@@ -1,0 +1,26 @@
+# Isle.Computer - Lakritz Board Constraints
+# Copyright Isle Authors
+# SPDX-License-Identifier: MIT
+
+BLOCK RESETPATHS;
+BLOCK ASYNCPATHS;
+
+# Board Clock: 48 MHz
+LOCATE COMP "clk_48m" SITE "A7";
+IOBUF  PORT "clk_48m" IO_TYPE=LVCMOS33;
+FREQUENCY PORT "clk_48m" 48 MHZ;
+
+# LEDs
+LOCATE COMP "led[0]" SITE "A2";
+IOBUF  PORT "led[0]" IO_TYPE=LVCMOS33;
+
+# DDMI (HDMI-compatible connector)
+#  NB. IO_TYPE=LVCMOS33D generates ddmi_dn from ddmi_dp
+LOCATE COMP "ddmi_dp[0]" SITE "M1";  # channel 0 +
+LOCATE COMP "ddmi_dp[1]" SITE "R2";  # channel 1 +
+LOCATE COMP "ddmi_dp[2]" SITE "R4";  # channel 2 +
+LOCATE COMP "ddmi_dp[3]" SITE "L1";  # clock +
+IOBUF  PORT "ddmi_dp[0]" IO_TYPE=LVCMOS33D DRIVE=4;
+IOBUF  PORT "ddmi_dp[1]" IO_TYPE=LVCMOS33D DRIVE=4;
+IOBUF  PORT "ddmi_dp[2]" IO_TYPE=LVCMOS33D DRIVE=4;
+IOBUF  PORT "ddmi_dp[3]" IO_TYPE=LVCMOS33D DRIVE=4;
