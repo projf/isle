@@ -1,5 +1,5 @@
 // Isle.Computer - Chapter 1: ULX3S Top
-// Copyright Isle Authors
+// Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
 `default_nettype none

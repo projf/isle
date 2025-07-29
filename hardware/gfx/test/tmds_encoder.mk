@@ -1,5 +1,5 @@
 # Isle.Computer - TMDS Encoder (DVI) Test Makefile
-# Copyright Isle Authors
+# Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
 SIM ?= verilator  # requires Verilator 5.006+

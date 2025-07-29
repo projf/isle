@@ -1,5 +1,5 @@
 // Isle.Computer - TMDS Encoder (DVI)
-// Copyright Isle Authors
+// Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
 `default_nettype none

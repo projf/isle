@@ -1,5 +1,5 @@
 # Isle.Computer - TMDS Encoder (DVI) Python Model
-# Copyright Isle Authors
+# Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
 # NB. [0:7] is 7 elements in Python, but 8 in Verilog.

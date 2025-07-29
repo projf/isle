@@ -1,5 +1,5 @@
 // Isle.Computer - Chapter 1: Verilator C++
-// Copyright Isle Authors
+// Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
 #include <stdio.h>

@@ -1,5 +1,5 @@
 # Isle.Computer - Nexys Video Board Constraints
-# Copyright Isle Authors
+# Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
 ## FPGA Configuration I/O Options

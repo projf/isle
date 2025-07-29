@@ -1,5 +1,5 @@
 // Isle.Computer - Display Controller
-// Copyright Isle Authors
+// Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
 // display modes (pixel clock)

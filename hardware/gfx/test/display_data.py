@@ -1,5 +1,5 @@
 # Isle.Computer - Display Controller Test Data
-# Copyright Isle Authors
+# Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
 """Display timing data for display tests."""
