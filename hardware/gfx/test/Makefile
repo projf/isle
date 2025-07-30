@@ -1,5 +1,5 @@
 # Isle.Computer - Graphics Test Makefile
-# Copyright Isle Authors
+# Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
 # NB. don't forget to source the cocotb venv

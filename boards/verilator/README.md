@@ -1,8 +1,8 @@
 # Verilator/SDL Support
 
-By combining Verilator and SDL you can run Isle on your computer. Read [Verilog Simulation with Verilator and SDL](http://projectf.io/posts/verilog-sim-verilator-sdl/) for more details.
+By combining [Verilator](https://www.veripool.org/verilator/) and [SDL](https://www.libsdl.org), you can run Isle on your computer. Read [Verilog Simulation with Verilator and SDL](http://projectf.io/posts/verilog-sim-verilator-sdl/) for more details.
 
-Be aware that Isle typically runs several times slower in simulation than on an [FPGA dev board](../). For Isle designs including a CPU, I see ~18 FPS on an Apple M1, your milage may vary.
+Be aware that Isle typically runs several times slower in simulation than on an [FPGA dev board](../). For Isle designs with a CPU, I see ~18 FPS on an Apple M1. Your mileage may vary.
 
 ## Installing Dependencies
 

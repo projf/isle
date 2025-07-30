@@ -1,5 +1,5 @@
 # Isle.Computer - Display Controller Test Bench
-# Copyright Isle Authors
+# Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
 """Display Controller Test Bench (cocotb)"""

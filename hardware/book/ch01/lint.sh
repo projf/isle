@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Isle.Computer - Chapter 1: Verilator Lint Script
-# Copyright Isle Authors
+# Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
 # check for Verilator 5

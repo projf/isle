@@ -1,5 +1,5 @@
 # Isle.Computer - TMDS Encoder (DVI) Test Bench
-# Copyright Isle Authors
+# Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
 """TMDS Encoder (DVI) Test Bench (cocotb)"""

@@ -1,5 +1,5 @@
 # Isle.Computer - Display Controller Test Makefile
-# Copyright Isle Authors
+# Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
 SIM ?= icarus

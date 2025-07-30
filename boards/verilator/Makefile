@@ -1,5 +1,5 @@
 # Isle.Computer - Verilator Makefile
-# Copyright Isle Authors
+# Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
 VFLAGS = -O3

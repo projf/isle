@@ -1,0 +1,41 @@
+# Xilinx Vivado
+*.bin
+*.bit
+*.cache
+*.hw
+*.ip_user_files
+*.mcs
+*.prm
+*.runs
+*.sim
+*.srcs
+*.Xil
+*.xpr
+clockInfo.txt
+webtalk.*
+
+# ECP5
+*yosys.log
+*.bit
+*.svf
+
+# Verilator
+obj_dir
+
+# asm
+software/obj
+software/bin
+
+# cocotb
+results*.xml
+sim_build*
+__pycache__
+.pytest_cache
+*.vcd
+cocotb-venv
+
+# Mac
+.DS_Store
+
+# general
+*.log

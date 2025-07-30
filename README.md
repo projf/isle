@@ -1,8 +1,8 @@
 # 🏝️ Isle FPGA Computer
 
-Welcome to Isle. Isle is a simple, modern computer — an open design that encourages tinkering, experimentation, and doing your own thing. Learn more on the Project F blog: <a href="http://projectf.io/isle/fpga-computer.html">Isle FPGA Computer</a>.
+Welcome to Isle. Isle is a simple, modern computer — an open design that encourages tinkering, experimentation, and doing your own thing. It's early days for the Isle project. The current designs are focused on graphics hardware; CPU and software will follow before too long.
 
-It's early days for the Isle project. The current designs are focused on graphics hardware. CPU and software will follow.
+Learn more and get started with the Project F blog: <a href="http://projectf.io/isle/fpga-computer.html">Isle FPGA Computer</a>
 
 ## Repo Layout
 

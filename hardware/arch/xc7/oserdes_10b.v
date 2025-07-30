@@ -1,5 +1,5 @@
 // Isle.Computer - XC7 10:1 Output Serializer
-// Copyright Isle Authors
+// Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
 `default_nettype none

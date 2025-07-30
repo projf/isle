@@ -1,5 +1,5 @@
 // Isle.Computer - ECP5 Dual clock generation
-// Copyright Isle Authors
+// Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
 module clock2_gen #(
