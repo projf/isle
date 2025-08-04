@@ -1,23 +1,24 @@
 # Isle Verilog Tests
 
-Isle uses cocotb for Verilog testing.
+Isle runs Verilog tests using [cocotb](https://www.cocotb.org) and two simulators:
 
-You need [Icarus Verilog](https://steveicarus.github.io/iverilog/) (iverilog) and [cocotb](https://www.cocotb.org) to run tests. Linting and a small number of tests require [Verilator](https://www.veripool.org/verilator/).
+* [Icarus Verilog](https://steveicarus.github.io/iverilog/) (iverilog)
+* [Verilator](https://www.veripool.org/verilator/)
 
-Install Icarus Verilog using the [official instructions](https://steveicarus.github.io/iverilog/usage/installation.html) or run `brew install icarus-verilog` on macOS.
+Before you run tests, follow the [installation instructions](#install-simulators) (below).
 
-Before running tests for the first time, install cocotb with pip in a venv (see below).
+I'm inexperienced with cocotb, so I'm sure there'll be some mistakes and approaches that strike old hands as strange. Please open an [issue](https://github.com/projf/isle/issues) if you have corrections or suggestions for improvement.
 
 ## Run Tests
 
-Once you've installed cocotb, ensure you've sourced the venv:
+Ensure you've sourced the Python venv if appropriate:
 
 ```shell
 cd isle/hardware
 source cocotb-venv/bin/activate
 ```
 
-Change directory into the area you want to test then use `make` to run tests.
+Change directory into the area you want to test, then use `make` to run the tests.
 
 For example, to test the display module at 1366x768:
 
@@ -34,19 +35,7 @@ For example, the following creates `sim_build/clut/clut.fst`:
 make WAVES=1 clut
 ```
 
-FST waveforms are supported by [GTKWave](https://gtkwave.github.io/gtkwave/) and [Surfer](https://surfer-project.org).
-
-## Install cocotb
-
-Do this once:
-
-```shell
-cd isle/hardware
-python3 -m venv cocotb-venv
-
-source cocotb-venv/bin/activate
-pip3 install -r requirements.txt
-```
+[GTKWave](https://gtkwave.github.io/gtkwave/) and [Surfer](https://surfer-project.org) support FST waveforms.
 
 ## Verilator Lint
 
@@ -58,3 +47,27 @@ For example, to lint chapter 1 designs:
 cd isle/hardware/book/ch01
 ./lint.sh
 ```
+
+## Install Simulators
+
+Install **Icarus Verilog** using the [official instructions](https://steveicarus.github.io/iverilog/usage/installation.html) or run `brew install icarus-verilog` on macOS.
+
+Install **Verilator** using the [official instructions](https://verilator.org/guide/latest/install.html) or run `brew install verilator` on macOS.
+
+See [boards/verilator](../boards/verilator/) for advice on using Verilator to run the full Isle simulation.
+
+## Install cocotb
+
+You can follow the official [cocotb installation instructions](https://docs.cocotb.org/en/stable/install.html) (covers dependencies), but I _strongly recommend_ installing cocotb inside a venv:
+
+```shell
+cd isle/hardware
+python3 -m venv cocotb-venv
+
+source cocotb-venv/bin/activate
+pip3 install -r requirements.txt
+```
+
+If you're having issues running cocotb on macOS, try using brew Python instead of the system one.
+
+I don't recommend using the version of cocotb from OSS CAD Suite as it's not stable.
