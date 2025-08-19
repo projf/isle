@@ -15,6 +15,9 @@ from cocotb.triggers import RisingEdge
 
 import tmds_model
 
+TEST_INFO = 1  # display TMDS info for passing test cycles
+
+
 async def reset_dut(dut):
     """Reset DUT (single cycle)"""
     await RisingEdge(dut.clk_pix)
@@ -25,10 +28,11 @@ async def reset_dut(dut):
     dut.rst_pix.value = 0
     await RisingEdge(dut.clk_pix)
 
+
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 async def tmds_random(dut):
     """Test 1000 random 8-bit pixel values."""
-    task = cocotb.start_soon(Clock(dut.clk_pix, 1, units="ns").start())
+    cocotb.start_soon(Clock(dut.clk_pix, 1, units="ns").start())
     dut.ctrl_in.value = 0
     await reset_dut(dut)
     dut.de.value = 1
@@ -44,7 +48,8 @@ async def tmds_random(dut):
             model_tmds = tmds_model.tmds(model_pixel_bin, model_pixel_dec)
             model_bias = tmds_model.bias(model_tmds)
             model_val = ''.join(map(str, reversed(model_bias)))
-            task.log.info("%4d: %02X - DUT: %s, Model: %s", \
+            if TEST_INFO:
+                dut._log.info("%4d: %02X - DUT: %s, Model: %s", \
                 i, pixel_dec_prev, dut.tmds.value.binstr, model_val)
             assert dut.tmds.value.binstr == model_val, \
                 f"DUT {dut.tmds.value.binstr} doesn't match model {model_val}!"

@@ -24,6 +24,8 @@ make ch01
 ./obj_dir/ch01
 ```
 
+To enable full screen display, set `FULLSCREEN` to true in the main C++ file for that chapter, e.g. `boards/verilator/main_ch01.cpp`.
+
 ## 672x384 Display Timings
 
 Verilator designs use their own 672x384 display timings with 25 MHz clock. The pixel and system clock are both 25 MHz in Verilator simulation. Chapter 1 uses 640x480 display in line with other dev boards.
