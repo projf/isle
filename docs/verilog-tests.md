@@ -58,7 +58,7 @@ See [boards/verilator](../boards/verilator/) for advice on using Verilator to ru
 
 ## Install cocotb
 
-You can follow the official [cocotb installation instructions](https://docs.cocotb.org/en/stable/install.html) (covers dependencies), but I _strongly recommend_ installing cocotb inside a venv:
+You can follow the official [cocotb installation instructions](https://docs.cocotb.org/en/stable/install.html) (covers dependencies). However, I _strongly recommend_ installing cocotb inside a venv and including pylint and pytest as per [requirements.txt](../hardware/requirements.txt):
 
 ```shell
 cd isle/hardware
