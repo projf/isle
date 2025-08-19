@@ -53,8 +53,8 @@ module display #(
         line_start  <= (x == h_sta);
         if (rst_pix) begin
             de          <= 0;
-            frame_start <= 0;
-            line_start  <= 0;
+            frame_start <= 1;  // after reset we immediately begin a frame...
+            line_start  <= 1;  // ...and a line
         end
     end
 
@@ -67,7 +67,7 @@ module display #(
             x <= x + 1;
         end
         if (rst_pix) begin
-            x <= h_sta;
+            x <= h_sta + 1;  // each coord only occurs once (1 cycle latency)
             y <= v_sta;
         end
     end
