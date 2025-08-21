@@ -16,4 +16,6 @@ make ch01
 openFPGALoader --board ulx3s ch01.bit
 ```
 
+If you get a timing failure, rerun make. The Makefile uses `--randomize-seed` with nextpnr and sometimes you'll be unlucky with placement.
+
 Isle also supports other [dev boards](../).

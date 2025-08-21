@@ -40,7 +40,7 @@ The frame and line flags allow you to take action each line or frame. For exampl
 
 ## Mode
 
-The display module includes four modes (pixel clock):
+The display module includes five modes (pixel clock):
 
 ```
 0 -  640 x 480 60 Hz (25.2 MHz)

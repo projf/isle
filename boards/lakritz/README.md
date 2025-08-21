@@ -15,6 +15,8 @@ dfu-util -a 0 -D ch01.bit
 dfu-util -a 0 -e
 ```
 
+If you get a timing failure, rerun make. The Makefile uses `--randomize-seed` with nextpnr and sometimes you'll be unlucky with placement.
+
 See the official [Lakritz README](https://github.com/machdyne/lakritz?tab=readme-ov-file#programming-lakritz) for more programming info.
 
 Isle also supports other [dev boards](../).
