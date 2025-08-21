@@ -54,12 +54,12 @@ For example, 2 bits per pixel mean you have 16 pixels per 32-bit word, and 16 is
 ### Output
 
 * `addr` - pixel memory address
-* `pidx` - pixel index within word
+* `pix_id` - pixel ID within word
 * `paint` - canvas painting enable
 
-The three outputs are the latency corrected `addr_pix`, `pidx`, and `paint` signals.
+The three outputs are the latency corrected `addr_pix`, `pix_id`, and `paint` signals.
 
-Our [vram](vram.md) has a 32-bit data bus, but a pixel is 1-8 bits wide. The `pidx` signal tells the display where in the data word the pixel is. For example, the third 4-bit pixel in a word would have a pidx of 2.
+Our [vram](vram.md) has a 32-bit data bus, but a pixel is 1-8 bits wide. The `pix_id` signal tells the display where in the data word the pixel is. For example, the third 4-bit pixel in a word would have a pix_id of 2.
 
 The paint signal tells you when canvas pixels should be output for display. The canvas doesn't necessarily cover the whole screen, so we need to know the right time to paint it.
 
