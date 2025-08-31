@@ -6,8 +6,8 @@ Learn more and get started with the Project F blog: <a href="http://projectf.io/
 
 ## Chapters
 
-* [Chapter 1 - Display](https://projectf.io/isle/display.html) | [Designs](hardware/book/ch01)
-* [Chapter 2 - Bitmap Graphics](https://projectf.io/isle/bitmap-graphics.html) | [Designs](hardware/book/ch02)
+* [Chapter 1 - Display](https://projectf.io/isle/display.html) - [Designs](hardware/book/ch01)
+* [Chapter 2 - Bitmap Graphics](https://projectf.io/isle/bitmap-graphics.html) - [Designs](hardware/book/ch02)
 * Chapter 3 - 2D Drawing (forthcoming)
 
 For build instructions see [dev boards](boards).
@@ -20,8 +20,8 @@ For build instructions see [dev boards](boards).
 * [res](res) - resource files
 * [software](software) (forthcoming)
 
-![](docs/img/ulx3s-1024x768-lvds.jpeg?raw=true "")
-
 ## Thank You!
 
 Special thanks to my **sponsors** who've stuck with me as I've developed this project: [Daniel Cliche](https://github.com/danodus), [David C. Norris](https://github.com/dcnorris), [dvir](https://github.com/dvirdc), [Justin Finkelstein](https://github.com/iamfinky), [kromych](https://github.com/kromych), [Martin Young](https://github.com/InternalCakeEngine), [Matt Venn](https://github.com/mattvenn), [Michael Doornbos](https://github.com/mrdoornbos), [Paul Sajna](https://github.com/sajattack), [Renaldas Zioma](https://github.com/rejunity), and those who wish to remain anonymous.
+
+![](docs/img/ulx3s-1024x768-lvds.jpeg?raw=true "")

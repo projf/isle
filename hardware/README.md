@@ -19,8 +19,8 @@ Architecture-specific FPGA designs, such as PLLs and I/O, are kept separate.
 
 ## Book Designs
 
-Designs to accompany the [Isle book](https://projectf.io/isle/index.html) on the Project F blog.
+Designs to accompany the Isle blog posts.
 
-* [Chapter 1 - Display](https://projectf.io/isle/display.html) | [Designs](hardware/book/ch01)
-* [Chapter 2 - Bitmap Graphics](https://projectf.io/isle/bitmap-graphics.html) | [Designs](hardware/book/ch02)
+* [Chapter 1 - Display](https://projectf.io/isle/display.html) - [Designs](book/ch01)
+* [Chapter 2 - Bitmap Graphics](https://projectf.io/isle/bitmap-graphics.html) - [Designs](book/ch02)
 * Chapter 3 - 2D Drawing (forthcoming)
