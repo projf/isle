@@ -5,6 +5,9 @@
 # NB. don't forget to source the cocotb venv
 #     display tests take a while to run
 
+canv_disp_agu:
+	make -f canv_disp_agu.mk
+
 tmds_encoder:
 	make -f tmds_encoder.mk
 
@@ -24,12 +27,12 @@ display_1280x720:
 	DISPLAY_MODE=4 make -f display.mk
 
 # this takes a while
-display_all: display_640x480 display_1024x768 display_1366x768 display_672x384 display_1280x720
+all_display: display_640x480 display_1024x768 display_1366x768 display_672x384 display_1280x720
 
 # all without display tests (which are slow)
-all_xdisp: tmds_encoder
+all_xdisp: canv_disp_agu tmds_encoder
 
-all: all_xdisp display_all
+all: all_xdisp all_display
 
 clean:
 	rm -f results*.xml
@@ -37,4 +40,4 @@ clean:
 	rm -rf __pycache__
 	rm -rf sim_build
 
-.PHONY: all all_xdisp display_all clean
+.PHONY: all all_xdisp all_display clean

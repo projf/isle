@@ -9,7 +9,7 @@ Learn more and get started with the Project F blog: <a href="http://projectf.io/
 * [boards](boards) - supported dev boards and simulators
 * [docs](docs) - high-level docs and project notes
 * [hardware](hardware) - Verilog hardware
-* [res](res) - resource files (forthcoming)
+* [res](res) - resource files
 * [software](software) - software (forthcoming)
 
 ## Thank You!

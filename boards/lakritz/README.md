@@ -15,6 +15,24 @@ dfu-util -a 0 -D ch01.bit
 dfu-util -a 0 -e
 ```
 
+If you get a timing failure, rerun make. The Makefile uses `--randomize-seed` with nextpnr and sometimes you'll be unlucky with placement.
+
 See the official [Lakritz README](https://github.com/machdyne/lakritz?tab=readme-ov-file#programming-lakritz) for more programming info.
 
 Isle also supports other [dev boards](../).
+
+## Clock Settings
+
+The following table shows clock generation parameters for different display modes using the 48 MHz board clock of the Lakritz. To understand how these values are calculated, see [ECP5 FPGA Clock Generation](https://projectf.io/posts/ecp5-fpga-clock/).
+
+| Parameter         | 640x480    | 1024x768*  | 1366x768   | 1280x720*  |
+| ----------------- | ---------: | ---------: | ---------: | ---------: |
+| Pixel Clock (MHz) | 25.2       | 64.8       | 72         | 74.4       |
+| CLKI_DIV          | 8          | 4          | 2          | 4          |
+| CLKFB_DIV         | 21         | 27         | 15         | 31         |
+| CLKOP_DIV         | 4          | 2          | 2          | 2          |
+| CLKOP_CPHASE      | 2          | 1          | 1          | 1          |
+| CLKOS_DIV         | 20         | 10         | 10         | 10         |
+| CLKOS_CPHASE      | 10         | 5          | 5          | 5          |
+
+_\*1024x768 should be 65 MHz and 1280x720 should be 74.25 MHz, but these clock frequencies are still withing spec ±0.5%._

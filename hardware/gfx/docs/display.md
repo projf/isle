@@ -40,7 +40,7 @@ The frame and line flags allow you to take action each line or frame. For exampl
 
 ## Mode
 
-The display module includes four modes (pixel clock):
+The display module includes five modes (pixel clock):
 
 ```
 0 -  640 x 480 60 Hz (25.2 MHz)
@@ -64,4 +64,4 @@ Mode could have been a signal to allow runtime resolution changes. However, this
 
 ## Testing
 
-There is a cocotb test bench [[python src](../test/display.py)] that exercises this module with the included display modes.
+There is a cocotb test bench [[python src](../test/display.py)] that exercises this module with the included display modes. For advice on running hardware tests, see [Isle Verilog Tests](../../../docs/verilog-tests.md).

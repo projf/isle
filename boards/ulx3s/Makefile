@@ -16,13 +16,18 @@ TARGET_FREQ = 25  # target frequency (MHz)
 PATH_LIB = ../../hardware
 ADD_SRC += ${PATH_LIB}/book/ch01/ch01_pattern.v
 ADD_SRC += ${PATH_LIB}/book/ch01/ch01_square.v
+ADD_SRC += ${PATH_LIB}/book/ch02/ch02.v
+ADD_SRC += ${PATH_LIB}/gfx/canv_disp_agu.v
 ADD_SRC += ${PATH_LIB}/gfx/display.v
 ADD_SRC += ${PATH_LIB}/gfx/tmds_encoder.v
+ADD_SRC += ${PATH_LIB}/mem/clut.v
+ADD_SRC += ${PATH_LIB}/mem/vram.v
 # ecp5 arch modules
 ADD_SRC += ${PATH_LIB}/arch/ecp5/clock2_gen.v
 ADD_SRC += ${PATH_LIB}/arch/ecp5/dvi_generator.v
 
 ch01: ch01.bit ch01.svf
+ch02: ch02.bit ch02.svf
 
 # synthesis
 %.json: top_%.v $(ADD_SRC)
@@ -40,7 +45,7 @@ ch01: ch01.bit ch01.svf
 %.svf: %.config
 	ecppack --compress --input $< --svf $@
 
-all: ch01
+all: ch01 ch02
 
 clean:
 	rm -f *.json *.config *.bit .*.d *.svf *yosys.log

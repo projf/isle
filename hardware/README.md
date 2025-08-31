@@ -6,13 +6,13 @@ Isle hardware is designed in straightforward Verilog. You can find reference doc
 
 * cpu - RISC-V processor (forthcoming)
 * [graphics](gfx) - display, drawing, text mode
-* memory - vram, system memory (forthcoming)
+* [memory](mem) - VRAM, CLUT, system memory
 
 The [requirements.txt](requirements.txt) in this directory is for [cocotb hardware tests](../docs/verilog-tests.md).
 
 ### Architecture Specific
 
-Architecture-specific FPGA designs, such as PLLs, are kept separate.
+Architecture-specific FPGA designs, such as PLLs and I/O, are kept separate.
 
 * Lattice [ECP5](arch/ecp5)
 * Xilinx [XC7](arch/xc7)
@@ -22,4 +22,5 @@ Architecture-specific FPGA designs, such as PLLs, are kept separate.
 Designs to accompany the [Isle book](https://projectf.io/isle/index.html) on the Project F blog.
 
 * Chapter 1 - Display: [Blog](https://projectf.io/isle/display.html) | [Designs](book/ch01)
-* Chapter 2 - Bitmap Graphics (forthcoming)
+* Chapter 2 - Bitmap Graphics: [Blog](https://projectf.io/isle/bitmap-graphics.html) | [Designs](book/ch02)
+* Chapter 3 - 2D Drawing (forthcoming)
