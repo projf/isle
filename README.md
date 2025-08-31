@@ -4,13 +4,23 @@ Welcome to Isle. Isle is a simple, modern computer — an open design that encou
 
 Learn more and get started with the Project F blog: <a href="http://projectf.io/isle/fpga-computer.html">Isle FPGA Computer</a>
 
+## Chapters
+
+* [Chapter 1 - Display](https://projectf.io/isle/display.html) | [Designs](hardware/book/ch01)
+* [Chapter 2 - Bitmap Graphics](https://projectf.io/isle/bitmap-graphics.html) | [Designs](hardware/book/ch02)
+* Chapter 3 - 2D Drawing (forthcoming)
+
+For build instructions see [dev boards](boards).
+
 ## Repo Layout
 
 * [boards](boards) - supported dev boards and simulators
 * [docs](docs) - high-level docs and project notes
 * [hardware](hardware) - Verilog hardware
 * [res](res) - resource files
-* [software](software) - software (forthcoming)
+* [software](software) (forthcoming)
+
+![](docs/img/ulx3s-1024x768-lvds.jpeg?raw=true "")
 
 ## Thank You!
 
