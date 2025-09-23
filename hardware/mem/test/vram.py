@@ -38,8 +38,8 @@ expt_data_disp = ["xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", "xxxxxxxxxxxxxxxxxxxxxxxxx
 
 async def setup_clocks(dut):
     """Setup system and pixel clocks."""
-    task_sys = cocotb.start_soon(Clock(dut.clk_sys, SYS_TIME, units="ns").start())
-    task_pix = cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, units="ns").start())
+    cocotb.start_soon(Clock(dut.clk_sys, SYS_TIME, units="ns").start())
+    cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, units="ns").start())
 
 
 async def zero_memory(dut):
@@ -58,7 +58,7 @@ async def zero_memory(dut):
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 async def sys_port_word(dut):
     """Test vram sys port with word data."""
-    task_sys = await setup_clocks(dut)
+    await setup_clocks(dut)
     await zero_memory(dut)  # zeroed memory matches FPGA
 
     # write data
@@ -88,7 +88,7 @@ async def sys_port_word(dut):
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 async def sys_port_mask(dut):
     """Test vram sys port with masked data."""
-    task_sys = await setup_clocks(dut)
+    await setup_clocks(dut)
     await zero_memory(dut)  # zeroed memory matches FPGA
 
     # write data
