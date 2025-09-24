@@ -10,11 +10,14 @@ SDL_LDFLAGS = `sdl2-config --libs`
 VERILOG_LIBS += -I../../hardware
 VERILOG_LIBS += -I../../hardware/book/ch01
 VERILOG_LIBS += -I../../hardware/book/ch02
+VERILOG_LIBS += -I../../hardware/book/ch03
 VERILOG_LIBS += -I../../hardware/gfx
 VERILOG_LIBS += -I../../hardware/mem
+VERILOG_LIBS += -I../../hardware/sys
 
 ch01: ch01.exe
 ch02: ch02.exe
+ch03: ch03.exe
 
 %.exe: %.mk
 	make -C ./obj_dir -f Vtop_$<
