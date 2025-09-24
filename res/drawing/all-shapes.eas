@@ -1,0 +1,234 @@
+# Isle.Computer - Earthrise All Shapes Example
+# Copyright Will Green and Isle Contributors
+# SPDX-License-Identifier: MIT
+
+# Designed for 336x192 canvas
+
+#
+# Lines
+#
+
+# line colours
+lca 10
+lcb  8
+
+# line 0
+x0  32
+y0   0
+x1 223
+y1 191
+draw line ca
+
+# line 1 (y-coord doesn't change)
+x0 223
+x1  32
+draw line cb
+
+# line 2 (single pixel)
+x0 20
+y0  8
+x1 20
+y1  8
+draw line ca
+
+
+#
+# Triangles
+#
+
+# line and fill colours
+lca 10
+lcb  8
+fca  4
+fcb  5
+
+nop  # throw in a NOP for fun
+
+# triangle 0 - tiny for logic testing
+x0 4
+y0 4
+x1 8
+y1 8
+x2 4
+y2 12
+draw tri ca
+
+# triangle 1 - tiny vertical A
+x0 12
+y0  4
+x1 16
+y1  8
+x2 12
+y2 12
+draw trif cb
+
+# triangle 2 - large triangle
+x0  24
+y0  20
+x1 184
+y1  80
+x2 108
+y2 180
+draw trif cb
+draw tri ca
+
+
+#
+# rects
+#
+
+# line colours
+lca 0xC
+lcb 0xB
+
+# rect 0 - large outline rect
+x0 224
+y0 116
+x1  32
+y1  76
+draw rect ca
+
+# rect 1 - large outline rect
+x0  33
+y0  77
+x1 223
+y1 115
+draw rect cb
+
+# fill colours
+fca 0x4
+fcb 0x5
+
+# rect 2 - small square on right-hand side
+x0 316
+y0  48
+x1 288
+y1  20
+draw rectf ca
+draw rect ca
+
+# rect 3 - small square on right-hand side
+x0 292
+y0  24
+x1 312
+y1  44
+draw rectf cb
+draw rect cb
+
+nop
+
+
+#
+# Pixels
+#
+
+# line colours
+lca 4
+lcb 10
+
+# F in pixels
+x0 12
+y0  6
+draw pix ca
+x0 13
+draw pix ca
+x0 14
+draw pix ca
+x0 12
+y0  7
+draw pix ca
+y0  8
+draw pix ca
+x0 13
+draw pix ca
+x0 12
+y0  9
+draw pix ca
+y0 10
+draw pix ca
+
+# pixel colour B
+x0 18
+y0  8
+draw pix cb
+
+# negative pixel (won't be visible)
+x0 -1
+y0 -2
+draw pix ca
+
+
+#
+# Fast (Horizontal) Lines
+#
+
+# line colours
+lca 0xA
+lcb 0x8
+
+# fline 0
+y0   3  # fixed vertical position
+x0 220
+x1  35
+draw fline ca
+
+# fline 1 (x-coords don't change)
+y0 188  # fixed vertical position
+draw fline cb
+
+# fline 2 (single pixel)
+x0 22
+y0  8
+x1 22
+draw fline ca
+
+
+#
+# Circles
+#
+
+# line colours
+lca 0xA
+lcb 0x6
+
+# circle 0
+x0 128
+y0  96
+r0  64
+draw circ ca
+
+# circle 1 (x- and y-coord don't change)
+r0 32
+draw circ cb
+
+# circle 2
+r0 16
+draw circf ca
+
+# fill colour
+fca 0
+
+# circle 3 & 4
+r0 8
+draw circf ca
+draw circ cb
+
+# line and fill colours
+lca 0xC
+lcb 0xB
+fca 0x4
+fcb 0x5
+
+# circle 5
+x0 302
+y0 152
+r0  20
+draw circf ca
+draw circ ca
+
+# circle 6
+r0 14
+draw circf cb
+draw circ cb
+
+stop
