@@ -26,7 +26,7 @@ module earthrise #(
     output reg  [ER_ADDRW+1:0] pc,             // program counter (byte address)
     input  wire [VRAM_ADDRW-1:0] addr_base,    // address of first canvas pixel
     input  wire [CANV_SHIFTW-1:0] addr_shift,  // address shift bits
-    output reg  [VRAM_ADDRW-1:0] vram_addr,    // pixel memory address
+    output wire [VRAM_ADDRW-1:0] vram_addr,    // pixel memory address
     output reg  [WORD-1:0] vram_din,           // vram data in
     output reg  [WORD-1:0] vram_wmask,         // vram write mask
     output reg  busy,                          // drawing request in progress
@@ -49,11 +49,11 @@ module earthrise #(
     localparam IMM8   =  8;  // immediate 8 width (bits)
 
     // drawing position and colour
-    reg drawing;   // actively drawing a pixel
+    reg drawing;  // actively drawing a pixel
     reg signed [ICORDW-1:0] x, y;
-    reg [COLRW-1:0] colr;    // drawing colour
-    reg [PIX_IDW-1:0] pix_id; // pixel ID within word
-    reg clip;  // high for coordinate outside canvas
+    reg [COLRW-1:0] colr;  // drawing colour
+    wire [PIX_IDW-1:0] pix_id;  // pixel ID within word
+    wire clip;  // high for coordinate outside canvas
 
     // instruction subfields
     reg [OPCW-1:0]  opc;    // opcode
