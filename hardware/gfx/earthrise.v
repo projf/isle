@@ -398,7 +398,7 @@ module earthrise #(
                         line_a_y0 <= tvy0s;
                         line_a_x1 <= tvx1s;
                         line_a_y1 <= tvy0s;
-                        `debug_er($display("  0: (%d,%d) -> (%d,%d)", tvx0s, tvy0s, tvx1s, tvy0s));
+                        // `debug_er($display("  0: (%d,%d) -> (%d,%d)", tvx0s, tvy0s, tvx1s, tvy0s));
                     end
                     'd1: begin
                         state_return <= RECT_INIT;  // return for third edge
@@ -406,7 +406,7 @@ module earthrise #(
                         line_a_y0 <= tvy1s;
                         line_a_x1 <= tvx1s;
                         line_a_y1 <= tvy1s;
-                        `debug_er($display("  1: (%d,%d) -> (%d,%d)", tvx0s, tvy1s, tvx1s, tvy1s));
+                        // `debug_er($display("  1: (%d,%d) -> (%d,%d)", tvx0s, tvy1s, tvx1s, tvy1s));
                     end
                     'd2: begin
                         state_return <= RECT_INIT;  // return for fourth edge
@@ -414,7 +414,7 @@ module earthrise #(
                         line_a_y0 <= tvy0s;
                         line_a_x1 <= tvx0s;
                         line_a_y1 <= tvy1s;
-                        `debug_er($display("  2: (%d,%d) -> (%d,%d)", tvx0s, tvy0s, tvx0s, tvy1s));
+                        // `debug_er($display("  2: (%d,%d) -> (%d,%d)", tvx0s, tvy0s, tvx0s, tvy1s));
                     end
                     default: begin
                         state_return <= DECODE;  // decode next instruction after draw
@@ -422,7 +422,7 @@ module earthrise #(
                         line_a_y0 <= tvy0s;
                         line_a_x1 <= tvx1s;
                         line_a_y1 <= tvy1s;
-                        `debug_er($display("  3: (%d,%d) -> (%d,%d)", tvx1s, tvy0s, tvx1s, tvy1s));
+                        // `debug_er($display("  3: (%d,%d) -> (%d,%d)", tvx1s, tvy0s, tvx1s, tvy1s));
                     end
                 endcase
             end
