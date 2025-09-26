@@ -8,8 +8,6 @@ Isle hardware is designed in straightforward Verilog. You can find reference doc
 * [graphics](gfx) - display, drawing, text mode
 * [memory](mem) - VRAM, CLUT, system memory
 
-The [requirements.txt](requirements.txt) in this directory is for [cocotb hardware tests](../docs/verilog-tests.md).
-
 ### Architecture Specific
 
 Architecture-specific FPGA designs, such as PLLs and I/O, are kept separate.
