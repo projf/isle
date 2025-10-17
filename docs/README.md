@@ -2,6 +2,7 @@
 
 High-level Isle docs.
 
+* [Earthrise Programming](earthrise-programming.md) - graphics programming with Earthrise
 * [Verilog Tests](verilog-tests.md) - testing Verilog with cocotb
 
 You'll find reference documentation for Verilog modules in the [hardware](../hardware/) directory.
