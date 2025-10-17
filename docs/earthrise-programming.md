@@ -20,10 +20,10 @@ A coordinate example **0x2040**:
 * The 4-bit opcode is **0x2** - load immediate into coordinate register `x1`
 * The 12-bit value is **0x040** - value is 0x40 or 64 in decimal
 
-Breaking down a drawing example **0xD201**:
+Breaking down a drawing example **0xD301**:
 
 * The 4-bit opcode is **0xD** - draw command
-* The 4-bit function is **0x2** - triangle
+* The 4-bit function is **0x3** - triangle
 * The 8-bit binary options are **00000001** - a filled triangle in colour A
 
 _The coordinates and colour for the triangle come from the registers._
