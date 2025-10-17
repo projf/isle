@@ -18,14 +18,14 @@ The follow signals are used for line drawing. Isle drawing takes place in the sy
 
 * `clk` - clock
 * `rst` - reset
-* `start` - start line drawing
+* `start` - start line calculation
 * `oe` - output enable
 * `x0`, `y0` - line start coordinates
 * `x1`, `y1` - line end coordinates
 
-The `start` signal only works when if the module isn't already drawing. If you want to stop line drawing and start afresh you need to reset with `rst` then use `start`.
+The `start` signal only works when if the module isn't already calculating. If you want to stop the calculation and start afresh you need to reset with `rst` then use `start`.
 
-Output enable `oe` lets you pause line drawing, which is useful for multiplexing access to memory or for drawing more complex shapes where multiple lines are involved.
+Output enable `oe` lets you pause the line calculation, which is useful for multiplexing access to memory or for drawing shapes (such as triangles) where multiple lines are involved.
 
 ### Output
 
