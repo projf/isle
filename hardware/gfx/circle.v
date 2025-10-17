@@ -6,15 +6,15 @@
 `timescale 1ns / 1ps
 
 module circle #(parameter CORDW=0) (  // signed coordinate width
-    input  wire clk,             // clock
-    input  wire rst,             // reset
-    input  wire start,           // start line drawing
-    input  wire oe,              // output enable
+    input  wire clk,    // clock
+    input  wire rst,    // reset
+    input  wire start,  // start circle calculation
+    input  wire oe,     // output enable
     input  wire signed [CORDW-1:0] r0,      // radius
     output reg  signed [CORDW-1:0] xa, ya,  // x and y distances
-    output reg  valid,           // circle values valid
-    output reg  busy,            // circle calculation in progress
-    output reg  done             // circle is complete (high for one tick)
+    output reg  busy,   // calculation in progress
+    output reg  valid,  // output coordinates valid
+    output reg  done    // calculation complete (high for one tick)
     );
 
     // internal variables

@@ -649,10 +649,10 @@ module earthrise #(
         .x0(fline_x0),
         .x1(fline_x1),
         .x(fline_x),
-        .valid(fline_valid),
         /* verilator lint_off PINCONNECTEMPTY */
         .busy(),
         /* verilator lint_on PINCONNECTEMPTY */
+        .valid(fline_valid),
         .done(fline_done)
     );
 
@@ -664,8 +664,8 @@ module earthrise #(
         .r0(circle_r0),
         .xa(circle_xa),
         .ya(circle_ya),
-        .valid(circle_valid),
         .busy(circle_busy),
+        .valid(circle_valid),
         /* verilator lint_off PINCONNECTEMPTY */
         .done()
         /* verilator lint_on PINCONNECTEMPTY */
