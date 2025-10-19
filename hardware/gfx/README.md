@@ -3,7 +3,7 @@
 | Module                           | Reference                    | Book Chapter    | Description                              |
 | -------------------------------- | ---------------------------- | --------------- | ---------------------------------------- |
 | [canv_disp_agu](canv_disp_agu.v) | [doc](docs/canv_disp_agu.md) | Bitmap Graphics | Canvas display address generation        |
-| [canv_draw_agu](canv_draw_agu.v) | [doc](docs/canv_draw_agu.md) | 2D Drawing      | Canvas drawing address generation        |
+| [canv_draw_agu](canv_draw_agu.v) | [doc](docs/canv_draw_agu.md) | 2D Drawing      | Canvas draw address generation           |
 | [circle](circle.v)               | [doc](docs/circle.md)        | 2D Drawing      | Draw circle                              |
 | [display](display.v)             | [doc](docs/display.md)       | Display         | Display controller                       |
 | [earthrise](earthrise.v)         | [doc](docs/earthrise.md)     | 2D Drawing      | Earthrise drawing engine                 |
