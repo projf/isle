@@ -1,4 +1,4 @@
-# Isle Line Drawing
+# Line Drawing
 
 The **line** module [[verilog src](../line.v)] draws lines with Bresenham's line algorithm. This implementation supports integer signed coordinates and draws towards increasing Y, swapping the input coordinates if necessary.
 

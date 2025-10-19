@@ -1,4 +1,4 @@
-# Isle Fast Line Drawing
+# Fast Line Drawing
 
 The **fline** module [[verilog src](../fline.v)] draws horizontal lines. This implementation supports integer signed coordinates. 
 

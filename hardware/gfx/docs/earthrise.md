@@ -1,4 +1,4 @@
-# Isle Earthrise 2D Drawing Engine
+# Earthrise 2D Drawing Engine
 
 The **Earthrise** module [[verilog src](../earthrise.v)] is a simple processor that decodes and executes graphics instructions for pixels, lines, triangles, rects, and circles.
 
