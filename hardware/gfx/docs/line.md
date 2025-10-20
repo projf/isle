@@ -6,7 +6,7 @@ The **line** module [[verilog src](../line.v)] draws lines with Bresenham's line
 
 * `CORDW` - signed coordinate width (bits)
 
-[Earthrise](earthrise.md) uses 12-bit integer coordinates. In future, Earthrise may switch to a 16-bit Q12.4 fixed-point format for sub-pixel precision.
+[Earthrise](earthrise.md) uses 12-bit integer coordinates for drawing; we may switch to a 16-bit Q12.4 fixed-point format for sub-pixel precision in future.
 
 ## Signals
 
