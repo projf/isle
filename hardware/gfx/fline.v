@@ -7,7 +7,7 @@
 `default_nettype none
 `timescale 1ns / 1ps
 
-module fline #(parameter CORDW=16) (  // signed coordinate width
+module fline #(parameter CORDW=0) (  // signed coordinate width
     input  wire clk,    // clock
     input  wire rst,    // reset
     input  wire start,  // start line calculation
@@ -15,8 +15,8 @@ module fline #(parameter CORDW=16) (  // signed coordinate width
     input  wire signed [CORDW-1:0] x0,  // point 0
     input  wire signed [CORDW-1:0] x1,  // point 1
     output reg  signed [CORDW-1:0] x,   // line position
-    output reg  valid,  // output coordinates valid
     output reg  busy,   // calculation request in progress
+    output reg  valid,  // output coordinates valid
     output reg  done    // calculation complete (high for one tick)
     );
 

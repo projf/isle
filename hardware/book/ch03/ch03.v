@@ -76,7 +76,7 @@ module ch03 #(
     ) ercmd_inst (
         .clk(clk_sys),
         /* verilator lint_off PINCONNECTEMPTY */
-        .we(),  // for future CPU use
+        .we_sys(),  // for future CPU use
         .addr_sys(),
         .din_sys(),
         .dout_sys(),

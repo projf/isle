@@ -1,6 +1,6 @@
 # Earthrise Programming
 
-This doc provides an overview and reference for Earthrise graphics programming. Take a look at [Isle Graphics](https://projectf.io/isle/graphics.html) for blog posts on this topic. You'll find reference documentation for the Earthrise hardware (Verilog module) in the [hardware](../hardware/) directory.
+This doc provides an overview and reference for Earthrise graphics programming. Take a look at [Isle Graphics](https://projectf.io/isle/graphics.html) for blog posts on this topic. You'll find reference documentation for the Earthrise hardware (Verilog module) in [graphics hardware](../hardware/gfx).
 
 ## Overview
 
@@ -20,10 +20,10 @@ A coordinate example **0x2040**:
 * The 4-bit opcode is **0x2** - load immediate into coordinate register `x1`
 * The 12-bit value is **0x040** - value is 0x40 or 64 in decimal
 
-Breaking down a drawing example **0xD201**:
+Breaking down a drawing example **0xD301**:
 
 * The 4-bit opcode is **0xD** - draw command
-* The 4-bit function is **0x2** - triangle
+* The 4-bit function is **0x3** - triangle
 * The 8-bit binary options are **00000001** - a filled triangle in colour A
 
 _The coordinates and colour for the triangle come from the registers._
@@ -70,7 +70,7 @@ Taking the line example from the overview (above):
 0xD100  # draw line ca
 ```
 
-To express negative values in hex, use two's complement: -1 is 0xFFF and -16 is 0xFF0. For example, instruction `0x8FFC` sets 0x8 (xt) to -4, which shifts coordinates left 4 pixels.
+To express negative values in hex, use two's complement: -1 is 0xFFF and -16 is 0xFF0. For example, instruction `0x8FFC` sets `xt` to -4, which shifts coordinates left 4 pixels.
 
 Earthrises uses coordinates to determine which address in [VRAM](../hardware/mem/docs/vram.md) to write to.
 

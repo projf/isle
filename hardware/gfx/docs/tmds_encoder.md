@@ -1,4 +1,4 @@
-# Isle TMDS Encoder
+# TMDS Encoder (DVI)
 
 The **tmds_encoder** module [[verilog src](../tmds_encoder.v)] encodes a channel for DVI TMDS (transition-minimized differential signaling) suitable for output to a DVI or HDMI display. You encode each of the red, green, and blue channels separately using this module.
 

@@ -19,11 +19,11 @@ module canv_draw_agu #(
     input  wire signed [CORDW-1:0] h,     // canvas height
     input  wire signed [CORDW-1:0] x,     // horizontal pixel coordinate
     input  wire signed [CORDW-1:0] y,     // vertical pixel coordinate
-    input  wire [ADDRW-1:0] addr_base,    // address of first pixel
+    input  wire [ADDRW-1:0] addr_base,    // address of first pixel in canvas
     input  wire [SHIFTW-1:0] addr_shift,  // address shift bits
     output reg  [ADDRW-1:0] addr,         // pixel memory address
     output reg  [PIX_IDW-1:0] pix_id,     // pixel ID within word
-    output reg  clip                      // high for coordinate outside canvas
+    output reg  clip                      // high for pixel coordinate outside canvas
     );
 
     localparam PIX_ADDRW = ADDRW + $clog2(WORD);

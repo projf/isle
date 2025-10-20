@@ -1,4 +1,4 @@
-# Isle Display Controller
+# Display Controller
 
 The **display** module [[verilog src](../display.v)] uses _display timings_ to generate sync signals and display coordinates.
 
