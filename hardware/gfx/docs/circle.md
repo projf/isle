@@ -1,6 +1,6 @@
 # Circle Drawing
 
-The **circle** module [[verilog src](../circle.v)] provides the x and y distances to draw a circle with the midpoint circle algorithm. This implementation supports integer signed coordinates. See [Earthrise](earthrise.md) for an example drawing complete circles with this module.
+The **circle** module [[verilog src](../circle.v)] provides the x and y distances to draw a circle with the midpoint circle algorithm. This implementation supports signed integer coordinates. See [Earthrise](earthrise.md) for an example drawing complete circles with this module.
 
 See the [2D Drawing](http://projectf.io/isle/2d-drawing.html) blog post for more information on the use of this module.
 
