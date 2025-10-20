@@ -50,10 +50,12 @@ For example, 2 bits per pixel mean you have 16 pixels per 32-bit word, and 16 is
 * `pc` - Earthrise program counter (byte address)
 * `vram_addr` - address in vram
 * `vram_din` - vram data in
-* `vram_wmask` - vram bit write mask
+* `vram_wmask` - vram bit-write mask
 * `busy` - execution in progress
 * `done` - commands complete (high for one tick)
 * `instr_invalid` - invalid instruction
+
+See [vram](../../mem/docs/vram.md) for details on vram write mask.
 
 ## Earthrise Command List
 
