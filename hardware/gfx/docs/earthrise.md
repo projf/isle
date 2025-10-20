@@ -27,8 +27,8 @@ For Isle, `CORDW` must be set to **16** and `WORD` must be set to **32**.
 * `rst` - reset
 * `start` - start execution
 * `canv_w`, `canv_h` - canvas width and height (in pixels)
-* `canv_bpp` - canvas bits per pixel
-* `cmd_list` - command list data
+* `canv_bpp` - canvas bits per pixel (colour depth)
+* `cmd_list` - command list data (2 x 16-bit instructions)
 * `addr_base` - address of first pixel in canvas
 * `addr_shift` - address shift bits
 
