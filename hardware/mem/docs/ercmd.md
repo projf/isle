@@ -34,7 +34,7 @@ The command list is dual port. The system port is read-write for use of the CPU.
 
 ## Latencies
 
-* **CPU port** - 1 cycle read latency
-* **Earthrise port** - 2 cycle read latency
+* **sys port** - 1 cycle read latency
+* **ER port** - 2 cycle read latency
 
 The Earthrise port has a higher latency because of the output register to improve timing.
