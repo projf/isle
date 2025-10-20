@@ -12,7 +12,7 @@ We introduce system components in their own chapter with a dedicated top-level d
 
 * [Chapter 1 - Display](https://projectf.io/isle/display.html) - [Designs](hardware/book/ch01)
 * [Chapter 2 - Bitmap Graphics](https://projectf.io/isle/bitmap-graphics.html) - [Designs](hardware/book/ch02)
-* Chapter 3 - 2D Drawing - [Designs](hardware/book/ch03) (blog forthcoming)
+* [Chapter 3 - 2D Drawing](http://projectf.io/isle/2d-drawing.html) - [Designs](hardware/book/ch03)
 * Chapter 4 - TextMode (forthcoming)
 * Chapter 5 - RISC-V CPU (forthcoming)
 
