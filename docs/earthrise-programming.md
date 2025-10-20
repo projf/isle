@@ -114,7 +114,7 @@ A drawing instruction has the **0xD** opcode follow by the function representing
     - draw a single pixel at `(x0, y0)`
 * line (**0xD1**)
     - draw a line from `(x0, y0)` to `(x1, y1)`
-* line fast (**0xDF**) - mnemonic F for fast
+* line fast (**0xDF**) - **F** for fast
     - draw a horizontal line from `x0` to `x1` at vertical position `y0`
     - has faster performance on some hardware, which is especially handy for fills
 * circle (**0xD2**)
@@ -154,8 +154,8 @@ You need two instructions to draw a shape with outline and fill, but you get to 
 
 **Control instructions** share opcode with colour registers, but use letters A-F for the second nibble.
 
-* nop (**0xCC00**) - no operations; mnemonic **C**ontinue
-* stop (**0xCE00**) - mnemonic **CE**ase
+* nop (**0xCC00**) - no operations; **C**ontinue
+* stop (**0xCE00**) - **CE**ase
 
 Add a STOP instruction at the end of your Earthrise drawing, otherwise Earthrise will keep executing instructions until it gets to the end of its command list.
 
@@ -320,7 +320,7 @@ In this case, `y2` was the same for both triangles because the diamond shape is 
 I recommend adding a STOP instruction at the end of your Earthrise instructions.
 
 ```
-0xCE00  // STOP - mnemonic CEase
+0xCE00  // STOP - CEase
 ```
 
 Otherwise, Earthrise keeps executing until it reaches the end of the command list.
