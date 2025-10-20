@@ -16,13 +16,13 @@ module ercmd #(
     parameter ADDRW=0,      // address width (bits)
     parameter FILE_INIT=""  // initial command list
     ) (
-    input  wire clk,                   // clock
-    input  wire [BYTE_CNT-1:0] we,     // write enable
-    input  wire [ADDRW-1:0] addr_sys,  // system address
-    input  wire [WORD-1:0] din_sys,    // system data in
-    output reg  [WORD-1:0] dout_sys,   // system data out
-    input  wire [ADDRW-1:0] addr_er,   // Earthrise address
-    output reg  [WORD-1:0] dout_er     // Earthrise data out
+    input  wire clk,                    // clock
+    input  wire [BYTE_CNT-1:0] we_sys,  // system write enable
+    input  wire [ADDRW-1:0] addr_sys,   // system address
+    input  wire [WORD-1:0] din_sys,     // system data in
+    output reg  [WORD-1:0] dout_sys,    // system data out
+    input  wire [ADDRW-1:0] addr_er,    // Earthrise address
+    output reg  [WORD-1:0] dout_er      // Earthrise data out
     );
 
     localparam DEPTH=2**ADDRW;
@@ -37,11 +37,11 @@ module ercmd #(
 
     // system port (read-write, write_mode: no change)
     always @(posedge clk) begin
-        if (~|we) dout_sys <= cmd_list_mem[addr_sys];
-        if (we[0]) cmd_list_mem[addr_sys][ 7: 0] <= din_sys[ 7: 0];
-        if (we[1]) cmd_list_mem[addr_sys][15: 8] <= din_sys[15: 8];
-        if (we[2]) cmd_list_mem[addr_sys][23:16] <= din_sys[23:16];
-        if (we[3]) cmd_list_mem[addr_sys][31:24] <= din_sys[31:24];
+        if (~|we_sys) dout_sys <= cmd_list_mem[addr_sys];
+        if (we_sys[0]) cmd_list_mem[addr_sys][ 7: 0] <= din_sys[ 7: 0];
+        if (we_sys[1]) cmd_list_mem[addr_sys][15: 8] <= din_sys[15: 8];
+        if (we_sys[2]) cmd_list_mem[addr_sys][23:16] <= din_sys[23:16];
+        if (we_sys[3]) cmd_list_mem[addr_sys][31:24] <= din_sys[31:24];
     end
 
     // Earthrise port (read-only with output register)
