@@ -5,7 +5,7 @@ Isle hardware is designed in straightforward Verilog. You can find reference doc
 ## Hardware Modules
 
 * [arch](arch) - architecture specific modules (see below)
-* [book](book) - RISC-V processor (forthcoming)
+* [book](book) - designs to accompany Isle blog chapters
 * [cpu](cpu) - RISC-V processor (forthcoming)
 * [graphics](gfx) - display, drawing, text mode
 * [memory](mem) - VRAM, CLUT, system memory
@@ -13,7 +13,7 @@ Isle hardware is designed in straightforward Verilog. You can find reference doc
 
 ### Architecture Specific
 
-Architecture-specific FPGA designs, such as PLLs and I/O, are kept separate.
+Architecture-specific FPGA designs, such as PLLs and I/O, are kept separate under `arch`.
 
 * Lattice [ECP5](arch/ecp5)
 * Xilinx [XC7](arch/xc7)
