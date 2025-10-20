@@ -1,6 +1,6 @@
 # Earthrise Command List
 
-The **ercmd** (Earthrise Command List) module [[verilog src](../ermcmd.v)] holds instructions for the [Earthrise](../../gfx/docs/earthrise.md) 2D drawing engine.
+The **ercmd** (Earthrise Command List) module [[verilog src](../ercmd.v)] holds instructions for the [Earthrise](../../gfx/docs/earthrise.md) 2D drawing engine.
 
 The command list uses byte addressing.
 
@@ -11,7 +11,7 @@ The command list uses byte addressing.
 * `FILE_INIT` - optional initial command list to load
 * `WORD` - machine word size (bits)
 
-For Isle, `WORD` must be set to **32**.
+For Isle, `BYTE_CNT` must be set to **4** and `WORD` must be set to **32**.
 
 The command list takea a `FILE_INIT` parameter, which allows an initial $readmemh format command list to be loaded at build time.
 
