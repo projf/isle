@@ -26,11 +26,11 @@ module earthrise #(
     output reg  [ER_ADDRW+1:0] pc,             // program counter (byte address)
     input  wire [VRAM_ADDRW-1:0] addr_base,    // address of first canvas pixel
     input  wire [CANV_SHIFTW-1:0] addr_shift,  // address shift bits
-    output wire [VRAM_ADDRW-1:0] vram_addr,    // pixel memory address
+    output wire [VRAM_ADDRW-1:0] vram_addr,    // address in vram
     output reg  [WORD-1:0] vram_din,           // vram data in
     output reg  [WORD-1:0] vram_wmask,         // vram write mask
-    output reg  busy,                          // drawing request in progress
-    output reg  done,                          // drawing complete (high for one tick)
+    output reg  busy,                          // execution in progress
+    output reg  done,                          // commands complete (high for one tick)
     output reg  instr_invalid                  // invalid instruction
     );
 
