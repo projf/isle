@@ -59,6 +59,8 @@ See [vram](../../mem/docs/vram.md) for details on vram write mask.
 
 ## Earthrise Command List
 
-Earthrise instructions are all 16 bits long. Earthrise reads instructions from dedicated memory using its own program counter. This command list memory has a 32-bit data interface to match CPU data width, so each Earthrise address contains two 16-bit instructions. The command list memory uses byte addressing to ensure consistency with CPU addressing.
+Earthrise instructions are all 16 bits long. Earthrise reads instructions from dedicated memory using its own program counter for addressing. This command list memory has a 32-bit data interface to match the RISC-V CPU, so each Earthrise address contains two 16-bit instructions. The command list memory uses byte addressing for consistency with CPU addressing.
 
-Isle uses 4 KiB of dual-port bram for the Earthrise command list. The CPU uses one port while Earthrise reads instructions from the second port. With 4 KiB of memory and 16-bit instruction, Earthrise can execute up to 2048 instructions in one run.
+Isle uses 4 KiB of dual-port bram for the Earthrise command list. The CPU uses one port to read/write drawing instructions, while Earthrise reads instructions from the second port. With 4 KiB of memory and 16-bit instructions, Earthrise can execute up to 2048 instructions in one run.
+
+See [ercmd](../../mem/docs/ercmd.md) for details on the command list module.
