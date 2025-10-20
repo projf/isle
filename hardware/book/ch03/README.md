@@ -1,6 +1,6 @@
 # Isle Chapter 3 - 2D Drawing
 
-These Verilog designs accompany [2D Drawing](http://projectf.io/isle/bitmap-graphics.html), chapter 3 of the Isle book from the Project F blog.
+These Verilog designs accompany [2D Drawing](http://projectf.io/isle/2d-drawing.html), chapter 3 of the Isle book from the Project F blog.
 
 See [boards](../../../boards/) for build and programming instructions.
 
