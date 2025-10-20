@@ -1,14 +1,12 @@
 # Line Drawing
 
-The **line** module [[verilog src](../line.v)] draws lines with Bresenham's line algorithm. This implementation supports signed integer coordinates and draws towards increasing Y, swapping the input coordinates if necessary.
-
-See the [2D Drawing](http://projectf.io/isle/2d-drawing.html) blog post for more information on the use of this module.
+The **line** module [[verilog src](../line.v)] draws lines with Bresenham's line algorithm. This implementation supports signed integer coordinates and draws downwards, towards increasing Y, swapping the input coordinates if necessary.
 
 ## Parameters
 
 * `CORDW` - signed coordinate width (bits)
 
-The [Earthrise](earthrise.md) 2D drawing engine uses a 12-bit coordinate. In future, Earthrise may switch to a 16-bit Q12.4 fixed-point format for sub-pixel precision.
+[Earthrise](earthrise.md) uses 12-bit integer coordinates. In future, Earthrise may switch to a 16-bit Q12.4 fixed-point format for sub-pixel precision.
 
 ## Signals
 

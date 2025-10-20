@@ -4,13 +4,11 @@ The **fline** module [[verilog src](../fline.v)] draws horizontal lines. This im
 
 The primary purpose of fast line is to accelerate the drawing of horizontal lines used in fills. Consecutive horizontal pixels are found at the same memory address in vram and can be written in one operation. For example, in 16-colour mode there are eight pixels in each 32-bit vram location. Support for writing multiple pixels in one memory operation will be handled in [Earthrise](earthrise.md).
 
-See the [2D Drawing](http://projectf.io/isle/2d-drawing.html) blog post for more information on the use of this module.
-
 ## Parameters
 
 * `CORDW` - signed coordinate width (bits)
 
-The [Earthrise](earthrise.md) 2D drawing engine uses a 12-bit coordinate. In future, Earthrise may switch to a 16-bit Q12.4 fixed-point format for sub-pixel precision.
+[Earthrise](earthrise.md) uses 12-bit integer coordinates. In future, Earthrise may switch to a 16-bit Q12.4 fixed-point format for sub-pixel precision.
 
 ## Signals
 

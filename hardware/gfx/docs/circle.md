@@ -2,13 +2,11 @@
 
 The **circle** module [[verilog src](../circle.v)] provides the x and y distances to draw a circle with the midpoint circle algorithm. This implementation supports signed integer coordinates. See [Earthrise](earthrise.md) for an example drawing complete circles with this module.
 
-See the [2D Drawing](http://projectf.io/isle/2d-drawing.html) blog post for more information on the use of this module.
-
 ## Parameters
 
 * `CORDW` - signed coordinate width (bits)
 
-The [Earthrise](earthrise.md) 2D drawing engine uses a 12-bit coordinate. In future, Earthrise may switch to a 16-bit Q12.4 fixed-point format for sub-pixel precision.
+[Earthrise](earthrise.md) uses 12-bit integer coordinates. In future, Earthrise may switch to a 16-bit Q12.4 fixed-point format for sub-pixel precision.
 
 ## Signals
 
