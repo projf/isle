@@ -1,6 +1,6 @@
 # Earthrise Programming
 
-This doc provides an overview and reference for Earthrise graphics programming. Take a look at [Isle Graphics](https://projectf.io/isle/graphics.html) for blog posts on this topic. You'll find reference documentation for the Earthrise hardware (Verilog module) in the [hardware](../hardware/) directory.
+This doc provides an overview and reference for Earthrise graphics programming. Take a look at [Isle Graphics](https://projectf.io/isle/graphics.html) for blog posts on this topic. You'll find reference documentation for the Earthrise hardware (Verilog module) in [gfx hardware](../hardware/gfx).
 
 ## Overview
 

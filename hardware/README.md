@@ -7,7 +7,7 @@ Isle hardware is designed in straightforward Verilog. You can find reference doc
 * cpu - RISC-V processor (forthcoming)
 * [graphics](gfx) - display, drawing, text mode
 * [memory](mem) - VRAM, CLUT, system memory
-* [sys](sys) - CDC (and future system modules)
+* [sys](sys) - CDC (and future system hardware)
 
 ### Architecture Specific
 
