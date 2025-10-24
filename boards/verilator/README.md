@@ -1,12 +1,24 @@
 # Verilator/SDL Support
 
-By combining [Verilator](https://www.veripool.org/verilator/) and [SDL](https://www.libsdl.org), you can run Isle on your computer. Read [Verilog Simulation with Verilator and SDL](http://projectf.io/posts/verilog-sim-verilator-sdl/) for more details.
+By combining [Verilator](https://www.veripool.org/verilator/) and [SDL](https://www.libsdl.org), you can run Isle on your computer. Read [Verilog Simulation with Verilator and SDL](http://projectf.io/posts/verilog-sim-verilator-sdl/) for more details. Isle also supports physical FPGA [dev boards](../).
 
-Be aware that Isle typically runs several times slower in simulation than on an [FPGA dev board](../). For Isle designs with a CPU, I see ~18 FPS on an Apple M1. Your mileage may vary.
+Be aware that Isle typically runs several times slower in simulation than on an FPGA dev board. For Isle designs with a CPU, I see ~18 FPS on an Apple M1. Your mileage may vary.
 
-## Installing Dependencies
+## Designs
 
-You need:
+The following designs are available to accompany the [Isle blog posts](https://projectf.io/isle/fpga-computer.html).
+
+* [ch01](../../hardware/book/ch01) - Display
+* [ch02](../../hardware/book/ch02) - Bitmap Graphics
+* [ch03](../../hardware/book/ch03) - 2D Drawing
+* ch04 - Text Mode (forthcoming)
+* ch05 - RISC-V CPU (forthcoming)
+
+There is a Verilator top module for each chapter in this directory, which uses an instance of the common chapter design from [hardware/book](../../hardware/book/). There is also a top-level C++ main file for each chapter.
+
+Many chapters have parameters you can edit in the matching top module. For example, in `top_ch02.v` you can choose the bitmap and palette to load.
+
+## Install Dependencies
 
 * C++ Toolchain
 * Verilator 5.006+
@@ -14,7 +26,7 @@ You need:
 
 See [Verilog Simulation with Verilator and SDL](http://projectf.io/posts/verilog-sim-verilator-sdl/#installing-dependencies) for installation instructions.
 
-## Building Designs for Verilator
+## Building
 
 Once you have dependencies installed, run make for the chapter you want:
 

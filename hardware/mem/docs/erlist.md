@@ -1,8 +1,6 @@
 # Earthrise Command List
 
-The **ercmd** (Earthrise Command List) module [[verilog src](../ercmd.v)] holds instructions for the [Earthrise](../../gfx/docs/earthrise.md) 2D drawing engine.
-
-The command list uses byte addressing.
+The **erlist** (Earthrise Command List) module [[verilog src](../erlist.v)] holds instructions for the [Earthrise](../../gfx/docs/earthrise.md) 2D drawing engine.
 
 ## Parameters
 
@@ -17,7 +15,7 @@ The command list takea a `FILE_INIT` parameter, which allows an initial $readmem
 
 ## Signals
 
-The command list is dual port. The system port is read-write for use of the CPU. Earthrise fetches instructions from a dedicated read-only port. Both ports are in the system domain.
+The command list is dual port. The system port is read-write for use of the CPU. Earthrise fetches instructions from a dedicated read-only port. Both ports are in the system domain. The command list has a 32-bit data bus and uses byte addressing. Earthrise instructions are 16-bit, so two instructions are packed (little endian) into each memory location.
 
 ### Input
 
@@ -34,7 +32,7 @@ The command list is dual port. The system port is read-write for use of the CPU.
 
 ## Latencies
 
-* **sys port** - 1 cycle read latency
-* **ER port** - 2 cycle read latency
+* **system port** - 1 cycle read latency
+* **Earthrise port** - 2 cycle read latency
 
 The Earthrise port has a higher latency because of the output register to improve timing.

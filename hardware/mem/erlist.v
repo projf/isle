@@ -10,7 +10,7 @@
 `default_nettype none
 `timescale 1ns / 1ps
 
-module ercmd #(
+module erlist #(
     parameter BYTE_CNT=0,   // bytes in machine word
     parameter WORD=0,       // machine word size (bits)
     parameter ADDRW=0,      // address width (bits)

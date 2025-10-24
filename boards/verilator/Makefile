@@ -27,7 +27,7 @@ ch03: ch03.exe
 	    -cc $< --exe main_$(basename $@).cpp -o $(basename $@) \
 		-CFLAGS "${SDL_CFLAGS}" -LDFLAGS "${SDL_LDFLAGS}"
 
-all: ch01 ch02
+all: ch01 ch02 ch03
 
 clean:
 	rm -rf ./obj_dir

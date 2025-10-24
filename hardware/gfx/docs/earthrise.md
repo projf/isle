@@ -63,4 +63,4 @@ Earthrise instructions are all 16 bits long. Earthrise reads instructions from d
 
 Isle uses 4 KiB of dual-port bram for the Earthrise command list. The CPU uses one port to read/write drawing instructions, while Earthrise reads instructions from the second port. With 4 KiB of memory and 16-bit instructions, Earthrise can execute up to 2048 instructions in one run.
 
-See [ercmd](../../mem/docs/ercmd.md) for details on the command list module.
+See [erlist](../../mem/docs/erlist.md) for details on the command list module.

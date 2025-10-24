@@ -18,7 +18,7 @@ The chapter 3 design uses the following Verilog modules:
 * `gfx/line.v`
 * `gfx/tmds_encoder.v`
 * `mem/clut.v`
-* `mem/ercmd.v`
+* `mem/erlist.v`
 * `mem/vram.v`
 * `sys/xd.v`
 

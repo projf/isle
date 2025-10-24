@@ -40,8 +40,8 @@ _NB. The CLUT doesn't support byte-write; a single CPU word maps to each palette
 
 ## Latencies
 
-* **sys port** - 1 cycle read latency
-* **disp port** - 2 cycle read latency
+* **system port** - 1 cycle read latency
+* **display port** - 2 cycle read latency
 
 The display port has a higher latency because of the output register to improve timing.
 

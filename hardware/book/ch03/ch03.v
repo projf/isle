@@ -65,15 +65,15 @@ module ch03 #(
 
     localparam ER_ADDRW = 10;  // 1024 x 32-bit (4 KiB word addressed)
 
-    wire [ER_ADDRW-1:0]  ercmd_addr_er;
-    wire [WORD-1:0] ercmd_dout_er;
+    wire [ER_ADDRW-1:0]  erlist_addr_er;
+    wire [WORD-1:0] erlist_dout_er;
 
-    ercmd #(
+    erlist #(
         .BYTE_CNT(BYTE_CNT),
         .WORD(WORD),
         .ADDRW(ER_ADDRW),
         .FILE_INIT(FILE_ER_LIST)
-    ) ercmd_inst (
+    ) erlist_inst (
         .clk(clk_sys),
         /* verilator lint_off PINCONNECTEMPTY */
         .we_sys(),  // for future CPU use
@@ -81,8 +81,8 @@ module ch03 #(
         .din_sys(),
         .dout_sys(),
         /* verilator lint_on PINCONNECTEMPTY */
-        .addr_er(ercmd_addr_er),
-        .dout_er(ercmd_dout_er)
+        .addr_er(erlist_addr_er),
+        .dout_er(erlist_dout_er)
     );
 
 
@@ -96,7 +96,7 @@ module ch03 #(
     wire [ER_ADDRW+1:0] er_pc;  // Earthrise program counter (byte addressed)
     /* verilator lint_on UNUSEDSIGNAL */
 
-    assign ercmd_addr_er = er_pc[ER_ADDRW+1:2];  // command list is word addressed
+    assign erlist_addr_er = er_pc[ER_ADDRW+1:2];  // command list is word addressed
 
     // CANV_BPP is currently a parameter, but will be hardware register later
     /* verilator lint_off WIDTHTRUNC */
@@ -125,7 +125,7 @@ module ch03 #(
         .canv_w(CANV_WIDTH),
         .canv_h(CANV_HEIGHT),
         .canv_bpp(CANV_BPP),
-        .cmd_list(ercmd_dout_er),
+        .cmd_list(erlist_dout_er),
         .pc(er_pc),
         .addr_base(0),  // fixed until we have CPU
         .addr_shift(draw_addr_shift),

@@ -27,7 +27,7 @@ ADD_SRC += ${PATH_LIB}/gfx/fline.v
 ADD_SRC += ${PATH_LIB}/gfx/line.v
 ADD_SRC += ${PATH_LIB}/gfx/tmds_encoder.v
 ADD_SRC += ${PATH_LIB}/mem/clut.v
-ADD_SRC += ${PATH_LIB}/mem/ercmd.v
+ADD_SRC += ${PATH_LIB}/mem/erlist.v
 ADD_SRC += ${PATH_LIB}/mem/vram.v
 ADD_SRC += ${PATH_LIB}/sys/xd.v
 # ecp5 arch modules
@@ -55,7 +55,7 @@ ch03: ch03.bit ch03.svf
 %.svf: %.config
 	ecppack --compress --input $< --svf $@
 
-all: ch01 ch02
+all: ch01 ch02 ch03
 
 clean:
 	rm -f *.json *.config *.bit .*.d *.svf *yosys.log
