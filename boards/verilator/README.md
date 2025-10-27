@@ -1,8 +1,10 @@
 # Verilator/SDL Support
 
-By combining [Verilator](https://www.veripool.org/verilator/) and [SDL](https://www.libsdl.org), you can run Isle on your computer. Read [Verilog Simulation with Verilator and SDL](http://projectf.io/posts/verilog-sim-verilator-sdl/) for more details. Isle also supports physical FPGA [dev boards](../).
+By combining [Verilator](https://www.veripool.org/verilator/) and [SDL](https://www.libsdl.org), you can run Isle on another computer. Read [Verilog Simulation with Verilator and SDL](http://projectf.io/posts/verilog-sim-verilator-sdl/) for more details. Isle also supports physical FPGA [dev boards](../).
 
 Be aware that Isle typically runs several times slower in simulation than on an FPGA dev board. For Isle designs with a CPU, I see ~18 FPS on an Apple M1. Your mileage may vary.
+
+On macOS, colour rendering is incorrect on high-gamut displays due to the way LibSDL v2 handles colour spaces. The only fix I've found is to temporarily set your monitor to sRGB colour profile. I plan to move to LibSDL v3 at some point, but it's not a high priority right now.
 
 ## Designs
 
@@ -37,6 +39,13 @@ make ch01
 ```
 
 To enable full screen display, set `FULLSCREEN` to true in the main C++ file for that chapter, e.g. `boards/verilator/main_ch01.cpp`.
+
+### Unknown Verilator Lint Message Code
+
+Verilator introduces new lint waivers from time to time; unfortunately, this trips up older versions of Verilator. If Verilator gives an error message of the form "Unknown Verilator lint message code" you have two options:
+
+1. Upgrade to a newer version of Verilator
+2. Remove the lint waivers from the corresponding Verilog files
 
 ## 672x384 Display Timings
 

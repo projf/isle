@@ -12,11 +12,11 @@ const int H_RES = 640, V_RES = 480;
 
 const int FULLSCREEN = false;
 
-typedef struct Pixel {  // for SDL texture
-    uint8_t a;  // transparency
+typedef struct Pixel {  // for SDL texture (little endian ARGB8888)
     uint8_t b;  // blue
     uint8_t g;  // green
     uint8_t r;  // red
+    uint8_t a;  // transparency
 } Pixel;
 
 int main(int argc, char* argv[]) {
@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    sdl_texture = SDL_CreateTexture(sdl_renderer, SDL_PIXELFORMAT_RGBA8888,
+    sdl_texture = SDL_CreateTexture(sdl_renderer, SDL_PIXELFORMAT_ARGB8888,
         SDL_TEXTUREACCESS_TARGET, H_RES, V_RES);
     if (!sdl_texture) {
         printf("Texture creation failed: %s\n", SDL_GetError());
@@ -125,6 +125,10 @@ int main(int argc, char* argv[]) {
     double duration = ((double)(end_ticks-start_ticks))/SDL_GetPerformanceFrequency();
     double fps = (double)frame_count/duration;
     printf("Frames per second: %.1f\n", fps);
+
+    SDL_RendererInfo info;
+    SDL_GetRendererInfo(sdl_renderer, &info);
+    printf("Used renderer: %s\n", info.name);
 
     top->final();  // simulation done
 
