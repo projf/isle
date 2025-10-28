@@ -16,7 +16,7 @@ The separate system and displays ports avoid contention between the CPU and disp
 
 For Isle, `DATAW` must be set to **15** and `ADDRW` should be set to **8**.
 
-The clut takea a `FILE_PAL` parameter, which allows an initial $readmemh format palette to be loaded at build time.
+The clut takea a `FILE_PAL` parameter, which allows an initial $readmemh format palette to be loaded at build time. Isle includes several palettes to get you started, see [Colour Palettes](../../../docs/colour-palettes.md) for details.
 
 ## Signals
 

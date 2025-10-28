@@ -1,7 +1,8 @@
 # Isle Docs
 
-High-level Isle docs.
+Isle high-level docs. There's also loads of information on the [Isle FPGA Computer](http://projectf.io/isle/fpga-computer.html) blog.
 
+* [Colour Palettes](colour-palettes.md) - reference colour charts for included palettes
 * [Earthrise Programming](earthrise-programming.md) - graphics programming with Earthrise
 * [Verilog Tests](verilog-tests.md) - testing Verilog with cocotb
 
