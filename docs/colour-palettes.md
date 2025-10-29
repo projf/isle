@@ -2,6 +2,8 @@
 
 Isle includes some colour palettes to get you started. You can load a Verilog ($readmemh) format palette into the [clut](../hardware/mem/docs/clut.md) module. Check out the [Isle graphics](http://projectf.io/isle/graphics.html) posts for examples of palette use and an explanation of Isle RGB555 colour format.
 
+You can use the [rgbconv](../tools/rgbconv/) tool to convert palette strings to/from RGB555 format.
+
 Palettes are stores in `res/palette`:
 
 * Go-16 - [Verilog](../res/palette/go-16.mem)
