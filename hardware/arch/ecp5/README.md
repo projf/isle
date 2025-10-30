@@ -2,6 +2,7 @@
 
 | Module                           | Reference                  | Book Chapter | Description                                |
 | -------------------------------- | -------------------------- | ------------ | ------------------------------------------ |
+| [clock_gen](clock_gen.v)         | -                          | 2D Drawing   | Generate clock with EHXPLL                 |
 | [clock2_gen](clock2_gen.v)       | -                          | Display      | Generate two clocks with EHXPLL (for TMDS) |
 | [dvi_generator](dvi_generator.v) | -                          | Display      | DVI output via ODDRX1F                     |
 

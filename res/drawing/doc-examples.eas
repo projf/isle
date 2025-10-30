@@ -1,0 +1,64 @@
+# Isle.Computer - Earthrise Doc Examples
+# Copyright Will Green and Isle Contributors
+# SPDX-License-Identifier: MIT
+
+# set colours
+lca 0xA
+lcb 0x8
+fca 0x4
+fcb 0x5
+
+# pixel
+x0 8
+y0 4
+draw pix ca
+
+# lines
+x0  8
+y0 16
+x1 16
+y1 24
+draw line ca
+
+# use existing values of x0, x1, and y1
+y0 32
+draw line cb
+
+# circle
+x0 168
+y0  96
+r0  64
+draw circf ca
+draw circ ca
+
+# triangle
+x0  60
+y0  20
+x1 280
+y1  80
+x2 160
+y2 164
+draw trif cb
+draw tri cb
+
+# rect
+x0 16
+y0 64
+x1 44
+y1 92
+draw rectf ca
+draw rect ca
+
+# filled quad from two triangles
+x0  16
+y0 128
+x1  16
+y1 144
+x2   8
+y2 136
+draw trif ca
+x2  24
+y2 136
+draw trif ca
+
+stop

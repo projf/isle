@@ -7,7 +7,7 @@
 
 module clock2_gen #(
     parameter MULT_MASTER=2.0,  // master clock multiplier (2.000-64.000)
-    parameter DIV_MASTER=2,     // master clock divider (1-106)
+    parameter DIV_MASTER=1,     // master clock divider (1-106)
     parameter DIV_5X=1.0,       // 5x clock divider
     parameter DIV_1X=1,         // 1x clock divider
     parameter IN_PERIOD=10.0    // period of master clock in ns (10 ns == 100 MHz)

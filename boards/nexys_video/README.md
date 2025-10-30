@@ -1,6 +1,22 @@
 # Nexys Video Board Support
 
-For the Nexys Video dev board, you need [Vivado](https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vivado-design-tools.html). Vivado can also program the Nexys Video, but I recommend using [openFPGALoader](https://github.com/trabucayre/openFPGALoader) as it's simpler and faster.
+For the Nexys Video dev board, you need [Vivado](https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vivado-design-tools.html). Vivado can also program the Nexys Video, but I recommend using [openFPGALoader](https://github.com/trabucayre/openFPGALoader) as it's simpler and faster. Isle also supports other [dev boards](../).
+
+## Designs
+
+The following designs are available to accompany the [Isle blog posts](https://projectf.io/isle/fpga-computer.html).
+
+* [ch01](../../hardware/book/ch01) - Display
+* [ch02](../../hardware/book/ch02) - Bitmap Graphics
+* [ch03](../../hardware/book/ch03) - 2D Drawing
+* ch04 - Text Mode (forthcoming)
+* ch05 - RISC-V CPU (forthcoming)
+
+There is a Nexys Video top module for each chapter in this directory, which uses an instance of the common chapter design from [hardware/book](../../hardware/book/).
+
+Many chapters have parameters you can edit in the matching top module. For example, in `top_ch02.v` you can choose the bitmap and palette to load.
+
+## Building
 
 Before you begin, locate your Vivado directory.
 
@@ -26,8 +42,6 @@ openFPGALoader -b nexysVideo ch01.bit
 ```
 
 The Project F blog has a post covering [Vivado Tcl build scripts](http://projectf.io/posts/vivado-tcl-build-script/), including how to script board programming with Vivado.
-
-Isle also supports other [dev boards](../).
 
 ## Clock Settings
 

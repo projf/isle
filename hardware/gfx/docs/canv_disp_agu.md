@@ -2,7 +2,7 @@
 
 The canvas display address generation unit **canv_disp_agu** [[verilog src](../canv_disp_agu.v)] calculates the [vram](../../mem/docs/vram.md) address in a canvas buffer for display.
 
-The address calculation supports different colour depths, canvas positioning, and scaling. This module has 2 cycles of latency and avoids multiplication.
+The address calculation supports different colour depths, canvas positioning, and scaling. This module has 2 cycles of latency, supports pipelining, and avoids multiplication.
 
 See the [Bitmap Graphics](http://projectf.io/isle/bitmap-graphics.html) blog post for more information on this module.
 

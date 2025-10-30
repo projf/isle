@@ -16,7 +16,7 @@ The separate system and displays ports avoid contention between the CPU and disp
 
 For Isle, `DATAW` must be set to **15** and `ADDRW` should be set to **8**.
 
-The clut takea a `FILE_PAL` parameter, which allows an initial $readmemh format palette to be loaded at build time.
+The clut takea a `FILE_PAL` parameter, which allows an initial $readmemh format palette to be loaded at build time. Isle includes several palettes to get you started, see [Colour Palettes](../../../docs/colour-palettes.md) for details.
 
 ## Signals
 
@@ -27,7 +27,7 @@ The clut is dual port, with a system and display port in different clock domains
 * `clk_sys` - system clock
 * `clk_pix` - pixel clock (frequency depends on [display](../../gfx/docs/display.md) mode)
 * `we_sys` - system write enable
-* `addr_sys` - system port word address
+* `addr_sys` - system word address
 * `din_sys` - system data in
 * `addr_disp` - display word address
 
@@ -40,8 +40,8 @@ _NB. The CLUT doesn't support byte-write; a single CPU word maps to each palette
 
 ## Latencies
 
-* **sys port** - 1 cycle read latency
-* **disp port** - 2 cycle read latency
+* **system port** - 1 cycle read latency
+* **display port** - 2 cycle read latency
 
 The display port has a higher latency because of the output register to improve timing.
 

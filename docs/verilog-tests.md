@@ -7,23 +7,23 @@ Isle runs Verilog tests using [cocotb](https://www.cocotb.org) and two simulator
 
 Before you run tests, follow the [installation instructions](#install-simulators) (below).
 
-I'm inexperienced with cocotb, so I'm sure there'll be some mistakes and approaches that strike old hands as strange. Please open an [issue](https://github.com/projf/isle/issues) if you have corrections or suggestions for improvement.
+I'm still learning cocotb, so I'm sure there'll be some mistakes and approaches that strike old hands as strange. Please open an [issue](https://github.com/projf/isle/issues) if you have corrections or suggestions for improvement.
 
-## Run Tests
+## Run Hardware Tests
 
-Ensure you've sourced the Python venv if appropriate:
+Ensure you've [installed simulators and cocotb](#install-simulators) and sourced the Python venv if appropriate:
 
 ```shell
-cd isle/hardware
-source cocotb-venv/bin/activate
+cd isle
+source isle-venv/bin/activate
 ```
 
-Change directory into the area you want to test, then use `make` to run the tests.
+Change directory into the area you want to test then run tests with `make`.
 
 For example, to test the display module at 1366x768:
 
 ```shell
-cd gfx/test
+cd isle/hardware/gfx/test
 make display_1366x768
 ```
 
@@ -32,10 +32,11 @@ Use `WAVES=1` to generate [FST](https://blog.timhutt.co.uk/fst_spec/) waveform f
 For example, the following creates `sim_build/clut/clut.fst`:
 
 ```shell
+cd isle/hardware/mem/test
 make WAVES=1 clut
 ```
 
-[GTKWave](https://gtkwave.github.io/gtkwave/) and [Surfer](https://surfer-project.org) support FST waveforms.
+[Surfer](https://surfer-project.org) (recommended) and [GTKWave](https://gtkwave.github.io/gtkwave/) support FST waveforms.
 
 ## Verilator Lint
 
@@ -58,16 +59,16 @@ See [boards/verilator](../boards/verilator/) for advice on using Verilator to ru
 
 ## Install cocotb
 
-You can follow the official [cocotb installation instructions](https://docs.cocotb.org/en/stable/install.html) (covers dependencies). However, I _strongly recommend_ installing cocotb inside a venv and including pylint and pytest as per [requirements.txt](../hardware/requirements.txt):
+I recommend installing cocotb inside a venv using the Isle Python [requirements.txt](../requirements.txt):
 
 ```shell
-cd isle/hardware
-python3 -m venv cocotb-venv
+cd isle
+python3 -m venv isle-venv
 
-source cocotb-venv/bin/activate
+source isle-venv/bin/activate
 pip3 install -r requirements.txt
 ```
 
 If you're having issues running cocotb on macOS, try using brew Python instead of the system one.
 
-I don't recommend using the version of cocotb from OSS CAD Suite as it's not stable.
+_I don't recommend using the version of cocotb from OSS CAD Suite as it's not stable._

@@ -2,6 +2,7 @@
 
 | Module                           | Reference                  | Book Chapter | Description                                     |
 | -------------------------------- | -------------------------- | ------------ | ----------------------------------------------- |
+| [clock_gen](clock_gen.v)         | -                          | 2D Drawing   | Generate clock with MMCME2_BASE                 |
 | [clock2_gen](clock2_gen.v)       | -                          | Display      | Generate two clocks with MMCME2_BASE (for TMDS) |
 | [dvi_generator](dvi_generator.v) | -                          | Display      | DVI output using oserdes_10b                    |
 | [oserdes_10b](oserdes_10b.v)     | -                          | Display      | 10:1 Output Serializer with OSERDESE2           |

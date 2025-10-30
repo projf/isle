@@ -1,0 +1,114 @@
+# Isle.Computer - Earthrise 16 Squares
+# Copyright Will Green and Isle Contributors
+# SPDX-License-Identifier: MIT
+
+# handy for testing 16-colour palettes
+
+#
+# first row
+#
+
+fca 0
+x0 80
+y0 8
+x1 112
+y1 40
+draw rectf ca
+
+fca 1
+x0 128
+x1 160
+draw rectf ca
+
+fca 2
+x0 176
+x1 208
+draw rectf ca
+
+fca 3
+x0 224
+x1 256
+draw rectf ca
+
+
+#
+# second row
+#
+
+fca 4
+x0 80
+y0 56
+x1 112
+y1 88
+draw rectf ca
+
+fca 5
+x0 128
+x1 160
+draw rectf ca
+
+fca 6
+x0 176
+x1 208
+draw rectf ca
+
+fca 7
+x0 224
+x1 256
+draw rectf ca
+
+
+#
+# third row
+#
+
+fca 8
+x0 80
+y0 104
+x1 112
+y1 136
+draw rectf ca
+
+fca 9
+x0 128
+x1 160
+draw rectf ca
+
+fca 10
+x0 176
+x1 208
+draw rectf ca
+
+fca 11
+x0 224
+x1 256
+draw rectf ca
+
+
+#
+# fourth row
+#
+
+fca 12
+x0 80
+y0 152
+x1 112
+y1 184
+draw rectf ca
+
+fca 13
+x0 128
+x1 160
+draw rectf ca
+
+fca 14
+x0 176
+x1 208
+draw rectf ca
+
+fca 15
+x0 224
+x1 256
+draw rectf ca
+
+stop
