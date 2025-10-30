@@ -26,7 +26,7 @@ module top_ch03 #(
     // 672x384 display with 336x192 4-bit canvas
     localparam FILE_BMAP="";
     localparam FILE_PAL="../../res/palette/go-16.mem";
-    localparam FILE_ER_LIST="../../res/drawing/16-squares.mem";
+    localparam FILE_ER_LIST="../../res/drawing/all-shapes.mem";
     localparam CANV_BPP=4;           // bits per pixel (4=16 colour)
     localparam CANV_WIDTH=16'd336;   // width (pixels)
     localparam CANV_HEIGHT=16'd192;  // height (lines)
