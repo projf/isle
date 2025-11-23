@@ -9,8 +9,8 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import FallingEdge, RisingEdge, Timer
 
-TEST_INFO    =  1  # display test info (colour and coordinate) for passing tests
-SYS_TIME     = 40  # 25 MHz - clock frequency
+TEST_INFO   =   1  # display test info (colour and coordinate) for passing tests
+SYS_TIME    =  40  # 25 MHz - clock frequency
 DISP_LINE   = 800  # 800 pixels in line including blanking
 DISP_HBLANK = 128  # 128 pixels in horizontal blanking
 DISP_VBLANK = 137  # 137 lines in vertical blanking
@@ -48,7 +48,7 @@ async def reset_dut(dut):
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 async def pixel_colour(dut):
-    """Test pixel colour using latency.mem bitmap"""
+    """Test display pixel colour"""
     cocotb.start_soon(Clock(dut.clk, SYS_TIME, units="ns").start())
     await reset_dut(dut)
 

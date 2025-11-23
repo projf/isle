@@ -7,7 +7,10 @@
 ch02:
 	make -f ch02.mk
 
-all: ch02
+ch04:
+	make -f ch04.mk
+
+all: ch02 ch04
 
 clean:
 	rm -f results*.xml
