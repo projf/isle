@@ -2,30 +2,34 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
+// NB. Assumes tram latency of one cycle (no additional tram output register)
+
 `default_nettype none
 `timescale 1ns / 1ps
 
 module textmode #(
     parameter CORDW=0,       // signed coordinate width (bits)
     parameter WORD=0,        // machine word size (bits)
-    parameter ADDRW=0,       // text buffer memory address width (bits)
+    parameter ADDRW=0,       // tram address width (bits)
     parameter CIDXW=0,       // colour index width (bits)
     parameter FILE_FONT="",  // font glyph ROM file
+    parameter FONT_COUNT=0,  // number of glyphs in font ROM
     parameter TEXT_LAT=0,    // text display latency
-    parameter TRAM_HRES=0,   // text buffer width (chars)
-    parameter TRAM_VRES=0    // text buffer height (chars)
+    parameter TRAM_HRES=0,   // tram width (chars)
+    parameter TRAM_VRES=0    // tram height (chars)
     ) (
     input  wire clk,                           // clock
     input  wire rst,                           // reset
     input  wire start,                         // start text display
-    input  wire [ADDRW-1:0] scroll_offs,       // text buffer scroll offset
+    input  wire [ADDRW-1:0] scroll_offs,       // tram scroll offset
     input  wire signed [CORDW-1:0] dx, dy,     // display position
     input  wire signed [CORDW-1:0] text_hres,  // text display width (chars)
     input  wire signed [CORDW-1:0] text_vres,  // text display height (chars)
+    input  wire [2*CORDW-1:0] scale,    // text mode scale
     /* verilator lint_off UNUSEDSIGNAL */
     input  wire [WORD-1:0] tram_data,   // char data - we don't use [23:21]
     /* verilator lint_on UNUSEDSIGNAL */
-    output reg  [ADDRW-1:0] tram_addr,  // text buffer address
+    output reg  [ADDRW-1:0] tram_addr,  // tram address
     output reg  [CIDXW-1:0] pix,        // pixel colour index
     output reg  paint_text              // textmode painting enable
     );
@@ -33,15 +37,23 @@ module textmode #(
     localparam GLYPH_HEIGHT   = 16;  // glyph height (pixels) - must be pow of 2
     localparam GLYPH_WIDTH    =  8;  // singe-width glyph width (pixels)
     localparam UCPW           = 21;  // Unicode code point width (bits)
-    localparam LAST_ADDR = TRAM_HRES * TRAM_VRES - 1;  // end of buffer
+    localparam LAST_ADDR = TRAM_HRES * TRAM_VRES - 1;  // end of tram
+
+    // scaling
+    reg [CORDW-1:0] scale_y, scale_y0, scale_x, scale_x0;
+    always @(*) begin
+        {scale_y0, scale_x0} = scale;
+        scale_x = (scale_x0 == 0) ? 1 : scale_x0;  // if scale is 0, set to 1
+        scale_y = (scale_y0 == 0) ? 1 : scale_y0;
+    end
 
     // flags
     reg signed [CORDW-1:0] char_line_end;
     reg signed [CORDW-1:0] char_frame_end;
 
     always @(posedge clk) begin
-        char_line_end  <= (GLYPH_WIDTH  * text_hres) - TEXT_LAT;
-        char_frame_end <= (GLYPH_HEIGHT * text_vres) - 1;
+        char_line_end  <= (GLYPH_WIDTH  * text_hres * scale_x) - TEXT_LAT;
+        char_frame_end <= (GLYPH_HEIGHT * text_vres * scale_y) - scale_y;
     end
 
     // bit widths
@@ -53,28 +65,21 @@ module textmode #(
     reg [CIDXW-1:0] colr_fg;  // foreground colour
     reg [CIDXW-1:0] colr_bg;  // background colour
 
-    reg [GLYPH_HEIGHT_W-1:0] line_id;
-    wire [GLYPH_WIDTH-1:0] pix_line;
-    font_glyph #(
-        .FILE_FONT(FILE_FONT)
-    ) font_glyph_instance (
-        .clk(clk),
-        .rst(rst),
-        .ucp(ucp),
-        .line_id(line_id),
-        .pix_line(pix_line)
-    );
+    // position within tram but constrained to text display area
+    reg [ADDRW-1:0] tx;  // 0 to text_hres-1
+    reg [ADDRW-1:0] ty;  // 0 to text_vres-1
 
-    // position within text buffer
-    reg [ADDRW-1:0] tx;
-    reg [ADDRW-1:0] ty;
+    // position within character glyph
+    reg [GLYPH_WIDTH_W-1:0]  gx;  // 0 to GLYPH_WIDTH-1
+    reg [GLYPH_HEIGHT_W-1:0] gy;  // 0 to GLYPH_HEIGHT-1
 
-    // position within glyph
-    reg [GLYPH_WIDTH_W-1:0]  gx;
-    reg [GLYPH_HEIGHT_W-1:0] gy;
+    // scale counters
+    reg [CORDW-1:0] cnt_x, cnt_y;
 
-    reg [GLYPH_WIDTH-1:0] pix_line_reg;  // copy of glyph pixel line
-    reg [ADDRW-1:0] tram_addr_line;   // addr copy, so we can return to it at line start
+    reg [GLYPH_HEIGHT_W-1:0] line_id;  // which ROM line to fetch
+    wire [GLYPH_WIDTH-1:0] pix_line;  // line of pixels from ROM
+    reg [GLYPH_WIDTH-1:0] pix_line_reg;  // copy of line of pixels
+    reg [ADDRW-1:0] tram_addr_line;  // addr copy, so we can return to it at line start
 
     // state machine
     localparam IDLE     = 0;  // idle awaiting 'start'
@@ -104,7 +109,7 @@ module textmode #(
 
     always @(posedge clk) begin
         state <= state_next;
-        ucp <= tram_data[20:0];  // extract 21-bit Unicode code point
+        ucp <= tram_data[UCPW-1:0];  // extract Unicode code point
 
         case (state)
             INIT: begin
@@ -115,38 +120,46 @@ module textmode #(
                 ty <= 0;
                 gx <= 0;
                 gy <= 0;
+                cnt_x <= 0;
+                cnt_y <= 0;
             end
-            AWAIT: begin
-                colr_fg <= tram_data[27:24];  // extract foreground colour
-                colr_bg <= tram_data[31:28];  // extract background colour
+            AWAIT: begin  // extract colours and register line of glyph pixels
+                colr_fg <= tram_data[WORD-CIDXW-1:WORD-2*CIDXW];
+                colr_bg <= tram_data[WORD-1:WORD-CIDXW];
                 pix_line_reg <= pix_line;
             end
             DRAW: begin
-                gx <= gx + 1;
-                if (gx == 0) begin  // next buffer address
-                    tram_addr <= (tram_addr == LAST_ADDR) ? 0 : tram_addr + 1;
+                cnt_x <= (cnt_x == scale_x-1) ? 0 : cnt_x + 1;
+                if (cnt_x == 0) gx <= gx + 1;  // next pixel in glyph
+                if (gx == 0 && cnt_x == 0) begin  // next tram address or back to start of tram
+                    tram_addr <= (tram_addr == LAST_ADDR) ? scroll_offs : tram_addr + 1;
                 /* verilator lint_off WIDTH */
-                end else if (gx == GLYPH_WIDTH-1) begin  // next char at end of glyph pixel line
+                end else if (gx == GLYPH_WIDTH-1 && cnt_x == 0) begin  // next char at end of glyph pixel line
                 /* verilator lint_on WIDTH */
-                    colr_fg <= tram_data[27:24];
-                    colr_bg <= tram_data[31:28];
+                    colr_fg <= tram_data[WORD-CIDXW-1:WORD-2*CIDXW];
+                    colr_bg <= tram_data[WORD-1:WORD-CIDXW];
                     pix_line_reg <= pix_line;
                     tx <= tx + 1;
                 end
             end
-            CHR_LINE: begin  // new line of chars
+            CHR_LINE: begin  // prepare for next line of chars
                 /* verilator lint_off WIDTH */
-                if (gy == GLYPH_HEIGHT-1) begin  // first line of char glyph
+                if (gy == GLYPH_HEIGHT-1 && cnt_y == 0) begin  // last line of char glyph
                 /* verilator lint_on WIDTH */
                     tram_addr_line <= tram_addr;  // copy address, so we can return to it
-                    ty <= ty + 1;
+                    ty <= ty + 1;  // move down to next line of chars
                 end
             end
-            SCR_LINE: begin  // begin with first char on line
+            SCR_LINE: begin  // new line of pixels; begin with first char on line
                 tx <= 0;
                 gx <= 0;
-                gy <= gy + 1;
-                line_id <= line_id + 1;
+                cnt_x <= 0;
+
+                cnt_y <= (cnt_y == scale_y-1) ? 0 : cnt_y + 1;
+                if (cnt_y == 0) begin
+                    gy <= gy + 1;
+                    line_id <= line_id + 1;
+                end
                 tram_addr <= tram_addr_line;  // restore tram address
             end
         endcase
@@ -166,4 +179,15 @@ module textmode #(
             paint_text_p2 <= 0;
         end
     end
+
+    font_glyph #(
+        .FONT_COUNT(FONT_COUNT),
+        .FILE_FONT(FILE_FONT)
+    ) font_glyph_instance (
+        .clk(clk),
+        .rst(rst),
+        .ucp(ucp),
+        .line_id(line_id),
+        .pix_line(pix_line)
+    );
 endmodule

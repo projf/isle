@@ -41,8 +41,8 @@ module canv_disp_agu #(
         {win_start_y, win_start_x} = win_start;
         {win_end_y, win_end_x} = win_end;
         {scale_y0, scale_x0} = scale;
-        scale_y = (scale_y0 == 0) ? 1 : scale_y0;  // if scale is 0, set to 1
-        scale_x = (scale_x0 == 0) ? 1 : scale_x0;
+        scale_x = (scale_x0 == 0) ? 1 : scale_x0;  // if scale is 0, set to 1
+        scale_y = (scale_y0 == 0) ? 1 : scale_y0;
     end
 
     // use window coords to determine paint area and vram read
@@ -57,26 +57,26 @@ module canv_disp_agu #(
 
     // stage 1 - main calculation, handling frame and line starts
     reg [ADDRW+PIX_IDW-1:0] addr_pix, addr_pix_ln;  // pixel addresses
-    reg [CORDW-1:0] cnt_scale_y, cnt_scale_x;  // scale counters
+    reg [CORDW-1:0] cnt_x, cnt_y;  // scale counters
     always @(posedge clk_pix) begin
         if (rst_pix || frame_start) begin  // reset address and counters at start of frame
-            cnt_scale_y <= 0;
-            cnt_scale_x <= 0;
+            cnt_y <= 0;
+            cnt_x <= 0;
             addr_pix <= 0;
             addr_pix_ln <= 0;
         end else if (line_start && (dy > win_start_y)) begin  // after 1st line in paint area
-            if (cnt_scale_y == scale_y - 1) begin
-                cnt_scale_y <= 0;
+            if (cnt_y == scale_y - 1) begin
+                cnt_y <= 0;
                 addr_pix_ln <= addr_pix;  // save line address
             end else begin
-                cnt_scale_y <= cnt_scale_y + 1;
+                cnt_y <= cnt_y + 1;
                 addr_pix <= addr_pix_ln;  // restore addr_pix_ln to repeat line
             end
         end else if (paint_y && vram_x) begin  // increment address in vram read area
-            if (cnt_scale_x == scale_x - 1) begin
+            if (cnt_x == scale_x - 1) begin
                 addr_pix <= addr_pix + 1;
-                cnt_scale_x <= 0;
-            end else cnt_scale_x <= cnt_scale_x + 1;
+                cnt_x <= 0;
+            end else cnt_x <= cnt_x + 1;
         end
         // pass to stage 2
         addr_base_p1 <= addr_base;

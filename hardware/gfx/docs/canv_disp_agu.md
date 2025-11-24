@@ -105,7 +105,7 @@ The bitmap display pipeline has three stages:
 2. [VRAM](../../mem/docs/vram.md) - returns pixel data
 3. [CLUT](../../mem/docs/clut.md) - looks up pixel colour
 
-This process takes several clock cycles. If we don't account for latency, the pixel would be displayed in the wrong position (too far to the right). VRAM and CLUT use brams with output registers, hence taking two cycles from address generation to receiving data.
+This process takes several clock cycles. If we don't account for latency, the pixel would be displayed in the wrong position (too far to the right). VRAM and CLUT use brams with additional output registers, hence taking two cycles from address generation to receiving data.
 
 Our display controller begins each line with the horizontal blanking internal. This gives us time to prepare the pipeline for the the first pixel, even if it's at x=0.
 
