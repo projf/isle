@@ -40,7 +40,7 @@ module erlist #(
     integer i;
     always @(posedge clk) begin
         if (~|we_sys) dout_sys <= erlist_mem[addr_sys];
-        for (i=0; i<WORD; i=i+BYTE) begin
+        for (i=0; i<BYTE_CNT; i=i+1) begin
             if (we_sys[i]) erlist_mem[addr_sys][i*BYTE +: BYTE] <= din_sys[i*BYTE +: BYTE];
         end
     end
