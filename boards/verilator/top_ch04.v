@@ -26,7 +26,7 @@ module top_ch04 #(
     // text mode params
     localparam FILE_FONT="../../res/fonts/system-font-rom.mem";
     localparam FILE_PAL="../../res/palette/go-16.mem";
-    localparam FILE_TXT="../../res/textmode/hello-world.mem";
+    localparam FILE_TXT="../../res/textmode/all-rom-glyphs.mem";
 
     // colour channel width adjustment for board display
     // NB. this logic must be updated if you change BPC or BPC_Board

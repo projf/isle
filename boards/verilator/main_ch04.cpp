@@ -10,7 +10,7 @@
 // display dimensions (must match hardware design or you'll core dump)
 const int H_RES = 672, V_RES = 384;
 
-const int FULLSCREEN = true;
+const int FULLSCREEN = false;
 
 typedef struct Pixel {  // for SDL texture (little endian ARGB8888)
     uint8_t b;  // blue
