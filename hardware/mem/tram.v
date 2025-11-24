@@ -2,7 +2,7 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// RAM Type:     async dual-port block ram
+// RAM Type:     dual-port block ram
 // Addressing:   word
 // Write Enable: byte
 // Write Mode:   no change (WRITEMODE=NORMAL for ECP5)
@@ -11,6 +11,7 @@
 `timescale 1ns / 1ps
 
 module tram #(
+    parameter BYTE=0,      // machine byte size (bits)
     parameter BYTE_CNT=0,  // bytes in machine word
     parameter WORD=0,      // machine word size (bits)
     parameter ADDRW=0,     // address width (bit)
@@ -31,21 +32,21 @@ module tram #(
     reg [WORD-1:0] tram_mem [0:DEPTH-1];
 
     initial begin
-        if (FILE_TXT != 0) begin
+        if (FILE_TXT != "") begin
             $display("Load text file '%s' into tram.", FILE_TXT);
             $readmemh(FILE_TXT, tram_mem);
         end
     end
 
     // system port (read-write, write_mode: no change)
+    integer i;
     always @(posedge clk_sys) begin
         if (~|we_sys) dout_sys <= tram_mem[addr_sys];
-        if (we_sys[0]) tram_mem[addr_sys][ 7: 0] <= din_sys[ 7: 0];
-        if (we_sys[1]) tram_mem[addr_sys][15: 8] <= din_sys[15: 8];
-        if (we_sys[2]) tram_mem[addr_sys][23:16] <= din_sys[23:16];
-        if (we_sys[3]) tram_mem[addr_sys][31:24] <= din_sys[31:24];
+        for (i=0; i<WORD; i=i+BYTE) begin
+            if (we_sys[i]) tram_mem[addr_sys][i*BYTE +: BYTE] <= din_sys[i*BYTE +: BYTE];
+        end
     end
 
-    // display port (read-only, no output register)
+    // display port (read-only)
     always @(posedge clk_pix) dout_disp <= tram_mem[addr_disp];
 endmodule

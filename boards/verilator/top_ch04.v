@@ -24,9 +24,11 @@ module top_ch04 #(
     );
 
     // text mode params
-    localparam FILE_FONT="../../res/fonts/system-font-rom.mem";
-    localparam FILE_PAL="../../res/palette/go-16.mem";
-    localparam FILE_TXT="../../res/textmode/all-rom-glyphs.mem";
+    localparam FILE_FONT  = "../../res/fonts/system-font-rom.mem";
+    localparam FILE_PAL   = "../../res/palette/go-16.mem";
+    localparam FILE_TXT   = "../../res/textmode/all-rom-glyphs.mem";
+    localparam FONT_COUNT = 128;  // glyphs in FILE_FONT
+    localparam TEXT_SCALE = 16'h1;  // text scaling factor
 
     // colour channel width adjustment for board display
     // NB. this logic must be updated if you change BPC or BPC_Board
@@ -39,7 +41,6 @@ module top_ch04 #(
         /* verilator lint_on WIDTHEXPAND */
     end
 
-
     ch04 #(
         .BPC(BPC),
         .CORDW(CORDW),
@@ -47,7 +48,9 @@ module top_ch04 #(
         .BG_COLR(BG_COLR),
         .FILE_FONT(FILE_FONT),
         .FILE_PAL(FILE_PAL),
-        .FILE_TXT(FILE_TXT)
+        .FILE_TXT(FILE_TXT),
+        .FONT_COUNT(FONT_COUNT),
+        .TEXT_SCALE(TEXT_SCALE)
     ) ch03_inst (
         .clk_sys(clk),  // common system and pixel clock in simulation
         .clk_pix(clk),

@@ -2,7 +2,7 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// RAM Type:     sync dual-port block ram
+// RAM Type:     dual-port block ram
 // Addressing:   word
 // Write Enable: byte
 // Write Mode:   no change (WRITEMODE=NORMAL for ECP5)
@@ -11,6 +11,7 @@
 `timescale 1ns / 1ps
 
 module erlist #(
+    parameter BYTE=0,      // machine byte size (bits)
     parameter BYTE_CNT=0,   // bytes in machine word
     parameter WORD=0,       // machine word size (bits)
     parameter ADDRW=0,      // address width (bits)
@@ -26,28 +27,28 @@ module erlist #(
     );
 
     localparam DEPTH=2**ADDRW;
-    reg [WORD-1:0] cmd_list_mem [0:DEPTH-1];
+    reg [WORD-1:0] erlist_mem [0:DEPTH-1];
 
     initial begin
-        if (FILE_INIT != 0) begin
+        if (FILE_INIT != "") begin
             $display("Info: Load init file '%s' into Earthrise list.", FILE_INIT);
-            $readmemh(FILE_INIT, cmd_list_mem);
+            $readmemh(FILE_INIT, erlist_mem);
         end else $display("Warning: Creating empty Earthrise list because FILE_INIT isn't set.");
     end
 
     // system port (read-write, write_mode: no change)
+    integer i;
     always @(posedge clk) begin
-        if (~|we_sys) dout_sys <= cmd_list_mem[addr_sys];
-        if (we_sys[0]) cmd_list_mem[addr_sys][ 7: 0] <= din_sys[ 7: 0];
-        if (we_sys[1]) cmd_list_mem[addr_sys][15: 8] <= din_sys[15: 8];
-        if (we_sys[2]) cmd_list_mem[addr_sys][23:16] <= din_sys[23:16];
-        if (we_sys[3]) cmd_list_mem[addr_sys][31:24] <= din_sys[31:24];
+        if (~|we_sys) dout_sys <= erlist_mem[addr_sys];
+        for (i=0; i<WORD; i=i+BYTE) begin
+            if (we_sys[i]) erlist_mem[addr_sys][i*BYTE +: BYTE] <= din_sys[i*BYTE +: BYTE];
+        end
     end
 
-    // Earthrise port (read-only with output register)
+    // Earthrise port (read-only with additional output register)
     reg [WORD-1:0] dout_er_reg;
     always @(posedge clk) begin
-        dout_er_reg <= cmd_list_mem[addr_er];
+        dout_er_reg <= erlist_mem[addr_er];
         dout_er <= dout_er_reg;
     end
 endmodule

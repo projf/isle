@@ -69,6 +69,7 @@ module ch03 #(
     wire [WORD-1:0] erlist_dout_er;
 
     erlist #(
+        .BYTE(BYTE),
         .BYTE_CNT(BYTE_CNT),
         .WORD(WORD),
         .ADDRW(ER_ADDRW),

@@ -19,7 +19,7 @@ module rom_sync #(
     reg [DATAW-1:0] rom_mem [0:DEPTH-1];
 
     initial begin
-        if (FILE_INIT != 0) begin
+        if (FILE_INIT != "") begin
             $display("Create rom_sync with init file '%s'.", FILE_INIT);
             $readmemh(FILE_INIT, rom_mem);
         end else $display("Warning: Creating empty rom_sync because FILE_INIT isn't set.");

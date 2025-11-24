@@ -6,13 +6,15 @@
 `timescale 1ns / 1ps
 
 module ch04 #(
-    parameter BPC=5,           // bits per colour channel
-    parameter CORDW=16,        // signed coordinate width (bits)
-    parameter DISPLAY_MODE=0,  // display mode (see display.v for modes)
-    parameter BG_COLR=0,       // background colour (RGB555)
-    parameter FILE_FONT="",    // font glyph ROM file
-    parameter FILE_PAL="",     // initial palette for CLUT
-    parameter FILE_TXT=""      // initial text file for tram
+    parameter BPC=5,            // bits per colour channel
+    parameter CORDW=16,         // signed coordinate width (bits)
+    parameter DISPLAY_MODE=0,   // display mode (see display.v for modes)
+    parameter BG_COLR=0,        // background colour (RGB555)
+    parameter FILE_FONT="",     // font glyph ROM file
+    parameter FILE_PAL="",      // initial palette for CLUT
+    parameter FILE_TXT="",      // initial text file for tram
+    parameter FONT_COUNT=128,   // number of glyphs in font ROM
+    parameter TEXT_SCALE=16'h1  // text mode scale
     ) (
     input  wire clk_sys,                    // system clock
     input  wire clk_pix,                    // pixel clock (used by display)
@@ -59,11 +61,12 @@ module ch04 #(
     wire [TRAM_ADDRW-1:0] tram_addr_disp;
     wire [WORD-1:0] tram_dout_disp;
 
-    // should adjust based on display mode
-    reg signed [CORDW-1:0] text_hres = 84;
-    reg signed [CORDW-1:0] text_vres = 24;
+    // should adjust based on display mode (fixed at size of tram for now)
+    reg signed [CORDW-1:0] text_hres = TRAM_HRES;
+    reg signed [CORDW-1:0] text_vres = TRAM_VRES;
 
     tram #(
+        .BYTE(BYTE),
         .BYTE_CNT(BYTE_CNT),
         .WORD(WORD),
         .ADDRW(TRAM_ADDRW),
@@ -97,6 +100,7 @@ module ch04 #(
         .ADDRW(TRAM_ADDRW),
         .CIDXW(TEXT_CIDXW),
         .FILE_FONT(FILE_FONT),
+        .FONT_COUNT(FONT_COUNT),
         .TEXT_LAT(TEXT_LAT),
         .TRAM_HRES(TRAM_HRES),
         .TRAM_VRES(TRAM_VRES)
@@ -109,6 +113,7 @@ module ch04 #(
         .dy(dy),
         .text_hres(text_hres),
         .text_vres(text_vres),
+        .scale({TEXT_SCALE, TEXT_SCALE}),
         .tram_data(tram_dout_disp),
         .tram_addr(tram_addr_disp),
         .pix(text_pix),
