@@ -8,6 +8,7 @@
 module rom_sync #(
     parameter ADDRW=0,      // address width (bits)
     parameter DATAW=0,      // data width (bits)
+    parameter DEPTH=0,      // ROM depth
     parameter FILE_INIT=""  // init ROM contents
     ) (
     input  wire clk,               // clock
@@ -15,7 +16,6 @@ module rom_sync #(
     output reg  [DATAW-1:0] dout   // data out
     );
 
-    localparam DEPTH=2**ADDRW;
     reg [DATAW-1:0] rom_mem [0:DEPTH-1];
 
     initial begin
