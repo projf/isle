@@ -2,7 +2,7 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// 3 cycle latency
+// 4 cycle latency
 
 `default_nettype none
 `timescale 1ns / 1ps
@@ -52,7 +52,9 @@ module font_glyph #(
         rom_addr <= (glyph_idx * HEIGHT) + line_id_reg;
         /* verilator lint_on WIDTH */
 
-        // stage 3 - register result, reversing line if MSB is left-most pixel
+        // stage 3 - ROM latency
+
+        // stage 4 - register result, reversing line if MSB is left-most pixel
         if (LSB) pix_line <= rom_data;
         else for (i=0; i<WIDTH; i=i+1) pix_line[i] <= rom_data[(WIDTH-1)-i];
 
