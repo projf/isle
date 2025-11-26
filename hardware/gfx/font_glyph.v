@@ -11,7 +11,7 @@ module font_glyph #(
     parameter FONT_COUNT=0,  // number of glyphs in font ROM
     parameter FILE_FONT="",  // font glyph ROM file
     parameter HEIGHT=16,     // glyph height (pixels)
-    parameter LSB=0,         // first font pixel in LSB
+    parameter LSB=0,         // first font pixel in least significant bit
     parameter UCPW=21,       // Unicode code point width (bits)
     parameter WIDTH=8        // glyph width (pixels)
     ) (
