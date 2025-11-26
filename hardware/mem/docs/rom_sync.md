@@ -1,0 +1,3 @@
+# Sync ROM
+
+The **sync ROM** (synchronous) [[verilog src](../rom_sync.v)] module...

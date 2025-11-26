@@ -8,7 +8,9 @@
 | [display](display.v)             | [doc](docs/display.md)       | Display         | Display controller                       |
 | [earthrise](earthrise.v)         | [doc](docs/earthrise.md)     | 2D Drawing      | Earthrise drawing engine                 |
 | [fline](fline.v)                 | [doc](docs/fline.md)         | 2D Drawing      | Draw fast (horizontal) line              |
+| [font_glyph](font_glyph.v)       | [doc](docs/font_glyph.md)    | Text Mode       | Load font glyph pixels from ROM          |
 | [line](line.v)                   | [doc](docs/line.md)          | 2D Drawing      | Draw line                                |
+| [textmode](textmode.v)           | [doc](docs/textmode.md)      | Text Mode       | Unicode text mode display                |
 | [tmds_encoder](tmds_encoder.v)   | [doc](docs/tmds_encoder.md)  | Display         | TMDS Encoder (DVI)                       |
 
 See [Verilog Tests](../../docs/verilog-tests.md) for advice on setting up the test environment and running tests.

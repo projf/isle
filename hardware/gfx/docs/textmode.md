@@ -1,0 +1,3 @@
+# Textmode
+
+The **text mode ** module [[verilog src](../textmode.v)]...
