@@ -1,10 +1,10 @@
 # Font Glyph
 
-The **font glyph** module [[verilog src](../font_glyph.v)] takes a Unicode code point and glyph line number and returns that line of font pixels from its internal ROM. This module is used by [textmode](textmode.md).
+The **font glyph** module [[verilog src](../font_glyph.v)] takes a Unicode code point and glyph line number and returns that line of font pixels from its internal ROM. This module is used by [textmode](textmode.md). This module has 4 cycles of latency and supports pipelining.
+
+Font glyph is hardcoded to use a specific ROM that includes 128 glyphs across two Unicode blocks: Basic Latin and Block Elements. The ROM is loaded from [/res/fonts/system-font-rom.mem](/res/fonts/system-font-rom.mem). The ROM doesn't include white square, so the module uses light shade for the missing glyph (AKA tofu).
 
 The internal ROM uses [rom_sync](../../mem/docs/rom_sync.md), which is usually inferred in bram.
-
-Font glyph is hardcoded to use a specific ROM that includes 128 glyphs across two Unicode blocks: Basic Latin and Block Elements. The ROM is loaded from [/res/fonts/system-font-rom.mem](/res/fonts/system-font-rom.mem).
 
 A future version of font glyph will support a full range Unicode code points once Isle has storage to hold larger font ROMs.
 
