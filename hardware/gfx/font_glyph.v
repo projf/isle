@@ -70,7 +70,7 @@ module font_glyph #(
         .ADDRW(ADDRW),
         .DATAW(WIDTH),
         .DEPTH(DEPTH),
-        .FILE_INIT(FILE_FONT)
+        .FILE_ROM(FILE_FONT)
     ) glyph_rom (
         .clk(clk),
         .addr(rom_addr),
