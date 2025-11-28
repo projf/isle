@@ -2,9 +2,7 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// Assumes external latencies
-// * tram 1 cycle (no additional tram output register)
-// * clut 2 cycles - paint signal delay
+// Assumes 1 cycle tram latency (no additional tram output register)
 
 `default_nettype none
 `timescale 1ns / 1ps
@@ -14,6 +12,7 @@ module textmode #(
     parameter WORD=0,        // machine word size (bits)
     parameter ADDRW=0,       // tram address width (bits)
     parameter CIDXW=0,       // colour index width (bits)
+    parameter CLUT_LAT=0,    // CLUT latency (cycles)
     parameter FILE_FONT="",  // font glyph ROM file
     parameter FONT_COUNT=0,  // number of glyphs in font ROM
     parameter TRAM_HRES=0,   // tram width (chars)
@@ -170,7 +169,7 @@ module textmode #(
         if (rst) state <= IDLE;
     end
 
-    // delay paint 2 cycles to account for CLUT latency
+    // delay paint 2 cycles to account for CLUT latency - shouldn't be hardcoded
     reg paint_text_p2, paint_text_p1;
     always @(posedge clk) begin
         paint_text_p1 <= paint_text_p2;

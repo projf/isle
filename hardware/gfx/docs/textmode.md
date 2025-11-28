@@ -25,7 +25,8 @@ The tram holds 32-bit word per character consisting of (LSB to MSB):
 2. Load UCP and colours from tram (1 cycle)
 3. Load pixels from font_glyph using UCP (4 cycles)
    - repeat for each line of pixels in glyph (typically 16)
+4. Output the pixel colour index (1 cycle)
 
-Setting the tram address and loading data from tram takes 2 cycles, but these steps can overlapped with loading font glyph provided we register results.
+Setting the tram address and loading data from tram takes 2 cycles, but these steps can overlap with other steps, so don't contribute to the overall latency.
 
-We also need to consider that colour lookup (CLUT) takes 2 cycles, so we need to delay the paint signal to match; this delay is currently hard-coded into the textmode design.
+We also need to consider that colour lookup (CLUT) introduces latency, so we need to output `pix` (pixel colour index) `CLUT_LAT` cycles before the display coordinate.
