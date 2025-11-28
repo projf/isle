@@ -2,7 +2,7 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// 4 cycle latency
+// 4 cycle latency - changing latency affects textmode
 
 `default_nettype none
 `timescale 1ns / 1ps

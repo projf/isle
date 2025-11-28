@@ -89,8 +89,6 @@ module ch04 #(
     // Text Mode
     //
 
-    localparam TEXT_LAT = 4;  // text display latency
-
     reg [TRAM_ADDRW-1:0] text_offs = 0;  // start display with this char (word)
     wire [TEXT_CIDXW-1:0] text_pix;
     wire paint_text;  // enable text paint
@@ -101,7 +99,6 @@ module ch04 #(
         .CIDXW(TEXT_CIDXW),
         .FILE_FONT(FILE_FONT),
         .FONT_COUNT(FONT_COUNT),
-        .TEXT_LAT(TEXT_LAT),
         .TRAM_HRES(TRAM_HRES),
         .TRAM_VRES(TRAM_VRES)
     ) textmode_inst (
