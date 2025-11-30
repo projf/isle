@@ -16,7 +16,7 @@ The optional `FILE_BMAP` parameter allows a $readmemh format bitmap to be loaded
 
 ## Signals
 
-The vram is dual port, with a system and display port in different clock domains (discussed in more detail below).
+The vram is dual port, with a system and display port in different clock domains (discussed in more detail below). The signal interfaces is the same as [tram](tram.md) (apart from write-mask granularity).
 
 ### Input
 
