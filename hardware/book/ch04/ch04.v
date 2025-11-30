@@ -47,6 +47,7 @@ module ch04 #(
     localparam BYTE_CNT = WORD / BYTE;  // bytes in word (for write enable)
     localparam CIDX_ADDRW = 8;   // colour index address width 2^8 = 256 colours
     localparam COLRW = 3 * BPC;  // colour width across three channels (bits)
+    localparam CLUT_LAT = 2;  // CLUT latency is 2 cycles
 
     // display signals
     wire signed [CORDW-1:0] dx, dy;
@@ -89,8 +90,6 @@ module ch04 #(
     // Text Mode
     //
 
-    localparam TEXT_LAT = 4;  // text display latency
-
     reg [TRAM_ADDRW-1:0] text_offs = 0;  // start display with this char (word)
     wire [TEXT_CIDXW-1:0] text_pix;
     wire paint_text;  // enable text paint
@@ -99,9 +98,9 @@ module ch04 #(
         .WORD(WORD),
         .ADDRW(TRAM_ADDRW),
         .CIDXW(TEXT_CIDXW),
+        .CLUT_LAT(CLUT_LAT),
         .FILE_FONT(FILE_FONT),
         .FONT_COUNT(FONT_COUNT),
-        .TEXT_LAT(TEXT_LAT),
         .TRAM_HRES(TRAM_HRES),
         .TRAM_VRES(TRAM_VRES)
     ) textmode_inst (

@@ -2,7 +2,7 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// NB. Assumes tram latency of one cycle (no additional tram output register)
+// Assumes 1 cycle tram latency (no additional tram output register)
 
 `default_nettype none
 `timescale 1ns / 1ps
@@ -12,9 +12,9 @@ module textmode #(
     parameter WORD=0,        // machine word size (bits)
     parameter ADDRW=0,       // tram address width (bits)
     parameter CIDXW=0,       // colour index width (bits)
+    parameter CLUT_LAT=0,    // CLUT latency (cycles)
     parameter FILE_FONT="",  // font glyph ROM file
     parameter FONT_COUNT=0,  // number of glyphs in font ROM
-    parameter TEXT_LAT=0,    // text display latency
     parameter TRAM_HRES=0,   // tram width (chars)
     parameter TRAM_VRES=0    // tram height (chars)
     ) (
@@ -39,6 +39,8 @@ module textmode #(
     localparam UCPW           = 21;  // Unicode code point width (bits)
     localparam LAST_ADDR = TRAM_HRES * TRAM_VRES - 1;  // end of tram
 
+    localparam FONT_LAT = 4;  // font glyph latency
+
     // scaling
     reg [CORDW-1:0] scale_y, scale_y0, scale_x, scale_x0;
     always @(*) begin
@@ -52,7 +54,7 @@ module textmode #(
     reg signed [CORDW-1:0] char_frame_end;
 
     always @(posedge clk) begin
-        char_line_end  <= (GLYPH_WIDTH  * text_hres * scale_x) - TEXT_LAT;
+        char_line_end  <= (GLYPH_WIDTH  * text_hres * scale_x) - FONT_LAT;
         char_frame_end <= (GLYPH_HEIGHT * text_vres * scale_y) - scale_y;
     end
 
@@ -98,7 +100,7 @@ module textmode #(
             INIT:     state_next = AWAIT;
             CHR_LINE: state_next = SCR_LINE;
             SCR_LINE: state_next = AWAIT;
-            AWAIT:    state_next = (dx == -TEXT_LAT) ? DRAW : AWAIT;
+            AWAIT:    state_next = (dx == -FONT_LAT) ? DRAW : AWAIT;
             DRAW: begin
                 if (dx == char_line_end) state_next = (dy == char_frame_end) ? IDLE : CHR_LINE;
                 else state_next = DRAW;
@@ -167,6 +169,7 @@ module textmode #(
         if (rst) state <= IDLE;
     end
 
+    // delay paint 2 cycles to account for CLUT latency - shouldn't be hardcoded
     reg paint_text_p2, paint_text_p1;
     always @(posedge clk) begin
         paint_text_p1 <= paint_text_p2;

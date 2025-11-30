@@ -33,7 +33,7 @@ module erlist #(
         if (FILE_INIT != "") begin
             $display("Info: Load init file '%s' into Earthrise list.", FILE_INIT);
             $readmemh(FILE_INIT, erlist_mem);
-        end else $display("Warning: Creating empty Earthrise list because FILE_INIT isn't set.");
+        end
     end
 
     // system port (read-write, write_mode: no change)

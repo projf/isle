@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 // 2 cycle latency
+// Assumes 2 cycle CLUT latency
 
 `default_nettype none
 `timescale 1ns / 1ps
