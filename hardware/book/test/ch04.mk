@@ -11,7 +11,7 @@ TOPLEVEL = ${DUT}
 MODULE = ch04
 
 # pass Verilog module parameters to simulator
-COMPILE_ARGS += -P${DUT}.DISPLAY_MODE=3 -P${DUT}.FILE_FONT="\"../../../res/fonts/system-font-rom.mem"\" -P${DUT}.FILE_PAL="\"../../../res/palette/go-16.mem"\" -P${DUT}.FILE_TXT="\"../../../res/textmode/hello-world.mem"\"
+COMPILE_ARGS += -P${DUT}.DISPLAY_MODE=3 -P${DUT}.FILE_FONT="\"../../../res/fonts/system-font-rom.mem"\" -P${DUT}.FILE_PAL="\"../../../res/palette/go-16.mem"\" -P${DUT}.FILE_TXT="\"../../../res/textmode/edge.mem"\" -P${DUT}.WIN_START=32\'h00000000 -P${DUT}.WIN_END=32\'h018002A0 -P${DUT}.TEXT_SCALE=32\'h00020002
 
 # each test needs its own build dir and results file
 COCOTB_RESULTS_FILE = results_${DUT}.xml

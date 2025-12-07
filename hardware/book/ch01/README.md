@@ -1,6 +1,6 @@
 # Isle Chapter 1 - Display
 
-These Verilog designs accompany [Display](http://projectf.io/isle/display.html), chapter 1 of the building Isle book from the Project F blog.
+These Verilog designs accompany [Display](http://projectf.io/isle/display.html), chapter 1 of the _Building Isle_ book from the Project F blog.
 
 See [boards](../../../boards/) for build and programming instructions.
 

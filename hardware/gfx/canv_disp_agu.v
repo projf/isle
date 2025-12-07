@@ -32,8 +32,6 @@ module canv_disp_agu #(
     output reg  paint                     // canvas painting enable
     );
 
-    localparam VRAM_OFFS = BMAP_LAT-1;  // first cycle handled by previous line
-
     // separate y and x from canvas window signals
     reg signed [CORDW-1:0] win_start_y, win_start_x;
     reg signed [CORDW-1:0] win_end_y, win_end_x;
@@ -46,13 +44,15 @@ module canv_disp_agu #(
         scale_y = (scale_y0 == 0) ? 1 : scale_y0;
     end
 
-    // use window coords to determine paint area and vram read
-    wire paint_y = (dy >= win_start_y) && (dy < win_end_y);
-    wire paint_x = (dx >= win_start_x-2) && (dx < win_end_x-2);  // 2-stage pipeline
-    wire vram_x  = (dx >= win_start_x-VRAM_OFFS) && (dx < win_end_x-VRAM_OFFS);
+    // paint and vram read area defined by window
+    reg vram_read;
+    wire win_y = (dy >= win_start_y) && (dy < win_end_y);
+    always @(posedge clk_pix) begin
+        paint <= (dx >= win_start_x-1) && (dx < win_end_x) && win_y;  // -1 for registering
+        vram_read <= (dx >= win_start_x-BMAP_LAT) && (dx < win_end_x-BMAP_LAT) && win_y;
+    end
 
     // pipelined signals
-    reg paint_p1;  // paint enable
     reg [ADDRW-1:0] addr_base_p1;  // canvas base address
     reg [SHIFTW-1:0] addr_shift_p1;  // address shift bits
 
@@ -73,7 +73,7 @@ module canv_disp_agu #(
                 cnt_y <= cnt_y + 1;
                 addr_pix <= addr_pix_ln;  // restore addr_pix_ln to repeat line
             end
-        end else if (paint_y && vram_x) begin  // increment address in vram read area
+        end else if (vram_read) begin  // increment address in vram read area
             if (cnt_x == scale_x - 1) begin
                 addr_pix <= addr_pix + 1;
                 cnt_x <= 0;
@@ -82,7 +82,6 @@ module canv_disp_agu #(
         // pass to stage 2
         addr_base_p1 <= addr_base;
         addr_shift_p1 <= addr_shift;
-        paint_p1 <= paint_y && paint_x;
     end
 
     // stage 2 - calculate memory address and pixel index
@@ -92,6 +91,5 @@ module canv_disp_agu #(
         addr <= addr_base_p1 + (addr_pix >> addr_shift_p1);
         /* verilator lint_on WIDTHTRUNC */ /* verilator lint_on WIDTHEXPAND */
         pix_id <= addr_pix[PIX_IDW-1:0] & pix_id_mask;
-        paint <= paint_p1;
     end
 endmodule

@@ -28,7 +28,9 @@ module top_ch04 #(
     localparam FILE_PAL   = "../../res/palette/go-16.mem";
     localparam FILE_TXT   = "../../res/textmode/all-rom-glyphs.mem";
     localparam FONT_COUNT = 128;  // glyphs in FILE_FONT
-    localparam TEXT_SCALE = 16'h1;  // text scaling factor
+    localparam TEXT_SCALE = 32'h00010001;  // text scaling factor 'hYYYYXXXX
+    localparam WIN_START  = 32'h00000000;  // text window start coords 'hYYYYXXXX
+    localparam WIN_END    = 32'h018002A0;  // text window end coords 'hYYYYXXXX
 
     // colour channel width adjustment for board display
     // NB. this logic must be updated if you change BPC or BPC_Board
@@ -50,7 +52,9 @@ module top_ch04 #(
         .FILE_PAL(FILE_PAL),
         .FILE_TXT(FILE_TXT),
         .FONT_COUNT(FONT_COUNT),
-        .TEXT_SCALE(TEXT_SCALE)
+        .TEXT_SCALE(TEXT_SCALE),
+        .WIN_START(WIN_START),
+        .WIN_END(WIN_END)
     ) ch03_inst (
         .clk_sys(clk),  // common system and pixel clock in simulation
         .clk_pix(clk),

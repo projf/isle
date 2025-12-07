@@ -6,15 +6,17 @@
 `timescale 1ns / 1ps
 
 module ch04 #(
-    parameter BPC=5,            // bits per colour channel
-    parameter CORDW=16,         // signed coordinate width (bits)
-    parameter DISPLAY_MODE=0,   // display mode (see display.v for modes)
-    parameter BG_COLR=0,        // background colour (RGB555)
-    parameter FILE_FONT="",     // font glyph ROM file
-    parameter FILE_PAL="",      // initial palette for CLUT
-    parameter FILE_TXT="",      // initial text file for tram
-    parameter FONT_COUNT=128,   // number of glyphs in font ROM
-    parameter TEXT_SCALE=16'h1  // text mode scale
+    parameter BPC=5,             // bits per colour channel
+    parameter CORDW=16,          // signed coordinate width (bits)
+    parameter DISPLAY_MODE=0,    // display mode (see display.v for modes)
+    parameter BG_COLR=0,         // background colour (RGB555)
+    parameter FILE_FONT="",      // font glyph ROM file
+    parameter FILE_PAL="",       // initial palette for CLUT
+    parameter FILE_TXT="",       // initial text file for tram
+    parameter FONT_COUNT=128,    // number of glyphs in font ROM
+    parameter TEXT_SCALE=32'h0,  // text mode scale hYYYYXXXX
+    parameter WIN_START=32'h0,   // text window start coords 'hYYYYXXXX
+    parameter WIN_END=32'h0      // text window end coords 'hYYYYXXXX
     ) (
     input  wire clk_sys,                    // system clock
     input  wire clk_pix,                    // pixel clock (used by display)
@@ -47,12 +49,12 @@ module ch04 #(
     localparam BYTE_CNT = WORD / BYTE;  // bytes in word (for write enable)
     localparam CIDX_ADDRW = 8;   // colour index address width 2^8 = 256 colours
     localparam COLRW = 3 * BPC;  // colour width across three channels (bits)
-    localparam CLUT_LAT = 2;  // CLUT latency is 2 cycles
+    // localparam CLUT_LAT = 2;     // CLUT latency is 2 cycles
 
     // display signals
     wire signed [CORDW-1:0] dx, dy;
     wire hsync, vsync, de;
-    wire frame_start, line_start;
+    wire frame_start;
 
 
     //
@@ -63,8 +65,8 @@ module ch04 #(
     wire [WORD-1:0] tram_dout_disp;
 
     // should adjust based on display mode (fixed at size of tram for now)
-    reg signed [CORDW-1:0] text_hres = TRAM_HRES;
-    reg signed [CORDW-1:0] text_vres = TRAM_VRES;
+    reg signed [TRAM_ADDRW-1:0] text_hres = TRAM_HRES;
+    reg signed [TRAM_ADDRW-1:0] text_vres = TRAM_VRES;
 
     tram #(
         .BYTE(BYTE),
@@ -98,25 +100,27 @@ module ch04 #(
         .WORD(WORD),
         .ADDRW(TRAM_ADDRW),
         .CIDXW(TEXT_CIDXW),
-        .CLUT_LAT(CLUT_LAT),
+        // .CLUT_LAT(CLUT_LAT),
         .FILE_FONT(FILE_FONT),
         .FONT_COUNT(FONT_COUNT),
         .TRAM_HRES(TRAM_HRES),
         .TRAM_VRES(TRAM_VRES)
     ) textmode_inst (
-        .clk(clk_pix),
-        .rst(rst_pix),
-        .start(line_start && dy==0),
+        .clk_pix(clk_pix),
+        .rst_pix(rst_pix),
+        .frame_start(frame_start),
         .scroll_offs(text_offs),
         .dx(dx),
         .dy(dy),
         .text_hres(text_hres),
         .text_vres(text_vres),
-        .scale({TEXT_SCALE, TEXT_SCALE}),
+        .win_start(WIN_START),
+        .win_end(WIN_END),
+        .scale(TEXT_SCALE),
         .tram_data(tram_dout_disp),
         .tram_addr(tram_addr_disp),
         .pix(text_pix),
-        .paint_text(paint_text)
+        .paint(paint_text)
     );
 
 
@@ -165,7 +169,9 @@ module ch04 #(
         .vsync(vsync),
         .de(de),
         .frame_start(frame_start),
-        .line_start(line_start)
+        /* verilator lint_off PINCONNECTEMPTY */
+        .line_start()
+        /* verilator lint_on PINCONNECTEMPTY */
     );
 
 
