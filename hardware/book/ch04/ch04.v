@@ -42,6 +42,8 @@ module ch04 #(
     localparam TRAM_ADDRW = 11;  // tram address width (bits)
     localparam TRAM_HRES  = 84;  // tram width (chars) - 84x8 = 672
     localparam TRAM_VRES  = 24;  // tram height (chars) - 24x16 = 384
+    localparam [TRAM_ADDRW-1:0] TRAM_DEPTH = TRAM_HRES * TRAM_VRES;
+    localparam TRAM_LAT   =  1;  // tram read latency (cycles)
 
     // internal system params
     localparam WORD = 32;  // machine word size (bits)
@@ -49,7 +51,7 @@ module ch04 #(
     localparam BYTE_CNT = WORD / BYTE;  // bytes in word (for write enable)
     localparam CIDX_ADDRW = 8;   // colour index address width 2^8 = 256 colours
     localparam COLRW = 3 * BPC;  // colour width across three channels (bits)
-    localparam CLUT_LAT = 2;     // CLUT latency is 2 cycles
+    localparam CLUT_LAT =   2;   // CLUT read latency (cycles)
 
     // display signals
     wire signed [CORDW-1:0] dx, dy;
@@ -103,8 +105,8 @@ module ch04 #(
         .CLUT_LAT(CLUT_LAT),
         .FILE_FONT(FILE_FONT),
         .FONT_COUNT(FONT_COUNT),
-        .TRAM_HRES(TRAM_HRES),
-        .TRAM_VRES(TRAM_VRES)
+        .TRAM_DEPTH(TRAM_DEPTH),
+        .TRAM_LAT(TRAM_LAT)
     ) textmode_inst (
         .clk_pix(clk_pix),
         .rst_pix(rst_pix),

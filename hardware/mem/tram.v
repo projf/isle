@@ -47,10 +47,8 @@ module tram #(
         end
     end
 
-    // display port (read-only with additional output register)
-    reg [WORD-1:0] dout_disp_reg;
+    // display port (read-only)
     always @(posedge clk_pix) begin
-        dout_disp_reg <= tram_mem[addr_disp];
-        dout_disp <= dout_disp_reg;
+        dout_disp <= tram_mem[addr_disp];
     end
 endmodule

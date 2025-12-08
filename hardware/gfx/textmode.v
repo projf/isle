@@ -15,8 +15,8 @@ module textmode #(
     parameter CLUT_LAT=0,    // CLUT latency (cycles)
     parameter FILE_FONT="",  // font glyph ROM file
     parameter FONT_COUNT=0,  // number of glyphs in font ROM
-    parameter TRAM_HRES=0,   // tram width (chars)
-    parameter TRAM_VRES=0    // tram height (chars)
+    parameter TRAM_DEPTH=0,  // tram depth (chars)
+    parameter TRAM_LAT=0     // tram latency (cycles)
     ) (
     input  wire clk_pix,                       // pixel clock
     input  wire rst_pix,                       // reset in pixel clock domain
@@ -39,11 +39,7 @@ module textmode #(
     localparam GLYPH_HEIGHT   = 16;  // glyph height (pixels) - must be pow of 2
     localparam GLYPH_WIDTH    =  8;  // singe-width glyph width (pixels)
     localparam UCPW           = 21;  // Unicode code point width (bits)
-    localparam LAST_ADDR = TRAM_HRES * TRAM_VRES - 1;  // end of tram
-    localparam PIX_LAT = 1;  // 1 cycle to register `pix`
-
-    // line start depends on latency
-    wire signed [CORDW-1:0] draw_start_x = win_start_x - (GLYPH_WIDTH * scale_x) - PIX_LAT - CLUT_LAT;
+    localparam PIX_LAT        =  1;  // 1 cycle to register `pix`
 
     // separate y and x from text window signals
     reg signed [CORDW-1:0] win_start_y, win_start_x;
@@ -62,6 +58,9 @@ module textmode #(
     always @(posedge clk_pix) begin
         paint <= (dx >= win_start_x-1) && (dx < win_end_x-1) && win_y;  // -1 for registering
     end
+
+    // draw start depends on window and latency
+    wire signed [CORDW-1:0] draw_start_x = win_start_x - PIX_LAT - CLUT_LAT;
 
     // character line and frame end coordinates
     reg signed [CORDW-1:0] char_line_end;
@@ -128,6 +127,10 @@ module textmode #(
             end
             AWAIT: begin
                 if (dx == draw_start_x - 1) state <= DRAW;  // -1 for transition to DRAW
+                colr_fg <= tram_data[WORD-CIDXW-1:WORD-2*CIDXW];
+                colr_bg <= tram_data[WORD-1:WORD-CIDXW];
+                pix_line_reg <= pix_line;
+                ucp <= tram_data[UCPW-1:0];
             end
             DRAW: begin
                 if (dx == char_line_end || dx >= win_end_x-1) begin
@@ -144,17 +147,18 @@ module textmode #(
                     /* verilator lint_on WIDTHEXPAND */
                 end else cnt_x <= cnt_x + 1;
 
-                // register Unicode code point from tram for font_glyph
-                // wait at least 3 cycles for tram address and tram data out
-                if (gx == 2 && cnt_x == 0) ucp <= tram_data[UCPW-1:0];
+                if (gx == 0 && cnt_x == 0)
+                    tram_addr <= (tram_addr == TRAM_DEPTH-1) ? scroll_offs : tram_addr + 1;
 
-                // load next glyph at end of current glyph
+                // register Unicode code point from tram for font_glyph
+                if (gx == TRAM_LAT+1 && cnt_x == 0) ucp <= tram_data[UCPW-1:0];  // +1 to reg tram_addr
+
+                // register glyph colours and pixels at end of current glyph
                 if (glyph_x_end) begin
                     colr_fg <= tram_data[WORD-CIDXW-1:WORD-2*CIDXW];
                     colr_bg <= tram_data[WORD-1:WORD-CIDXW];
                     pix_line_reg <= pix_line;
                     tx <= tx + 1;
-                    tram_addr <= (tram_addr == LAST_ADDR) ? scroll_offs : tram_addr + 1;  // next address or wrap around
                 end
             end
             CHR_LINE: begin  // prepare for next line of chars
