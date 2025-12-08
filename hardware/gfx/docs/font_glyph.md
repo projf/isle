@@ -30,7 +30,6 @@ If `HEIGHT` isn't a power of 2 this module will infer a multiplier.
 ### Input
 
 * `clk` - clock
-* `rst` - reset
 * `ucp` - Unicode code point
 * `line_id` - glyph line to get
 

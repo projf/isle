@@ -16,7 +16,6 @@ module font_glyph #(
     parameter WIDTH=8        // glyph width (pixels)
     ) (
     input  wire clk,                           // clock
-    input  wire rst,                           // reset
     input  wire [UCPW-1:0] ucp,                // Unicode code point
     input  wire [$clog2(HEIGHT)-1:0] line_id,  // glyph line to get
     output reg  [WIDTH-1:0] pix_line           // glyph pixel line
@@ -57,12 +56,6 @@ module font_glyph #(
         // stage 4 - register result, reversing line if MSB is left-most pixel
         if (LSB) pix_line <= rom_data;
         else for (i=0; i<WIDTH; i=i+1) pix_line[i] <= rom_data[(WIDTH-1)-i];
-
-        if (rst) begin
-            glyph_idx <= 0;
-            pix_line <= 0;
-            rom_addr <= 0;
-        end
     end
 
     // font glyph ROM

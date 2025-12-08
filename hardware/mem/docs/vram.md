@@ -58,7 +58,7 @@ The separate system and displays ports avoid contention between the graphics eng
 * **system port** - 1 cycle read latency
 * **display port** - 2 cycle read latency
 
-The display port has a higher latency because of the output register to improve timing.
+The display port has a higher latency because of the additional output register to improve timing.
 
 ## Testing
 

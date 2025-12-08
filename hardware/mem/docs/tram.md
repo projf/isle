@@ -48,6 +48,6 @@ The separate system and displays ports avoid contention between the graphics eng
 ### Latencies
 
 * **system port** - 1 cycle read latency
-* **display port** - 1 cycle read latency
+* **display port** - 2 cycle read latency
 
-Display port latency may increase in a future version to improve timing, as is already the case with [vram](vram.md).
+The display port has a higher latency because of the additional output register to improve timing.

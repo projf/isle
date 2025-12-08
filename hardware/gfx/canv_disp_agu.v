@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: MIT
 
 // 2 cycle latency
-// Assumes 2 cycle CLUT latency
 
 `default_nettype none
 `timescale 1ns / 1ps
@@ -66,7 +65,7 @@ module canv_disp_agu #(
             addr_pix <= 0;
             addr_pix_ln <= 0;
         end else if (line_start && (dy > win_start_y)) begin  // after 1st line in paint area
-            if (cnt_y == scale_y - 1) begin
+            if (cnt_y == scale_y-1) begin
                 cnt_y <= 0;
                 addr_pix_ln <= addr_pix;  // save line address
             end else begin
@@ -74,7 +73,7 @@ module canv_disp_agu #(
                 addr_pix <= addr_pix_ln;  // restore addr_pix_ln to repeat line
             end
         end else if (vram_read) begin  // increment address in vram read area
-            if (cnt_x == scale_x - 1) begin
+            if (cnt_x == scale_x-1) begin
                 addr_pix <= addr_pix + 1;
                 cnt_x <= 0;
             end else cnt_x <= cnt_x + 1;
