@@ -57,7 +57,7 @@ The load immediate opcode for each register:
 * **0x6**, **0x7** - `(x3, y3)`
 * **0x8**, **0x9** - `(xt, yt)` - translation registers
 
-The **translation** registers `(xt, yt)` are added to the initial coordinates used by drawing functions. For example, when `(xt=4, yt=8)`, all coordinates will be shifted right 4 pixels and down 8 pixels. You can use negative translation values, so `(xt=-4, yt=0)` will move the x coordinates left by 4 pixels. Translation applies to all subsequent coordinates, so you can define a complex shape, then update the translation registers to move the whole shape without having to revise hundreds of coordinates.
+The **translation** registers `(xt, yt)` are added to the initial coordinates used by drawing functions. For example, when `(xt=4, yt=8)`, all coordinates will be shifted right 4 pixels and down 8 pixels. You can use negative translation values, so `(xt=-4, yt=0)` will move the x coordinates left by 4 pixels. Translation applies to all subsequent coordinates, so you can define a complex shape, then update the translation registers to move the whole shape without having to revise hundreds of coordinates. If you translate beyond the coordinates range (-2048 to +2047) the coordinates will overflow and big positive numbers become negative and vice versa.
 
 Taking the line example from the overview (above):
 
