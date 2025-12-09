@@ -1,4 +1,4 @@
-# Isle.Computer - Lakritz Board Constraints
+# Isle.Computer - Lakritz Board Constraints (Chapter 4)
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
@@ -9,10 +9,6 @@ BLOCK ASYNCPATHS;
 LOCATE COMP "clk_48m" SITE "A7";
 IOBUF  PORT "clk_48m" IO_TYPE=LVCMOS33;
 FREQUENCY PORT "clk_48m" 48 MHZ;
-
-# LEDs
-LOCATE COMP "led[0]" SITE "A2";
-IOBUF  PORT "led[0]" IO_TYPE=LVCMOS33;
 
 # DDMI (HDMI-compatible connector)
 #  NB. IO_TYPE=LVCMOS33D generates ddmi_dn from ddmi_dp

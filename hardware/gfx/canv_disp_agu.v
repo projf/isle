@@ -47,7 +47,7 @@ module canv_disp_agu #(
     reg vram_read;
     wire win_y = (dy >= win_start_y) && (dy < win_end_y);
     always @(posedge clk_pix) begin
-        paint <= (dx >= win_start_x-1) && (dx < win_end_x) && win_y;  // -1 for registering
+        paint <= (dx >= win_start_x-1) && (dx < win_end_x-1) && win_y;  // -1 for registering
         vram_read <= (dx >= win_start_x-BMAP_LAT) && (dx < win_end_x-BMAP_LAT) && win_y;
     end
 

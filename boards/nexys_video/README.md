@@ -4,9 +4,11 @@ Isle supports the Digilent Nexys Video dev board with Xilinx XC7 FPGA. Isle also
 
 For the Nexys Video dev board, you need [Vivado](https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vivado-design-tools.html). Vivado can also program the Nexys Video, but I recommend using [openFPGALoader](https://github.com/trabucayre/openFPGALoader) as it's simpler and faster.
 
+If you're new to Isle, the best place to start is [Isle FPGA Computer](http://projectf.io/isle/fpga-computer.html).
+
 ## Building
 
-There is a Nexys Video top module for each chapter of the _Building Isle_ book. The top module uses an instance of the common chapter design from [hardware/book](../../hardware/book/).
+There is a Nexys Video top module for each chapter of the _Building Isle_ book, which you can read on the [Isle blog](https://projectf.io/isle/index.html).
 
 Before you begin, locate your Vivado directory.
 
@@ -24,6 +26,8 @@ Then run **vivado** to build your chosen chapter. For example, to build the chap
 cd isle/boards/nexys_video/ch02
 vivado -mode batch -nojournal -source build_ch02.tcl
 ```
+
+Each chapter top module uses an instance of the common chapter design from [hardware/book](../../hardware/book/).
 
 ### Board Programming
 

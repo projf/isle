@@ -1,4 +1,4 @@
-# Isle.Computer - ULX3S Board Constraints
+# Isle.Computer - ULX3S Board Constraints (Chapter 2)
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
@@ -9,16 +9,6 @@ BLOCK ASYNCPATHS;
 LOCATE COMP "clk_25m" SITE "G2";
 IOBUF  PORT "clk_25m" PULLMODE=NONE IO_TYPE=LVCMOS33;
 FREQUENCY PORT "clk_25m" 25 MHZ;
-
-# LEDs
-LOCATE COMP "led[0]" SITE "B2";
-LOCATE COMP "led[1]" SITE "C2";
-LOCATE COMP "led[2]" SITE "C1";
-LOCATE COMP "led[3]" SITE "D2";
-IOBUF  PORT "led[0]" PULLMODE=NONE IO_TYPE=LVCMOS33 DRIVE=4;
-IOBUF  PORT "led[1]" PULLMODE=NONE IO_TYPE=LVCMOS33 DRIVE=4;
-IOBUF  PORT "led[2]" PULLMODE=NONE IO_TYPE=LVCMOS33 DRIVE=4;
-IOBUF  PORT "led[3]" PULLMODE=NONE IO_TYPE=LVCMOS33 DRIVE=4;
 
 # GPDI (HDMI-compatible connector)
 #   NB. IO_TYPE=LVCMOS33D generates gpdi_dn from gpdi_dp

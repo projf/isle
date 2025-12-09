@@ -1,11 +1,11 @@
-// Isle.Computer - Chapter 3: ULX3S Top
+// Isle.Computer - Chapter 2: ULX3S Top
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
 `default_nettype none
 `timescale 1ns / 1ps
 
-module top_ch03 #(
+module top_ch02 #(
     parameter BPC=5,           // system bits per colour channel
     parameter BPC_BOARD=8,     // board bits per colour channel
     parameter CORDW=16,        // signed coordinate width (bits)
@@ -16,40 +16,29 @@ module top_ch03 #(
     output wire [3:0] gpdi_dp  // DVI out
     );
 
-    // 1366x768 display with 336x192 4-bit canvas
-    localparam FILE_BMAP="";
-    localparam FILE_PAL="../../res/palette/go-16.mem";
-    localparam FILE_ER_LIST="../../res/drawing/all-shapes.mem";
-    localparam CANV_BPP=4;           // bits per pixel (4=16 colour)
-    localparam CANV_WIDTH=16'd336;   // width (pixels)
-    localparam CANV_HEIGHT=16'd192;  // height (lines)
-    localparam CANV_SCALE=16'd4;     // scaling factor
-    localparam WIN_WIDTH=16'd1344;   // window width (pixel)
-    localparam WIN_HEIGHT=16'd768;   // window height (lines)
-    localparam WIN_STARTX=16'd11;    // window horizontal position (pixels)
-    localparam WIN_STARTY=16'd0;     // window vertical position (lines)
+    // 1366x768 display with 336x192 4-bit canvas (crocus test)
+    localparam FILE_BMAP="../../res/bitmap/crocus/crocus-336x192.mem";
+    localparam FILE_PAL="../../res/bitmap/crocus/crocus-336x192_palette.mem";
+    localparam CANV_BPP=4;          // bits per pixel (4=16 colour)
+    localparam CANV_SCALE=16'd4;    // scaling factor
+    localparam WIN_WIDTH=16'd1344;  // window width (pixel)
+    localparam WIN_HEIGHT=16'd768;  // window height (lines)
+    localparam WIN_STARTX=16'd11;   // window horizontal position (pixels)
+    localparam WIN_STARTY=16'd0;    // window vertical position (lines)
 
+    // 1366x768 display with 672x384 2-bit canvas (latency test)
+    // localparam FILE_BMAP="../../res/bitmap/latency/latency.mem";
+    // localparam FILE_PAL="../../res/bitmap/latency/latency_palette.mem";
+    // localparam CANV_BPP=2;          // bits per pixel (2=4 colour)
+    // localparam CANV_SCALE=16'd2;    // scaling factor
+    // localparam WIN_WIDTH=16'd1344;  // window width (pixel)
+    // localparam WIN_HEIGHT=16'd768;  // window height (lines)
+    // localparam WIN_STARTX=16'd11;   // window horizontal position (pixels)
+    // localparam WIN_STARTY=16'd0;    // window vertical position (lines)
 
-    // system clock - 25 MHz
-    // 25 MHz -> 25 MHz
-    wire clk_sys, clk_sys_locked;
-    clock_gen #(
-        .CLKI_DIV(1),
-        .CLKFB_DIV(1),
-        .CLKOP_DIV(24),
-        .CLKOP_CPHASE(12)
-    ) clock_sys_inst (
-       .clk_in(clk_25m),
-       .clk_out(clk_sys),
-       .clk_locked(clk_sys_locked)
-    );
-
-    reg rst_sys;  // sync reset from clock lock
-    always @(posedge clk_sys) rst_sys <= !clk_sys_locked;  // await clock lock
-
-    // pixel clock - 72 MHz for 1366x768 (DISPLAY_MODE=2)
+    // generate common clock - 72 MHz for 1366x768 (DISPLAY_MODE=2)
     // 25 MHz -> 360/72 MHz
-    wire clk_pix, clk_pix_5x, clk_pix_locked;
+    wire clk, clk_5x, clk_locked;
     clock2_gen #(
         .CLKI_DIV(5),
         .CLKFB_DIV(72),
@@ -57,15 +46,15 @@ module top_ch03 #(
         .CLKOP_CPHASE(1),
         .CLKOS_DIV(10),
         .CLKOS_CPHASE(5)
-    ) clock_pix_inst (
+    ) clock2_gen_inst (
        .clk_in(clk_25m),
-       .clk_5x_out(clk_pix_5x),
-       .clk_out(clk_pix),
-       .clk_locked(clk_pix_locked)
+       .clk_5x_out(clk_5x),
+       .clk_out(clk),
+       .clk_locked(clk_locked)
     );
 
-    reg rst_pix;  // sync reset from clock lock
-    always @(posedge clk_pix) rst_pix <= !clk_pix_locked;  // await clock lock
+    reg rst;  // sync reset from clock lock
+    always @(posedge clk) rst <= !clk_locked;  // wait for clock lock
 
     // display signals for TMDS encoding
     wire disp_hsync, disp_vsync, disp_de;
@@ -82,28 +71,22 @@ module top_ch03 #(
         /* verilator lint_on WIDTHEXPAND */
     end
 
-
-    ch03 #(
+    ch02 #(
         .BPC(BPC),
         .CORDW(CORDW),
         .DISPLAY_MODE(DISPLAY_MODE),
         .BG_COLR(BG_COLR),
         .FILE_BMAP(FILE_BMAP),
         .FILE_PAL(FILE_PAL),
-        .FILE_ER_LIST(FILE_ER_LIST),
-        .CANV_BPP(CANV_BPP),
-        .CANV_WIDTH(CANV_WIDTH),
-        .CANV_HEIGHT(CANV_HEIGHT),
         .CANV_SCALE(CANV_SCALE),
+        .CANV_BPP(CANV_BPP),
         .WIN_WIDTH(WIN_WIDTH),
         .WIN_HEIGHT(WIN_HEIGHT),
         .WIN_STARTX(WIN_STARTX),
         .WIN_STARTY(WIN_STARTY)
-    ) ch03_inst (
-        .clk_sys(clk_sys),
-        .clk_pix(clk_pix),
-        .rst_sys(rst_sys),
-        .rst_pix(rst_pix),
+    ) ch02_inst (
+        .clk(clk),
+        .rst(rst),
         /* verilator lint_off PINCONNECTEMPTY */
         .disp_x(),
         .disp_y(),
@@ -121,9 +104,9 @@ module top_ch03 #(
 
     // TMDS encoding and serialization
     dvi_generator dvi_out (
-        .clk_pix(clk_pix),
-        .clk_pix_5x(clk_pix_5x),
-        .rst_pix(rst_pix),
+        .clk_pix(clk),
+        .clk_pix_5x(clk_5x),
+        .rst_pix(rst),
         .de(disp_de),
         .ch0_din(board_b),
         .ch1_din(board_g),

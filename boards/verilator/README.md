@@ -1,14 +1,16 @@
 # Verilator/SDL Support
 
-By combining [Verilator](https://www.veripool.org/verilator/) and [SDL](https://www.libsdl.org), you can run Isle on another computer (Linux, Mac, or Windows). Read [Verilog Simulation with Verilator and SDL](http://projectf.io/posts/verilog-sim-verilator-sdl/) for more details. Isle also supports physical FPGA [dev boards](../).
+By combining [Verilator](https://www.veripool.org/verilator/) and [SDL](https://www.libsdl.org), you can run Isle on another computer (Linux, Mac, or Windows). Isle also supports physical FPGA [dev boards](../).
 
 Be aware that Isle typically runs several times slower in simulation than on an FPGA dev board. For Isle designs with a CPU, I see ~18 FPS on an Apple M1. Your mileage may vary.
 
 On macOS, colour rendering is incorrect on high-gamut displays due to the way LibSDL v2 handles colour spaces. The only fix I've found is to temporarily set your monitor to sRGB colour profile. I plan to move to LibSDL v3 at some point, but it's not a high priority right now.
 
+If you're new to Isle, the best place to start is [Isle FPGA Computer](http://projectf.io/isle/fpga-computer.html).
+
 ## Building
 
-There is a Verilator top module for each chapter of the _Building Isle_ book. The top module uses an instance of the common chapter design from [hardware/book](../../hardware/book/). There is also a top-level C++ main file for each design.
+There is a Verilator top module for each chapter of the _Building Isle_ book, which you can read on the [Isle blog](https://projectf.io/isle/index.html).
 
 [Install dependencies](#install-dependencies) if you haven't already.
 
@@ -23,6 +25,8 @@ make ch02
 To enable full screen display, set `FULLSCREEN` to true in the main C++ file for that chapter, e.g. `boards/verilator/main_ch02.cpp`.
 
 Many chapters have parameters you can edit in the matching top module. For example, in `top_ch02.v` you can choose the bitmap and palette to load.
+
+Each chapter top module uses an instance of the common chapter design from [hardware/book](../../hardware/book/). There is also a top-level C++ main file for each design.
 
 ### Unknown Verilator Lint Message Code
 

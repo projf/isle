@@ -60,15 +60,6 @@ module textmode #(
     // draw start depends on window and latency
     wire signed [CORDW-1:0] draw_start_x = win_start_x - PIX_LAT - CLUT_LAT;
 
-    // character line and frame end coordinates
-    reg signed [CORDW-1:0] char_line_end;
-    reg signed [CORDW-1:0] char_frame_end;
-
-    always @(posedge clk_pix) begin
-        char_line_end  <= (GLYPH_WIDTH  * text_hres * scale_x) - 1;
-        char_frame_end <= (GLYPH_HEIGHT * text_vres * scale_y) - 1;
-    end
-
     // glyph end signals
     /* verilator lint_off WIDTHEXPAND */
     wire glyph_x_end = (gx == GLYPH_WIDTH-1  && cnt_x == scale_x-1);
@@ -131,8 +122,8 @@ module textmode #(
                 ucp <= tram_data[UCPW-1:0];
             end
             DRAW: begin
-                if (dx == char_line_end || dx >= win_end_x-1) begin
-                    if (dy == char_frame_end || dy >= win_end_y-1) state <= IDLE;
+                if (tx == text_hres || dx >= win_end_x-1) begin
+                    if (ty == text_vres || dy >= win_end_y-1) state <= IDLE;
                     else if (glyph_y_end) state <= CHR_LINE;
                     else state <= SCR_LINE;
                 end

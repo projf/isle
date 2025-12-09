@@ -43,7 +43,6 @@ module top_ch02 #(
     // localparam WIN_STARTX=16'd0;     // window horizontal position (pixels)
     // localparam WIN_STARTY=16'd0;     // window vertical position (lines)
 
-
     // colour channel width adjustment for board display
     //   NB. this logic must be updated if you change BPC or BPC_Board
     wire [BPC-1:0] disp_r, disp_g, disp_b;

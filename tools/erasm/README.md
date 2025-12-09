@@ -10,4 +10,4 @@ To assemble the _All Shapes_ example:
 tools/erasm/erasm.py res/drawing/all-shapes.eas
 ```
 
-An pre-assembled version of _All Shapes_ is included in the repo: [res/drawing/all-shapes.mem](../../res/drawing/all-shapes.mem).
+A pre-assembled version of _All Shapes_ is included in the repo: [res/drawing/all-shapes.mem](../../res/drawing/all-shapes.mem).

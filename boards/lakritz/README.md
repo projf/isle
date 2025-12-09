@@ -4,32 +4,38 @@ Isle supports the Machdyne Lakritz dev board with ECP5 FPGA. Isle also supports 
 
 For the Lakritz dev board, you need [Yosys](https://github.com/YosysHQ/yosys), [nextpnr](https://github.com/YosysHQ/nextpnr), and [dfu-util](https://dfu-util.sourceforge.net). All three are included in [OSS CAD Suite](https://github.com/YosysHQ/oss-cad-suite-build).
 
+If you're new to Isle, the best place to start is [Isle FPGA Computer](http://projectf.io/isle/fpga-computer.html).
+
 ## Building
 
-There is a Lakritz top module for each chapter of the _Building Isle_ book. The top module uses an instance of the common chapter design from [hardware/book](../../hardware/book/).
+There is a Lakritz top module for each chapter of the _Building Isle_ book, which you can read on the [Isle blog](https://projectf.io/isle/index.html).
 
-Use **make** to build your chosen chapter. For example, to build the chapter 2 design:
+Use **make** to build your chosen chapter. For example, to build the chapter 4 design:
 
 ```shell
-cd isle/boards/lakritz
-make ch02
+cd isle/boards/lakritz/ch04
+make
 ```
 
-If you get a timing failure, rerun make. The Makefile uses `--randomize-seed` with nextpnr and sometimes you'll be unlucky with placement.
+If you get a timing failure, run `make clean && make`. The Makefile uses `--randomize-seed` with nextpnr and sometimes you'll be unlucky with placement.
 
 Many chapters have parameters you can edit in the matching top module. For example, in `top_ch02.v` you can choose the bitmap and palette to load.
+
+Each chapter top module uses an instance of the common chapter design from [hardware/book](../../hardware/book/).
 
 ### Board Programming
 
 ```shell
 # power on Lakritz and run the following within 5 seconds
-dfu-util -a 0 -D ch02.bit
+dfu-util -a 0 -D ch04.bit
 
 # detach the DFU device and continue the boot process
 dfu-util -a 0 -e
 ```
 
 See the official [Lakritz README](https://github.com/machdyne/lakritz?tab=readme-ov-file#programming-lakritz) for more programming info.
+
+The build process also creates an SVF (Serial Vector Format) file if your preferred board programming method requires that.
 
 ## Clock Settings
 
