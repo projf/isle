@@ -42,6 +42,12 @@ module earthrise #(
 
     localparam ICORDW = CORDW - 4;  // use integer coordinates (4 bits reserved for fraction)
 
+    // sign extension needed for tri_b_left cross product
+    function signed [2*ICORDW+1:0] sext;
+        input signed [ICORDW-1:0] v;
+        sext = {{(ICORDW+2){v[ICORDW-1]}}, v};
+    endfunction
+
     localparam INSTRW = 16;  // instruction width (bits)
     localparam OPCW   =  4;  // opcode width (bits)
     localparam FUNW   =  4;  // function width
@@ -452,7 +458,8 @@ module earthrise #(
             TRI_INIT_B0: begin  // A: tv0s -> tv2s; B0: tv0s -> tv1s
                 state <= TRI_WAIT;
                 // `debug_er($display("  sorted (%d,%d) (%d,%d) (%d,%d)", tvx0s, tvy0s, tvx1s, tvy1s, tvx2s, tvy2s));
-                tri_b_left <= ((tvx1s - tvx0s)*(tvy2s - tvy0s) < (tvy1s - tvy0s)*(tvx2s - tvx0s));  // dot product
+                tri_b_left <= (sext(tvx1s) - sext(tvx0s))*(sext(tvy2s) - sext(tvy0s)) <  // sign extend for cross product
+                              (sext(tvy1s) - sext(tvy0s))*(sext(tvx2s) - sext(tvx0s));
                 // line A
                 line_a_x0 <= tvx0s;
                 line_a_y0 <= tvy0s;
