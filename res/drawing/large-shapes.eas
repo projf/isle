@@ -1,0 +1,47 @@
+# Isle.Computer - Earthrise Large Shapes Example
+# Copyright Will Green and Isle Contributors
+# SPDX-License-Identifier: MIT
+
+# line and fill colours
+lca 10
+lcb  8
+fca  4
+fcb  5
+
+# triangles
+
+# triangle 0 - very large
+x0 -2048
+y0 -2048
+x1 -2048
+y1  2047
+x2  2047
+y2  2047
+draw trif cb
+draw tri ca
+
+# move across
+xt 64
+
+# triangle 1 - modest size
+x0   0
+y0  45
+x1  45
+y1  45
+x2   0
+y2   0
+draw trif cb
+draw tri ca
+
+# move across
+xt 128
+
+# triangle 2 - modest size
+x0   0
+y0  46
+x1  46
+y1  46
+x2   0
+y2   0
+draw trif cb
+draw tri ca
