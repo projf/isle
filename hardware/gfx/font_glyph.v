@@ -2,7 +2,7 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// 4 cycle latency - changing latency affects textmode
+// 4 cycle latency
 
 `default_nettype none
 `timescale 1ns / 1ps
@@ -10,10 +10,10 @@
 module font_glyph #(
     parameter FONT_COUNT=0,  // number of glyphs in font ROM
     parameter FILE_FONT="",  // font glyph ROM file
-    parameter HEIGHT=16,     // glyph height (pixels)
+    parameter HEIGHT=0,      // glyph height (pixels)
     parameter LSB=0,         // first font pixel in least significant bit
     parameter UCPW=21,       // Unicode code point width (bits)
-    parameter WIDTH=8        // glyph width (pixels)
+    parameter WIDTH=0        // glyph width (pixels)
     ) (
     input  wire clk,                           // clock
     input  wire [UCPW-1:0] ucp,                // Unicode code point
@@ -46,7 +46,7 @@ module font_glyph #(
         endcase
         line_id_reg <= line_id;  // register line index to match glyph_idx calculation
 
-        // stage 2 - calculate ROM address
+        // stage 2 - calculate ROM address; may infer multiplier if HEIGHT is not power of 2
         /* verilator lint_off WIDTH */
         rom_addr <= (glyph_idx * HEIGHT) + line_id_reg;
         /* verilator lint_on WIDTH */

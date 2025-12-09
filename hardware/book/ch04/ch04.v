@@ -14,6 +14,8 @@ module ch04 #(
     parameter FILE_PAL="",       // initial palette for CLUT
     parameter FILE_TXT="",       // initial text file for tram
     parameter FONT_COUNT=128,    // number of glyphs in font ROM
+    parameter GLYPH_HEIGHT=16,   // font glyph height (pixels)
+    parameter GLYPH_WIDTH=8,     // font half-width glyph width (pixels)
     parameter TEXT_SCALE=32'h0,  // text mode scale hYYYYXXXX
     parameter WIN_START=32'h0,   // text window start coords 'hYYYYXXXX
     parameter WIN_END=32'h0      // text window end coords 'hYYYYXXXX
@@ -94,7 +96,7 @@ module ch04 #(
     // Text Mode
     //
 
-    reg [TRAM_ADDRW-1:0] text_offs = 0;  // start display with this char (word)
+    reg [TRAM_ADDRW-1:0] scroll_offs = 0*84;  // scroll text display (use lines of chars)
     wire [TEXT_CIDXW-1:0] text_pix;
     wire paint_text;  // enable text paint
     textmode #(
@@ -105,15 +107,17 @@ module ch04 #(
         .CLUT_LAT(CLUT_LAT),
         .FILE_FONT(FILE_FONT),
         .FONT_COUNT(FONT_COUNT),
+        .GLYPH_HEIGHT(GLYPH_HEIGHT),
+        .GLYPH_WIDTH(GLYPH_WIDTH),
         .TRAM_DEPTH(TRAM_DEPTH),
         .TRAM_LAT(TRAM_LAT)
     ) textmode_inst (
         .clk_pix(clk_pix),
         .rst_pix(rst_pix),
         .frame_start(frame_start),
-        .scroll_offs(text_offs),
         .dx(dx),
         .dy(dy),
+        .scroll_offs(scroll_offs),
         .text_hres(text_hres),
         .text_vres(text_vres),
         .win_start(WIN_START),

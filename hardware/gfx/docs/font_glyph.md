@@ -19,11 +19,11 @@ A future version of font glyph will support a full range Unicode code points onc
 
 The `FILE_FONT` parameter needs to be set to load the $readmemh format ROM at build time. Isle uses [/res/fonts/system-font-rom.mem](/res/fonts/system-font-rom.mem). Set `FONT_COUNT` to match the number of glyphs in the ROM, which is 128 for system-font-rom.mem.
 
-The `LSB` param allows fonts with pixels stored in either direction. For GNU Unifont (used by the internal ROM), the first pixel is in the most significant bit, so `LSB=0`. If a font is 8 pixels wide, a ROM entry of `F0` will be 4 pixels on the left with `LSB=0`.
+The `LSB` param allows fonts with pixels stored in either direction. For GNU Unifont (used by the internal ROM), the first pixel is in the most significant bit, so `LSB=0`. If a font is 8 pixels wide, a ROM entry of `F0` will be 4 pixels on the left with `LSB=0`. If a font renders reflected, adjust `LSB`.
 
 `UCPW` must be set to 21 to cover all possible Unicode code points.
 
-If `HEIGHT` isn't a power of 2 this module will infer a multiplier.
+If `HEIGHT` isn't a power of 2, this module may infer a multiplier.
 
 ## Signals
 

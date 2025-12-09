@@ -24,8 +24,7 @@ For Isle, `CORDW` must be set to **16** and `WORD` must be set to **32**.
 * `rst_pix` - reset canvas address calculation
 * `frame_start` - frame start flag
 * `line_start` - line start flag
-* `dx` - horizontal display position
-* `dy` - vertical display position
+* (`dx`, `dy`) - display position
 * `addr_base` - canvas base address
 * `addr_shift` - address shift bits (for colour depth)
 * `win_start` - canvas window start coords
@@ -96,6 +95,8 @@ win_end: 0x01B000240
 
 scale:  0x00020002
 ```
+
+[Text mode](textmode.md) windows work in the same way.
 
 ## Display Pipeline
 
