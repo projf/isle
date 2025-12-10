@@ -31,6 +31,8 @@ Each chapter top module uses an instance of the common chapter design from [hard
 
 ### Board Programming
 
+Program the ULX3S with openFPGALoader. For example, for chapter 4:
+
 ```shell
 openFPGALoader --board ulx3s ch04.bit
 ```

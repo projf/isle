@@ -1,11 +1,11 @@
-// Isle.Computer - Chapter 2: Nexys Video Top
+// Isle.Computer - Chapter 4: Nexys Video Top
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
 `default_nettype none
 `timescale 1ns / 1ps
 
-module top_ch02 #(
+module top_ch04 #(
     parameter BPC=5,           // system bits per colour channel
     parameter BPC_BOARD=8,     // board bits per colour channel
     parameter CORDW=16,        // signed coordinate width (bits)
@@ -25,44 +25,54 @@ module top_ch02 #(
 
     localparam RES = "../../../res";  // resource path
 
-    // 1366x768 display with 336x192 4-bit canvas (crocus test)
-    localparam FILE_BMAP  = {RES, "/bitmaps/crocus/crocus-336x192.mem"};
-    localparam FILE_PAL   = {RES, "/bitmaps/crocus/crocus-336x192_palette.mem"};
-    localparam CANV_BPP   = 4;         // bits per pixel (4=16 colour)
-    localparam CANV_SCALE = 16'd4;     // scaling factor
-    localparam WIN_WIDTH  = 16'd1344;  // window width (pixel)
-    localparam WIN_HEIGHT = 16'd768;   // window height (lines)
-    localparam WIN_STARTX = 16'd11;    // window horizontal position (pixels)
-    localparam WIN_STARTY = 16'd0;     // window vertical position (lines)
+    // text mode params
+    localparam FILE_PAL   = {RES, "/palettes/go-16.mem"};
+    localparam FILE_TXT   = {RES, "/textmaps/all-rom-glyphs.mem"};
+    localparam TEXT_SCALE = 32'h00020002;  // text scaling factor 'hYYYYXXXX
+    localparam WIN_START  = 32'h0000000B;  // text window start coords
+    localparam WIN_END    = 32'h0300054B;  // text window end coords
 
-    // 1366x768 display with 672x384 2-bit canvas (latency test)
-    // localparam FILE_BMAP  = {RES, "/bitmaps/latency/latency.mem"};
-    // localparam FILE_PAL   = {RES, "/bitmaps/latency/latency_palette.mem"};
-    // localparam CANV_BPP   = 2;         // bits per pixel (2=4 colour)
-    // localparam CANV_SCALE = 16'd2;     // scaling factor
-    // localparam WIN_WIDTH  = 16'd1344;  // window width (pixel)
-    // localparam WIN_HEIGHT = 16'd768;   // window height (lines)
-    // localparam WIN_STARTX = 16'd11;    // window horizontal position (pixels)
-    // localparam WIN_STARTY = 16'd0;     // window vertical position (lines)
+    // font params
+    localparam FILE_FONT    = {RES, "/fonts/system-font-rom.mem"};
+    localparam FONT_COUNT   = 128;  // glyphs in FILE_FONT
+    localparam GLYPH_HEIGHT =  16;  // glyph height (pixels)
+    localparam GLYPH_WIDTH  =   8;  // half-width glyph width (pixels)
 
-    // generate common clock - 72 MHz for 1366x768 (DISPLAY_MODE=2)
+    // system clock - 25 MHz
+    // 100 MHz -> 25 MHz
+    wire clk_sys, clk_sys_locked;
+    clock_gen #(
+        .MULT_MASTER(9.125),
+        .DIV_MASTER(1),
+        .DIV_1X(36.5),
+        .IN_PERIOD(10.0)
+    ) clock_sys_inst (
+       .clk_in(clk_100m),
+       .clk_out(clk_sys),
+       .clk_locked(clk_sys_locked)
+    );
+
+    reg rst_sys;  // sync reset from clock lock
+    always @(posedge clk_sys) rst_sys <= !clk_sys_locked;  // await clock lock
+
+    // pixel clock - 72 MHz for 1366x768 (DISPLAY_MODE=2)
     // 100 MHz -> 360/72 MHz
-    wire clk, clk_5x, clk_locked;
+    wire clk_pix, clk_pix_5x, clk_pix_locked;
     clock2_gen #(
         .MULT_MASTER(54),
         .DIV_MASTER(5),
         .DIV_5X(3.0),
         .DIV_1X(15),
         .IN_PERIOD(10.0)
-    ) clock2_gen_inst (
+    ) clock_pix_inst (
        .clk_in(clk_100m),
-       .clk_5x_out(clk_5x),
-       .clk_out(clk),
-       .clk_locked(clk_locked)
+       .clk_5x_out(clk_pix_5x),
+       .clk_out(clk_pix),
+       .clk_locked(clk_pix_locked)
     );
 
-    reg rst;  // sync reset from clock lock
-    always @(posedge clk) rst <= !clk_locked;  // wait for clock lock
+    reg rst_pix;  // sync reset from clock lock
+    always @(posedge clk_pix) rst_pix <= !clk_pix_locked;  // await clock lock
 
     // display signals for TMDS encoding
     wire disp_hsync, disp_vsync, disp_de;
@@ -79,22 +89,25 @@ module top_ch02 #(
         /* verilator lint_on WIDTHEXPAND */
     end
 
-    ch02 #(
+    ch04 #(
         .BPC(BPC),
         .CORDW(CORDW),
         .DISPLAY_MODE(DISPLAY_MODE),
         .BG_COLR(BG_COLR),
-        .FILE_BMAP(FILE_BMAP),
+        .FILE_FONT(FILE_FONT),
         .FILE_PAL(FILE_PAL),
-        .CANV_SCALE(CANV_SCALE),
-        .CANV_BPP(CANV_BPP),
-        .WIN_WIDTH(WIN_WIDTH),
-        .WIN_HEIGHT(WIN_HEIGHT),
-        .WIN_STARTX(WIN_STARTX),
-        .WIN_STARTY(WIN_STARTY)
-    ) ch02_inst (
-        .clk(clk),
-        .rst(rst),
+        .FILE_TXT(FILE_TXT),
+        .FONT_COUNT(FONT_COUNT),
+        .GLYPH_HEIGHT(GLYPH_HEIGHT),
+        .GLYPH_WIDTH(GLYPH_WIDTH),
+        .TEXT_SCALE(TEXT_SCALE),
+        .WIN_START(WIN_START),
+        .WIN_END(WIN_END)
+    ) ch04_inst (
+        .clk_sys(clk_sys),
+        .clk_pix(clk_pix),
+        .rst_sys(rst_sys),
+        .rst_pix(rst_pix),
         /* verilator lint_off PINCONNECTEMPTY */
         .disp_x(),
         .disp_y(),
@@ -113,9 +126,9 @@ module top_ch02 #(
     // TMDS encoding and serialization
     wire ch0_dout, ch1_dout, ch2_dout, clk_dout;
     dvi_generator dvi_out (
-        .clk_pix(clk),
-        .clk_pix_5x(clk_5x),
-        .rst_pix(rst),
+        .clk_pix(clk_pix),
+        .clk_pix_5x(clk_pix_5x),
+        .rst_pix(rst_pix),
         .de(disp_de),
         .ch0_din(board_b),
         .ch1_din(board_g),

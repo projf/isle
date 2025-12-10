@@ -60,12 +60,6 @@ module textmode #(
     // draw start depends on window and latency
     wire signed [CORDW-1:0] draw_start_x = win_start_x - PIX_LAT - CLUT_LAT;
 
-    // glyph end signals
-    /* verilator lint_off WIDTHEXPAND */
-    wire glyph_x_end = (gx == GLYPH_WIDTH-1  && cnt_x == scale_x-1);
-    wire glyph_y_end = (gy == GLYPH_HEIGHT-1 && cnt_y == scale_y-1);
-    /* verilator lint_on WIDTHEXPAND */
-
     // bit widths
     localparam GLYPH_HEIGHT_W = $clog2(GLYPH_HEIGHT);
     localparam GLYPH_WIDTH_W  = $clog2(GLYPH_WIDTH);
@@ -86,9 +80,15 @@ module textmode #(
     // scale counters
     reg [CORDW-1:0] cnt_x, cnt_y;
 
-    wire [GLYPH_WIDTH-1:0] pix_line;  // line of pixels from ROM
-    reg [GLYPH_WIDTH-1:0] pix_line_reg;  // copy of line of pixels
+    wire [GLYPH_WIDTH-1:0] pix_line;  // line of glyph pixels from ROM
+    reg [GLYPH_WIDTH-1:0] pix_line_reg;  // registered copy of glyph pixels
     reg [ADDRW-1:0] tram_addr_line;  // addr copy, so we can return to it at line start
+
+    // glyph end signals
+    /* verilator lint_off WIDTHEXPAND */
+    wire glyph_x_end = (gx == GLYPH_WIDTH-1  && cnt_x == scale_x-1);
+    wire glyph_y_end = (gy == GLYPH_HEIGHT-1 && cnt_y == scale_y-1);
+    /* verilator lint_on WIDTHEXPAND */
 
     // state machine
     localparam IDLE       = 0;  // idle awaiting 'frame_start'

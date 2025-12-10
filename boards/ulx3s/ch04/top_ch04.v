@@ -16,18 +16,20 @@ module top_ch04 #(
     output wire [3:0] gpdi_dp  // DVI out
     );
 
+    localparam RES = "../../../res";  // resource path
+
     // text mode params
-    localparam FILE_PAL   = "../../res/palette/go-16.mem";
-    localparam FILE_TXT   = "../../res/textmode/all-rom-glyphs.mem";
+    localparam FILE_PAL   = {RES, "/palettes/go-16.mem"};
+    localparam FILE_TXT   = {RES, "/textmaps/all-rom-glyphs.mem"};
     localparam TEXT_SCALE = 32'h00020002;  // text scaling factor 'hYYYYXXXX
     localparam WIN_START  = 32'h0000000B;  // text window start coords
     localparam WIN_END    = 32'h0300054B;  // text window end coords
 
     // font params
-    localparam FILE_FONT = "../../res/fonts/system-font-rom.mem";
-    localparam FONT_COUNT  = 128;  // glyphs in FILE_FONT
-    localparam GLYPH_HEIGHT = 16;  // glyph height (pixels)
-    localparam GLYPH_WIDTH  =  8;  // half-width glyph width (pixels)
+    localparam FILE_FONT    = {RES, "/fonts/system-font-rom.mem"};
+    localparam FONT_COUNT   = 128;  // glyphs in FILE_FONT
+    localparam GLYPH_HEIGHT =  16;  // glyph height (pixels)
+    localparam GLYPH_WIDTH  =   8;  // half-width glyph width (pixels)
 
     // system clock - 25 MHz
     // 25 MHz -> 25 MHz

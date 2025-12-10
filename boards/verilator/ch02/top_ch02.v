@@ -23,25 +23,27 @@ module top_ch02 #(
     output reg [BPC_BOARD-1:0] sdl_b      // blue video channel
     );
 
+    localparam RES = "../../../res";  // resource path
+
     // 672x384 display with 336x192 4-bit canvas (crocus test)
-    localparam FILE_BMAP="../../res/bitmap/crocus/crocus-336x192.mem";
-    localparam FILE_PAL="../../res/bitmap/crocus/crocus-336x192_palette.mem";
-    localparam CANV_BPP=4;           // bits per pixel (4=16 colour)
-    localparam CANV_SCALE=16'd2;     // scaling factor
-    localparam WIN_WIDTH=16'd672;    // window width (pixel)
-    localparam WIN_HEIGHT=16'd384;   // window height (lines)
-    localparam WIN_STARTX=16'd0;     // window horizontal position (pixels)
-    localparam WIN_STARTY=16'd0;     // window vertical position (lines)
+    localparam FILE_BMAP  = {RES, "/bitmaps/crocus/crocus-336x192.mem"};
+    localparam FILE_PAL   = {RES, "/bitmaps/crocus/crocus-336x192_palette.mem"};
+    localparam CANV_BPP   = 4;        // bits per pixel (4=16 colour)
+    localparam CANV_SCALE = 16'd2;    // scaling factor
+    localparam WIN_WIDTH  = 16'd672;  // window width (pixel)
+    localparam WIN_HEIGHT = 16'd384;  // window height (lines)
+    localparam WIN_STARTX = 16'd0;    // window horizontal position (pixels)
+    localparam WIN_STARTY = 16'd0;    // window vertical position (lines)
 
     // 672x384 display with 672x384 2-bit canvas (latency test)
-    // localparam FILE_BMAP="../../res/bitmap/latency/latency.mem";
-    // localparam FILE_PAL="../../res/bitmap/latency/latency_palette.mem";
-    // localparam CANV_BPP=2;           // bits per pixel (2=4 colour)
-    // localparam CANV_SCALE=16'd1;     // scaling factor
-    // localparam WIN_WIDTH=16'd672;    // window width (pixel)
-    // localparam WIN_HEIGHT=16'd384;   // window height (lines)
-    // localparam WIN_STARTX=16'd0;     // window horizontal position (pixels)
-    // localparam WIN_STARTY=16'd0;     // window vertical position (lines)
+    // localparam FILE_BMAP  = {RES, "/bitmaps/latency/latency.mem"};
+    // localparam FILE_PAL   = {RES, "/bitmaps/latency/latency_palette.mem"};
+    // localparam CANV_BPP   = 2;        // bits per pixel (2=4 colour)
+    // localparam CANV_SCALE = 16'd1;    // scaling factor
+    // localparam WIN_WIDTH  = 16'd672;  // window width (pixel)
+    // localparam WIN_HEIGHT = 16'd384;  // window height (lines)
+    // localparam WIN_STARTX = 16'd0;    // window horizontal position (pixels)
+    // localparam WIN_STARTY = 16'd0;    // window vertical position (lines)
 
     // colour channel width adjustment for board display
     //   NB. this logic must be updated if you change BPC or BPC_Board

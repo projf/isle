@@ -1,4 +1,4 @@
-# Isle.Computer - Nexys Video Board Constraints (Chapter 2)
+# Isle.Computer - Nexys Video Board Constraints (Chapter 4)
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
@@ -9,6 +9,11 @@ set_property CFGBVS VCCO [current_design]
 ## Board Clock: 100 MHz
 set_property -dict {PACKAGE_PIN R4 IOSTANDARD LVCMOS33} [get_ports {clk_100m}];
 create_clock -name clk_100m -period 10.00 [get_ports {clk_100m}];
+
+## Pixel Clock is async to System Clock
+set_clock_groups -name SysPixel -asynchronous \
+    -group [get_clocks -of_objects [get_pins clock_sys_inst/MMCME2_BASE_inst/CLKOUT0]] \
+    -group [get_clocks -of_objects [get_pins clock_pix_inst/MMCME2_BASE_inst/CLKOUT1]];
 
 ## HDMI Source
 set_property -dict {PACKAGE_PIN T1  IOSTANDARD TMDS_33} [get_ports {hdmi_tx_clk_p}];

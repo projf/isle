@@ -134,7 +134,7 @@ module ch04 #(
     // CLUT
     //
 
-    reg  [CIDX_ADDRW-1:0] clut_addr_disp;
+    wire [CIDX_ADDRW-1:0] clut_addr_disp;
     wire [COLRW-1:0] clut_dout_disp;
 
     clut #(

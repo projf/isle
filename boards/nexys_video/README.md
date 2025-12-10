@@ -12,29 +12,29 @@ There is a Nexys Video top module for each chapter of the _Building Isle_ book, 
 
 Before you begin, locate your Vivado directory.
 
-On Linux source the Vivado setting script to set the environment:
+On **Linux** source the Vivado setting script to set the environment:
 
 ```shell
 source /opt/Xilinx/2025.1/Vivado/settings64.sh  # adjust this path for your system
 ```
 
-On Windows, run the settings batch file from the `Vivado` directory.
+On **Windows**, run the `settings64.bat` batch file from the `Vivado` directory.
 
-Then run **vivado** to build your chosen chapter. For example, to build the chapter 2 design:
+Then run **vivado** to build your chosen chapter. For example, to build the chapter 4 design:
 
 ```shell
-cd isle/boards/nexys_video/ch02
-vivado -mode batch -nojournal -source build_ch02.tcl
+cd isle/boards/nexys_video/ch04
+vivado -mode batch -nojournal -source build.tcl
 ```
 
 Each chapter top module uses an instance of the common chapter design from [hardware/book](../../hardware/book/).
 
 ### Board Programming
 
-Program the Nexys Video with Vivado or openFPGALoader:
+Program the Nexys Video with Vivado or openFPGALoader. For example, for chapter 4:
 
 ```shell
-openFPGALoader -b nexysVideo ch02.bit
+openFPGALoader -b nexysVideo ch04.bit
 ```
 
 The Project F blog has a post covering [Vivado Tcl build scripts](http://projectf.io/posts/vivado-tcl-build-script/), including how to script board programming with Vivado.

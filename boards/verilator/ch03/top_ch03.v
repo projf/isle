@@ -1,11 +1,11 @@
-// Isle.Computer - Chapter 4: Verilator Top
+// Isle.Computer - Chapter 3: Verilator Top
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
 `default_nettype none
 `timescale 1ns / 1ps
 
-module top_ch04 #(
+module top_ch03 #(
     parameter BPC=5,           // system bits per colour channel
     parameter BPC_BOARD=8,     // board bits per colour channel
     parameter CORDW=16,        // signed coordinate width (bits)
@@ -23,18 +23,20 @@ module top_ch04 #(
     output reg [BPC_BOARD-1:0] sdl_b      // blue video channel
     );
 
-    // text mode params
-    localparam FILE_PAL   = "../../res/palette/go-16.mem";
-    localparam FILE_TXT   = "../../res/textmode/all-rom-glyphs.mem";
-    localparam TEXT_SCALE = 32'h00010001;  // text scaling factor 'hYYYYXXXX
-    localparam WIN_START  = 32'h00000000;  // text window start coords
-    localparam WIN_END    = 32'h018002A0;  // text window end coords
+    localparam RES = "../../../res";  // resource path
 
-    // font params
-    localparam FILE_FONT = "../../res/fonts/system-font-rom.mem";
-    localparam FONT_COUNT  = 128;  // glyphs in FILE_FONT
-    localparam GLYPH_HEIGHT = 16;  // glyph height (pixels)
-    localparam GLYPH_WIDTH  =  8;  // half-width glyph width (pixels)
+    // 672x384 display with 336x192 4-bit canvas
+    localparam FILE_BMAP    = "";
+    localparam FILE_PAL     = {RES, "/palettes/go-16.mem"};
+    localparam FILE_ER_LIST = {RES, "/drawings/all-shapes.mem"};
+    localparam CANV_BPP     = 4;        // bits per pixel (4=16 colour)
+    localparam CANV_WIDTH   = 16'd336;  // width (pixels)
+    localparam CANV_HEIGHT  = 16'd192;  // height (lines)
+    localparam CANV_SCALE   = 16'd2;    // scaling factor
+    localparam WIN_WIDTH    = 16'd672;  // window width (pixel)
+    localparam WIN_HEIGHT   = 16'd384;  // window height (lines)
+    localparam WIN_STARTX   = 16'd0;    // window horizontal position (pixels)
+    localparam WIN_STARTY   = 16'd0;    // window vertical position (lines)
 
     // colour channel width adjustment for board display
     // NB. this logic must be updated if you change BPC or BPC_Board
@@ -47,21 +49,24 @@ module top_ch04 #(
         /* verilator lint_on WIDTHEXPAND */
     end
 
-    ch04 #(
+
+    ch03 #(
         .BPC(BPC),
         .CORDW(CORDW),
         .DISPLAY_MODE(DISPLAY_MODE),
         .BG_COLR(BG_COLR),
-        .FILE_FONT(FILE_FONT),
+        .FILE_BMAP(FILE_BMAP),
         .FILE_PAL(FILE_PAL),
-        .FILE_TXT(FILE_TXT),
-        .FONT_COUNT(FONT_COUNT),
-        .GLYPH_HEIGHT(GLYPH_HEIGHT),
-        .GLYPH_WIDTH(GLYPH_WIDTH),
-        .TEXT_SCALE(TEXT_SCALE),
-        .WIN_START(WIN_START),
-        .WIN_END(WIN_END)
-    ) ch04_inst (
+        .FILE_ER_LIST(FILE_ER_LIST),
+        .CANV_BPP(CANV_BPP),
+        .CANV_WIDTH(CANV_WIDTH),
+        .CANV_HEIGHT(CANV_HEIGHT),
+        .CANV_SCALE(CANV_SCALE),
+        .WIN_WIDTH(WIN_WIDTH),
+        .WIN_HEIGHT(WIN_HEIGHT),
+        .WIN_STARTX(WIN_STARTX),
+        .WIN_STARTY(WIN_STARTY)
+    ) ch03_inst (
         .clk_sys(clk),  // common system and pixel clock in simulation
         .clk_pix(clk),
         .rst_sys(rst),

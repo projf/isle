@@ -1,4 +1,4 @@
-# Isle.Computer - Nexys Video Build Script
+# Isle.Computer - Nexys Video Build Script (Chapter 2)
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 

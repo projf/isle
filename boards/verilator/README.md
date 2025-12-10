@@ -14,12 +14,12 @@ There is a Verilator top module for each chapter of the _Building Isle_ book, wh
 
 [Install dependencies](#install-dependencies) if you haven't already.
 
-Use **make** to build your chosen chapter. For example, to build the chapter 2 design:
+Use **make** to build your chosen chapter. For example, to build the chapter 4 design:
 
 ```shell
-cd isle/boards/verilator
-make ch02
-./obj_dir/ch02
+cd isle/boards/verilator/ch04
+make
+./obj_dir/ch04
 ```
 
 To enable full screen display, set `FULLSCREEN` to true in the main C++ file for that chapter, e.g. `boards/verilator/main_ch02.cpp`.

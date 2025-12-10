@@ -25,6 +25,8 @@ Each chapter top module uses an instance of the common chapter design from [hard
 
 ### Board Programming
 
+Program the Lakritz with dfu-util. For example, for chapter 4:
+
 ```shell
 # power on Lakritz and run the following within 5 seconds
 dfu-util -a 0 -D ch04.bit

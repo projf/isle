@@ -23,18 +23,20 @@ module top_ch03 #(
     output wire hdmi_tx_clk_n   // HDMI source clock diff-
     );
 
+    localparam RES = "../../../res";  // resource path
+
     // 1366x768 display with 336x192 4-bit canvas
-    localparam FILE_BMAP="";
-    localparam FILE_PAL="../../../res/palette/go-16.mem";
-    localparam FILE_ER_LIST="../../../res/drawing/all-shapes.mem";
-    localparam CANV_BPP=4;           // bits per pixel (4=16 colour)
-    localparam CANV_WIDTH=16'd336;   // width (pixels)
-    localparam CANV_HEIGHT=16'd192;  // height (lines)
-    localparam CANV_SCALE=16'd4;     // scaling factor
-    localparam WIN_WIDTH=16'd1344;   // window width (pixel)
-    localparam WIN_HEIGHT=16'd768;   // window height (lines)
-    localparam WIN_STARTX=16'd11;    // window horizontal position (pixels)
-    localparam WIN_STARTY=16'd0;     // window vertical position (lines)
+    localparam FILE_BMAP    = "";
+    localparam FILE_PAL     = {RES, "/palettes/go-16.mem"};
+    localparam FILE_ER_LIST = {RES, "/drawings/all-shapes.mem"};
+    localparam CANV_BPP     = 4;         // bits per pixel (4=16 colour)
+    localparam CANV_WIDTH   = 16'd336;   // width (pixels)
+    localparam CANV_HEIGHT  = 16'd192;   // height (lines)
+    localparam CANV_SCALE   = 16'd4;     // scaling factor
+    localparam WIN_WIDTH    = 16'd1344;  // window width (pixel)
+    localparam WIN_HEIGHT   = 16'd768;   // window height (lines)
+    localparam WIN_STARTX   = 16'd11;    // window horizontal position (pixels)
+    localparam WIN_STARTY   = 16'd0;     // window vertical position (lines)
 
     // system clock - 25 MHz
     // 100 MHz -> 25 MHz
