@@ -10,7 +10,7 @@ VERILOG_LIBS += -I${PATH_LIB}/book/ch04
 VERILOG_LIBS += -I${PATH_LIB}/gfx
 VERILOG_LIBS += -I${PATH_LIB}/mem
 
-ch03: ch04.exe
+ch04: ch04.exe
 
 all: ch04
 

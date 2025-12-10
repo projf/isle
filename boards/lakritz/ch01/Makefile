@@ -17,7 +17,7 @@ ADD_SRC += ${PATH_LIB}/arch/ecp5/dvi_generator.v
 
 ch01: ch01.bit ch01.svf
 
-all: ch02
+all: ch01
 
 clean:
 	rm -f *.json *.config *.bit .*.d *.svf *yosys.log

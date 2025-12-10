@@ -109,7 +109,7 @@ module ch03 #(
     reg er_enable;
     always @(posedge clk_sys) begin
         if (rst_sys) er_enable <= 1;
-        if (er_done) er_enable <= 0;
+        else if (er_done) er_enable <= 0;
     end
 
     earthrise #(

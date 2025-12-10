@@ -185,7 +185,7 @@ module ch04 #(
     // Painting & Display Output
     //
 
-    assign clut_addr_disp = {4'b0, text_pix};  // should use params
+    assign clut_addr_disp = {{CIDX_ADDRW-TEXT_CIDXW{1'b0}}, text_pix};
 
     reg [BPC-1:0] paint_r, paint_g, paint_b;
     always @(*) {paint_r, paint_g, paint_b} = paint_text ? clut_dout_disp : BG_COLR;

@@ -58,18 +58,12 @@ module ch01_square #(
     //
 
     // define a square with display coordinates
-    reg square;
-    always @(*) begin
-        square = (dx > 220 && dx < 420) && (dy > 140 && dy < 340);
-    end
+    wire square = (dx >= 220 && dx < 420) && (dy >= 140 && dy < 340);
 
     // paint colour: white inside square, blue outside
-    reg [BPC-1:0] paint_r, paint_g, paint_b;
-    always @(*) begin
-        paint_r = (square) ? 'h1F : 'h02;
-        paint_g = (square) ? 'h1F : 'h06;
-        paint_b = (square) ? 'h1F : 'h0E;
-    end
+    wire [BPC-1:0] paint_r = (square) ? 'h1F : 'h02;
+    wire [BPC-1:0] paint_g = (square) ? 'h1F : 'h06;
+    wire [BPC-1:0] paint_b = (square) ? 'h1F : 'h0E;
 
 
     //
