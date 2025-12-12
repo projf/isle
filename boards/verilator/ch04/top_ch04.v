@@ -27,7 +27,7 @@ module top_ch04 #(
 
     // text mode params
     localparam FILE_PAL   = {RES, "/palettes/go-16.mem"};
-    localparam FILE_TXT   = {RES, "/textmaps/all-rom-glyphs.mem"};
+    localparam FILE_TXT   = {RES, "/textmaps/rom-84x24.mem"};
     localparam TEXT_SCALE = 32'h00010001;  // text scaling factor 'hYYYYXXXX
     localparam WIN_START  = 32'h00000000;  // text window start coords
     localparam WIN_END    = 32'h018002A0;  // text window end coords

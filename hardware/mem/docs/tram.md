@@ -4,10 +4,17 @@ The **tram** (text mode ram) [[verilog src](../tram.v)] module holds text mode c
 
 The tram holds 32-bit word per character consisting of (LSB to MSB):
 
-* 21 bits Unicode code point
+* 21 bits Unicode code point (UCP)
 * 3 bits unused (reserved for future use)
-* 4 bits foreground colour index
-* 4 bits background colour index
+* 4 bits foreground colour index (FG)
+* 4 bits background colour index (BG)
+
+```
+|31  28|27  24|23  21|20                  0|
+|------|------|------|---------------------|
+| BG   | FG   |  -   |        UCP          |
+|------|------|------|---------------------|
+```
 
 The CPU can write the Unicode code point, together with foreground and background colours, in a single word. By writing a byte to the upper 8 bits, the CPU can change the colours of an existing character.
 
@@ -19,7 +26,7 @@ The CPU can write the Unicode code point, together with foreground and backgroun
 * `ADDRW` - address width (bits)
 * `FILE_TXT` - optional initial text to load
 
-The optional `FILE_TXT` parameter allows $readmemh format text to be loaded at build time; this is mostly useful for testing.
+The optional `FILE_TXT` parameter allows $readmemh format [textmaps](../../../res/textmaps/) to be loaded at build time; this is mostly useful for testing; for example `/res/textmaps/rom-84x24.mem`.
 
 ## Signals
 

@@ -1,22 +1,21 @@
 // Isle.Computer - Go-16 Palette
-// Copyright Will Green and Isle Contributors
-// SPDX-License-Identifier: MIT
+// Not subject to copyright
 
 // Based on Gopuri16 by BBUNSIK - https://lospec.com/palette-list/gopuri16
 
-0C43
-0CAD
-096F
-0A76
-058A
-02CD
-34F2
-5DB5
-44C5
-458E
-7189
-7ACF
-65C2
-7EC0
-5AF1
-7399
+0C43  // 0x0 - (03, 02, 03)
+0CAD  // 0x1 - (03, 05, 13)
+096F  // 0x2 - (02, 11, 15)
+0A76  // 0x3 - (02, 19, 22)
+058A  // 0x4 - (01, 12, 10)
+02CD  // 0x5 - (00, 22, 13)
+34F2  // 0x6 - (13, 07, 18)
+5DB5  // 0x7 - (23, 13, 21)
+44C5  // 0x8 - (17, 06, 05)
+458E  // 0x9 - (17, 12, 14)
+7189  // 0xA - (28, 12, 09)
+7ACF  // 0xB - (30, 22, 15)
+65C2  // 0xC - (25, 14, 02)
+7EC0  // 0xD - (31, 22, 00)
+5AF1  // 0xE - (22, 23, 17)
+7399  // 0xF - (28, 28, 25)

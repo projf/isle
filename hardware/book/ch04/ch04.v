@@ -37,8 +37,6 @@ module ch04 #(
     output reg  [BPC-1:0] disp_b            // blue display channel
     );
 
-    `define DEBUG  // debug messages in simulation (comment out to disable)
-
     // text mode
     localparam TEXT_CIDXW =  4;  // 16 colours available in textmode
     localparam TRAM_ADDRW = 11;  // tram address width (bits)
@@ -68,7 +66,7 @@ module ch04 #(
     wire [TRAM_ADDRW-1:0] tram_addr_disp;
     wire [WORD-1:0] tram_dout_disp;
 
-    // should adjust based on display mode (fixed at size of tram for now)
+    // fixed tram size for now; CPU will control through hardware registers
     reg signed [TRAM_ADDRW-1:0] text_hres = TRAM_HRES;
     reg signed [TRAM_ADDRW-1:0] text_vres = TRAM_VRES;
 
@@ -98,7 +96,7 @@ module ch04 #(
 
     reg [TRAM_ADDRW-1:0] scroll_offs = 0*84;  // scroll text display (use lines of chars)
     wire [TEXT_CIDXW-1:0] text_pix;
-    wire paint_text;  // enable text paint
+    wire paint_text;  // signals when to enable text painting
     textmode #(
         .CORDW(CORDW),
         .WORD(WORD),

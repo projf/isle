@@ -29,8 +29,8 @@ module top_ch02 #(
     localparam WIN_STARTY = 16'd0;     // window vertical position (lines)
 
     // 1366x768 display with 672x384 2-bit canvas (latency test)
-    // localparam FILE_BMAP  = {RES, "/bitmaps/latency/latency.mem"};
-    // localparam FILE_PAL   = {RES, "/bitmaps/latency/latency_palette.mem"};
+    // localparam FILE_BMAP  = {RES, "/bitmaps/latency/latency-672x384.mem"};
+    // localparam FILE_PAL   = {RES, "/bitmaps/latency/latency-672x384_palette.mem"};
     // localparam CANV_BPP   = 2;         // bits per pixel (2=4 colour)
     // localparam CANV_SCALE = 16'd2;     // scaling factor
     // localparam WIN_WIDTH  = 16'd1344;  // window width (pixel)

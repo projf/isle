@@ -65,19 +65,109 @@ async def pixel_colour(dut):
     cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, units="ns").start())
     await reset_pix_dut(dut)
 
-    #
-    # top left of canvas
-    #
-    await Timer(DISP_VBLANK*DISP_LINE*SYS_TIME + DISP_HBLANK*SYS_TIME + 4, units='ns')  # await 4 ns into (0,0)
-    assert_coord(dut, 0, 0)
-    # assert_pixel(dut, 3, 2, 2)  # background
+    # await 4 ns into (0,0)
+    await Timer(DISP_VBLANK*DISP_LINE*SYS_TIME + DISP_HBLANK*SYS_TIME + 4, units='ns')
 
-    #
-    # bottom right of canvas
-    #
-    await Timer(383*DISP_LINE*SYS_TIME + 671*SYS_TIME, units='ns')  # 383 lines from above
+    # pixel line 0
+    assert_coord(dut, 0, 0)
+    assert_pixel(dut, 0, 22, 13)  # 0x5
+    await Timer(SYS_TIME, units='ns')
+    assert_coord(dut, 1, 0)
+    assert_pixel(dut, 3, 2, 3)  # 0x0
+    await Timer(14*SYS_TIME, units='ns')
+    assert_coord(dut, 15, 0)
+    assert_pixel(dut, 31, 22, 00)  # 0xD
+    await Timer(SYS_TIME, units='ns')
+    assert_coord(dut, 16, 0)
+    assert_pixel(dut, 0, 22, 13)  # 0x5
+    await Timer(SYS_TIME, units='ns')
+    assert_coord(dut, 17, 0)
+    assert_pixel(dut, 0, 22, 13)  # 0x5
+    await Timer(6*SYS_TIME, units='ns')
+    assert_coord(dut, 23, 0)
+    assert_pixel(dut, 0, 22, 13)  # 0x5
+    await Timer(SYS_TIME, units='ns')
+    assert_coord(dut, 24, 0)
+    assert_pixel(dut, 3, 2, 3)  # 0x0
+    await Timer(646*SYS_TIME, units='ns')
+    assert_coord(dut, 670, 0)
+    assert_pixel(dut, 3, 2, 3)  # 0x0
+    await Timer(SYS_TIME, units='ns')
+    assert_coord(dut, 671, 0)
+    assert_pixel(dut, 23, 13, 21)  # 0x7
+    await Timer((DISP_LINE-671)*SYS_TIME, units='ns')  # wait the rest of the line
+
+    # pixel line 1
+    assert_coord(dut, 0, 1)
+    assert_pixel(dut, 0, 22, 13)  # 0x5
+    await Timer(SYS_TIME, units='ns')
+    assert_coord(dut, 1, 1)
+    assert_pixel(dut, 3, 2, 3)  # 0x0
+    await Timer(14*SYS_TIME, units='ns')
+    assert_coord(dut, 15, 1)
+    assert_pixel(dut, 31, 22, 00)  # 0xD
+    await Timer(SYS_TIME, units='ns')
+    assert_coord(dut, 16, 1)
+    assert_pixel(dut, 0, 22, 13)  # 0x5
+    await Timer(SYS_TIME, units='ns')
+    assert_coord(dut, 17, 1)
+    assert_pixel(dut, 0, 22, 13)  # 0x5
+    await Timer(6*SYS_TIME, units='ns')
+    assert_coord(dut, 23, 1)
+    assert_pixel(dut, 0, 22, 13)  # 0x5
+    await Timer(SYS_TIME, units='ns')
+    assert_coord(dut, 24, 1)
+    assert_pixel(dut, 3, 2, 3)  # 0x0
+    await Timer(646*SYS_TIME, units='ns')
+    assert_coord(dut, 670, 1)
+    assert_pixel(dut, 3, 2, 3)  # 0x0
+    await Timer(SYS_TIME, units='ns')
+    assert_coord(dut, 671, 1)
+    assert_pixel(dut, 23, 13, 21)  # 0x7
+    await Timer((DISP_LINE-671)*SYS_TIME, units='ns')  # wait the rest of the line
+
+    # pixel line 2
+    assert_coord(dut, 0, 2)
+    assert_pixel(dut, 0, 22, 13)  # 0x5
+    await Timer(SYS_TIME, units='ns')
+    assert_coord(dut, 1, 2)
+    assert_pixel(dut, 3, 2, 3)  # 0x0
+    await Timer(14*SYS_TIME, units='ns')
+    assert_coord(dut, 15, 2)
+    assert_pixel(dut, 31, 22, 00)  # 0xD
+    await Timer(SYS_TIME, units='ns')
+    assert_coord(dut, 16, 2)
+    assert_pixel(dut, 3, 2, 3)  # 0x0
+    await Timer(SYS_TIME, units='ns')
+    assert_coord(dut, 17, 2)
+    assert_pixel(dut, 3, 2, 3)  # 0x0
+    await Timer(6*SYS_TIME, units='ns')
+    assert_coord(dut, 23, 2)
+    assert_pixel(dut, 3, 2, 3)  # 0x0
+    await Timer(SYS_TIME, units='ns')
+    assert_coord(dut, 24, 2)
+    assert_pixel(dut, 3, 2, 3)  # 0x0
+    await Timer(646*SYS_TIME, units='ns')
+    assert_coord(dut, 670, 2)
+    assert_pixel(dut, 3, 2, 3)  # 0x0
+    await Timer(SYS_TIME, units='ns')
+    assert_coord(dut, 671, 2)
+    assert_pixel(dut, 23, 13, 21)  # 0x7
+    await Timer((DISP_LINE-671)*SYS_TIME, units='ns')  # wait the rest of the line
+
+    # skip to bottom of display
+    await Timer(380*DISP_LINE*SYS_TIME, units='ns')
+
+    # pixel line 383
+    assert_coord(dut, 0, 383)
+    assert_pixel(dut, 3, 2, 3)  # 0x0
+    await Timer(8*SYS_TIME, units='ns')
+    assert_coord(dut, 8, 383)
+    assert_pixel(dut, 25, 14, 2)  # 0xC
+    await Timer(663*SYS_TIME, units='ns')
     assert_coord(dut, 671, 383)
-    # assert_pixel(dut, 3, 2, 2)  # background
+    assert_pixel(dut, 13, 7, 18)  # 0x6
+    await Timer((DISP_LINE-671)*SYS_TIME, units='ns')  # wait the rest of the line
 
     # wait one more line to complete waveform
     await Timer(DISP_LINE*SYS_TIME, units='ns')
