@@ -12,16 +12,18 @@ module xd (
     output  reg flag_dst   // flag in destination domain
     );
 
+    // play nicely in sim without reset
+    initial begin
+        toggle_src = 0;
+        shr_dst = 0;
+    end
+
     // toggle reg when pulse received in source domain
-    /* verilator lint_off PROCASSINIT */
-    reg toggle_src = 0;
-    /* verilator lint_on PROCASSINIT */
+    reg toggle_src;
     always @(posedge clk_src) toggle_src <= toggle_src ^ flag_src;
 
     // cross to destination domain via shift reg
-    /* verilator lint_off PROCASSINIT */
-    reg [3:0] shr_dst = 0;
-    /* verilator lint_on PROCASSINIT */
+    reg [3:0] shr_dst;
     always @(posedge clk_dst) shr_dst <= {shr_dst[2:0], toggle_src};
 
     // output pulse when transition occurs

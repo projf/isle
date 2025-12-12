@@ -1,6 +1,6 @@
 # Isle Chapter 3 - 2D Drawing
 
-These Verilog designs accompany [2D Drawing](http://projectf.io/isle/2d-drawing.html), chapter 3 of the Isle book from the Project F blog.
+These Verilog designs accompany [2D Drawing](http://projectf.io/isle/2d-drawing.html), chapter 3 of the _Building Isle_ book from the Project F blog.
 
 See [boards](../../../boards/) for build and programming instructions.
 
@@ -16,7 +16,7 @@ The chapter 3 design uses the following Verilog modules:
 * `gfx/earthrise.v`
 * `gfx/fline.v`
 * `gfx/line.v`
-* `gfx/tmds_encoder.v`
+* `gfx/tmds_encoder.v` (not used in Verilator sim)
 * `mem/clut.v`
 * `mem/erlist.v`
 * `mem/vram.v`

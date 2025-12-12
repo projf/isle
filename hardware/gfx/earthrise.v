@@ -23,7 +23,7 @@ module earthrise #(
     input  wire signed [CORDW-1:0] canv_h,     // canvas height
     input  wire [COLRW-1:0] canv_bpp,          // canvas bits per pixel
     input  wire [WORD-1:0] cmd_list,           // command list data (32-bit)
-    output reg  [ER_ADDRW+1:0] pc,             // program counter (byte address)
+    output wire [ER_ADDRW+1:0] pc,             // program counter (byte address)
     input  wire [VRAM_ADDRW-1:0] addr_base,    // address of first canvas pixel
     input  wire [CANV_SHIFTW-1:0] addr_shift,  // address shift bits
     output wire [VRAM_ADDRW-1:0] vram_addr,    // address in vram
@@ -71,7 +71,10 @@ module earthrise #(
     localparam OPT_FILL = 0;  // filled shape
     localparam OPT_COLR = 1;  // colour A or B
 
-    reg [ER_ADDRW+1:0] pc_exec;  // currently executing address (byte addressed)
+    // PC registers
+    reg [ER_ADDRW+2:0] pc_reg;  // PC points to next instruction (extra bit to detect overflow)
+    reg [ER_ADDRW+1:0] pc_debug;  // currently executing instruction address for debugging
+    assign pc = pc_reg[ER_ADDRW+1:0];  // output PC without overflow check bit
 
     // Earthrise registers
     reg signed [ICORDW-1:0] r0;        // radius 0 - for circle
@@ -132,19 +135,17 @@ module earthrise #(
     reg tri_b1_skip;  // flag: skip drawing at start of edge B1
 
     // sort triangle vertices by y-coordinate
-    wire [1:0] tri_min, tri_max, tri_mid;
-    wire tri_degen_x;  // degenerate triangle with all x-coordinates in line
-    assign tri_min = (tvy0 <= tvy1 && tvy0 <= tvy2) ? 0 : (tvy1 <= tvy2) ? 1 : 2;
-    assign tri_max = (tvy0 > tvy1 && tvy0 > tvy2) ? 0 : (tvy1 > tvy2) ? 1 : 2;
-    assign tri_mid = tri_min ^ tri_max ^ 'b11;
-    assign tri_degen_x = (tvx0 == tvx1 && tvx0 == tvx2);
+    wire [1:0] tri_min = (tvy0 <= tvy1 && tvy0 <= tvy2) ? 0 : (tvy1 <= tvy2) ? 1 : 2;
+    wire [1:0] tri_max = (tvy0 > tvy1 && tvy0 > tvy2) ? 0 : (tvy1 > tvy2) ? 1 : 2;
+    wire [1:0] tri_mid = tri_min ^ tri_max ^ 2'b11;
+    wire tri_degen_x = (tvx0 == tvx1 && tvx0 == tvx2);  // x-coordinates in line
 
     // state machine
     localparam IDLE           =  0;
     localparam DONE           =  1;
     localparam FETCH          =  2;
     localparam DECODE         =  3;
-    localparam EXEC_0         =  4;  // all instr use this state
+    localparam EXEC           =  4;  // all instr use this state
     localparam LINE_EXEC      =  5;  // drawing instr have their own states
     localparam FLINE_EXEC     =  6;
     localparam RECT_INIT      =  7;
@@ -171,29 +172,29 @@ module earthrise #(
     reg [STATEW-1:0] state, state_return;
 
     // select instruction from command list data (upper or lower half from word)
-    reg [INSTRW-1:0] instr;
-    always @(*) instr = pc[1] ? cmd_list[2*INSTRW-1:INSTRW] : cmd_list[INSTRW-1:0];
-    reg cmd_last;  // flag for last command address
+    wire [INSTRW-1:0] instr = pc[1] ? cmd_list[2*INSTRW-1:INSTRW] : cmd_list[INSTRW-1:0];
 
     always @(posedge clk) begin
         drawing <= 0;
         case (state)
             JUMP_WAIT: state <= FETCH;  // wait an extra cycle after changing PC before we can fetch
-            FETCH: state <= (cmd_last == 1) ? DONE : DECODE;  // stop at end of command memory
+            FETCH: state <= DECODE;
             DECODE: begin
-                state <= EXEC_0;
-                if (pc == 2**(ER_ADDRW+2)-2) cmd_last <= 1;  // check for final address (byte addressed)
-                pc <= pc + 2;   // advance to next instruction by default (16-bit instructions)
-                pc_exec <= pc;  // save address of instruction we're executing for debug messages
-                opc <= instr[INSTRW-1:INSTRW-OPCW];
-                imm12 <= instr[IMM12-1:0];
-                fun <= instr[COLRW+FUNW-1:COLRW];
-                imm8 <= instr[IMM8-1:0];
-                cnt_draw <= 0;  // draw counter
-                cnt_fill <= 0;  // fill counter
-                // `debug_er($display(">> decode  %x - instr: %x", pc, instr));
+                if (pc_reg[ER_ADDRW+2]) state <= DONE;  // stop if overflow bit of PC set
+                else begin
+                    state <= EXEC;
+                    pc_reg <= pc_reg + 2;  // next instruction by default (16-bit instr)
+                    pc_debug <= pc_reg[ER_ADDRW+1:0];  // save address of current instr for debug
+                    opc <= instr[INSTRW-1:INSTRW-OPCW];
+                    imm12 <= instr[IMM12-1:0];
+                    fun <= instr[COLRW+FUNW-1:COLRW];
+                    imm8 <= instr[IMM8-1:0];
+                    cnt_draw <= 0;  // draw counter
+                    cnt_fill <= 0;  // fill counter
+                    // `debug_er($display(">> decode  %x - instr: %x", pc, instr));
+                end
             end
-            EXEC_0: begin
+            EXEC: begin
                 state <= FETCH;
                 case (opc)
                     'h0: tvx0 <= imm12 + xt;  // translated vertex x0
@@ -211,49 +212,49 @@ module earthrise #(
                     'h9: yt   <= imm12;
                     'hA: begin
                         pc_start <= imm12[ER_ADDRW+1:0];
-                        `debug_er($display("0x%x: pc_next  %x", pc_exec, imm12[ER_ADDRW-1:0]));
+                        `debug_er($display("0x%x: pc_next  %x", pc_debug, imm12[ER_ADDRW-1:0]));
                     end
                     'hC: begin  // colour and control
                         case (fun)
                             'h0: begin
                                 lca <= imm8;
-                                `debug_er($display("0x%x: lca      %x", pc_exec, imm8));
+                                `debug_er($display("0x%x: lca      %x", pc_debug, imm8));
                             end
                             'h1: begin
                                 lcb <= imm8;
-                                `debug_er($display("0x%x: lcb      %x", pc_exec, imm8));
+                                `debug_er($display("0x%x: lcb      %x", pc_debug, imm8));
                             end
                             'h2: begin
                                 fca <= imm8;
-                                `debug_er($display("0x%x: fca      %x", pc_exec, imm8));
+                                `debug_er($display("0x%x: fca      %x", pc_debug, imm8));
                             end
                             'h3: begin
                                 fcb <= imm8;
-                                `debug_er($display("0x%x: fcb      %x", pc_exec, imm8));
+                                `debug_er($display("0x%x: fcb      %x", pc_debug, imm8));
                             end
-                            'hA: begin  // 0xCA - Change Address
+                            'hA: begin  // 0xCA - Jump (Change Address)
                                 state <= JUMP_WAIT;  // wait a cycle after changing PC
-                                pc <= pc_start;
-                                `debug_er($display("0x%x: jump     %x", pc_exec, pc_start));
+                                pc_reg <= {1'b0, pc_start};
+                                `debug_er($display("0x%x: jump     %x", pc_debug, pc_start));
                             end
-                            'hC: begin  // 0xCC - Continue
+                            'hC: begin  // 0xCC - NOP (Continue)
                                 state <= FETCH;
                             end
-                            'hE: begin  // 0xCE CEase
+                            'hE: begin  // 0xCE Stop (CEase)
                                 state <= DONE;
-                                `debug_er($display("0x%x: stop", pc_exec));  // use pc_exec because pc points at NEXT instruction
+                                `debug_er($display("0x%x: stop", pc_debug));  // use pc_debug because pc points at NEXT instruction
                             end
                             default: begin
                                 state <= DONE;
                                 instr_invalid <= 1;
-                                `debug_er($display("0x%x: Invalid Instruction - no such instruction '0xC%x'.", pc_exec, fun));
+                                `debug_er($display("0x%x: Invalid Instruction - no such instruction '0xC%x'.", pc_debug, fun));
                             end
                         endcase
                     end
                     'hD: begin
                         // handle colour once for all shapes; fill colours work for shapes without filled forms
-                        if (imm8[OPT_FILL] == 0) colr <= imm8[OPT_COLR] ? lcb : lca;
-                        else colr <= imm8[OPT_COLR] ? fcb : fca;
+                        colr <= imm8[OPT_FILL] ? (imm8[OPT_COLR] ? fcb : fca)
+                                               : (imm8[OPT_COLR] ? lcb : lca);
 
                         // disable line output by default
                         line_a_oe <= 0;
@@ -265,7 +266,7 @@ module earthrise #(
                                 x <= tvx0;
                                 y <= tvy0;
                                 drawing <= 1;
-                                `debug_er($display("0x%x: pixel    (%d,%d)", pc_exec, tvx0, tvy0));
+                                `debug_er($display("0x%x: pixel    (%d,%d)", pc_debug, tvx0, tvy0));
                             end
                             'h1: begin  // draw line
                                 state <= LINE_EXEC;
@@ -275,7 +276,7 @@ module earthrise #(
                                 line_a_y0 <= tvy0;
                                 line_a_x1 <= tvx1;
                                 line_a_y1 <= tvy1;
-                                `debug_er($display("0x%x: line     (%d,%d)->(%d,%d)", pc_exec, tvx0, tvy0, tvx1, tvy1));
+                                `debug_er($display("0x%x: line     (%d,%d)->(%d,%d)", pc_debug, tvx0, tvy0, tvx1, tvy1));
                             end
                             'h2: begin  // draw circle
                                 if (r0 > 0) begin  // only draw with positive radius
@@ -285,13 +286,13 @@ module earthrise #(
                                     circle_y0 <= tvy0;
                                     circle_r0 <= r0;
                                 end else state <= FETCH;
-                                `debug_er($display("0x%x: circle   (%d,%d) r=%d", pc_exec, tvx0, tvy0, r0));
+                                `debug_er($display("0x%x: circle   (%d,%d) r=%d", pc_debug, tvx0, tvy0, r0));
                             end
                             'h3: begin  // draw triangle (sort vertices first)
                                 if (tri_min == tri_max || tri_degen_x) begin  // degenerate triangle
                                     state <= DONE;
                                     instr_invalid <= 1;
-                                    `debug_er($display("0x%x: Invalid Instruction - degenerate triangle.", pc_exec));
+                                    `debug_er($display("0x%x: Invalid Instruction - degenerate triangle.", pc_debug));
                                 end else state <= TRI_INIT_B0;
                                 tvx0s <= (tri_min == 0) ? tvx0 : (tri_min == 1) ? tvx1 : tvx2;
                                 tvy0s <= (tri_min == 0) ? tvy0 : (tri_min == 1) ? tvy1 : tvy2;
@@ -299,7 +300,7 @@ module earthrise #(
                                 tvy1s <= (tri_mid == 0) ? tvy0 : (tri_mid == 1) ? tvy1 : tvy2;
                                 tvx2s <= (tri_max == 0) ? tvx0 : (tri_max == 1) ? tvx1 : tvx2;
                                 tvy2s <= (tri_max == 0) ? tvy0 : (tri_max == 1) ? tvy1 : tvy2;
-                                `debug_er($display("0x%x: triangle (%d,%d) (%d,%d) (%d,%d)", pc_exec, tvx0, tvy0, tvx1, tvy1, tvx2, tvy2));
+                                `debug_er($display("0x%x: triangle (%d,%d) (%d,%d) (%d,%d)", pc_debug, tvx0, tvy0, tvx1, tvy1, tvx2, tvy2));
                             end
                             'h4: begin  // draw rect (sort vertices first)
                                 tvx0s <= (tvx0 < tvx1) ? tvx0 : tvx1;
@@ -307,7 +308,7 @@ module earthrise #(
                                 tvx1s <= (tvx0 < tvx1) ? tvx1 : tvx0;
                                 tvy1s <= (tvy0 < tvy1) ? tvy1 : tvy0;
                                 state <= (imm8[OPT_FILL] == 0) ? RECT_INIT : RECTF_INIT;
-                                `debug_er($display("0x%x: rect     (%d,%d)->(%d,%d)", pc_exec, tvx0, tvy0, tvx1, tvy1));
+                                `debug_er($display("0x%x: rect     (%d,%d)->(%d,%d)", pc_debug, tvx0, tvy0, tvx1, tvy1));
                             end
                             'hF: begin  // fast (horizontal) line - could support faster memory writes in future
                                 state <= FLINE_EXEC;
@@ -315,24 +316,24 @@ module earthrise #(
                                 fline_x0 <= tvx0;
                                 fline_x1 <= tvx1;
                                 fline_y <= tvy0;  // use tvy0 for vertical position
-                                `debug_er($display("0x%x: fline    (%d->%d) y=%d", pc_exec, tvx0, tvx1, tvy0));
+                                `debug_er($display("0x%x: fline    (%d->%d) y=%d", pc_debug, tvx0, tvx1, tvy0));
                             end
                             default: begin
                                 state <= DONE;
                                 instr_invalid <= 1;
-                                `debug_er($display("0x%x: Invalid Instruction - no such draw function '%x'.", pc_exec, fun));
+                                `debug_er($display("0x%x: Invalid Instruction - no such draw function '%x'.", pc_debug, fun));
                             end
                         endcase
                     end
                     default: begin
                         state <= DONE;
                         instr_invalid <= 1;
-                        `debug_er($display("0x%x: Invalid Instruction - no such opcode '%x'.", pc_exec, opc));
+                        `debug_er($display("0x%x: Invalid Instruction - no such opcode '%x'.", pc_debug, opc));
                     end
                 endcase
             end
             LINE_EXEC: begin
-                if (line_a_done) state <= FETCH;
+                if (line_a_done) state <= DECODE;
                 line_a_start <= 0;
                 drawing <= line_a_valid;
                 x <= line_a_x;
@@ -346,7 +347,6 @@ module earthrise #(
                     state <= (imm8[OPT_FILL] == 0) ? CIRCLE_PIX : CIRCLE_FILL_DI;
                 end
                 circle_start <= 0;
-                drawing <= 0;
             end
             CIRCLE_PIX: begin
                 if (cnt_draw == 3) state <= (circle_busy) ? CIRCLE_CALC : DECODE;
@@ -386,7 +386,7 @@ module earthrise #(
                 y <= fline_y;
             end
             FLINE_EXEC: begin
-                if (fline_done) state <= FETCH;
+                if (fline_done) state <= DECODE;
                 fline_start <= 0;
                 drawing <= fline_valid;
                 x <= fline_x;
@@ -566,9 +566,8 @@ module earthrise #(
             DONE: begin
                 state <= IDLE;
                 busy <= 0;
-                pc <= 0;  // reset pc: execution always starts from address 0
-                pc_exec <= 0;
-                cmd_last <= 0;
+                pc_reg <= 0;  // reset pc: execution always starts from address 0
+                pc_debug <= 0;
                 `debug_er($display("** DONE **"));
             end
             default: begin // IDLE
@@ -583,10 +582,9 @@ module earthrise #(
         if (rst) begin
             state <= IDLE;
             state_return <= IDLE;
-            pc <= 0;
-            pc_exec <= 0;
+            pc_reg <= 0;
+            pc_debug <= 0;
             pc_start <= 0;
-            cmd_last <= 0;
             drawing <= 0;
             busy <= 0;
             instr_invalid <= 0;

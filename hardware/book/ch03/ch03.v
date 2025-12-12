@@ -10,7 +10,7 @@ module ch03 #(
     parameter CORDW=16,           // signed coordinate width (bits)
     parameter DISPLAY_MODE=0,     // display mode (see display.v for modes)
     parameter BG_COLR=0,          // background colour (RGB555)
-    parameter FILE_BMAP="",       // initial bitmap file for framebuffer
+    parameter FILE_BMAP="",       // initial bitmap file for vram
     parameter FILE_PAL="",        // initial palette for CLUT
     parameter FILE_ER_LIST="",    // initial command list for Earthrise
     parameter CANV_BPP=0,         // canvas bits per pixel (4=16 colours)
@@ -69,6 +69,7 @@ module ch03 #(
     wire [WORD-1:0] erlist_dout_er;
 
     erlist #(
+        .BYTE(BYTE),
         .BYTE_CNT(BYTE_CNT),
         .WORD(WORD),
         .ADDRW(ER_ADDRW),
@@ -108,7 +109,7 @@ module ch03 #(
     reg er_enable;
     always @(posedge clk_sys) begin
         if (rst_sys) er_enable <= 1;
-        if (er_done) er_enable <= 0;
+        else if (er_done) er_enable <= 0;
     end
 
     earthrise #(

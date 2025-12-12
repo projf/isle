@@ -4,10 +4,10 @@ Isle includes some colour palettes to get you started. You can load a Verilog ($
 
 You can use the [rgbconv](../tools/rgbconv/) tool to convert palette strings to/from RGB555 format.
 
-Palettes are stores in `res/palette`:
+Palettes are stores in `res/palettes`:
 
-* Go-16 - [Verilog](../res/palette/go-16.mem)
-* Aqua-4 - [Verilog](../res/palette/aqua-4.mem)
-* Mono-2 - [Verilog](../res/palette/mono-2.mem)
+* Go-16 - [Verilog $readmemh](../res/palettes/go-16.mem)
+* Aqua-4 - [Verilog $readmemh](../res/palettes/aqua-4.mem)
+* Mono-2 - [Verilog $readmemh](../res/palettes/mono-2.mem)
 
 ![](img/isle-palette-ref-2025.png?raw=true "")

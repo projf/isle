@@ -4,10 +4,10 @@ The Earthrise Assembler, **erasm**, is a simple Python tool for assembling Earth
 
 See [Earthrise Programming](../../docs/earthrise-programming.md) for a guide to Earthrise drawing instructions.
 
-To assemble the _All Shapes_ example:
+To assemble the example the examples from _Earthrise Programming_:
 
 ```shell
-tools/erasm/erasm.py res/drawing/all-shapes.eas
+tools/erasm/erasm.py res/drawings/doc-examples.eas
 ```
 
-An pre-assembled version of _All Shapes_ is included in the repo: [res/drawing/all-shapes.mem](../../res/drawing/all-shapes.mem).
+A pre-assembled version of _All Shapes_ is included in the repo: [res/drawings/all-shapes.mem](../../res/drawings/all-shapes.mem).

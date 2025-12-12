@@ -1,6 +1,6 @@
 # Isle Chapter 2 - Bitmap Graphics
 
-These Verilog designs accompany [Bitmap Graphics](http://projectf.io/isle/bitmap-graphics.html), chapter 2 of the Isle book from the Project F blog.
+These Verilog designs accompany [Bitmap Graphics](http://projectf.io/isle/bitmap-graphics.html), chapter 2 of the _Building Isle_ book from the Project F blog.
 
 See [boards](../../../boards/) for build and programming instructions.
 
@@ -11,7 +11,7 @@ The chapter 2 design uses the following Verilog modules:
 * `book/ch02/ch02.v`
 * `gfx/canv_disp_agu.v`
 * `gfx/display.v`
-* `gfx/tmds_encoder.v`
+* `gfx/tmds_encoder.v` (not used in Verilator sim)
 * `mem/clut.v`
 * `mem/vram.v`
 

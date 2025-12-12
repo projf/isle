@@ -2,7 +2,7 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// RAM Type:     async dual-port block ram
+// RAM Type:     dual-port block ram
 // Addressing:   word
 // Write Enable: word
 // Write Mode:   no change (WRITEMODE=NORMAL for ECP5)
@@ -30,7 +30,7 @@ module clut #(
     reg [DATAW-1:0] clut_mem [0:DEPTH-1];
 
     initial begin
-        if (FILE_PAL != 0) begin
+        if (FILE_PAL != "") begin
             $display("Load palette file '%s' into clut.", FILE_PAL);
             $readmemh(FILE_PAL, clut_mem);
         end
@@ -42,7 +42,7 @@ module clut #(
         else dout_sys <= clut_mem[addr_sys];
     end
 
-    // display port (read-only with output register)
+    // display port (read-only with additional output register)
     reg [DATAW-1:0] dout_disp_reg;
     always @(posedge clk_pix) begin
         dout_disp_reg <= clut_mem[addr_disp];

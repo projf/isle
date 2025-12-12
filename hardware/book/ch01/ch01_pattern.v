@@ -84,12 +84,9 @@ module ch01_pattern #(
     always @(posedge clk) last_h_stitch <= h_line && h_on;
 
     // paint colour: yellow lines, blue background
-    reg [BPC-1:0] paint_r, paint_g, paint_b;
-    always @(*) begin
-        paint_r = (stitch) ? 'h1F : 'h02;
-        paint_g = (stitch) ? 'h18 : 'h06;
-        paint_b = (stitch) ? 'h00 : 'h0E;
-    end
+    wire [BPC-1:0] paint_r = (stitch) ? 'h1F : 'h02;
+    wire [BPC-1:0] paint_g = (stitch) ? 'h18 : 'h06;
+    wire [BPC-1:0] paint_b = (stitch) ? 'h10 : 'h0E;
 
 
     //

@@ -12,11 +12,13 @@ If vram shared main memory, we'd have to arbitrate between the display, drawing 
 
 For Isle, `WORD` must be set to **32** to match the architecture. `ADDRW` should be set to **14**, but may be set larger if you have enough block ram. Because bit write infers 32 x 2 KiB brams, you don't save any resources by setting `ADDRW` to less than 14.
 
-The optional `FILE_BMAP` parameter allows a $readmemh format bitmap to be loaded at build time; this is mostly useful for testing. You can create a suitable $readmemh bitmap with [img2fmem](https://github.com/projf/fpgatools/tree/main/img2fmem).
+The optional `FILE_BMAP` parameter allows $readmemh format [bitmaps](../../../res/bitmaps/) to be loaded at build time; this is mostly useful for testing; for example `/res/bitmaps/crocus/crocus-336x192.mem`.
+
+You can create a suitable $readmemh bitmap with [img2fmem](https://github.com/projf/fpgatools/tree/main/img2fmem).
 
 ## Signals
 
-The vram is dual port, with a system and display port in different clock domains (discussed in more detail below).
+The vram is dual port, with a system and display port in different clock domains (discussed in more detail below). The signal interfaces is the same as [tram](tram.md) (apart from write-mask granularity).
 
 ### Input
 
@@ -58,7 +60,7 @@ The separate system and displays ports avoid contention between the graphics eng
 * **system port** - 1 cycle read latency
 * **display port** - 2 cycle read latency
 
-The display port has a higher latency because of the output register to improve timing.
+The display port has a higher latency because of the additional output register to improve timing.
 
 ## Testing
 

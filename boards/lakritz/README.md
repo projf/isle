@@ -1,39 +1,43 @@
 # Lakritz Board Support
 
-For the Lakritz dev board, you need [Yosys](https://github.com/YosysHQ/yosys), [nextpnr](https://github.com/YosysHQ/nextpnr), and [dfu-util](https://dfu-util.sourceforge.net). All three are included in [OSS CAD Suite](https://github.com/YosysHQ/oss-cad-suite-build). Isle also supports other [dev boards](../).
+Isle supports the Machdyne Lakritz dev board with ECP5 FPGA. Isle also supports other [dev boards](../).
 
-## Designs
+For the Lakritz dev board, you need [Yosys](https://github.com/YosysHQ/yosys), [nextpnr](https://github.com/YosysHQ/nextpnr), and [dfu-util](https://dfu-util.sourceforge.net). All three are included in [OSS CAD Suite](https://github.com/YosysHQ/oss-cad-suite-build).
 
-The following designs are available to accompany the [Isle blog posts](https://projectf.io/isle/fpga-computer.html).
-
-* [ch01](../../hardware/book/ch01) - Display
-* [ch02](../../hardware/book/ch02) - Bitmap Graphics
-* [ch03](../../hardware/book/ch03) - 2D Drawing
-* ch04 - Text Mode (forthcoming)
-* ch05 - RISC-V CPU (forthcoming)
-
-There is a Lakritz top module for each chapter in this directory, which uses an instance of the common chapter design from [hardware/book](../../hardware/book/).
-
-Many chapters have parameters you can edit in the matching top module. For example, in `top_ch02.v` you can choose the bitmap and palette to load.
+If you're new to Isle, the best place to start is [Isle FPGA Computer](http://projectf.io/isle/fpga-computer.html).
 
 ## Building
 
-Use make to build your chosen chapter. For example, to build the chapter 1 design:
+There is a Lakritz top module for each chapter of the _Building Isle_ book, which you can read on the [Isle blog](https://projectf.io/isle/index.html).
+
+Use **make** to build your chosen chapter. For example, to build the chapter 4 design:
 
 ```shell
-cd isle/boards/lakritz
-make ch01
+cd isle/boards/lakritz/ch04
+make
+```
 
+If you get a timing failure, run `make clean && make`. The Makefile uses `--randomize-seed` with nextpnr and sometimes you'll be unlucky with placement.
+
+Many chapters have parameters you can edit in the matching top module. For example, in `top_ch02.v` you can choose the bitmap and palette to load.
+
+Each chapter top module uses an instance of the common chapter design from [hardware/book](../../hardware/book/).
+
+### Board Programming
+
+Program the Lakritz with dfu-util. For example, for chapter 4:
+
+```shell
 # power on Lakritz and run the following within 5 seconds
-dfu-util -a 0 -D ch01.bit
+dfu-util -a 0 -D ch04.bit
 
 # detach the DFU device and continue the boot process
 dfu-util -a 0 -e
 ```
 
-If you get a timing failure, rerun make. The Makefile uses `--randomize-seed` with nextpnr and sometimes you'll be unlucky with placement.
-
 See the official [Lakritz README](https://github.com/machdyne/lakritz?tab=readme-ov-file#programming-lakritz) for more programming info.
+
+The build process also creates an SVF (Serial Vector Format) file if your preferred board programming method requires that.
 
 ## Clock Settings
 

@@ -1,6 +1,6 @@
 # Earthrise 2D Drawing Engine
 
-The **Earthrise** module [[verilog src](../earthrise.v)] is a simple processor that decodes and executes graphics instructions for pixels, lines, triangles, rects, and circles. This doc provides a summary of the hardware module; see [Earthrise Programming](../../../docs/earthrise-programming.md) for guidance on drawing pixels, lines, and shapes.
+The **earthrise** module [[verilog src](../earthrise.v)] is a simple processor that decodes and executes graphics instructions for pixels, lines, triangles, rects, and circles. This doc provides a summary of the hardware module; see [Earthrise Programming](../../../docs/earthrise-programming.md) for guidance on drawing pixels, lines, and shapes.
 
 Earthrise fetches an instruction from its command memory, decodes it, executes it, passing the drawing details to dedicated graphics hardware, before calculating the vram address to write pixels to. The CPU can write to the command memory and set Earthrise to drawing while it continues with other processing.
 

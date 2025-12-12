@@ -127,6 +127,8 @@ A drawing instruction has the **0xD** opcode follow by the function representing
 
 Drawing instructions leave coordinate and colour registers untouched.
 
+_NB. Execution halts if you specify a degenerate triangle (common vertices)._
+
 ### Drawing Options
 
 Use up to 8 bits in the instruction to control drawing. Only _filled_ and _colour_ are currently supported.

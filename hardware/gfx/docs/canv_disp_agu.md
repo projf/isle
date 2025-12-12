@@ -24,8 +24,7 @@ For Isle, `CORDW` must be set to **16** and `WORD` must be set to **32**.
 * `rst_pix` - reset canvas address calculation
 * `frame_start` - frame start flag
 * `line_start` - line start flag
-* `dx` - horizontal display position
-* `dy` - vertical display position
+* (`dx`, `dy`) - display position
 * `addr_base` - canvas base address
 * `addr_shift` - address shift bits (for colour depth)
 * `win_start` - canvas window start coords
@@ -97,6 +96,8 @@ win_end: 0x01B000240
 scale:  0x00020002
 ```
 
+[Text mode](textmode.md) windows work in the same way.
+
 ## Display Pipeline
 
 The bitmap display pipeline has three stages:
@@ -105,7 +106,7 @@ The bitmap display pipeline has three stages:
 2. [VRAM](../../mem/docs/vram.md) - returns pixel data
 3. [CLUT](../../mem/docs/clut.md) - looks up pixel colour
 
-This process takes several clock cycles. If we don't account for latency, the pixel would be displayed in the wrong position (too far to the right). VRAM and CLUT use brams with output registers, hence taking two cycles from address generation to receiving data.
+This process takes several clock cycles. If we don't account for latency, the pixel would be displayed in the wrong position (too far to the right). VRAM and CLUT use brams with additional output registers, hence taking two cycles from address generation to receiving data.
 
 Our display controller begins each line with the horizontal blanking internal. This gives us time to prepare the pipeline for the the first pixel, even if it's at x=0.
 

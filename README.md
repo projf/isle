@@ -6,15 +6,15 @@ Learn more and get started with the Project F blog: [Isle FPGA Computer](http://
 
 Follow [@WillFlux@mastodon.social](https://mastodon.social/@WillFlux) for updates.
 
-## Chapters
+## Building Isle Book
 
-We introduce system components in their own chapter with a dedicated top-level design.
+As I build each new component, I introduce it in its own chapter with a dedicated Verilog design.
 
-* [Chapter 1 - Display](https://projectf.io/isle/display.html) - [Designs](hardware/book/ch01)
-* [Chapter 2 - Bitmap Graphics](https://projectf.io/isle/bitmap-graphics.html) - [Designs](hardware/book/ch02)
-* [Chapter 3 - 2D Drawing](http://projectf.io/isle/2d-drawing.html) - [Designs](hardware/book/ch03)
-* Chapter 4 - Text Mode (forthcoming)
-* Chapter 5 - RISC-V CPU (forthcoming)
+* Chapter 1 - **Display**: [Design](hardware/book/ch01) - [Blog](https://projectf.io/isle/display.html)
+* Chapter 2 - **Bitmap Graphics**: [Design](hardware/book/ch02) - [Blog](https://projectf.io/isle/bitmap-graphics.html)
+* Chapter 3 - **2D Drawing**: [Design](hardware/book/ch03) - [Blog](http://projectf.io/isle/2d-drawing.html)
+* Chapter 4 - **Text Mode**: [Design](hardware/book/ch04) - [Blog](http://projectf.io/isle/text-mode.html)
+* Chapter 5 - **RISC-V CPU** (forthcoming)
 
 For build instructions see [dev boards](boards). Isle supports Lattice ECP5, Xilinx XC7, and Verilator/SDL simulation on Linux/Mac/Windows.
 

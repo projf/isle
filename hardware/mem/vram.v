@@ -2,7 +2,7 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// RAM Type:     async dual-port block ram
+// RAM Type:     dual-port block ram
 // Addressing:   word
 // Write Enable: bit
 // Write Mode:   no change (WRITEMODE=NORMAL for ECP5)
@@ -29,7 +29,7 @@ module vram #(
     reg [WORD-1:0] vram_mem [0:DEPTH-1];
 
     initial begin
-        if (FILE_BMAP != 0) begin
+        if (FILE_BMAP != "") begin
             $display("Load bitmap file '%s' into vram.", FILE_BMAP);
             $readmemh(FILE_BMAP, vram_mem);
         end
@@ -44,7 +44,7 @@ module vram #(
         end
     end
 
-    // display port (read-only with output register)
+    // display port (read-only with additional output register)
     reg [WORD-1:0] dout_disp_reg;
     always @(posedge clk_pix) begin
         dout_disp_reg <= vram_mem[addr_disp];

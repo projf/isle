@@ -23,26 +23,27 @@ module top_ch02 #(
     output wire hdmi_tx_clk_n   // HDMI source clock diff-
     );
 
+    localparam RES = "../../../res";  // resource path
+
     // 1366x768 display with 336x192 4-bit canvas (crocus test)
-    localparam FILE_BMAP="../../res/bitmap/crocus/crocus-336x192.mem";
-    localparam FILE_PAL="../../res/bitmap/crocus/crocus-336x192_palette.mem";
-    localparam CANV_BPP=4;          // bits per pixel (4=16 colour)
-    localparam CANV_SCALE=16'd4;    // scaling factor
-    localparam WIN_WIDTH=16'd1344;  // window width (pixel)
-    localparam WIN_HEIGHT=16'd768;  // window height (lines)
-    localparam WIN_STARTX=16'd11;   // window horizontal position (pixels)
-    localparam WIN_STARTY=16'd0;    // window vertical position (lines)
+    localparam FILE_BMAP  = {RES, "/bitmaps/crocus/crocus-336x192.mem"};
+    localparam FILE_PAL   = {RES, "/bitmaps/crocus/crocus-336x192_palette.mem"};
+    localparam CANV_BPP   = 4;         // bits per pixel (4=16 colour)
+    localparam CANV_SCALE = 16'd4;     // scaling factor
+    localparam WIN_WIDTH  = 16'd1344;  // window width (pixel)
+    localparam WIN_HEIGHT = 16'd768;   // window height (lines)
+    localparam WIN_STARTX = 16'd11;    // window horizontal position (pixels)
+    localparam WIN_STARTY = 16'd0;     // window vertical position (lines)
 
     // 1366x768 display with 672x384 2-bit canvas (latency test)
-    // localparam FILE_BMAP="../../res/bitmap/latency/latency.mem";
-    // localparam FILE_PAL="../../res/bitmap/latency/latency_palette.mem";
-    // localparam CANV_BPP=2;          // bits per pixel (2=4 colour)
-    // localparam CANV_SCALE=16'd2;    // scaling factor
-    // localparam WIN_WIDTH=16'd1344;  // window width (pixel)
-    // localparam WIN_HEIGHT=16'd768;  // window height (lines)
-    // localparam WIN_STARTX=16'd11;   // window horizontal position (pixels)
-    // localparam WIN_STARTY=16'd0;    // window vertical position (lines)
-
+    // localparam FILE_BMAP  = {RES, "/bitmaps/latency/latency-672x384.mem"};
+    // localparam FILE_PAL   = {RES, "/bitmaps/latency/latency-672x384_palette.mem"};
+    // localparam CANV_BPP   = 2;         // bits per pixel (2=4 colour)
+    // localparam CANV_SCALE = 16'd2;     // scaling factor
+    // localparam WIN_WIDTH  = 16'd1344;  // window width (pixel)
+    // localparam WIN_HEIGHT = 16'd768;   // window height (lines)
+    // localparam WIN_STARTX = 16'd11;    // window horizontal position (pixels)
+    // localparam WIN_STARTY = 16'd0;     // window vertical position (lines)
 
     // generate common clock - 72 MHz for 1366x768 (DISPLAY_MODE=2)
     // 100 MHz -> 360/72 MHz
