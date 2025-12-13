@@ -57,9 +57,12 @@ module starfield #(
     // LFSR
     //
 
-    wire paint = (dx >= 0 && dx < 512) && (dy >= 0 && dy < 256);
+    // 512 * 256 = 2^17
+    localparam WIDTH = 512;
+    localparam HEIGHT = 256;
+    wire paint = (dx >= 0 && dx < WIDTH) && (dy >= 0 && dy < HEIGHT);
 
-    // 17-bit LFSR
+    // 17-bit LFSR (matches paint area)
     localparam LFSRW = 17;
     localparam TAPS = 'b10010000000000000;
     /* verilator lint_off UNUSEDSIGNAL */
