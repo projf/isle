@@ -6,7 +6,7 @@ include ../ulx3s.mk
 
 # included Verilog modules
 PATH_LIB = ../../../hardware
-PATH_PROJ = ../../../proj
+PATH_PROJ = ../../../projects
 ADD_SRC += ${PATH_LIB}/book/ch01/ch01_pattern.v
 ADD_SRC += ${PATH_LIB}/book/ch01/ch01_square.v
 ADD_SRC += ${PATH_LIB}/gfx/display.v

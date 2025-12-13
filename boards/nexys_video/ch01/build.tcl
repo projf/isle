@@ -10,7 +10,7 @@ set fpga_part "xc7a200tsbg484-1"
 
 # set reference directories for source files
 set lib_dir [file normalize "./../../../hardware/"]
-set proj_dir [file normalize "./../../../proj/"]
+set proj_dir [file normalize "./../../../projects/"]
 
 # read design sources
 read_verilog "top_${design_name}.v"
