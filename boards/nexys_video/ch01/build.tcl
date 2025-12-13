@@ -10,6 +10,7 @@ set fpga_part "xc7a200tsbg484-1"
 
 # set reference directories for source files
 set lib_dir [file normalize "./../../../hardware/"]
+set proj_dir [file normalize "./../../../proj/"]
 
 # read design sources
 read_verilog "top_${design_name}.v"
@@ -22,6 +23,9 @@ read_verilog "${lib_dir}/arch/xc7/clock2_gen.v"
 read_verilog "${lib_dir}/arch/xc7/dvi_generator.v"
 read_verilog "${lib_dir}/arch/xc7/oserdes_10b.v"
 read_verilog "${lib_dir}/arch/xc7/tmds_out.v"
+# Starfield modules
+read_verilog "${lib_dir}/math/lfsr.v"
+read_verilog "${proj_dir}/starfield/starfield.v"
 
 # read constraints
 read_xdc "${design_name}.xdc"

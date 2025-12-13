@@ -56,7 +56,7 @@ module top_ch01 #(
         /* verilator lint_on WIDTHEXPAND */
     end
 
-    // use ch01_square or ch01_pattern
+    // use ch01_square, ch01_pattern, or starfield
     ch01_square #(
         .BPC(BPC),
         .CORDW(CORDW),

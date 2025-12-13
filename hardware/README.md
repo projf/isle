@@ -8,6 +8,7 @@ Isle hardware is designed in straightforward Verilog. You can find reference doc
 * [book](book) - designs to accompany _Building Isle_ book chapters
 * [cpu](cpu) - RISC-V processor (forthcoming)
 * [graphics](gfx) - display, drawing, text mode
+* [math](math) - mathematics
 * [memory](mem) - VRAM, CLUT, system memory
 * [sys](sys) - CDC (and future system hardware)
 
