@@ -23,6 +23,7 @@ For build instructions see [dev boards](boards). Isle supports Lattice ECP5, Xil
 * [boards](boards) - supported dev boards and simulators
 * [docs](docs) - high-level docs and project notes
 * [hardware](hardware) - Verilog hardware
+* [projects](projects) - projects that run on Isle
 * [res](res) - resource files (bitmaps, drawings, palettes)
 * [software](software) - programs to run on Isle (forthcoming)
 * [tools](tools) - tools to build Isle software and resources
