@@ -2,7 +2,7 @@
 
 The **font_glyph** module [[verilog src](../font_glyph.v)] takes a Unicode code point and glyph line number and returns that line of font pixels from its internal ROM. This module is used by [textmode](textmode.md). This module has 4 cycles of latency and supports pipelining.
 
-Font glyph is hardcoded to use a specific ROM that includes 128 glyphs across two Unicode blocks: Basic Latin and Block Elements. Isle loads the ROM with [system-font-rom.mem](/res/fonts/system-font-rom.mem). The ROM doesn't include white square, so the module uses light shade for the missing glyph (AKA tofu).
+Font glyph is hardcoded to use a specific ROM that includes 128 glyphs across two Unicode blocks: Basic Latin and Block Elements. Isle loads the ROM with [system-font-rom.mem](../../../res/fonts/system-font-rom.mem). The ROM doesn't include white square, so the module uses light shade for the missing glyph (AKA tofu).
 
 The internal ROM uses [rom_sync](../../mem/docs/rom_sync.md), which is usually inferred in bram.
 
@@ -17,7 +17,7 @@ A future version of font glyph will support a full range Unicode code points onc
 * `UCPW` - Unicode code point width (bits)
 * `WIDTH` - glyph width (pixels)
 
-The `FILE_FONT` parameter needs to be set to load the $readmemh format ROM at build time. Isle uses [/res/fonts/system-font-rom.mem](/res/fonts/system-font-rom.mem). Set `FONT_COUNT` to match the number of glyphs in the ROM, which is 128 for system-font-rom.mem.
+The `FILE_FONT` parameter needs to be set to load the $readmemh format ROM at build time. Isle uses [/res/fonts/system-font-rom.mem](../../../res/fonts/system-font-rom.mem). Set `FONT_COUNT` to match the number of glyphs in the ROM, which is 128 for system-font-rom.mem.
 
 The `LSB` param allows fonts with pixels stored in either direction. For GNU Unifont (used by the internal ROM), the first pixel is in the most significant bit, so `LSB=0`. If a font is 8 pixels wide, a ROM entry of `F0` will be 4 pixels on the left with `LSB=0`. If a font renders reflected, adjust `LSB`.
 
