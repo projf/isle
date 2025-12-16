@@ -10,10 +10,13 @@ ch01:
 ch02:
 	make -f ch02.mk
 
+ch03:
+	make -f ch03.mk
+
 ch04:
 	make -f ch04.mk
 
-all: ch01 ch02 ch04
+all: ch01 ch02 ch03 ch04
 
 clean:
 	rm -f results*.xml

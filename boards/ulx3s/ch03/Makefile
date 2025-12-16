@@ -20,7 +20,6 @@ ADD_SRC += ${PATH_LIB}/gfx/tmds_encoder.v
 ADD_SRC += ${PATH_LIB}/mem/clut.v
 ADD_SRC += ${PATH_LIB}/mem/erlist.v
 ADD_SRC += ${PATH_LIB}/mem/vram.v
-ADD_SRC += ${PATH_LIB}/sys/xd.v
 
 # ECP5 Arch
 ADD_SRC += ${PATH_LIB}/arch/ecp5/clock_gen.v

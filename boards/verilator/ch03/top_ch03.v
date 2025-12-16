@@ -49,6 +49,19 @@ module top_ch03 #(
         /* verilator lint_on WIDTHEXPAND */
     end
 
+    // Earthrise start - sent externally for testing without CPU
+    reg er_start, er_started;
+    always @(clk) begin
+        if (rst) begin
+            er_start <= 0;
+            er_started <= 0;
+        end else begin
+            if (er_started == 0) begin
+                er_start <= 1;
+                er_started <= 1;
+            end else er_start <= 0;
+        end
+    end
 
     ch03 #(
         .BPC(BPC),
@@ -71,6 +84,7 @@ module top_ch03 #(
         .clk_pix(clk),
         .rst_sys(rst),
         .rst_pix(rst),
+        .er_start(er_start),
         .disp_x(sdl_x),
         .disp_y(sdl_y),
         .disp_hsync(),

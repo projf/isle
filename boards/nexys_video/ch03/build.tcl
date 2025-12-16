@@ -27,7 +27,6 @@ read_verilog "${lib_dir}/gfx/tmds_encoder.v"
 read_verilog "${lib_dir}/mem/clut.v"
 read_verilog "${lib_dir}/mem/erlist.v"
 read_verilog "${lib_dir}/mem/vram.v"
-read_verilog "${lib_dir}/sys/xd.v"
 
 # XC7 Arch
 read_verilog "${lib_dir}/arch/xc7/clock_gen.v"

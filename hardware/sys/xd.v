@@ -9,7 +9,7 @@ module xd (
     input  wire clk_src,   // source domain clock
     input  wire clk_dst,   // destination domain clock
     input  wire flag_src,  // flag in source domain
-    output  reg flag_dst   // flag in destination domain
+    output wire flag_dst   // flag in destination domain
     );
 
     // play nicely in sim without reset
@@ -27,5 +27,5 @@ module xd (
     always @(posedge clk_dst) shr_dst <= {shr_dst[2:0], toggle_src};
 
     // output pulse when transition occurs
-    always @(*) flag_dst = shr_dst[3] ^ shr_dst[2];
+    assign flag_dst = shr_dst[3] ^ shr_dst[2];
 endmodule

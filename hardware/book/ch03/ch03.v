@@ -26,6 +26,7 @@ module ch03 #(
     input  wire clk_pix,                    // pixel clock (used by display)
     input  wire rst_sys,                    // reset (system clock domain)
     input  wire rst_pix,                    // reset (pixel clock domain)
+    input  wire er_start,                   // start Earthrise drawing
     output reg  signed [CORDW-1:0] disp_x,  // horizontal display position
     output reg  signed [CORDW-1:0] disp_y,  // vertical display position
     output reg  disp_hsync,                 // horizontal display sync
@@ -56,7 +57,6 @@ module ch03 #(
     wire signed [CORDW-1:0] dx, dy;
     wire hsync, vsync, de;
     wire frame_start, line_start;
-    wire frame_start_sys;  // frame_start in system clock domain
 
 
     //
@@ -104,13 +104,9 @@ module ch03 #(
     assign draw_addr_shift = 5 - $clog2(CANV_BPP);
     /* verilator lint_on WIDTHTRUNC */
 
-    // execute Earthrise command list once
-    wire er_done;
-    reg er_enable;
-    always @(posedge clk_sys) begin
-        if (rst_sys) er_enable <= 1;
-        else if (er_done) er_enable <= 0;
-    end
+    /* verilator lint_off UNUSEDSIGNAL */
+    wire er_busy, er_done, er_instr_invalid;  // handy for simulation
+    /* verilator lint_on UNUSEDSIGNAL */
 
     earthrise #(
         .CORDW(CORDW),
@@ -122,7 +118,7 @@ module ch03 #(
     ) earthrise_inst (
         .clk(clk_sys),
         .rst(rst_sys),
-        .start(frame_start_sys && er_enable),  // start every frame in this simple example
+        .start(er_start),
         .canv_w(CANV_WIDTH),
         .canv_h(CANV_HEIGHT),
         .canv_bpp(CANV_BPP),
@@ -134,10 +130,8 @@ module ch03 #(
         .vram_din(vram_din_sys),
         .vram_wmask(vram_wmask_sys),
         .done(er_done),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .busy(),
-        .instr_invalid()
-        /* verilator lint_on PINCONNECTEMPTY */
+        .busy(er_busy),
+        .instr_invalid(er_instr_invalid)
     );
 
 
@@ -259,14 +253,6 @@ module ch03 #(
         .de(de),
         .frame_start(frame_start),
         .line_start(line_start)
-    );
-
-    // frame_start in system clock domain
-    xd xd_frame_start (
-        .clk_src(clk_pix),
-        .clk_dst(clk_sys),
-        .flag_src(frame_start),
-        .flag_dst(frame_start_sys)
     );
 
 
