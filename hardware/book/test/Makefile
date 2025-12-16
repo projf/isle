@@ -4,13 +4,16 @@
 
 # NB. don't forget to source the cocotb venv
 
+ch01:
+	make -f ch01.mk
+
 ch02:
 	make -f ch02.mk
 
 ch04:
 	make -f ch04.mk
 
-all: ch02 ch04
+all: ch01 ch02 ch04
 
 clean:
 	rm -f results*.xml

@@ -12,6 +12,8 @@ from cocotb.triggers import FallingEdge, RisingEdge, Timer
 TEST_INFO   =   1  # display test info (colour and coordinate) for passing tests
 SYS_TIME    =  40  # 25 MHz - clock frequency
 PIX_TIME    =  40  # 25 MHz - clock frequency
+
+# 672x384 (DISPLAY_MODE=3)
 DISP_LINE   = 800  # 800 pixels in line including blanking
 DISP_HBLANK = 128  # 128 pixels in horizontal blanking
 DISP_VBLANK = 137  # 137 lines in vertical blanking
