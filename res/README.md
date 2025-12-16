@@ -12,11 +12,12 @@ Resources for use by Isle hardware. Most are in Verilog $readmemh format.
 Earthrise drawings in assembler format using extension `.eas`. Use [erasm](../tools/erasm/) to assemble them.
 
 * [All Shapes](drawings/all-shapes.eas) - a test drawing using many Earthrise features
+* [Basic Test](drawings/basic-test.eas) - a few small shapes for end-to-end testing
 * [16 Squares](drawings/16-squares.eas) - 16 different coloured squares
 * [Doc Examples](drawings/doc-examples.eas) - examples from [Earthrise Programming](../docs/earthrise-programming.md)
 * [Large Shapes](drawings/large-shapes.eas) - some large shapes for testing edge cases
 
-The _All Shapes_ drawing is also available pre-compiled in $readmemh format.
+The _All Shapes_ and _Basic Test_ drawings are also available pre-compiled in $readmemh format.
 
 ## Fonts
 
