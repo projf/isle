@@ -17,7 +17,7 @@ HW_DIR="../../${LINT_DIR}"  # hardware source directory
 verilator --lint-only -Wall \
     -I${HW_DIR} \
     -I${HW_DIR}/gfx \
-    ch01_square.v
+    ch01.v
 
 verilator --lint-only -Wall \
     -I${HW_DIR} \

@@ -72,7 +72,7 @@ module starfield #(
     lfsr #(
         .LEN(LFSRW),
         .TAPS(TAPS)
-    ) lsfr_sf (
+    ) lfsr_inst (
         .clk(clk),
         .rst(rst),
         .en(paint),
@@ -81,7 +81,7 @@ module starfield #(
     );
 
     // control star density
-    wire star = &{sreg[LFSRW-1:LFSRW-6]};
+    wire star = &{sreg[LFSRW-1:LFSRW-6]};  // 6 bits == 1/64 pixels are stars
 
     // paint colour
     wire [BPC-1:0] paint_r = (paint && star) ? sreg[BPC-1:0] : 'h02;

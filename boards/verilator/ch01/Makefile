@@ -4,14 +4,20 @@
 
 include ../verilator.mk
 
-# Verilog modules
-PATH_LIB = ../../../hardware
+PATH_LIB  = ../../../hardware
+PATH_PROJ = ../../../projects
+
+# Common Verilog
 VERILOG_LIBS += -I${PATH_LIB}/book/ch01
 VERILOG_LIBS += -I${PATH_LIB}/gfx
 
-# Starfield
-VERILOG_LIBS += -I../../../projects/starfield
+# Project: Hitomezashi
+VERILOG_LIBS += -I${PATH_PROJ}/hitomezashi
+
+# Project: Starfield
+VERILOG_LIBS += -I${PATH_PROJ}/starfield
 VERILOG_LIBS += -I${PATH_LIB}/math
+
 
 ch01: ch01.exe
 

@@ -1,11 +1,11 @@
-// Isle.Computer - Chapter 1: Hitomezashi Pattern
+// Isle.Computer - Chapter 1: Display
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
 `default_nettype none
 `timescale 1ns / 1ps
 
-module ch01_pattern #(
+module ch01 #(
     parameter BPC=5,          // bits per colour channel
     parameter CORDW=16,       // signed coordinate width (bits)
     parameter DISPLAY_MODE=0  // display mode (see display.v for modes)
@@ -57,36 +57,13 @@ module ch01_pattern #(
     // Painting
     //
 
-    // stitch start values: MSB first, so we can write left to right
-    /* verilator lint_off ASCRANGE */
-    reg [0:39] v_start;  // 40 vertical lines
-    reg [0:29] h_start;  // 30 horizontal lines
-    /* verilator lint_on ASCRANGE */
+    // define a square with display coordinates
+    wire square = (dx >= 220 && dx < 420) && (dy >= 140 && dy < 340);
 
-    initial begin  // random start values
-        v_start = 40'b01100_00101_00110_10011_10101_10101_01111_01101;
-        h_start = 30'b10111_01001_00001_10100_00111_01010;
-    end
-
-    // paint stitch pattern with 16x16 pixel grid
-    reg stitch;
-    reg v_line, v_on;
-    reg h_line, h_on;
-    reg last_h_stitch;
-    always @(*) begin
-        v_line = (dx[3:0] == 4'b0000);
-        h_line = (dy[3:0] == 4'b0000);
-        v_on = dy[4] ^ v_start[dx[9:4]];
-        h_on = dx[4] ^ h_start[dy[8:4]];
-        stitch = (v_line && v_on) || (h_line && h_on) || last_h_stitch;
-    end
-
-    always @(posedge clk) last_h_stitch <= h_line && h_on;
-
-    // paint colour: yellow lines, blue background
-    wire [BPC-1:0] paint_r = (stitch) ? 'h1F : 'h02;
-    wire [BPC-1:0] paint_g = (stitch) ? 'h18 : 'h06;
-    wire [BPC-1:0] paint_b = (stitch) ? 'h10 : 'h0E;
+    // paint colour: white inside square, blue outside
+    wire [BPC-1:0] paint_r = (square) ? 'h1F : 'h02;
+    wire [BPC-1:0] paint_g = (square) ? 'h1F : 'h06;
+    wire [BPC-1:0] paint_b = (square) ? 'h1F : 'h0E;
 
 
     //

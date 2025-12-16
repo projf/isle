@@ -4,18 +4,22 @@
 
 include ../lakritz.mk
 
-# included Verilog modules
-PATH_LIB = ../../../hardware
+PATH_LIB  = ../../../hardware
+PATH_PROJ = ../../../projects
+
+# Common Verilog
 ADD_SRC += ${PATH_LIB}/book/ch02/ch02.v
 ADD_SRC += ${PATH_LIB}/gfx/canv_disp_agu.v
 ADD_SRC += ${PATH_LIB}/gfx/display.v
 ADD_SRC += ${PATH_LIB}/gfx/tmds_encoder.v
 ADD_SRC += ${PATH_LIB}/mem/clut.v
 ADD_SRC += ${PATH_LIB}/mem/vram.v
-# ecp5 arch modules
+
+# ECP5 Arch
 ADD_SRC += ${PATH_LIB}/arch/ecp5/clock_gen.v
 ADD_SRC += ${PATH_LIB}/arch/ecp5/clock2_gen.v
 ADD_SRC += ${PATH_LIB}/arch/ecp5/dvi_generator.v
+
 
 ch02: ch02.bit ch02.svf
 

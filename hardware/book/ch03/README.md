@@ -22,4 +22,4 @@ The chapter 3 design uses the following Verilog modules:
 * `mem/vram.v`
 * `sys/xd.v`
 
-Each [board](../../../boards/) has its own top module plus relevant Architecture-specific modules under `arch/ecp5` and `arch/xc7`; check board make/build files for details.
+Each [board](../../../boards/) has its own top module plus relevant architecture-specific modules under `arch/ecp5` and `arch/xc7`; check board make/build files for details.

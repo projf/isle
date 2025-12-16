@@ -33,8 +33,8 @@ module top_ch01 #(
         /* verilator lint_on WIDTHEXPAND */
     end
 
-    // use ch01_square, ch01_pattern, or starfield
-    ch01_square #(
+    // use ch01, hitomezashi, or starfield
+    ch01 #(
         .BPC(BPC),
         .CORDW(CORDW),
         .DISPLAY_MODE(DISPLAY_MODE)
