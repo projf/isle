@@ -1,5 +1,6 @@
 # Isle.Computer - Chapter 4 Test Bench
-# Copyright Will Green
+# Copyright Will Green and Isle Contributors
+# SPDX-License-Identifier: MIT
 
 """Chapter 4 Test Bench (cocotb)"""
 
@@ -10,13 +11,12 @@ from cocotb.clock import Clock
 from cocotb.triggers import FallingEdge, RisingEdge, Timer
 
 TEST_INFO   =   1  # display test info (colour and coordinate) for passing tests
-SYS_TIME    =  40  # 25 MHz - clock frequency
-PIX_TIME    =  40  # 25 MHz - clock frequency
+SYS_TIME    =  40  # 25 MHz clock frequency (for system and pixel clocks)
 
 # 672x384 (DISPLAY_MODE=3)
-DISP_LINE   = 800  # 800 pixels in line including blanking
-DISP_HBLANK = 128  # 128 pixels in horizontal blanking
-DISP_VBLANK = 137  # 137 lines in vertical blanking
+DISP_LINE   = 800  # horizontal line including blanking
+DISP_HBLANK = 128  # horizontal blanking
+DISP_VBLANK = 137  # vertical blanking
 
 
 def assert_pixel(dut, r, g, b):
@@ -48,6 +48,7 @@ async def reset_sys_dut(dut):
     dut.rst_sys.value = 0
     await RisingEdge(dut.clk_sys)
 
+
 async def reset_pix_dut(dut):
     """Reset DUT (single cycle)"""
     await RisingEdge(dut.clk_pix)
@@ -64,11 +65,14 @@ async def pixel_colour(dut):
     """Test display pixel colour"""
     cocotb.start_soon(Clock(dut.clk_sys, SYS_TIME, units="ns").start())
     await reset_sys_dut(dut)
-    cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, units="ns").start())
+    cocotb.start_soon(Clock(dut.clk_pix, SYS_TIME, units="ns").start())
     await reset_pix_dut(dut)
 
-    # await 4 ns into (0,0)
-    await Timer(DISP_VBLANK*DISP_LINE*SYS_TIME + DISP_HBLANK*SYS_TIME + 4, units='ns')
+    # await start of active pixels
+    while not dut.de.value:
+        await RisingEdge(dut.clk_pix)
+    # await middle of clock before sampling colour
+    await Timer(SYS_TIME >> 1, units='ns')
 
     # pixel line 0
     assert_coord(dut, 0, 0)

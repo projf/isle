@@ -1,5 +1,6 @@
 # Isle.Computer - Chapter 1 Test Bench
-# Copyright Will Green
+# Copyright Will Green and Isle Contributors
+# SPDX-License-Identifier: MIT
 
 """Chapter 1 Test Bench (cocotb)"""
 
@@ -10,7 +11,7 @@ from cocotb.clock import Clock
 from cocotb.triggers import FallingEdge, RisingEdge, Timer
 
 TEST_INFO   =   1  # display test info (colour and coordinate) for passing tests
-SYS_TIME    =  40  # 25 MHz - clock frequency
+SYS_TIME    =  40  # 25 MHz clock frequency
 
 # 640x480 (DISPLAY_MODE=0)
 DISP_LINE   = 800  # horizontal line including blanking
@@ -54,8 +55,11 @@ async def pixel_colour(dut):
     cocotb.start_soon(Clock(dut.clk, SYS_TIME, units="ns").start())
     await reset_dut(dut)
 
-    # await 4 ns into (0,0)
-    await Timer(DISP_VBLANK*DISP_LINE*SYS_TIME + DISP_HBLANK*SYS_TIME + 4, units='ns')
+    # await start of active pixels
+    while not dut.de.value:
+        await RisingEdge(dut.clk)
+    # await middle of clock before sampling colour
+    await Timer(SYS_TIME >> 1, units='ns')
 
     # pixel line 0
     assert_coord(dut, 0, 0)
