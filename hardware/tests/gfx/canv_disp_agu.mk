@@ -4,11 +4,13 @@
 
 SIM ?= icarus
 TOPLEVEL_LANG ?= verilog
-
 DUT = canv_disp_agu
-VERILOG_SOURCES += $(PWD)/../${DUT}.v
+
 TOPLEVEL = ${DUT}
 MODULE = ${DUT}
+HARDWARE = $(PWD)/../..
+
+VERILOG_SOURCES += $(HARDWARE)/gfx/${DUT}.v
 
 # pass Verilog module parameters to simulator
 COMPILE_ARGS += -P${DUT}.CORDW=16 -P${DUT}.WORD=32 -P${DUT}.ADDRW=8 -P${DUT}.BMAP_LAT=6 -P${DUT}.SHIFTW=3

@@ -4,11 +4,13 @@
 
 SIM ?= icarus
 TOPLEVEL_LANG ?= verilog
-
 DUT = display
-VERILOG_SOURCES += $(PWD)/../${DUT}.v
+
 TOPLEVEL = ${DUT}
-MODULE = display
+MODULE =  ${DUT}
+HARDWARE = $(PWD)/../..
+
+VERILOG_SOURCES += $(HARDWARE)/gfx/${DUT}.v
 
 # pass Verilog module parameters to simulator
 COMPILE_ARGS += -P${DUT}.CORDW=16 -P${DUT}.MODE=${DISPLAY_MODE}

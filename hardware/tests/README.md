@@ -15,7 +15,7 @@ Ensure you've [installed simulators and cocotb](#install-simulators) and sourced
 
 ```shell
 cd isle/hardware/tests
-source isle-venv/bin/activate
+source hw-tests-venv/bin/activate
 ```
 
 Change directory into the area you want to test then run tests with `make`.
@@ -63,9 +63,9 @@ I recommend installing cocotb inside a venv using the Isle Python [requirements.
 
 ```shell
 cd isle/hardware/tests
-python3 -m venv isle-venv
+python3 -m venv hw-tests-venv
 
-source isle-venv/bin/activate
+source hw-tests-venv/bin/activate
 pip3 install -r requirements.txt
 ```
 

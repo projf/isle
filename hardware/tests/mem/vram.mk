@@ -4,11 +4,13 @@
 
 SIM ?= icarus
 TOPLEVEL_LANG ?= verilog
-
 DUT = vram
-VERILOG_SOURCES += $(PWD)/../${DUT}.v
+
 TOPLEVEL = ${DUT}
 MODULE = ${DUT}
+HARDWARE = $(PWD)/../..
+
+VERILOG_SOURCES += $(HARDWARE)/mem/${DUT}.v
 
 # pass Verilog module parameters to simulator
 COMPILE_ARGS += -P${DUT}.ADDRW=5 -P${DUT}.WORD=32

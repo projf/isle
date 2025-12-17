@@ -4,11 +4,13 @@
 
 SIM ?= verilator  # requires Verilator 5.006+
 TOPLEVEL_LANG ?= verilog
-
 DUT = tmds_encoder
-VERILOG_SOURCES += $(PWD)/../${DUT}.v
+
 TOPLEVEL = ${DUT}
 MODULE = ${DUT}
+HARDWARE = $(PWD)/../..
+
+VERILOG_SOURCES += $(HARDWARE)/gfx/${DUT}.v
 
 # pass Verilog module parameters to simulator
 COMPILE_ARGS +=
