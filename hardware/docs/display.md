@@ -1,6 +1,6 @@
 # Display Controller
 
-The **display** module [[verilog src](../display.v)] uses _display timings_ to generate sync signals and display coordinates.
+The **display** module [[verilog src](../gfx/display.v)] uses _display timings_ to generate sync signals and display coordinates.
 
 The `MODE` parameter controls the display mode (resolution and refresh rate). The input pixel clock must match the mode to generate a valid display signal. For example, `MODE=2` is 1366x768 and requires a 72 MHz pixel clock.
 
@@ -64,4 +64,4 @@ Mode could have been a signal to allow runtime resolution changes. However, this
 
 ## Testing
 
-There is a cocotb test bench [[python src](../test/display.py)] that exercises this module with the included display modes. For advice on running hardware tests, see [Isle Verilog Tests](../../../docs/verilog-tests.md).
+There is a cocotb test bench [[python src](../tests/display.py)] that exercises this module with the included display modes. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).

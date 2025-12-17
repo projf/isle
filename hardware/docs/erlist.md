@@ -1,6 +1,6 @@
 # Earthrise Command List
 
-The **erlist** (Earthrise Command List) module [[verilog src](../erlist.v)] holds instructions for the [Earthrise](../../gfx/docs/earthrise.md) 2D drawing engine.
+The **erlist** (Earthrise Command List) module [[verilog src](../mem/erlist.v)] holds instructions for the [Earthrise](earthrise.md) 2D drawing engine.
 
 ## Parameters
 

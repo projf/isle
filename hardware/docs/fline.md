@@ -1,6 +1,6 @@
 # Fast Line Drawing
 
-The **fline** module [[verilog src](../fline.v)] draws horizontal lines. This implementation supports signed integer coordinates.
+The **fline** module [[verilog src](../gfx/fline.v)] draws horizontal lines. This implementation supports signed integer coordinates.
 
 The primary purpose of fast line is to accelerate the drawing of horizontal lines used in fills. Consecutive horizontal pixels are found at the same memory address in vram and can be written in one operation. For example, in 16-colour mode there are eight pixels in each 32-bit vram location. Support for writing multiple pixels in one memory operation will be handled in [Earthrise](earthrise.md).
 

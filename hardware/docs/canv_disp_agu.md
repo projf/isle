@@ -1,6 +1,6 @@
 # Canvas Display Address Generation
 
-The canvas display address generation unit **canv_disp_agu** [[verilog src](../canv_disp_agu.v)] calculates the [vram](../../mem/docs/vram.md) address in a canvas buffer for display.
+The canvas display address generation unit **canv_disp_agu** [[verilog src](../gfx/canv_disp_agu.v)] calculates the [vram](vram.md) address in a canvas buffer for display.
 
 The address calculation supports different colour depths, canvas positioning, and scaling. This module has 2 cycles of latency, supports pipelining, and avoids multiplication.
 
@@ -103,8 +103,8 @@ scale:  0x00020002
 The bitmap display pipeline has three stages:
 
 1. Canvas Display AGU (this module) - calculates vram address
-2. [VRAM](../../mem/docs/vram.md) - returns pixel data
-3. [CLUT](../../mem/docs/clut.md) - looks up pixel colour
+2. [VRAM](vram.md) - returns pixel data
+3. [CLUT](clut.md) - looks up pixel colour
 
 This process takes several clock cycles. If we don't account for latency, the pixel would be displayed in the wrong position (too far to the right). VRAM and CLUT use brams with additional output registers, hence taking two cycles from address generation to receiving data.
 
@@ -112,4 +112,4 @@ Our display controller begins each line with the horizontal blanking internal. T
 
 ### Testing
 
-There is a cocotb test bench [[python src](../test/canv_disp_agu.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../../../docs/verilog-tests.md).
+There is a cocotb test bench [[python src](../tests/canv_disp_agu.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).

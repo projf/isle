@@ -1,6 +1,6 @@
 # Earthrise 2D Drawing Engine
 
-The **earthrise** module [[verilog src](../earthrise.v)] is a simple processor that decodes and executes graphics instructions for pixels, lines, triangles, rects, and circles. This doc provides a summary of the hardware module; see [Earthrise Programming](../../../docs/earthrise-programming.md) for guidance on drawing pixels, lines, and shapes.
+The **earthrise** module [[verilog src](../gfx/earthrise.v)] is a simple processor that decodes and executes graphics instructions for pixels, lines, triangles, rects, and circles. This doc provides a summary of the hardware module; see [Earthrise Programming](../../../docs/earthrise-programming.md) for guidance on drawing pixels, lines, and shapes.
 
 Earthrise fetches an instruction from its command memory, decodes it, executes it, passing the drawing details to dedicated graphics hardware, before calculating the vram address to write pixels to. The CPU can write to the command memory and set Earthrise to drawing while it continues with other processing.
 
@@ -55,7 +55,7 @@ For example, 2 bits per pixel mean you have 16 pixels per 32-bit word, and 16 is
 * `done` - commands complete (high for one tick)
 * `instr_invalid` - invalid instruction
 
-See [vram](../../mem/docs/vram.md) for details on vram write mask.
+See [vram](vram.md) for details on vram write mask.
 
 ## Earthrise Command List
 
@@ -63,4 +63,4 @@ Earthrise instructions are all 16 bits long. Earthrise reads instructions from d
 
 Isle uses 4 KiB of dual-port bram for the Earthrise command list. The CPU uses one port to read/write drawing instructions, while Earthrise reads instructions from the second port. With 4 KiB of memory and 16-bit instructions, Earthrise can execute up to 2048 instructions in one run.
 
-See [erlist](../../mem/docs/erlist.md) for details on the command list module.
+See [erlist](erlist.md) for details on the command list module.

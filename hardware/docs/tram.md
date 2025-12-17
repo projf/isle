@@ -1,6 +1,6 @@
 # TRAM
 
-The **tram** (text mode ram) [[verilog src](../tram.v)] module holds text mode characters in block ram (bram). The default Isle tram design is 8 KiB as 2K x 32 bit, which supports 84x24 (672z384) and 80x25 (640x400). The tram is byte write. The [textmode](../../gfx/docs/textmode.md) module connects to tram to retrieve character data for display.
+The **tram** (text mode ram) [[verilog src](../mem/tram.v)] module holds text mode characters in block ram (bram). The default Isle tram design is 8 KiB as 2K x 32 bit, which supports 84x24 (672z384) and 80x25 (640x400). The tram is byte write. The [textmode](textmode.md) module connects to tram to retrieve character data for display.
 
 The tram holds 32-bit word per character consisting of (LSB to MSB):
 
@@ -35,7 +35,7 @@ The tram is dual port, with a system and display port in different clock domains
 ### Input
 
 * `clk_sys` - system clock
-* `clk_pix` - pixel clock (frequency depends on [display](../../gfx/docs/display.md) mode)
+* `clk_pix` - pixel clock (frequency depends on [display](display.md) mode)
 * `we_sys` - byte write mask (write-enable)
 * `addr_sys` - system port word address
 * `din_sys` - system data in
@@ -57,4 +57,4 @@ The separate system and displays ports avoid contention between the graphics eng
 * **system port** - 1 cycle read latency
 * **display port** - 1 cycle read latency
 
-The display port may have an additional output register added following work on [textmode](../../gfx/docs/textmode.md).
+The display port may have an additional output register added following work on [textmode](textmode.md).

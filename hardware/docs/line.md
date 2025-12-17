@@ -1,6 +1,6 @@
 # Line Drawing
 
-The **line** module [[verilog src](../line.v)] draws lines with Bresenham's line algorithm. This implementation supports signed integer coordinates and draws downwards, towards increasing Y, swapping the input coordinates if necessary.
+The **line** module [[verilog src](../gfx/line.v)] draws lines with Bresenham's line algorithm. This implementation supports signed integer coordinates and draws downwards, towards increasing Y, swapping the input coordinates if necessary.
 
 ## Parameters
 

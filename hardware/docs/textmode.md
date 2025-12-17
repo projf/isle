@@ -1,6 +1,6 @@
 # Text Mode
 
-The **textmode** module [[verilog src](../textmode.v)] displays text mode, loading character data and colour from [tram](../../mem/docs/tram.md).
+The **textmode** module [[verilog src](../gfx/textmode.v)] displays text mode, loading character data and colour from [tram](tram.md).
 
 Text mode includes a 2 KiB character ROM holding 128 characters for basic system functionality before additional storage is available; these characters cover Basic Latin and Block Elements. Text mode is currently limited by Isle's lack of storage; future versions will extend Unicode coverage and add support for full-width glyphs.
 
@@ -12,9 +12,9 @@ See the [Text Mode](http://projectf.io/isle/text-mode.html) blog post for more i
 
 The textmode module depends on three other modules:
 
-* [tram](../../mem/docs/tram.md) - holds Unicode code points and colours
+* [tram](tram.md) - holds Unicode code points and colours
 * [font_glyph](font_glyph.md) - load font pixel data (embedded within _textmode_)
-* [rom_sync](../../mem/docs/rom_sync.md) - holds core system font (embedded within _font\_glyph_)
+* [rom_sync](rom_sync.md) - holds core system font (embedded within _font\_glyph_)
 
 ## Parameters
 

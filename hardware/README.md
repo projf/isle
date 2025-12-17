@@ -1,6 +1,9 @@
 # Isle Hardware
 
-Isle hardware is designed in straightforward Verilog. You can find reference documentation and tests in each directory.
+Isle hardware is designed in straightforward Verilog.
+
+* [docs](docs) - reference docs for hardware modules
+* [tests](tests) - cocotb hardware tests
 
 ## Hardware Modules
 

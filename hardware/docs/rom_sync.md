@@ -1,6 +1,6 @@
 # Synchronous ROM
 
-The **rom_sync** [[verilog src](../rom_sync.v)] module create a synchronous ROM, typically in block ram. Isle uses small synchronous ROMs for vital data, such as the core system font.
+The **rom_sync** [[verilog src](../mem/rom_sync.v)] module create a synchronous ROM, typically in block ram. Isle uses small synchronous ROMs for vital data, such as the core system font.
 
 ## Parameters
 

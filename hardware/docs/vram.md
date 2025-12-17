@@ -1,6 +1,6 @@
 # VRAM
 
-The **vram** (video ram) [[verilog src](../vram.v)] module holds bitmap graphics in block ram (bram). The default Isle vram design is 64 KiB as 16K x 32 bit. The vram is bit write, with a 32-bit write mask so you can set individual bits.
+The **vram** (video ram) [[verilog src](../mem/vram.v)] module holds bitmap graphics in block ram (bram). The default Isle vram design is 64 KiB as 16K x 32 bit. The vram is bit write, with a 32-bit write mask so you can set individual bits.
 
 If vram shared main memory, we'd have to arbitrate between the display, drawing engine, and CPU, all while handling clock domain crossing and the latency of sdram. Having dedicated vram keeps things simple and predictable. We also support bit write, making 1, 2, and 4 bit graphics simpler and faster.
 
@@ -23,7 +23,7 @@ The vram is dual port, with a system and display port in different clock domains
 ### Input
 
 * `clk_sys` - system clock
-* `clk_pix` - pixel clock (frequency depends on [display](../../gfx/docs/display.md) mode)
+* `clk_pix` - pixel clock (frequency depends on [display](display.md) mode)
 * `wmask_sys` - 32-bit write mask (write-enable)
 * `addr_sys` - system port word address
 * `din_sys` - system data in
@@ -64,6 +64,6 @@ The display port has a higher latency because of the additional output register 
 
 ## Testing
 
-There is a cocotb test bench [[python src](../test/vram.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../../../docs/verilog-tests.md).
+There is a cocotb test bench [[python src](../tests/vram.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
 
 Most of the complexity depends on the dual-port bram implementation, which isn't visible with this inferred memory design.
