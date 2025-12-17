@@ -32,4 +32,4 @@ Channel 0 encodes horizontal and vertical sync using the `ctrl_in` signal with v
 
 ## Testing
 
-There is a comprehensive test [[python src](../tests/tmds_encoder.py)] of the encoding using a Python model [[python src](../tests/tmds_model.py)].  For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
+There is a comprehensive test [[python src](../tests/gfx/tmds_encoder.py)] of the encoding using a Python model [[python src](../tests/gfx/tmds_model.py)].  For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).

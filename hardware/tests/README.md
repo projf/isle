@@ -14,7 +14,7 @@ I'm still learning cocotb, so I'm sure there'll be some mistakes and approaches 
 Ensure you've [installed simulators and cocotb](#install-simulators) and sourced the Python venv if appropriate:
 
 ```shell
-cd isle
+cd isle/hardware/tests
 source isle-venv/bin/activate
 ```
 
@@ -23,7 +23,7 @@ Change directory into the area you want to test then run tests with `make`.
 For example, to test the display module at 1366x768:
 
 ```shell
-cd isle/hardware/gfx/test
+cd gfx
 make display_1366x768
 ```
 
@@ -32,7 +32,7 @@ Use `WAVES=1` to generate [FST](https://blog.timhutt.co.uk/fst_spec/) waveform f
 For example, the following creates `sim_build/clut/clut.fst`:
 
 ```shell
-cd isle/hardware/mem/test
+cd mem
 make WAVES=1 clut
 ```
 
@@ -62,7 +62,7 @@ See [boards/verilator](../boards/verilator/) for advice on using Verilator to ru
 I recommend installing cocotb inside a venv using the Isle Python [requirements.txt](../requirements.txt):
 
 ```shell
-cd isle
+cd isle/hardware/tests
 python3 -m venv isle-venv
 
 source isle-venv/bin/activate

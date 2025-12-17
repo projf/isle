@@ -64,6 +64,6 @@ The display port has a higher latency because of the additional output register 
 
 ## Testing
 
-There is a cocotb test bench [[python src](../tests/vram.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
+There is a cocotb test bench [[python src](../tests/mem/vram.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
 
 Most of the complexity depends on the dual-port bram implementation, which isn't visible with this inferred memory design.

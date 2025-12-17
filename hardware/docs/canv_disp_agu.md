@@ -112,4 +112,4 @@ Our display controller begins each line with the horizontal blanking internal. T
 
 ### Testing
 
-There is a cocotb test bench [[python src](../tests/canv_disp_agu.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
+There is a cocotb test bench [[python src](../tests/gfx/canv_disp_agu.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).

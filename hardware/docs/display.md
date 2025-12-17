@@ -64,4 +64,4 @@ Mode could have been a signal to allow runtime resolution changes. However, this
 
 ## Testing
 
-There is a cocotb test bench [[python src](../tests/display.py)] that exercises this module with the included display modes. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
+There is a cocotb test bench [[python src](../tests/gfx/display.py)] that exercises this module with the included display modes. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
