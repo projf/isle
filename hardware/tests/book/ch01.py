@@ -4,38 +4,18 @@
 
 """Chapter 1 Test Bench (cocotb)"""
 
-import os
-
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import FallingEdge, RisingEdge, Timer
+from cocotb.triggers import RisingEdge, Timer
+from tests.helpers import assert_coord, assert_pixel
 
-TEST_INFO   =   1  # display test info (colour and coordinate) for passing tests
-SYS_TIME    =  40  # 25 MHz clock frequency
+# clock frequency
+SYS_TIME = 40  # 40 ns is 25 MHz
 
 # 640x480 (DISPLAY_MODE=0)
 DISP_LINE   = 800  # horizontal line including blanking
 DISP_HBLANK = 160  # horizontal blanking
 DISP_VBLANK =  45  # vertical blanking
-
-
-def assert_pixel(dut, r, g, b):
-    """Assert pixel colour is correct"""
-    if (TEST_INFO): log_pixel(dut)
-    assert dut.disp_r.value == r and dut.disp_g.value == g and dut.disp_b.value == b, \
-        f"RGB({dut.disp_r.value.integer},{dut.disp_g.value.integer},{dut.disp_b.value.integer}) is not RGB({r},{g},{b})."
-
-
-def assert_coord(dut, x, y):
-    """Assert coordinate is correct"""
-    assert dut.disp_x.value == x and dut.disp_y.value == y, \
-        f"({dut.disp_x.value.signed_integer},{dut.disp_y.value.signed_integer}) is not ({x},{y})."
-
-
-def log_pixel(dut):
-    """Log pixel at current position"""
-    dut._log.info("RGB(%2d,%2d,%2d) at (%4d,%4d)", \
-        dut.disp_r.value.integer, dut.disp_g.value.integer, dut.disp_b.value.integer, dut.disp_x.value.signed_integer, dut.disp_y.value.signed_integer)
 
 
 async def reset_dut(dut):

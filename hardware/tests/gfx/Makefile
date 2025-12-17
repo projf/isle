@@ -5,6 +5,9 @@
 # NB. don't forget to source the cocotb venv
 #     display tests take a while to run
 
+# add hardware/tests to Python path
+export PYTHONPATH := $(shell pwd)/../..:$(PYTHONPATH)
+
 canv_disp_agu:
 	make -f canv_disp_agu.mk
 

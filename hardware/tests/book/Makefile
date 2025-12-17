@@ -4,6 +4,9 @@
 
 # NB. don't forget to source the cocotb venv
 
+# add hardware/tests to Python path
+export PYTHONPATH := $(shell pwd)/../..:$(PYTHONPATH)
+
 ch01:
 	make -f ch01.mk
 

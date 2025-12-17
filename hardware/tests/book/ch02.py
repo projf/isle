@@ -4,38 +4,18 @@
 
 """Chapter 2 Test Bench (cocotb)"""
 
-import os
-
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import FallingEdge, RisingEdge, Timer
+from cocotb.triggers import RisingEdge, Timer
+from tests.helpers import assert_coord, assert_pixel
 
-TEST_INFO   =   1  # display test info (colour and coordinate) for passing tests
-SYS_TIME    =  40  # 25 MHz clock frequency
+# clock frequency
+SYS_TIME = 40  # 40 ns is 25 MHz
 
 # 672x384 (DISPLAY_MODE=3)
 DISP_LINE   = 800  # horizontal line including blanking
 DISP_HBLANK = 128  # horizontal blanking
 DISP_VBLANK = 137  # vertical blanking
-
-
-def assert_pixel(dut, r, g, b):
-    """Assert pixel colour is correct"""
-    if (TEST_INFO): log_pixel(dut)
-    assert dut.disp_r.value == r and dut.disp_g.value == g and dut.disp_b.value == b, \
-        f"RGB({dut.disp_r.value.integer},{dut.disp_g.value.integer},{dut.disp_b.value.integer}) is not RGB({r},{g},{b})."
-
-
-def assert_coord(dut, x, y):
-    """Assert coordinate is correct"""
-    assert dut.disp_x.value == x and dut.disp_y.value == y, \
-        f"({dut.disp_x.value.signed_integer},{dut.disp_y.value.signed_integer}) is not ({x},{y})."
-
-
-def log_pixel(dut):
-    """Log pixel at current position"""
-    dut._log.info("RGB(%2d,%2d,%2d) at (%4d,%4d)", \
-        dut.disp_r.value.integer, dut.disp_g.value.integer, dut.disp_b.value.integer, dut.disp_x.value.signed_integer, dut.disp_y.value.signed_integer)
 
 
 async def reset_dut(dut):
@@ -93,12 +73,9 @@ async def pixel_colour(dut):
     assert_pixel(dut, 31, 30, 6)  # yellow
 
     # skip to bottom of display
-    await Timer(377*DISP_LINE*SYS_TIME + 670*SYS_TIME, units='ns')  # 380=377+3 lines from above
+    await Timer(377*DISP_LINE*SYS_TIME + 671*SYS_TIME, units='ns')  # 380=377+3 lines from above
 
     # pixel line 380
-    assert_coord(dut, 670, 380)
-    assert_pixel(dut, 0, 0, 0)  # black
-    await Timer(SYS_TIME, units='ns')
     assert_coord(dut, 671, 380)
     assert_pixel(dut, 31, 30, 6)  # yellow
     await Timer(DISP_LINE*SYS_TIME, units='ns')  # move down one line

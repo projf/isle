@@ -49,6 +49,16 @@ cd isle/hardware/book/ch01
 ./lint.sh
 ```
 
+## Python Lint
+
+You can lint hardware tests from within the `isle/hardware` directory.
+
+```shell
+cd isle/hardware
+pylint tests/gfx/tmds_encoder.py
+pylint tests/book/ch03.py
+```
+
 ## Install Simulators
 
 Install **Icarus Verilog** using the [official instructions](https://steveicarus.github.io/iverilog/usage/installation.html) or run `brew install icarus-verilog` on macOS.
