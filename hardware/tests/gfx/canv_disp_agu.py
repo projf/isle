@@ -21,7 +21,7 @@ Y_MAX = 7
 async def address_scale_0x(dut):
     """Test address calculation."""
 
-    cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, units="ns").start())
+    cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, unit="ns").start())
 
     # reset
     dut.rst_pix.value = 0
@@ -50,7 +50,7 @@ async def address_scale_0x(dut):
 async def address_scale_1x(dut):
     """Test address calculation."""
 
-    cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, units="ns").start())
+    cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, unit="ns").start())
 
     # reset
     dut.rst_pix.value = 0
@@ -79,7 +79,7 @@ async def address_scale_1x(dut):
 async def address_scale_2x(dut):
     """Test address calculation."""
 
-    cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, units="ns").start())
+    cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, unit="ns").start())
 
     # reset
     dut.rst_pix.value = 0

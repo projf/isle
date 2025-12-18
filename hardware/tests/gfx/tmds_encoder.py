@@ -32,7 +32,7 @@ async def reset_dut(dut):
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 async def tmds_random(dut):
     """Test 1000 random 8-bit pixel values."""
-    cocotb.start_soon(Clock(dut.clk_pix, 1, units="ns").start())
+    cocotb.start_soon(Clock(dut.clk_pix, 1, unit="ns").start())
     dut.ctrl_in.value = 0
     await reset_dut(dut)
     dut.de.value = 1
@@ -50,8 +50,8 @@ async def tmds_random(dut):
             model_val = ''.join(map(str, reversed(model_bias)))
             if TEST_INFO:
                 cocotb.log.info("%4d: %02X - DUT: %s, Model: %s", \
-                i, pixel_dec_prev, dut.tmds.value.binstr, model_val)
-            assert dut.tmds.value.binstr == model_val, \
-                f"DUT {dut.tmds.value.binstr} doesn't match model {model_val}!"
+                i, pixel_dec_prev, str(dut.tmds.value), model_val)
+            assert str(dut.tmds.value) == model_val, \
+                f"DUT {str(dut.tmds.value)} doesn't match model {model_val}!"
 
         pixel_dec_prev = pixel_dec  # save previous value for comparison in next iteration

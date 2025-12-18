@@ -42,7 +42,7 @@ async def zero_memory(dut):
 async def sys_port(dut):
     """Test CLUT sys port."""
 
-    cocotb.start_soon(Clock(dut.clk_sys, SYS_TIME, units="ns").start())
+    cocotb.start_soon(Clock(dut.clk_sys, SYS_TIME, unit="ns").start())
     await zero_memory(dut)  # matches hardware behaviour
 
     # write data
@@ -72,7 +72,7 @@ async def sys_port(dut):
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 async def disp_port(dut):
     """Test CLUT disp port."""
-    cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, units="ns").start())
+    cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, unit="ns").start())
 
     # read data written via system port
     for i, (addr, data_expected) in enumerate(zip(test_addr_disp, test_data_disp)):

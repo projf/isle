@@ -32,48 +32,48 @@ async def reset_dut(dut):
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 async def pixel_colour(dut):
     """Test display pixel colour"""
-    cocotb.start_soon(Clock(dut.clk, SYS_TIME, units="ns").start())
+    cocotb.start_soon(Clock(dut.clk, SYS_TIME, unit="ns").start())
     await reset_dut(dut)
 
     # await start of active pixels
     while not dut.de.value:
         await RisingEdge(dut.clk)
     # await middle of clock before sampling colour
-    await Timer(SYS_TIME >> 1, units='ns')
+    await Timer(SYS_TIME >> 1, unit='ns')
 
     # pixel line 0
     assert_coord(dut, 0, 0)
     assert_pixel(dut, 2, 6, 14)  # dark blue
-    await Timer(DISP_LINE*SYS_TIME, units='ns')  # wait the rest of the line
+    await Timer(DISP_LINE*SYS_TIME, unit='ns')  # wait the rest of the line
 
     # skip to line 140
-    await Timer(139*DISP_LINE*SYS_TIME + 219*SYS_TIME, units='ns')
+    await Timer(139*DISP_LINE*SYS_TIME + 219*SYS_TIME, unit='ns')
 
     # pixel line 140
     assert_coord(dut, 219, 140)
     assert_pixel(dut, 2, 6, 14)  # dark blue
-    await Timer(SYS_TIME, units='ns')
+    await Timer(SYS_TIME, unit='ns')
     assert_coord(dut, 220, 140)
     assert_pixel(dut, 31, 31, 31)  # white
-    await Timer((DISP_LINE-220)*SYS_TIME, units='ns')  # wait the rest of the line
+    await Timer((DISP_LINE-220)*SYS_TIME, unit='ns')  # wait the rest of the line
 
     # skip to line 339
-    await Timer(198*DISP_LINE*SYS_TIME + 419*SYS_TIME, units='ns')
+    await Timer(198*DISP_LINE*SYS_TIME + 419*SYS_TIME, unit='ns')
 
     # pixel line 339
     assert_coord(dut, 419, 339)
     assert_pixel(dut, 31, 31, 31)  # white
-    await Timer(SYS_TIME, units='ns')
+    await Timer(SYS_TIME, unit='ns')
     assert_coord(dut, 420, 339)
     assert_pixel(dut, 2, 6, 14)  # dark blue
-    await Timer((DISP_LINE-420)*SYS_TIME, units='ns')  # wait the rest of the line
+    await Timer((DISP_LINE-420)*SYS_TIME, unit='ns')  # wait the rest of the line
 
     # skip to bottom of display
-    await Timer(139*DISP_LINE*SYS_TIME + 639*SYS_TIME, units='ns')
+    await Timer(139*DISP_LINE*SYS_TIME + 639*SYS_TIME, unit='ns')
 
     # pixel line 479
     assert_coord(dut, 639, 479)
     assert_pixel(dut, 2, 6, 14)  # dark blue
 
     # wait one more line to complete waveform
-    await Timer(DISP_LINE*SYS_TIME, units='ns')
+    await Timer(DISP_LINE*SYS_TIME, unit='ns')

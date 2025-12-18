@@ -40,8 +40,8 @@ expt_data_disp = ["xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
 
 async def setup_clocks(dut):
     """Setup system and pixel clocks."""
-    cocotb.start_soon(Clock(dut.clk_sys, SYS_TIME, units="ns").start())
-    cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, units="ns").start())
+    cocotb.start_soon(Clock(dut.clk_sys, SYS_TIME, unit="ns").start())
+    cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, unit="ns").start())
 
 
 async def zero_memory(dut):
@@ -121,7 +121,7 @@ async def sys_port_mask(dut):
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 async def disp_port(dut):
     """Test vram disp port."""
-    cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, units="ns").start())
+    cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, unit="ns").start())
 
     # read data written via system port
     expt_disp_data = zip(expt_addr_disp, expt_data_disp, strict=True)

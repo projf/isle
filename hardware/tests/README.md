@@ -7,7 +7,7 @@ Isle runs Verilog tests using [cocotb](https://www.cocotb.org) and two simulator
 
 Before you run tests, follow the [installation instructions](#install-simulators) (below).
 
-I'm still learning cocotb, so I'm sure there'll be some mistakes and approaches that strike old hands as strange. Please open an [issue](https://github.com/projf/isle/issues) if you have corrections or suggestions for improvement.
+I'm still learning cocotb, so I'm sure there'll be some mistakes and approaches that strike experienced hands as strange. Please open an [issue](https://github.com/projf/isle/issues) if you have corrections or suggestions for improvement.
 
 ## Run Hardware Tests
 
@@ -69,7 +69,7 @@ See [boards/verilator](../boards/verilator/) for advice on using Verilator to ru
 
 ## Install cocotb
 
-I recommend installing cocotb inside a venv using the Isle Python [requirements.txt](../requirements.txt):
+Isle requires cocotb 2.0+. I recommend installing cocotb inside a venv using the hardware test [requirements.txt](../requirements.txt):
 
 ```shell
 cd isle/hardware/tests
@@ -79,6 +79,8 @@ source hw-tests-venv/bin/activate
 pip3 install -r requirements.txt
 ```
 
-If you're having issues running cocotb on macOS, try using brew Python instead of the system one.
+Troubleshooting:
 
-_I don't recommend using the version of cocotb from OSS CAD Suite as it's not stable._
+* The latest version of Python isn't necessarily supported (cocotb 2.0 doesn't support Python 14).
+* If you're having issues running cocotb on macOS, try using brew Python instead of the system one.
+* I don't recommend using the version of cocotb from _OSS CAD Suite_ as it's not the stable release.
