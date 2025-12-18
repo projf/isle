@@ -69,7 +69,7 @@ See [boards/verilator](../boards/verilator/) for advice on using Verilator to ru
 
 ## Install cocotb
 
-Isle requires cocotb 2.0+. I recommend installing cocotb inside a venv using the hardware test [requirements.txt](../requirements.txt):
+Isle requires cocotb 2.0+. I recommend installing cocotb inside a venv using the hardware test [requirements.txt](requirements.txt):
 
 ```shell
 cd isle/hardware/tests
