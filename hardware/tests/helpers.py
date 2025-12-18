@@ -9,8 +9,16 @@ import cocotb
 
 def assert_coord(dut, x, y):
     """Assert coordinate is correct"""
-    assert dut.disp_x.value == x and dut.disp_y.value == y, \
-        f"({dut.disp_x.value.signed_integer},{dut.disp_y.value.signed_integer}) is not ({x},{y})."
+    coord_matches = (
+        dut.disp_x.value == x and
+        dut.disp_y.value == y
+    )
+
+    assert coord_matches, (
+        f"{dut.disp_x.value.signed_integer},"
+        f"{dut.disp_y.value.signed_integer},"
+        f" is not ({x},{y})."
+    )
 
 
 def assert_pixel(dut, r, g, b, verbose=True):
@@ -27,8 +35,8 @@ def assert_pixel(dut, r, g, b, verbose=True):
     assert rgb_matches, (
         f"RGB({dut.disp_r.value.integer},"
         f"{dut.disp_g.value.integer},"
-        f"{dut.disp_b.value.integer}) "
-        f"is not RGB({r},{g},{b})."
+        f"{dut.disp_b.value.integer})"
+        f" is not RGB({r},{g},{b})."
     )
 
 

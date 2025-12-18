@@ -33,7 +33,9 @@ expt_mask_data_sys = [0x008000005, 0x008000005, 0x900000C0, 0x00000000, 0x008000
 
 # vram expected data for disp port - 2 cycle latency
 expt_addr_disp = [0x02, 0x1F,  0x00, 0x01, 0x01]
-expt_data_disp = ["xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", 0x008000005, 0x00000000, 0x900000C0]
+expt_data_disp = ["xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                  "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                  0x008000005, 0x00000000, 0x900000C0]
 
 
 async def setup_clocks(dut):
@@ -102,7 +104,8 @@ async def sys_port_mask(dut):
     await RisingEdge(dut.clk_sys)
 
     # read data back
-    for i, (addr, data_expected) in enumerate(zip(expt_mask_addr_sys, expt_mask_data_sys, strict=True)):
+    expt_sys_data = zip(expt_mask_addr_sys, expt_mask_data_sys, strict=True)
+    for i, (addr, data_expected) in enumerate(expt_sys_data):
         dut.addr_sys.value = addr
         await RisingEdge(dut.clk_sys)
 
@@ -121,7 +124,8 @@ async def disp_port(dut):
     cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, units="ns").start())
 
     # read data written via system port
-    for i, (addr, data_expected) in enumerate(zip(expt_addr_disp, expt_data_disp, strict=True)):
+    expt_disp_data = zip(expt_addr_disp, expt_data_disp, strict=True)
+    for i, (addr, data_expected) in enumerate(expt_disp_data):
         dut.addr_disp.value = addr
         await RisingEdge(dut.clk_pix)
 

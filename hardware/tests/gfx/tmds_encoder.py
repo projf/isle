@@ -49,7 +49,7 @@ async def tmds_random(dut):
             model_bias = tmds_model.bias(model_tmds)
             model_val = ''.join(map(str, reversed(model_bias)))
             if TEST_INFO:
-                dut._log.info("%4d: %02X - DUT: %s, Model: %s", \
+                cocotb.log.info("%4d: %02X - DUT: %s, Model: %s", \
                 i, pixel_dec_prev, dut.tmds.value.binstr, model_val)
             assert dut.tmds.value.binstr == model_val, \
                 f"DUT {dut.tmds.value.binstr} doesn't match model {model_val}!"
