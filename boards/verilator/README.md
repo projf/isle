@@ -43,13 +43,19 @@ Verilator introduces new lint waivers from time to time; unfortunately, this tri
 
 ### Linux
 
-For Debian and Ubuntu-based distros, you can use the following. Other distros will be similar.
-
-Install a C++ toolchain with build-essential, Verilator, and the dev version of SDL:
+For Debian, Ubuntu, and Pop!_OS:
 
 ```shell
 apt install build-essential verilator libsdl2-dev
 ```
+
+On Arch:
+
+```shell
+pacman -S base-devel verilator sdl2
+```
+
+Other Linux distros and BSD will be similar.
 
 ### macOS
 

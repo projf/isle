@@ -196,6 +196,8 @@ The assembler uses **#** to begin comments.
 
 The following examples demonstrate each of the opcodes and shapes.
 
+The following examples are also ready to run as [res/drawings/doc-examples.eas](../res/drawings/doc-examples.eas).
+
 ### Colours
 
 Set all the line and fill colours as you like. For these examples I'll use:

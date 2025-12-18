@@ -21,7 +21,7 @@ module earthrise #(
     input  wire start,                         // start execution
     input  wire signed [CORDW-1:0] canv_w,     // canvas width
     input  wire signed [CORDW-1:0] canv_h,     // canvas height
-    input  wire [COLRW-1:0] canv_bpp,          // canvas bits per pixel
+    input  wire [$clog2(WORD)-1:0] canv_bpp,   // canvas bits per pixel
     input  wire [WORD-1:0] cmd_list,           // command list data (32-bit)
     output wire [ER_ADDRW+1:0] pc,             // program counter (byte address)
     input  wire [VRAM_ADDRW-1:0] addr_base,    // address of first canvas pixel

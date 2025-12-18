@@ -4,11 +4,14 @@
 
 include ../verilator.mk
 
-# Verilog modules
-PATH_LIB = ../../../hardware
+PATH_LIB  = ../../../hardware
+PATH_PROJ = ../../../projects
+
+# Common Verilog
 VERILOG_LIBS += -I${PATH_LIB}/book/ch02
 VERILOG_LIBS += -I${PATH_LIB}/gfx
 VERILOG_LIBS += -I${PATH_LIB}/mem
+
 
 ch02: ch02.exe
 

@@ -26,6 +26,7 @@ module ch03 #(
     input  wire clk_pix,                    // pixel clock (used by display)
     input  wire rst_sys,                    // reset (system clock domain)
     input  wire rst_pix,                    // reset (pixel clock domain)
+    input  wire er_start,                   // start Earthrise drawing
     output reg  signed [CORDW-1:0] disp_x,  // horizontal display position
     output reg  signed [CORDW-1:0] disp_y,  // vertical display position
     output reg  disp_hsync,                 // horizontal display sync
@@ -56,7 +57,6 @@ module ch03 #(
     wire signed [CORDW-1:0] dx, dy;
     wire hsync, vsync, de;
     wire frame_start, line_start;
-    wire frame_start_sys;  // frame_start in system clock domain
 
 
     //
@@ -68,6 +68,14 @@ module ch03 #(
     wire [ER_ADDRW-1:0]  erlist_addr_er;
     wire [WORD-1:0] erlist_dout_er;
 
+    // signals for future CPU use
+    wire [BYTE_CNT-1:0] erlist_we_sys = 0;
+    wire [ER_ADDRW-1:0] erlist_addr_sys = 0;
+    wire [WORD-1:0] erlist_din_sys = 0;
+    /* verilator lint_off UNUSEDSIGNAL */
+    wire [WORD-1:0] erlist_dout_sys;
+    /* verilator lint_on UNUSEDSIGNAL */
+
     erlist #(
         .BYTE(BYTE),
         .BYTE_CNT(BYTE_CNT),
@@ -76,12 +84,10 @@ module ch03 #(
         .FILE_INIT(FILE_ER_LIST)
     ) erlist_inst (
         .clk(clk_sys),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .we_sys(),  // for future CPU use
-        .addr_sys(),
-        .din_sys(),
-        .dout_sys(),
-        /* verilator lint_on PINCONNECTEMPTY */
+        .we_sys(erlist_we_sys),
+        .addr_sys(erlist_addr_sys),
+        .din_sys(erlist_din_sys),
+        .dout_sys(erlist_dout_sys),
         .addr_er(erlist_addr_er),
         .dout_er(erlist_dout_er)
     );
@@ -104,13 +110,9 @@ module ch03 #(
     assign draw_addr_shift = 5 - $clog2(CANV_BPP);
     /* verilator lint_on WIDTHTRUNC */
 
-    // execute Earthrise command list once
-    wire er_done;
-    reg er_enable;
-    always @(posedge clk_sys) begin
-        if (rst_sys) er_enable <= 1;
-        else if (er_done) er_enable <= 0;
-    end
+    /* verilator lint_off UNUSEDSIGNAL */
+    wire er_busy, er_done, er_instr_invalid;  // handy for simulation
+    /* verilator lint_on UNUSEDSIGNAL */
 
     earthrise #(
         .CORDW(CORDW),
@@ -122,22 +124,20 @@ module ch03 #(
     ) earthrise_inst (
         .clk(clk_sys),
         .rst(rst_sys),
-        .start(frame_start_sys && er_enable),  // start every frame in this simple example
+        .start(er_start),
         .canv_w(CANV_WIDTH),
         .canv_h(CANV_HEIGHT),
         .canv_bpp(CANV_BPP),
         .cmd_list(erlist_dout_er),
         .pc(er_pc),
-        .addr_base(0),  // fixed until we have CPU
+        .addr_base({VRAM_ADDRW{1'b0}}),  // fixed base address for now
         .addr_shift(draw_addr_shift),
         .vram_addr(draw_addr),
         .vram_din(vram_din_sys),
         .vram_wmask(vram_wmask_sys),
         .done(er_done),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .busy(),
-        .instr_invalid()
-        /* verilator lint_on PINCONNECTEMPTY */
+        .busy(er_busy),
+        .instr_invalid(er_instr_invalid)
     );
 
 
@@ -150,6 +150,11 @@ module ch03 #(
     wire [WORD-1:0] vram_din_sys;
     wire [VRAM_ADDRW-1:0] vram_addr_disp;  // pixel clock domain
     wire [WORD-1:0] vram_dout_disp;  // pixel clock domain
+
+    // signals for future Earthrise/CPU use
+    /* verilator lint_off UNUSEDSIGNAL */
+    wire [WORD-1:0] vram_dout_sys;
+    /* verilator lint_on UNUSEDSIGNAL */
 
     // use Earthrise address for vram (will multiplex with CPU later)
     assign vram_addr_sys = draw_addr;  // doesn't validate address, but vram depth is power of two
@@ -164,9 +169,7 @@ module ch03 #(
         .wmask_sys(vram_wmask_sys),
         .addr_sys(vram_addr_sys),
         .din_sys(vram_din_sys),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .dout_sys(),  // Earthrise doesn't read vram yet
-        /* verilator lint_on PINCONNECTEMPTY */
+        .dout_sys(vram_dout_sys),
         .addr_disp(vram_addr_disp),
         .dout_disp(vram_dout_disp)
     );
@@ -200,7 +203,7 @@ module ch03 #(
         .line_start(line_start),
         .dx(dx),
         .dy(dy),
-        .addr_base(0),  // fixed base address for now
+        .addr_base({VRAM_ADDRW{1'b0}}),  // fixed base address for now
         .addr_shift(disp_addr_shift),
         .win_start({WIN_STARTY, WIN_STARTX}),
         .win_end({WIN_HEIGHT + WIN_STARTY, WIN_WIDTH + WIN_STARTX}),
@@ -218,21 +221,25 @@ module ch03 #(
     reg  [CIDX_ADDRW-1:0] clut_addr_disp;
     wire [COLRW-1:0] clut_dout_disp;
 
+    // signals for future CPU use
+    wire clut_we_sys = 0;
+    wire [CIDX_ADDRW-1:0] clut_addr_sys = 0;
+    wire [COLRW-1:0] clut_din_sys = 0;
+    /* verilator lint_off UNUSEDSIGNAL */
+    wire [COLRW-1:0] clut_dout_sys;
+    /* verilator lint_on UNUSEDSIGNAL */
+
     clut #(
         .ADDRW(CIDX_ADDRW),
         .DATAW(COLRW),
         .FILE_PAL(FILE_PAL)
     ) clut_inst (
-        /* verilator lint_off PINCONNECTEMPTY */
-        .clk_sys(),
-        /* verilator lint_on PINCONNECTEMPTY */
+        .clk_sys(clk_sys),
         .clk_pix(clk_pix),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .we_sys(),  // for future CPU use
-        .addr_sys(),
-        .din_sys(),
-        .dout_sys(),
-        /* verilator lint_on PINCONNECTEMPTY */
+        .we_sys(clut_we_sys),
+        .addr_sys(clut_addr_sys),
+        .din_sys(clut_din_sys),
+        .dout_sys(clut_dout_sys),
         .addr_disp(clut_addr_disp),
         .dout_disp(clut_dout_disp)
     );
@@ -259,14 +266,6 @@ module ch03 #(
         .de(de),
         .frame_start(frame_start),
         .line_start(line_start)
-    );
-
-    // frame_start in system clock domain
-    xd xd_frame_start (
-        .clk_src(clk_pix),
-        .clk_dst(clk_sys),
-        .flag_src(frame_start),
-        .flag_dst(frame_start_sys)
     );
 
 

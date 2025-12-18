@@ -56,21 +56,25 @@ module ch02 #(
     wire [VRAM_ADDRW-1:0] vram_addr_disp;
     wire [WORD-1:0] vram_dout_disp;
 
+    // signals for future Earthrise/CPU use
+    wire [WORD-1:0] vram_wmask_sys = 0;
+    wire [VRAM_ADDRW-1:0] vram_addr_sys = 0;
+    wire [WORD-1:0] vram_din_sys = 0;
+    /* verilator lint_off UNUSEDSIGNAL */
+    wire [WORD-1:0] vram_dout_sys;
+    /* verilator lint_on UNUSEDSIGNAL */
+
     vram #(
         .WORD(WORD),
         .ADDRW(VRAM_ADDRW),
         .FILE_BMAP(FILE_BMAP)
         ) vram_inst (
-        /* verilator lint_off PINCONNECTEMPTY */
-        .clk_sys(),
-        /* verilator lint_on PINCONNECTEMPTY */
+        .clk_sys(clk),
         .clk_pix(clk),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .wmask_sys(),
-        .addr_sys(),
-        .din_sys(),
-        .dout_sys(),
-        /* verilator lint_on PINCONNECTEMPTY */
+        .wmask_sys(vram_wmask_sys),
+        .addr_sys(vram_addr_sys),
+        .din_sys(vram_din_sys),
+        .dout_sys(vram_dout_sys),
         .addr_disp(vram_addr_disp),
         .dout_disp(vram_dout_disp)
     );
@@ -103,7 +107,7 @@ module ch02 #(
         .line_start(line_start),
         .dx(dx),
         .dy(dy),
-        .addr_base(0),  // fixed base address for now
+        .addr_base({VRAM_ADDRW{1'b0}}),  // fixed base address for now
         .addr_shift(disp_addr_shift),
         .win_start({WIN_STARTY, WIN_STARTX}),
         .win_end({WIN_HEIGHT + WIN_STARTY, WIN_WIDTH + WIN_STARTX}),
@@ -121,21 +125,25 @@ module ch02 #(
     reg  [CIDX_ADDRW-1:0] clut_addr_disp;
     wire [COLRW-1:0] clut_dout_disp;
 
+    // signals for future CPU use
+    wire clut_we_sys = 0;
+    wire [CIDX_ADDRW-1:0] clut_addr_sys = 0;
+    wire [COLRW-1:0] clut_din_sys = 0;
+    /* verilator lint_off UNUSEDSIGNAL */
+    wire [COLRW-1:0] clut_dout_sys;
+    /* verilator lint_on UNUSEDSIGNAL */
+
     clut #(
         .ADDRW(CIDX_ADDRW),
         .DATAW(COLRW),
         .FILE_PAL(FILE_PAL)
     ) clut_inst (
-        /* verilator lint_off PINCONNECTEMPTY */
-        .clk_sys(),
-        /* verilator lint_on PINCONNECTEMPTY */
+        .clk_sys(clk),
         .clk_pix(clk),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .we_sys(),
-        .addr_sys(),
-        .din_sys(),
-        .dout_sys(),
-        /* verilator lint_on PINCONNECTEMPTY */
+        .we_sys(clut_we_sys),
+        .addr_sys(clut_addr_sys),
+        .din_sys(clut_din_sys),
+        .dout_sys(clut_dout_sys),
         .addr_disp(clut_addr_disp),
         .dout_disp(clut_dout_disp)
     );

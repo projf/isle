@@ -1,3 +1,0 @@
-cocotb~=1.9
-pylint~=3.0
-pytest~=8.0

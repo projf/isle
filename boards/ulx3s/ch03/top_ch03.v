@@ -22,7 +22,7 @@ module top_ch03 #(
     localparam FILE_BMAP    = "";
     localparam FILE_PAL     = {RES, "/palettes/go-16.mem"};
     localparam FILE_ER_LIST = {RES, "/drawings/all-shapes.mem"};
-    localparam CANV_BPP     = 4;         // bits per pixel (4=16 colour)
+    localparam CANV_BPP     = 5'd4;      // bits per pixel (1,2,4,8,[16])
     localparam CANV_WIDTH   = 16'd336;   // width (pixels)
     localparam CANV_HEIGHT  = 16'd192;   // height (lines)
     localparam CANV_SCALE   = 16'd4;     // scaling factor
@@ -83,6 +83,20 @@ module top_ch03 #(
         /* verilator lint_on WIDTHEXPAND */
     end
 
+    // Earthrise start - sent externally for testing without CPU
+    reg er_start, er_started;
+    always @(posedge clk_sys) begin
+        if (rst_sys) begin
+            er_start <= 0;
+            er_started <= 0;
+        end else begin
+            if (er_started == 0) begin
+                er_start <= 1;
+                er_started <= 1;
+            end else er_start <= 0;
+        end
+    end
+
     ch03 #(
         .BPC(BPC),
         .CORDW(CORDW),
@@ -104,6 +118,7 @@ module top_ch03 #(
         .clk_pix(clk_pix),
         .rst_sys(rst_sys),
         .rst_pix(rst_pix),
+        .er_start(er_start),
         /* verilator lint_off PINCONNECTEMPTY */
         .disp_x(),
         .disp_y(),

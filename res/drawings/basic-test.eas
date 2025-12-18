@@ -1,0 +1,57 @@
+# Isle.Computer - Earthrise Basic Shapes Test
+# Copyright Will Green and Isle Contributors
+# SPDX-License-Identifier: MIT
+
+# these shapes are small for end-to-end pixel test
+
+# line and fill colours
+lca  1
+lcb  2
+fca  3
+fcb  3
+
+# pixel
+x0  2
+y0  1
+draw pix ca
+
+# horizontal line
+x0  2
+y0  5
+x1  9
+y1  5
+draw line cb
+
+# diagonal line
+x0 2
+y0 10
+x1 7
+y1 15
+draw line ca
+
+# rect
+x0 14
+y0 2
+x1 18
+y1 6
+draw rectf ca
+draw rect cb
+
+# triangle
+x0 22
+y0 2
+x1 22
+y1 10
+x2 30
+y2 10
+draw trif ca
+draw tri ca
+
+# circle
+x0 16
+y0 14
+r0 3
+draw circf ca
+draw circ cb
+
+stop

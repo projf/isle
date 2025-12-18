@@ -28,8 +28,6 @@ For build instructions see [dev boards](boards). Isle supports Lattice ECP5, Xil
 * [software](software) - programs to run on Isle (forthcoming)
 * [tools](tools) - tools to build Isle software and resources
 
-The [requirements.txt](requirements.txt) is for [Python tools](tools) and [cocotb hardware tests](docs/verilog-tests.md).
-
 ## Thank You!
 
 Special thanks to my **sponsors** who've stuck with me as I develop Isle: [Alexandre Mutel](https://github.com/xoofx), [Daniel Cliche](https://github.com/danodus), [David C. Norris](https://github.com/dcnorris), [dvir](https://github.com/dvirdc), [Justin Finkelstein](https://github.com/iamfinky), [kromych](https://github.com/kromych), [Martin Young](https://github.com/InternalCakeEngine), [Matt Venn](https://github.com/mattvenn), [Paul Sajna](https://github.com/sajattack), [Renaldas Zioma](https://github.com/rejunity), and those who wish to remain anonymous.

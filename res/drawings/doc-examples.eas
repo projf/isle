@@ -2,6 +2,9 @@
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
+# Examples from docs/earthrise-programming.md
+
+
 # set colours
 lca 0xA
 lcb 0x8
