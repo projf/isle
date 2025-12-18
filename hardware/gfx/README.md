@@ -13,6 +13,6 @@
 | [textmode](textmode.v)           | [doc](../docs/textmode.md)      | Text Mode       | Unicode text mode display                |
 | [tmds_encoder](tmds_encoder.v)   | [doc](../docs/tmds_encoder.md)  | Display         | TMDS Encoder (DVI)                       |
 
-See [Verilog Tests](../../docs/verilog-tests.md) for advice on setting up the test environment and running tests.
+See [Verilog Tests](../tests/README.md) for advice on setting up the test environment and running tests.
 
 NB. The TMDS encoder test uses Verilator.
