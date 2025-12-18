@@ -1,0 +1,168 @@
+// Isle.Computer - Unscii ROM (for 128 Glyph ROM)
+// Public Domain
+
+// 128 8x16 pixel glyphs from Unscii by Viznut
+// For more information visit: http://viznut.fi/unscii/
+
+// * Block Elements U+2580..U+259F (32)
+// * Basic Latin U+0020..U+007F (95)
+// * Replacement character U+FFFD
+//   - created by Will Green from Unscii question mark
+
+
+//
+// Block Elements (U+2580..U+259F)
+//
+
+FF FF FF FF FF FF FF FF 00 00 00 00 00 00 00 00  // U+2580 - Upper half block
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 FF FF  // U+2581 - Lower one eighth block
+00 00 00 00 00 00 00 00 00 00 00 00 FF FF FF FF  // U+2582 - Lower one quarter block
+00 00 00 00 00 00 00 00 00 00 FF FF FF FF FF FF  // U+2583 - Lower three eighths block
+00 00 00 00 00 00 00 00 FF FF FF FF FF FF FF FF  // U+2584 - Lower half block
+00 00 00 00 00 00 FF FF FF FF FF FF FF FF FF FF  // U+2585 - Lower five eighths block
+00 00 00 00 FF FF FF FF FF FF FF FF FF FF FF FF  // U+2586 - Lower three quarters block
+00 00 FF FF FF FF FF FF FF FF FF FF FF FF FF FF  // U+2587 - Lower seven eighths block
+FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF  // U+2588 - Full block
+FE FE FE FE FE FE FE FE FE FE FE FE FE FE FE FE  // U+2589 - Left seven eighths block
+FC FC FC FC FC FC FC FC FC FC FC FC FC FC FC FC  // U+258A - Left three quarters block
+F8 F8 F8 F8 F8 F8 F8 F8 F8 F8 F8 F8 F8 F8 F8 F8  // U+258B - Left five eighths block
+F0 F0 F0 F0 F0 F0 F0 F0 F0 F0 F0 F0 F0 F0 F0 F0  // U+258C - Left half block
+E0 E0 E0 E0 E0 E0 E0 E0 E0 E0 E0 E0 E0 E0 E0 E0  // U+258D - Left three eighths block
+C0 C0 C0 C0 C0 C0 C0 C0 C0 C0 C0 C0 C0 C0 C0 C0  // U+258E - Left one quarter block
+80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80  // U+258F - Left one eighth block
+0F 0F 0F 0F 0F 0F 0F 0F 0F 0F 0F 0F 0F 0F 0F 0F  // U+2590 - Right half block
+22 88 22 88 22 88 22 88 22 88 22 88 22 88 22 88  // U+2591 - Light shade
+AA 55 AA 55 AA 55 AA 55 AA 55 AA 55 AA 55 AA 55  // U+2592 - Medium shade
+DD 77 DD 77 DD 77 DD 77 DD 77 DD 77 DD 77 DD 77  // U+2593 - Dark shade
+FF FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00  // U+2594 - Upper one eighth block
+01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01  // U+2595 - Right one eighth block
+00 00 00 00 00 00 00 00 F0 F0 F0 F0 F0 F0 F0 F0  // U+2596 - Quadrant lower left
+00 00 00 00 00 00 00 00 0F 0F 0F 0F 0F 0F 0F 0F  // U+2597 - Quadrant lower right
+F0 F0 F0 F0 F0 F0 F0 F0 00 00 00 00 00 00 00 00  // U+2598 - Quadrant upper left
+F0 F0 F0 F0 F0 F0 F0 F0 FF FF FF FF FF FF FF FF  // U+2599 - Quadrant upper left and lower left and lower right
+F0 F0 F0 F0 F0 F0 F0 F0 0F 0F 0F 0F 0F 0F 0F 0F  // U+259A - Quadrant upper left and lower right
+FF FF FF FF FF FF FF FF F0 F0 F0 F0 F0 F0 F0 F0  // U+259B - Quadrant upper left and upper right and lower left
+FF FF FF FF FF FF FF FF 0F 0F 0F 0F 0F 0F 0F 0F  // U+259C - Quadrant upper left and upper right and lower right
+0F 0F 0F 0F 0F 0F 0F 0F 00 00 00 00 00 00 00 00  // U+259D - Quadrant upper right
+0F 0F 0F 0F 0F 0F 0F 0F F0 F0 F0 F0 F0 F0 F0 F0  // U+259E - Quadrant upper right and lower left
+0F 0F 0F 0F 0F 0F 0F 0F FF FF FF FF FF FF FF FF  // U+259F - Quadrant upper right and lower left and lower right
+
+
+//
+// Basic Latin (U+0020..U+007E)
+//
+
+// ASCII punctuation and symbols
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  // U+0020 - Space
+00 18 18 18 18 18 18 18 18 00 00 18 18 00 00 00  // U+0021 - Exclamation mark
+00 66 66 66 00 00 00 00 00 00 00 00 00 00 00 00  // U+0022 - Quotation mark
+00 00 6C 6C 6C FE 6C 6C 6C FE 6C 6C 6C 00 00 00  // U+0023 - Number sign
+00 18 18 3C 66 60 30 18 0C 06 66 3C 18 18 00 00  // U+0024 - Dollar sign
+00 00 06 C6 CC CC 18 18 30 30 66 66 C6 C0 00 00  // U+0025 - Percent sign
+00 00 38 6C 6C 38 30 7A DE CC CC CC 76 00 00 00  // U+0026 - Ampersand
+00 18 18 18 30 00 00 00 00 00 00 00 00 00 00 00  // U+0027 - Apostrophe
+00 0C 18 18 30 30 30 30 30 30 30 18 18 0C 00 00  // U+0028 - Left parenthesis
+00 30 18 18 0C 0C 0C 0C 0C 0C 0C 18 18 30 00 00  // U+0029 - Right parenthesis
+00 00 00 00 66 66 3C FF 3C 66 66 00 00 00 00 00  // U+002A - Asterisk
+00 00 00 00 18 18 18 7E 18 18 18 00 00 00 00 00  // U+002B - Plus sign
+00 00 00 00 00 00 00 00 00 00 38 18 18 30 60 00  // U+002C - Comma
+00 00 00 00 00 00 00 7E 00 00 00 00 00 00 00 00  // U+002D - Hyphen-minus
+00 00 00 00 00 00 00 00 00 00 18 18 18 00 00 00  // U+002E - Full stop or period
+03 03 06 06 0C 0C 18 18 30 30 60 60 C0 C0 00 00  // U+002F - Solidus or Slash
+
+// ASCII digits
+00 00 38 6C C6 C6 CE D6 E6 C6 C6 6C 38 00 00 00  // U+0030 - Digit Zero
+00 00 18 38 78 18 18 18 18 18 18 18 7E 00 00 00  // U+0031 - Digit One
+00 00 3C 66 66 06 06 0C 18 30 60 60 7E 00 00 00  // U+0032 - Digit Two
+00 00 3C 66 66 06 06 1C 06 06 66 66 3C 00 00 00  // U+0033 - Digit Three
+00 00 0C 1C 3C 6C CC CC FE 0C 0C 0C 0C 00 00 00  // U+0034 - Digit Four
+00 00 7E 60 60 60 7C 06 06 06 66 66 3C 00 00 00  // U+0035 - Digit Five
+00 00 1C 30 60 60 7C 66 66 66 66 66 3C 00 00 00  // U+0036 - Digit Six
+00 00 7E 06 06 06 0C 0C 18 18 18 18 18 00 00 00  // U+0037 - Digit Seven
+00 00 3C 66 66 66 76 3C 6E 66 66 66 3C 00 00 00  // U+0038 - Digit Eight
+00 00 3C 66 66 66 66 3E 06 06 06 0C 38 00 00 00  // U+0039 - Digit Nine
+
+// ASCII punctuation and symbols
+00 00 00 18 18 18 00 00 00 00 18 18 18 00 00 00  // U+003A - Colon
+00 00 00 18 18 18 00 00 00 00 38 18 18 30 60 00  // U+003B - Semicolon
+00 00 00 06 0C 18 30 60 30 18 0C 06 00 00 00 00  // U+003C - Less-than sign
+00 00 00 00 00 7E 00 00 00 7E 00 00 00 00 00 00  // U+003D - Equal sign
+00 00 00 60 30 18 0C 06 0C 18 30 60 00 00 00 00  // U+003E - Greater-than sign
+00 3C 66 66 06 0C 18 18 18 00 00 18 18 00 00 00  // U+003F - Question mark
+00 00 7C C6 C6 C6 DE DE DE DC C0 C0 7C 00 00 00  // U+0040 - At sign or Commercial at
+
+// Uppercase Latin alphabet
+00 00 18 3C 66 66 66 7E 66 66 66 66 66 00 00 00  // U+0041 - Latin Capital letter A
+00 00 7C 66 66 66 6C 78 6C 66 66 66 7C 00 00 00  // U+0042 - Latin Capital letter B
+00 00 3C 66 66 60 60 60 60 60 66 66 3C 00 00 00  // U+0043 - Latin Capital letter C
+00 00 78 6C 66 66 66 66 66 66 66 6C 78 00 00 00  // U+0044 - Latin Capital letter D
+00 00 7E 60 60 60 60 7C 60 60 60 60 7E 00 00 00  // U+0045 - Latin Capital letter E
+00 00 7E 60 60 60 7C 60 60 60 60 60 60 00 00 00  // U+0046 - Latin Capital letter F
+00 00 3C 66 66 60 60 6E 66 66 66 66 3E 00 00 00  // U+0047 - Latin Capital letter G
+00 00 66 66 66 66 66 7E 66 66 66 66 66 00 00 00  // U+0048 - Latin Capital letter H
+00 00 7E 18 18 18 18 18 18 18 18 18 7E 00 00 00  // U+0049 - Latin Capital letter I
+00 00 06 06 06 06 06 06 06 06 66 66 3C 00 00 00  // U+004A - Latin Capital letter J
+00 00 C6 C6 CC CC D8 F0 D8 CC CC C6 C6 00 00 00  // U+004B - Latin Capital letter K
+00 00 60 60 60 60 60 60 60 60 60 60 7E 00 00 00  // U+004C - Latin Capital letter L
+00 00 C6 EE EE FE D6 D6 C6 C6 C6 C6 C6 00 00 00  // U+004D - Latin Capital letter M
+00 00 C6 C6 E6 E6 F6 FE DE CE CE C6 C6 00 00 00  // U+004E - Latin Capital letter N
+00 00 3C 66 66 66 66 66 66 66 66 66 3C 00 00 00  // U+004F - Latin Capital letter O
+00 00 7C 66 66 66 66 7C 60 60 60 60 60 00 00 00  // U+0050 - Latin Capital letter P
+00 00 3C 66 66 66 66 66 66 66 66 66 3C 0C 06 00  // U+0051 - Latin Capital letter Q
+00 00 7C 66 66 66 66 7C 6C 66 66 66 66 00 00 00  // U+0052 - Latin Capital letter R
+00 00 3C 66 66 60 30 18 0C 06 66 66 3C 00 00 00  // U+0053 - Latin Capital letter S
+00 00 7E 18 18 18 18 18 18 18 18 18 18 00 00 00  // U+0054 - Latin Capital letter T
+00 00 66 66 66 66 66 66 66 66 66 66 3C 00 00 00  // U+0055 - Latin Capital letter U
+00 00 66 66 66 66 66 66 66 3C 3C 18 18 00 00 00  // U+0056 - Latin Capital letter V
+00 00 C6 C6 C6 C6 C6 D6 D6 FE EE EE C6 00 00 00  // U+0057 - Latin Capital letter W
+00 00 C3 C3 66 3C 18 18 18 3C 66 C3 C3 00 00 00  // U+0058 - Latin Capital letter X
+00 00 C3 C3 66 66 3C 18 18 18 18 18 18 00 00 00  // U+0059 - Latin Capital letter Y
+00 00 7E 06 06 0C 0C 18 30 30 60 60 7E 00 00 00  // U+005A - Latin Capital letter Z
+
+// ASCII punctuation and symbols
+00 3C 30 30 30 30 30 30 30 30 30 30 30 3C 00 00  // U+005B - Left Square Bracket
+C0 C0 60 60 30 30 18 18 0C 0C 06 06 03 03 00 00  // U+005C - Backslash
+00 3C 0C 0C 0C 0C 0C 0C 0C 0C 0C 0C 0C 3C 00 00  // U+005D - Right Square Bracket
+00 10 38 6C 6C C6 C6 00 00 00 00 00 00 00 00 00  // U+005E - Circumflex accent
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 FF  // U+005F - Low line
+00 18 18 0C 06 00 00 00 00 00 00 00 00 00 00 00  // U+0060 - Grave accent
+
+// Lowercase Latin alphabet
+00 00 00 00 00 00 3C 06 3E 66 66 66 3E 00 00 00  // U+0061 - Latin Small letter A
+00 00 60 60 60 60 7C 66 66 66 66 66 7C 00 00 00  // U+0062 - Latin Small letter B
+00 00 00 00 00 00 3C 66 60 60 60 66 3C 00 00 00  // U+0063 - Latin Small letter C
+00 00 06 06 06 06 3E 66 66 66 66 66 3E 00 00 00  // U+0064 - Latin Small letter D
+00 00 00 00 00 00 3C 66 66 7E 60 60 3C 00 00 00  // U+0065 - Latin Small letter E
+00 00 1E 30 30 30 7E 30 30 30 30 30 30 00 00 00  // U+0066 - Latin Small letter F
+00 00 00 00 00 00 3E 66 66 66 66 66 3E 06 06 7C  // U+0067 - Latin Small letter G
+00 00 60 60 60 60 7C 66 66 66 66 66 66 00 00 00  // U+0068 - Latin Small letter H
+00 00 18 18 00 00 78 18 18 18 18 18 1E 00 00 00  // U+0069 - Latin Small letter I
+00 00 0C 0C 00 00 0C 0C 0C 0C 0C 0C 0C 0C 0C 78  // U+006A - Latin Small letter J
+00 00 60 60 60 60 66 66 6C 78 6C 66 66 00 00 00  // U+006B - Latin Small letter K
+00 00 78 18 18 18 18 18 18 18 18 18 1E 00 00 00  // U+006C - Latin Small letter L
+00 00 00 00 00 00 CC FE D6 D6 D6 D6 C6 00 00 00  // U+006D - Latin Small letter M
+00 00 00 00 00 00 7C 66 66 66 66 66 66 00 00 00  // U+006E - Latin Small letter N
+00 00 00 00 00 00 3C 66 66 66 66 66 3C 00 00 00  // U+006F - Latin Small letter O
+00 00 00 00 00 00 7C 66 66 66 66 66 7C 60 60 60  // U+0070 - Latin Small letter P
+00 00 00 00 00 00 3E 66 66 66 66 66 3E 06 06 06  // U+0071 - Latin Small letter Q
+00 00 00 00 00 00 7C 66 66 60 60 60 60 00 00 00  // U+0072 - Latin Small letter R
+00 00 00 00 00 00 3E 60 60 3C 06 06 7C 00 00 00  // U+0073 - Latin Small letter S
+00 00 00 30 30 30 7E 30 30 30 30 30 1E 00 00 00  // U+0074 - Latin Small letter T
+00 00 00 00 00 00 66 66 66 66 66 66 3E 00 00 00  // U+0075 - Latin Small letter U
+00 00 00 00 00 00 66 66 66 66 66 3C 18 00 00 00  // U+0076 - Latin Small letter V
+00 00 00 00 00 00 C6 C6 D6 D6 D6 7C 6C 00 00 00  // U+0077 - Latin Small letter W
+00 00 00 00 00 00 C6 C6 6C 38 6C C6 C6 00 00 00  // U+0078 - Latin Small letter X
+00 00 00 00 00 00 66 66 66 66 66 66 3E 06 06 3C  // U+0079 - Latin Small letter Y
+00 00 00 00 00 00 7E 06 0C 18 30 60 7E 00 00 00  // U+007A - Latin Small letter Z
+
+// ASCII punctuation and symbols
+00 0E 18 18 18 18 18 F0 18 18 18 18 18 0E 00 00  // U+007B - Left Curly Bracket
+18 18 18 18 18 18 18 18 18 18 18 18 18 18 00 00  // U+007C - Vertical bar
+00 E0 30 30 30 30 30 1E 30 30 30 30 30 E0 00 00  // U+007D - Right Curly Bracket
+00 72 D6 9C 00 00 00 00 00 00 00 00 00 00 00 00  // U+007E - Tilde
+
+//
+// Replacement character (U+FFFD)
+//
+
+00 7E C3 99 99 F9 F3 E7 E7 E7 FF FF E7 E7 7E 00  // U+FFFD - Replacement character

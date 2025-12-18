@@ -20,7 +20,7 @@ VERILOG_SOURCES += $(HARDWARE)/mem/tram.v
 
 # pass Verilog module parameters to simulator
 COMPILE_ARGS += -P${DUT}.DISPLAY_MODE=3
-COMPILE_ARGS += -P${DUT}.FILE_FONT="\"../../../res/fonts/system-font-rom.mem"\"
+COMPILE_ARGS += -P${DUT}.FILE_FONT="\"../../../res/fonts/unifont-rom.mem"\"
 COMPILE_ARGS += -P${DUT}.FILE_PAL="\"../../../res/palettes/go-16.mem"\"
 COMPILE_ARGS += -P${DUT}.FILE_TXT="\"../../../res/textmaps/edge-84x24.mem"\"
 COMPILE_ARGS += -P${DUT}.FONT_COUNT=128
