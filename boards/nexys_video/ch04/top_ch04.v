@@ -33,7 +33,7 @@ module top_ch04 #(
     localparam WIN_END    = 32'h0300054B;  // text window end coords
 
     // font params
-    localparam FILE_FONT    = {RES, "/fonts/system-font-rom.mem"};
+    localparam FILE_FONT    = {RES, "/fonts/unifont-rom.mem"};
     localparam FONT_COUNT   = 128;  // glyphs in FILE_FONT
     localparam GLYPH_HEIGHT =  16;  // glyph height (pixels)
     localparam GLYPH_WIDTH  =   8;  // half-width glyph width (pixels)

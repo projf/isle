@@ -21,7 +21,12 @@ The _All Shapes_ and _Basic Test_ drawings are also available pre-compiled in $r
 
 ## Fonts
 
-* [System Font ROM](fonts/system-font-rom.mem) - 128 8x16 pixel glyphs for internal ROM (GNU Unifont)
+Bitmap fonts.
+
+* [Unifont ROM](fonts/unifont-rom.mem) - [GNU Unifont](https://www.unifoundry.com/unifont/) 8x16
+* [Unscii ROM](fonts/unscii-rom.mem) - [Unscii](http://viznut.fi/unscii/) 8x16
+
+Fonts resources with "ROM" in their name are 128 character 8x16 pixel fonts for internal [text mode](../hardware/docs/textmode.md) ROM.
 
 _Fonts have their own licences; see font file header for details._
 

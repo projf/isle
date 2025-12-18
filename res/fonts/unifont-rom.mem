@@ -1,7 +1,9 @@
-// Isle.Computer - System Font ROM
+// Isle.Computer - GNU Unifont (for 128 Glyph ROM)
 // SPDX-License-Identifier: OFL-1.1 OR GPL-2.0-or-later
 
-// Contains 128 8x16 pixel glyphs from Unifont 15.0.06
+// 128 8x16 pixel glyphs from Unifont 15.0.06
+// For more information visit http://unifoundry.com/unifont/index.html
+
 // * Block Elements U+2580..U+259F (32)
 // * Basic Latin U+0020..U+007F (95)
 // * Replacement character U+FFFD (1)
@@ -12,7 +14,6 @@
 //
 // Unifont is dual-licensed under the SIL Open Font License (OFL) version 1.1
 //   and the GNU GPL 2+ with the GNU font embedding exception.
-// For more information visit http://unifoundry.com/unifont/index.html
 
 
 //
@@ -171,4 +172,4 @@ FF FF FF FF FF FF FF FF 0F 0F 0F 0F 0F 0F 0F 0F  // U+259C - Quadrant upper left
 // Replacement character (U+FFFD)
 //
 
-00 00 00 00 00 00 7F 41 41 41 41 41 7F 00 00 00  // U+FFFD - Replacement character
+00 00 00 7E 66 5A 5A 7A 76 76 7E 76 76 7E 00 00  // U+FFFD - Replacement character
