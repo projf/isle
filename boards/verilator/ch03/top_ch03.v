@@ -51,7 +51,7 @@ module top_ch03 #(
 
     // Earthrise start - sent externally for testing without CPU
     reg er_start, er_started;
-    always @(clk) begin
+    always @(posedge clk) begin
         if (rst) begin
             er_start <= 0;
             er_started <= 0;
