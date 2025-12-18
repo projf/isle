@@ -68,6 +68,14 @@ module ch03 #(
     wire [ER_ADDRW-1:0]  erlist_addr_er;
     wire [WORD-1:0] erlist_dout_er;
 
+    // signals for future CPU use
+    wire [BYTE_CNT-1:0] erlist_we_sys = 0;
+    wire [ER_ADDRW-1:0] erlist_addr_sys = 0;
+    wire [WORD-1:0] erlist_din_sys = 0;
+    /* verilator lint_off UNUSEDSIGNAL */
+    wire [WORD-1:0] erlist_dout_sys;
+    /* verilator lint_on UNUSEDSIGNAL */
+
     erlist #(
         .BYTE(BYTE),
         .BYTE_CNT(BYTE_CNT),
@@ -76,12 +84,10 @@ module ch03 #(
         .FILE_INIT(FILE_ER_LIST)
     ) erlist_inst (
         .clk(clk_sys),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .we_sys(),  // for future CPU use
-        .addr_sys(),
-        .din_sys(),
-        .dout_sys(),
-        /* verilator lint_on PINCONNECTEMPTY */
+        .we_sys(erlist_we_sys),
+        .addr_sys(erlist_addr_sys),
+        .din_sys(erlist_din_sys),
+        .dout_sys(erlist_dout_sys),
         .addr_er(erlist_addr_er),
         .dout_er(erlist_dout_er)
     );
@@ -124,7 +130,7 @@ module ch03 #(
         .canv_bpp(CANV_BPP),
         .cmd_list(erlist_dout_er),
         .pc(er_pc),
-        .addr_base(0),  // fixed until we have CPU
+        .addr_base({VRAM_ADDRW{1'b0}}),  // fixed base address for now
         .addr_shift(draw_addr_shift),
         .vram_addr(draw_addr),
         .vram_din(vram_din_sys),
@@ -145,6 +151,11 @@ module ch03 #(
     wire [VRAM_ADDRW-1:0] vram_addr_disp;  // pixel clock domain
     wire [WORD-1:0] vram_dout_disp;  // pixel clock domain
 
+    // signals for future Earthrise/CPU use
+    /* verilator lint_off UNUSEDSIGNAL */
+    wire [WORD-1:0] vram_dout_sys;
+    /* verilator lint_on UNUSEDSIGNAL */
+
     // use Earthrise address for vram (will multiplex with CPU later)
     assign vram_addr_sys = draw_addr;  // doesn't validate address, but vram depth is power of two
 
@@ -158,9 +169,7 @@ module ch03 #(
         .wmask_sys(vram_wmask_sys),
         .addr_sys(vram_addr_sys),
         .din_sys(vram_din_sys),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .dout_sys(),  // Earthrise doesn't read vram yet
-        /* verilator lint_on PINCONNECTEMPTY */
+        .dout_sys(vram_dout_sys),
         .addr_disp(vram_addr_disp),
         .dout_disp(vram_dout_disp)
     );
@@ -194,7 +203,7 @@ module ch03 #(
         .line_start(line_start),
         .dx(dx),
         .dy(dy),
-        .addr_base(0),  // fixed base address for now
+        .addr_base({VRAM_ADDRW{1'b0}}),  // fixed base address for now
         .addr_shift(disp_addr_shift),
         .win_start({WIN_STARTY, WIN_STARTX}),
         .win_end({WIN_HEIGHT + WIN_STARTY, WIN_WIDTH + WIN_STARTX}),
@@ -212,21 +221,25 @@ module ch03 #(
     reg  [CIDX_ADDRW-1:0] clut_addr_disp;
     wire [COLRW-1:0] clut_dout_disp;
 
+    // signals for future CPU use
+    wire clut_we_sys = 0;
+    wire [CIDX_ADDRW-1:0] clut_addr_sys = 0;
+    wire [COLRW-1:0] clut_din_sys = 0;
+    /* verilator lint_off UNUSEDSIGNAL */
+    wire [COLRW-1:0] clut_dout_sys;
+    /* verilator lint_on UNUSEDSIGNAL */
+
     clut #(
         .ADDRW(CIDX_ADDRW),
         .DATAW(COLRW),
         .FILE_PAL(FILE_PAL)
     ) clut_inst (
-        /* verilator lint_off PINCONNECTEMPTY */
-        .clk_sys(),
-        /* verilator lint_on PINCONNECTEMPTY */
+        .clk_sys(clk_sys),
         .clk_pix(clk_pix),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .we_sys(),  // for future CPU use
-        .addr_sys(),
-        .din_sys(),
-        .dout_sys(),
-        /* verilator lint_on PINCONNECTEMPTY */
+        .we_sys(clut_we_sys),
+        .addr_sys(clut_addr_sys),
+        .din_sys(clut_din_sys),
+        .dout_sys(clut_dout_sys),
         .addr_disp(clut_addr_disp),
         .dout_disp(clut_dout_disp)
     );

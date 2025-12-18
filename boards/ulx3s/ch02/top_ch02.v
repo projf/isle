@@ -21,7 +21,7 @@ module top_ch02 #(
     // 1366x768 display with 336x192 4-bit canvas (crocus test)
     localparam FILE_BMAP  = {RES, "/bitmaps/crocus/crocus-336x192.mem"};
     localparam FILE_PAL   = {RES, "/bitmaps/crocus/crocus-336x192_palette.mem"};
-    localparam CANV_BPP   = 4;         // bits per pixel (4=16 colour)
+    localparam CANV_BPP   = 5'd4;      // bits per pixel (1,2,4,8,[16])
     localparam CANV_SCALE = 16'd4;     // scaling factor
     localparam WIN_WIDTH  = 16'd1344;  // window width (pixel)
     localparam WIN_HEIGHT = 16'd768;   // window height (lines)
@@ -31,7 +31,7 @@ module top_ch02 #(
     // 1366x768 display with 672x384 2-bit canvas (latency test)
     // localparam FILE_BMAP  = {RES, "/bitmaps/latency/latency-672x384.mem"};
     // localparam FILE_PAL   = {RES, "/bitmaps/latency/latency-672x384_palette.mem"};
-    // localparam CANV_BPP   = 2;         // bits per pixel (2=4 colour)
+    // localparam CANV_BPP   = 5'd2;      // bits per pixel (1,2,4,8,[16])
     // localparam CANV_SCALE = 16'd2;     // scaling factor
     // localparam WIN_WIDTH  = 16'd1344;  // window width (pixel)
     // localparam WIN_HEIGHT = 16'd768;   // window height (lines)

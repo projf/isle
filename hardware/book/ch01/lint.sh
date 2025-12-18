@@ -18,8 +18,3 @@ verilator --lint-only -Wall \
     -I${HW_DIR} \
     -I${HW_DIR}/gfx \
     ch01.v
-
-verilator --lint-only -Wall \
-    -I${HW_DIR} \
-    -I${HW_DIR}/gfx \
-    ch01_pattern.v

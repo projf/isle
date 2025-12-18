@@ -29,7 +29,7 @@ module top_ch03 #(
     localparam FILE_BMAP    = "";
     localparam FILE_PAL     = {RES, "/palettes/go-16.mem"};
     localparam FILE_ER_LIST = {RES, "/drawings/all-shapes.mem"};
-    localparam CANV_BPP     = 4;         // bits per pixel (4=16 colour)
+    localparam CANV_BPP     = 5'd4;      // bits per pixel (1,2,4,8,[16])
     localparam CANV_WIDTH   = 16'd336;   // width (pixels)
     localparam CANV_HEIGHT  = 16'd192;   // height (lines)
     localparam CANV_SCALE   = 16'd4;     // scaling factor

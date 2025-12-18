@@ -70,6 +70,14 @@ module ch04 #(
     reg signed [TRAM_ADDRW-1:0] text_hres = TRAM_HRES;
     reg signed [TRAM_ADDRW-1:0] text_vres = TRAM_VRES;
 
+    // signals for future CPU use
+    wire [BYTE_CNT-1:0] tram_we_sys = 0;
+    wire [TRAM_ADDRW-1:0] tram_addr_sys = 0;
+    wire [WORD-1:0] tram_din_sys = 0;
+    /* verilator lint_off UNUSEDSIGNAL */
+    wire [WORD-1:0] tram_dout_sys;
+    /* verilator lint_on UNUSEDSIGNAL */
+
     tram #(
         .BYTE(BYTE),
         .BYTE_CNT(BYTE_CNT),
@@ -79,14 +87,12 @@ module ch04 #(
     ) tram_inst (
         .clk_sys(clk_sys),
         .clk_pix(clk_pix),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .we_sys(),  // for future CPU use
-        .addr_sys(),
+        .we_sys(tram_we_sys),
+        .addr_sys(tram_addr_sys),
         .addr_disp(tram_addr_disp),
-        .din_sys(),
-        .dout_sys(),
+        .din_sys(tram_din_sys),
+        .dout_sys(tram_dout_sys),
         .dout_disp(tram_dout_disp)
-        /* verilator lint_on PINCONNECTEMPTY */
     );
 
 
@@ -132,8 +138,16 @@ module ch04 #(
     // CLUT
     //
 
-    wire [CIDX_ADDRW-1:0] clut_addr_disp;
+    wire [CIDX_ADDRW-1:0] clut_addr_disp;  // wire to match assign
     wire [COLRW-1:0] clut_dout_disp;
+
+    // signals for future CPU use
+    wire clut_we_sys = 0;
+    wire [CIDX_ADDRW-1:0] clut_addr_sys = 0;
+    wire [COLRW-1:0] clut_din_sys = 0;
+    /* verilator lint_off UNUSEDSIGNAL */
+    wire [COLRW-1:0] clut_dout_sys;
+    /* verilator lint_on UNUSEDSIGNAL */
 
     clut #(
         .ADDRW(CIDX_ADDRW),
@@ -142,12 +156,10 @@ module ch04 #(
     ) clut_inst (
         .clk_sys(clk_sys),
         .clk_pix(clk_pix),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .we_sys(),  // for future CPU use
-        .addr_sys(),
-        .din_sys(),
-        .dout_sys(),
-        /* verilator lint_on PINCONNECTEMPTY */
+        .we_sys(clut_we_sys),
+        .addr_sys(clut_addr_sys),
+        .din_sys(clut_din_sys),
+        .dout_sys(clut_dout_sys),
         .addr_disp(clut_addr_disp),
         .dout_disp(clut_dout_disp)
     );
