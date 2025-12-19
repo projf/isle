@@ -269,14 +269,23 @@ module earthrise #(
                                 `debug_er($display("0x%x: pixel    (%d,%d)", pc_debug, tvx0, tvy0));
                             end
                             'h1: begin  // draw line
-                                state <= LINE_EXEC;
-                                line_a_oe <= 1;
-                                line_a_start <= 1;   // use line instance A
-                                line_a_x0 <= tvx0;
-                                line_a_y0 <= tvy0;
-                                line_a_x1 <= tvx1;
-                                line_a_y1 <= tvy1;
-                                `debug_er($display("0x%x: line     (%d,%d)->(%d,%d)", pc_debug, tvx0, tvy0, tvx1, tvy1));
+                                if (tvy0 == tvy1) begin  // fast line
+                                    state <= FLINE_EXEC;
+                                    fline_start <= 1;
+                                    fline_x0 <= tvx0;
+                                    fline_x1 <= tvx1;
+                                    fline_y <= tvy0;  // use tvy0 for vertical position
+                                    `debug_er($display("0x%x: fline    (%d,%d)->(%d,%d)", pc_debug, tvx0, tvy0, tvx1, tvy1));
+                                end else begin
+                                    state <= LINE_EXEC;
+                                    line_a_oe <= 1;
+                                    line_a_start <= 1;   // use line instance A
+                                    line_a_x0 <= tvx0;
+                                    line_a_y0 <= tvy0;
+                                    line_a_x1 <= tvx1;
+                                    line_a_y1 <= tvy1;
+                                    `debug_er($display("0x%x: line     (%d,%d)->(%d,%d)", pc_debug, tvx0, tvy0, tvx1, tvy1));
+                                end
                             end
                             'h2: begin  // draw circle
                                 if (r0 > 0) begin  // only draw with positive radius
@@ -309,14 +318,6 @@ module earthrise #(
                                 tvy1s <= (tvy0 < tvy1) ? tvy1 : tvy0;
                                 state <= (imm8[OPT_FILL] == 0) ? RECT_INIT : RECTF_INIT;
                                 `debug_er($display("0x%x: rect     (%d,%d)->(%d,%d)", pc_debug, tvx0, tvy0, tvx1, tvy1));
-                            end
-                            'hF: begin  // fast (horizontal) line - could support faster memory writes in future
-                                state <= FLINE_EXEC;
-                                fline_start <= 1;
-                                fline_x0 <= tvx0;
-                                fline_x1 <= tvx1;
-                                fline_y <= tvy0;  // use tvy0 for vertical position
-                                `debug_er($display("0x%x: fline    (%d->%d) y=%d", pc_debug, tvx0, tvx1, tvy0));
                             end
                             default: begin
                                 state <= DONE;

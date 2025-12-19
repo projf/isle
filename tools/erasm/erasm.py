@@ -73,8 +73,7 @@ def asm_draw(shape, colr):
         'tri':   [0x3, 0],
         'trif':  [0x3, 1],
         'rect':  [0x4, 0],
-        'rectf': [0x4, 1],
-        'fline': [0xF, 0]
+        'rectf': [0x4, 1]
     }
     if shape not in draw_map:
         raise ValueError(f"Unknown draw shape '{shape}'")
