@@ -159,28 +159,31 @@ draw pix ca
 
 
 #
-# Fast (Horizontal) Lines
+# Horizontal Lines (should render with fast line)
 #
 
 # line colours
 lca 0xA
 lcb 0x8
 
-# fline 0
-y0   3  # fixed vertical position
+# horizontal line 0
 x0 220
+y0   3  # fixed vertical position
 x1  35
-draw fline ca
+y1   3
+draw line ca
 
-# fline 1 (x-coords don't change)
+# horizontal line 1 (x-coords don't change)
 y0 188  # fixed vertical position
-draw fline cb
+y1 188
+draw line cb
 
-# fline 2 (single pixel)
+# horizontal line 2 (single pixel)
 x0 22
 y0  8
 x1 22
-draw fline ca
+y1  8
+draw line ca
 
 
 #

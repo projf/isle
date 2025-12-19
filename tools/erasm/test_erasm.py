@@ -72,7 +72,6 @@ class TestErasm:
         assert asm_draw("trif", "ca") == 0xD301
         assert asm_draw("rect", "cb") == 0xD402
         assert asm_draw("rectf", "cb") == 0xD403
-        assert asm_draw("fline", "cb") == 0xDF02
         with pytest.raises(ValueError, match="Unknown draw shape"):
             asm_draw("circle", "ca")
         with pytest.raises(ValueError, match="Unknown colour"):
@@ -99,4 +98,3 @@ class TestErasm:
         assert asm_line("draw trif ca") == 0xD301
         assert asm_line("draw rect cb") == 0xD402
         assert asm_line("draw rectf cb") == 0xD403
-        assert asm_line("draw fline cb") == 0xDF02

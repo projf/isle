@@ -114,9 +114,8 @@ A drawing instruction has the **0xD** opcode follow by the function representing
     - draw a single pixel at `(x0, y0)`
 * line (**0xD1**)
     - draw a line from `(x0, y0)` to `(x1, y1)`
-* line fast (**0xDF**) - **F** for fast
-    - draw a horizontal line from `x0` to `x1` at vertical position `y0`
-    - has faster performance on some hardware, which is especially handy for fills
+    - automatically detects horizontal lines for faster performance
+    - NB. the line fast (**0xDF**) instruction is NO LONGER SUPPORTED; use normal line
 * circle (**0xD2**)
     - draw a circle with centre `(x0, y0)` and radius `r0` (same reg as `x1`)
     - does nothing if radius is zero or negative
@@ -171,7 +170,7 @@ For coordinate registers, specify the name of the register and the signed immedi
 
 * `x0 21`
 * `y0 -1`
-* `xt 255`
+* `xt 671`
 
 Colour registers work in a similar way, but immediates are unsigned in the range 0-255. Possible registers: `lca, lcb, fca, fcb`.
 
@@ -188,7 +187,6 @@ Drawing (colour):
 * `draw trif ca` - filled triangle (fca)
 * `draw rect cb` - outline rect (lcb)
 * `draw rectf cb` - filled rect (fcb)
-* `draw fline cb` - fast line (lcb)
 
 The assembler uses **#** to begin comments.
 
