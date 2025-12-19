@@ -170,7 +170,7 @@ For coordinate registers, specify the name of the register and the signed immedi
 
 * `x0 21`
 * `y0 -1`
-* `xt 255`
+* `xt 671`
 
 Colour registers work in a similar way, but immediates are unsigned in the range 0-255. Possible registers: `lca, lcb, fca, fcb`.
 
