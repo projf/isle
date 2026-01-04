@@ -5,6 +5,7 @@
 """Test helpers for Isle cocotb hardware tests."""
 
 import cocotb
+from cocotb.triggers import RisingEdge
 
 
 def assert_coord(dut, x, y):
@@ -49,3 +50,29 @@ def log_pixel(dut):
     y = dut.disp_y.value.to_signed()
 
     cocotb.log.info("RGB(%2d,%2d,%2d) at (%4d,%4d)", r, g, b, x, y)
+
+
+async def zero_memory(dut):
+    """Zero memory to match hardware behaviour for block ram."""
+
+    for i in range(dut.DEPTH.value.to_unsigned()):
+        dut.we_sys.value = 1
+        dut.addr_sys.value = i
+        dut.din_sys.value = 0
+        await RisingEdge(dut.clk_sys)
+
+    dut.we_sys.value = 0
+    await RisingEdge(dut.clk_sys)
+
+
+async def zero_vram(dut):
+    """Zero vram to match hardware behaviour for block ram."""
+
+    for i in range(dut.DEPTH.value.to_unsigned()):
+        dut.wmask_sys.value = 0xFFFFFFFF
+        dut.addr_sys.value = i
+        dut.din_sys.value = 0
+        await RisingEdge(dut.clk_sys)
+
+    dut.wmask_sys.value = 0x00000000
+    await RisingEdge(dut.clk_sys)

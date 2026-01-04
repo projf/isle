@@ -7,7 +7,7 @@
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, Timer
-from tests.helpers import assert_coord, assert_pixel
+from tests.helpers import assert_coord, assert_pixel, zero_vram
 
 # clock frequency
 SYS_TIME = 40  # 40 ns is 25 MHz
@@ -38,19 +38,6 @@ async def reset_pix_dut(dut):
     await RisingEdge(dut.clk_pix)
     dut.rst_pix.value = 0
     await RisingEdge(dut.clk_pix)
-
-
-async def zero_memory(dut):
-    """Zero vram and to match hardware behaviour for block ram."""
-
-    for i in range(2**dut.VRAM_ADDRW.value.to_unsigned()):
-        dut.vram_inst.wmask_sys.value = 0xFFFFFFFF
-        dut.vram_inst.addr_sys.value = i
-        dut.vram_inst.din_sys.value = 0
-        await RisingEdge(dut.clk_sys)
-
-    dut.vram_inst.wmask_sys.value = 0x00000000
-    await RisingEdge(dut.clk_sys)
 
 
 async def pixel_colour_line_1(dut):
@@ -221,7 +208,7 @@ async def pixel_colour(dut):
     await reset_sys_dut(dut)
 
     # zero vram otherwise we'll paint x
-    await zero_memory(dut)
+    await zero_vram(dut.vram_inst)
     await RisingEdge(dut.clk_sys)
 
     # start Earthrise

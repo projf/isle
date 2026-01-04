@@ -7,7 +7,7 @@ TOPLEVEL_LANG ?= verilog
 DUT = ch03
 
 TOPLEVEL = ${DUT}
-MODULE = ${DUT}
+COCOTB_TEST_MODULES = ${DUT}
 HARDWARE = $(PWD)/../..
 
 VERILOG_SOURCES += $(HARDWARE)/book/${DUT}/${DUT}.v
@@ -26,7 +26,7 @@ VERILOG_SOURCES += $(HARDWARE)/mem/vram.v
 COMPILE_ARGS += -P${DUT}.DISPLAY_MODE=3
 COMPILE_ARGS += -P${DUT}.FILE_ER_LIST="\"../../../res/drawings/basic-test.mem"\"
 COMPILE_ARGS += -P${DUT}.FILE_PAL="\"../../../res/palettes/aqua-4.mem"\"
-COMPILE_ARGS += -P${DUT}.CANV_BPP=2
+COMPILE_ARGS += -P${DUT}.CANV_BPP=5\'d2
 COMPILE_ARGS += -P${DUT}.CANV_WIDTH=16\'d672
 COMPILE_ARGS += -P${DUT}.CANV_HEIGHT=16\'d384
 COMPILE_ARGS += -P${DUT}.CANV_SCALE=16\'d1

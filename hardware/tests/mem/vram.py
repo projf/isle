@@ -7,6 +7,7 @@
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge
+from tests.helpers import zero_vram
 
 # clock frequencies
 PIX_TIME = 13.89  # 72 MHz
@@ -44,24 +45,11 @@ async def setup_clocks(dut):
     cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, unit="ns").start())
 
 
-async def zero_memory(dut):
-    """Zero vram to match hardware behaviour for block ram."""
-
-    for i in range(dut.DEPTH.value):
-        dut.wmask_sys.value = 0xFFFFFFFF
-        dut.addr_sys.value = i
-        dut.din_sys.value = 0
-        await RisingEdge(dut.clk_sys)
-
-    dut.wmask_sys.value = 0x00000000
-    await RisingEdge(dut.clk_sys)
-
-
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 async def sys_port_word(dut):
     """Test vram sys port with word data."""
     await setup_clocks(dut)
-    await zero_memory(dut)  # zeroed memory matches FPGA
+    await zero_vram(dut)  # zeroed memory matches FPGA
 
     # write data
     for addr, data in zip(tdat_addr_in, tdat_din, strict=True):
@@ -79,7 +67,7 @@ async def sys_port_word(dut):
         await RisingEdge(dut.clk_sys)
 
         if dut.dout_sys.value.is_resolvable:
-            sys_data = dut.dout_sys.value.integer
+            sys_data = dut.dout_sys.value.to_unsigned()
         else:
             sys_data = dut.dout_sys.value
 
@@ -91,7 +79,7 @@ async def sys_port_word(dut):
 async def sys_port_mask(dut):
     """Test vram sys port with masked data."""
     await setup_clocks(dut)
-    await zero_memory(dut)  # zeroed memory matches FPGA
+    await zero_vram(dut)  # zeroed memory matches FPGA
 
     # write data
     for addr, data, wmask in zip(tdat_mask_addr_in, tdat_mask_din, tdat_mask_wmask, strict=True):
@@ -110,7 +98,7 @@ async def sys_port_mask(dut):
         await RisingEdge(dut.clk_sys)
 
         if dut.dout_sys.value.is_resolvable:
-            sys_data = dut.dout_sys.value.integer
+            sys_data = dut.dout_sys.value.to_unsigned()
         else:
             sys_data = dut.dout_sys.value
 
@@ -130,7 +118,7 @@ async def disp_port(dut):
         await RisingEdge(dut.clk_pix)
 
         if dut.dout_disp.value.is_resolvable:
-            disp_data = dut.dout_disp.value.integer
+            disp_data = dut.dout_disp.value.to_unsigned()
         else:
             disp_data = dut.dout_disp.value
 
