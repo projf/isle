@@ -7,6 +7,7 @@
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge
+from tests.helpers import zero_memory
 
 # clock frequencies
 PIX_TIME = 13.89  # 72 MHz
@@ -25,18 +26,6 @@ test_data_sys = [0x1, 0xA, 0x0, 0x7, 0x9, 0x1]
 test_addr_disp = [0x2, 0xF, 0x0, 0x5, 0xA, 0x0, 0x0]
 test_data_disp = ["xxxxxxxxxxxx", "xxxxxxxxxxxx", 0xA, 0x0, 0x7, 0x9, 0x1]
 
-
-async def zero_memory(dut):
-    """Zero CLUT to match hardware behaviour for block ram."""
-
-    for i in range(2**dut.ADDRW.value):
-        dut.we_sys.value = 1
-        dut.addr_sys.value = i
-        dut.din_sys.value = 0
-        await RisingEdge(dut.clk_sys)
-
-    dut.we_sys.value = 0
-    await RisingEdge(dut.clk_sys)
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 async def sys_port(dut):
@@ -61,7 +50,7 @@ async def sys_port(dut):
         await RisingEdge(dut.clk_sys)
 
         if dut.dout_sys.value.is_resolvable:
-            sys_data = dut.dout_sys.value.integer
+            sys_data = dut.dout_sys.value.to_unsigned()
         else:
             sys_data = dut.dout_sys.value
 
@@ -80,7 +69,7 @@ async def disp_port(dut):
         await RisingEdge(dut.clk_pix)
 
         if dut.dout_disp.value.is_resolvable:
-            disp_data = dut.dout_disp.value.integer
+            disp_data = dut.dout_disp.value.to_unsigned()
         else:
             disp_data = dut.dout_disp.value
 

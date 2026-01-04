@@ -7,7 +7,7 @@ TOPLEVEL_LANG ?= verilog
 DUT = tmds_encoder
 
 TOPLEVEL = ${DUT}
-MODULE = ${DUT}
+COCOTB_TEST_MODULES = ${DUT}
 HARDWARE = $(PWD)/../..
 
 VERILOG_SOURCES += $(HARDWARE)/gfx/${DUT}.v

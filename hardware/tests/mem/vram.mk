@@ -7,7 +7,7 @@ TOPLEVEL_LANG ?= verilog
 DUT = vram
 
 TOPLEVEL = ${DUT}
-MODULE = ${DUT}
+COCOTB_TEST_MODULES = ${DUT}
 HARDWARE = $(PWD)/../..
 
 VERILOG_SOURCES += $(HARDWARE)/mem/${DUT}.v
