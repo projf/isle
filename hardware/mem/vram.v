@@ -18,6 +18,7 @@ module vram #(
     input  wire clk_sys,                // system clock
     input  wire clk_pix,                // pixel clock
     input  wire [WORD-1:0] wmask_sys,   // system write mask
+    input  wire re_sys,                 // system read enable
     input  wire [ADDRW-1:0] addr_sys,   // system word address
     input  wire [WORD-1:0] din_sys,     // system data in
     output reg  [WORD-1:0] dout_sys,    // system data out
@@ -26,6 +27,7 @@ module vram #(
     );
 
     localparam DEPTH=2**ADDRW;
+
     reg [WORD-1:0] vram_mem [0:DEPTH-1];
 
     initial begin
@@ -38,7 +40,7 @@ module vram #(
     // system port (read-write, write_mode: no change)
     integer i;
     always @(posedge clk_sys) begin
-        if (~|wmask_sys) dout_sys <= vram_mem[addr_sys];
+        if (re_sys) dout_sys <= vram_mem[addr_sys];
         for (i=0; i<WORD; i=i+1) begin
             if (wmask_sys[i]) vram_mem[addr_sys][i] <= din_sys[i];
         end

@@ -36,7 +36,8 @@ The tram is dual port, with a system and display port in different clock domains
 
 * `clk_sys` - system clock
 * `clk_pix` - pixel clock (frequency depends on [display](display.md) mode)
-* `we_sys` - byte write mask (write-enable)
+* `we_sys` - system write enable (byte mask)
+* `re_sys` - system read enable
 * `addr_sys` - system port word address
 * `din_sys` - system data in
 * `addr_disp` - display word address

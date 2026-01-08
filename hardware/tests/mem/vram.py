@@ -10,8 +10,8 @@ from cocotb.triggers import RisingEdge
 from tests.helpers import zero_vram
 
 # clock frequencies
-PIX_TIME = 13.89  # 72 MHz
-SYS_TIME = 40.00  # 25 MHz
+SYS_TIME = 40  # 40 ns is 25 MHz
+PIX_TIME = 20  # 20 ns is 50 MHz
 
 # vram write data for sys port word test
 tdat_addr_in = [0x02, 0x1F, 0x00, 0x15, 0x0A]
@@ -39,16 +39,10 @@ expt_data_disp = ["xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
                   0x008000005, 0x00000000, 0x900000C0]
 
 
-async def setup_clocks(dut):
-    """Setup system and pixel clocks."""
-    cocotb.start_soon(Clock(dut.clk_sys, SYS_TIME, unit="ns").start())
-    cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, unit="ns").start())
-
-
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 async def sys_port_word(dut):
     """Test vram sys port with word data."""
-    await setup_clocks(dut)
+    cocotb.start_soon(Clock(dut.clk_sys, SYS_TIME, unit="ns").start())
     await zero_vram(dut)  # zeroed memory matches FPGA
 
     # write data
@@ -59,6 +53,7 @@ async def sys_port_word(dut):
         await RisingEdge(dut.clk_sys)
 
     dut.wmask_sys.value = 0x00000000
+    dut.re_sys.value = 1
     await RisingEdge(dut.clk_sys)
 
     # read data back
@@ -74,11 +69,14 @@ async def sys_port_word(dut):
         assert sys_data == data_expected, \
             f"DUT i={i} {sys_data} doesn't match expected {data_expected} at address 0x{addr:X}!"
 
+    dut.re_sys.value = 0
+    await RisingEdge(dut.clk_sys)
+
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 async def sys_port_mask(dut):
     """Test vram sys port with masked data."""
-    await setup_clocks(dut)
+    cocotb.start_soon(Clock(dut.clk_sys, SYS_TIME, unit="ns").start())
     await zero_vram(dut)  # zeroed memory matches FPGA
 
     # write data
@@ -89,6 +87,7 @@ async def sys_port_mask(dut):
         await RisingEdge(dut.clk_sys)
 
     dut.wmask_sys.value = 0x00000000
+    dut.re_sys.value = 1
     await RisingEdge(dut.clk_sys)
 
     # read data back
@@ -104,6 +103,9 @@ async def sys_port_mask(dut):
 
         assert sys_data == data_expected, \
             f"DUT i={i} {sys_data} doesn't match expected {data_expected} at address 0x{addr:X}!"
+
+    dut.re_sys.value = 0
+    await RisingEdge(dut.clk_sys)
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter

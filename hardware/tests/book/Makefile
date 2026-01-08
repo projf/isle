@@ -7,19 +7,23 @@
 # add hardware/tests to Python path
 export PYTHONPATH := $(shell pwd)/../..:$(PYTHONPATH)
 
+# test targets
+TESTS = ch01 ch02 ch03 ch04
+
 ch01:
-	make -f ch01.mk
+	-make -f ch01.mk
 
 ch02:
-	make -f ch02.mk
+	-make -f ch02.mk
 
 ch03:
-	make -f ch03.mk
+	-make -f ch03.mk
 
 ch04:
-	make -f ch04.mk
+	-make -f ch04.mk
 
-all: ch01 ch02 ch03 ch04
+all: $(TESTS)
+	@../summary.sh $(TESTS)
 
 clean:
 	rm -f results*.xml

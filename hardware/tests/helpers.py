@@ -16,8 +16,8 @@ def assert_coord(dut, x, y):
     )
 
     assert coord_matches, (
-        f"{dut.disp_x.value.to_signed()},"
-        f"{dut.disp_y.value.to_signed()},"
+        f"({dut.disp_x.value.to_signed()},"
+        f"{dut.disp_y.value.to_signed()})"
         f" is not ({x},{y})."
     )
 

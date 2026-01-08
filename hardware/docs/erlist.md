@@ -11,7 +11,7 @@ The **erlist** (Earthrise Command List) module [[verilog src](../mem/erlist.v)] 
 
 For Isle, `BYTE_CNT` must be set to **4** and `WORD` must be set to **32**.
 
-The command list takea a `FILE_INIT` parameter, which allows an initial $readmemh format command list to be loaded at build time. Use the Earthrise assembler, [erasm](../../tools/erasm/), to generate a suitable file.
+The command list takes a `FILE_INIT` parameter, which allows an initial $readmemh format command list to be loaded at build time. Use the Earthrise assembler, [erasm](../../tools/erasm/), to generate a suitable file.
 
 ## Signals
 
@@ -20,7 +20,8 @@ The command list is dual port. The system port is read-write for use of the CPU.
 ### Input
 
 * `clk` - clock
-* `we_sys` - system write enable
+* `we_sys` - system write enable (byte mask)
+* `re_sys` - system read enable
 * `addr_sys` - system address
 * `din_sys` - system data in
 * `addr_er` - Earthrise address
