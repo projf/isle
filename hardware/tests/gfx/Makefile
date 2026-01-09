@@ -8,34 +8,35 @@
 # add hardware/tests to Python path
 export PYTHONPATH := $(shell pwd)/../..:$(PYTHONPATH)
 
+# test targets
+TESTS = canv_disp_agu tmds_encoder display_mode_3
+
 canv_disp_agu:
-	make -f canv_disp_agu.mk
+	-make -f canv_disp_agu.mk
 
 tmds_encoder:
-	make -f tmds_encoder.mk
+	-make -f tmds_encoder.mk
 
-display_640x480:
-	DISPLAY_MODE=0 make -f display.mk
+display_mode_0:
+	-DISPLAY_MODE=0 make -f display.mk
 
-display_1024x768:
-	DISPLAY_MODE=1 make -f display.mk
+display_mode_1:
+	-DISPLAY_MODE=1 make -f display.mk
 
-display_1366x768:
-	DISPLAY_MODE=2 make -f display.mk
+display_mode_2:
+	-DISPLAY_MODE=2 make -f display.mk
 
-display_672x384:
-	DISPLAY_MODE=3 make -f display.mk
+display_mode_3:
+	-DISPLAY_MODE=3 make -f display.mk
 
-display_1280x720:
-	DISPLAY_MODE=4 make -f display.mk
+display_mode_4:
+	-DISPLAY_MODE=4 make -f display.mk
+
+all: $(TESTS)
+	@../summary.sh $(TESTS)
 
 # this takes a while
-all_display: display_640x480 display_1024x768 display_1366x768 display_672x384 display_1280x720
-
-# all without display tests (which are slow)
-all_xdisp: canv_disp_agu tmds_encoder
-
-all: all_xdisp all_display
+display_all: display_mode_0 display_mode_1 display_mode_2 display_mode_3 display_mode_4
 
 clean:
 	rm -f results*.xml
@@ -43,4 +44,4 @@ clean:
 	rm -rf __pycache__
 	rm -rf sim_build
 
-.PHONY: all all_xdisp all_display clean
+.PHONY: all display_all clean

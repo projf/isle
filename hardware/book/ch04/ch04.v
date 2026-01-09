@@ -72,6 +72,7 @@ module ch04 #(
 
     // signals for future CPU use
     wire [BYTE_CNT-1:0] tram_we_sys = 0;
+    wire tram_re_sys = 0;
     wire [TRAM_ADDRW-1:0] tram_addr_sys = 0;
     wire [WORD-1:0] tram_din_sys = 0;
     /* verilator lint_off UNUSEDSIGNAL */
@@ -88,6 +89,7 @@ module ch04 #(
         .clk_sys(clk_sys),
         .clk_pix(clk_pix),
         .we_sys(tram_we_sys),
+        .re_sys(tram_re_sys),
         .addr_sys(tram_addr_sys),
         .addr_disp(tram_addr_disp),
         .din_sys(tram_din_sys),
@@ -143,6 +145,7 @@ module ch04 #(
 
     // signals for future CPU use
     wire clut_we_sys = 0;
+    wire clut_re_sys = 0;
     wire [CIDX_ADDRW-1:0] clut_addr_sys = 0;
     wire [COLRW-1:0] clut_din_sys = 0;
     /* verilator lint_off UNUSEDSIGNAL */
@@ -157,6 +160,7 @@ module ch04 #(
         .clk_sys(clk_sys),
         .clk_pix(clk_pix),
         .we_sys(clut_we_sys),
+        .re_sys(clut_re_sys),
         .addr_sys(clut_addr_sys),
         .din_sys(clut_din_sys),
         .dout_sys(clut_dout_sys),

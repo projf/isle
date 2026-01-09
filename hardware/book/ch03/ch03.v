@@ -70,6 +70,7 @@ module ch03 #(
 
     // signals for future CPU use
     wire [BYTE_CNT-1:0] erlist_we_sys = 0;
+    wire erlist_re_sys = 0;
     wire [ER_ADDRW-1:0] erlist_addr_sys = 0;
     wire [WORD-1:0] erlist_din_sys = 0;
     /* verilator lint_off UNUSEDSIGNAL */
@@ -85,6 +86,7 @@ module ch03 #(
     ) erlist_inst (
         .clk(clk_sys),
         .we_sys(erlist_we_sys),
+        .re_sys(erlist_re_sys),
         .addr_sys(erlist_addr_sys),
         .din_sys(erlist_din_sys),
         .dout_sys(erlist_dout_sys),
@@ -147,6 +149,7 @@ module ch03 #(
 
     wire [VRAM_ADDRW-1:0] vram_addr_sys;
     wire [WORD-1:0] vram_wmask_sys;
+    wire vram_re_sys = 0;
     wire [WORD-1:0] vram_din_sys;
     wire [VRAM_ADDRW-1:0] vram_addr_disp;  // pixel clock domain
     wire [WORD-1:0] vram_dout_disp;  // pixel clock domain
@@ -167,6 +170,7 @@ module ch03 #(
         .clk_sys(clk_sys),
         .clk_pix(clk_pix),
         .wmask_sys(vram_wmask_sys),
+        .re_sys(vram_re_sys),
         .addr_sys(vram_addr_sys),
         .din_sys(vram_din_sys),
         .dout_sys(vram_dout_sys),
@@ -223,6 +227,7 @@ module ch03 #(
 
     // signals for future CPU use
     wire clut_we_sys = 0;
+    wire clut_re_sys = 0;
     wire [CIDX_ADDRW-1:0] clut_addr_sys = 0;
     wire [COLRW-1:0] clut_din_sys = 0;
     /* verilator lint_off UNUSEDSIGNAL */
@@ -237,6 +242,7 @@ module ch03 #(
         .clk_sys(clk_sys),
         .clk_pix(clk_pix),
         .we_sys(clut_we_sys),
+        .re_sys(clut_re_sys),
         .addr_sys(clut_addr_sys),
         .din_sys(clut_din_sys),
         .dout_sys(clut_dout_sys),

@@ -10,8 +10,8 @@ from cocotb.triggers import RisingEdge
 from tests.helpers import zero_memory
 
 # clock frequencies
-PIX_TIME = 13.89  # 72 MHz
-SYS_TIME  = 40    # 25 MHz
+SYS_TIME = 40  # 40 ns is 25 MHz
+PIX_TIME = 20  # 20 ns is 50 MHz
 
 # CLUT test data (for writing)
 test_addr_in = [0x2, 0xF, 0x0, 0x5, 0xA]
@@ -30,7 +30,6 @@ test_data_disp = ["xxxxxxxxxxxx", "xxxxxxxxxxxx", 0xA, 0x0, 0x7, 0x9, 0x1]
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 async def sys_port(dut):
     """Test CLUT sys port."""
-
     cocotb.start_soon(Clock(dut.clk_sys, SYS_TIME, unit="ns").start())
     await zero_memory(dut)  # matches hardware behaviour
 
@@ -42,6 +41,7 @@ async def sys_port(dut):
         await RisingEdge(dut.clk_sys)
 
     dut.we_sys.value = 0
+    dut.re_sys.value = 1
     await RisingEdge(dut.clk_sys)
 
     # read data back
@@ -56,6 +56,9 @@ async def sys_port(dut):
 
         assert sys_data == data_expected, \
             f"DUT i={i} {sys_data} doesn't match expected {data_expected}!"
+
+    dut.re_sys.value = 0
+    await RisingEdge(dut.clk_sys)
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter

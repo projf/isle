@@ -58,6 +58,7 @@ module ch02 #(
 
     // signals for future Earthrise/CPU use
     wire [WORD-1:0] vram_wmask_sys = 0;
+    wire vram_re_sys = 0;
     wire [VRAM_ADDRW-1:0] vram_addr_sys = 0;
     wire [WORD-1:0] vram_din_sys = 0;
     /* verilator lint_off UNUSEDSIGNAL */
@@ -72,6 +73,7 @@ module ch02 #(
         .clk_sys(clk),
         .clk_pix(clk),
         .wmask_sys(vram_wmask_sys),
+        .re_sys(vram_re_sys),
         .addr_sys(vram_addr_sys),
         .din_sys(vram_din_sys),
         .dout_sys(vram_dout_sys),
@@ -127,6 +129,7 @@ module ch02 #(
 
     // signals for future CPU use
     wire clut_we_sys = 0;
+    wire clut_re_sys = 0;
     wire [CIDX_ADDRW-1:0] clut_addr_sys = 0;
     wire [COLRW-1:0] clut_din_sys = 0;
     /* verilator lint_off UNUSEDSIGNAL */
@@ -141,6 +144,7 @@ module ch02 #(
         .clk_sys(clk),
         .clk_pix(clk),
         .we_sys(clut_we_sys),
+        .re_sys(clut_re_sys),
         .addr_sys(clut_addr_sys),
         .din_sys(clut_din_sys),
         .dout_sys(clut_dout_sys),

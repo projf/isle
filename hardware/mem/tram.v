@@ -20,6 +20,7 @@ module tram #(
     input  wire clk_sys,                // system clock
     input  wire clk_pix,                // pixel clock
     input  wire [BYTE_CNT-1:0] we_sys,  // system write enable
+    input  wire re_sys,                 // system read enable
     input  wire [ADDRW-1:0] addr_sys,   // system address
     input  wire [ADDRW-1:0] addr_disp,  // display address
     input  wire [WORD-1:0] din_sys,     // system data in
@@ -28,7 +29,7 @@ module tram #(
     );
 
     localparam DEPTH=2**ADDRW;
-    (* no_rw_check *)
+
     reg [WORD-1:0] tram_mem [0:DEPTH-1];
 
     initial begin
@@ -41,7 +42,7 @@ module tram #(
     // system port (read-write, write_mode: no change)
     integer i;
     always @(posedge clk_sys) begin
-        if (~|we_sys) dout_sys <= tram_mem[addr_sys];
+        if (re_sys) dout_sys <= tram_mem[addr_sys];
         for (i=0; i<BYTE_CNT; i=i+1) begin
             if (we_sys[i]) tram_mem[addr_sys][i*BYTE +: BYTE] <= din_sys[i*BYTE +: BYTE];
         end

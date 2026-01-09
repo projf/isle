@@ -18,14 +18,15 @@ module clut #(
     input  wire clk_sys,                // system clock
     input  wire clk_pix,                // pixel clock
     input  wire we_sys,                 // system write enable
+    input  wire re_sys,                 // system read enable
     input  wire [ADDRW-1:0] addr_sys,   // system address
     input  wire [DATAW-1:0] din_sys,    // system data in
     output reg  [DATAW-1:0] dout_sys,   // system data out
-    input  wire [ADDRW-1:0] addr_disp,  // display address (clk_pix)
-    output reg  [DATAW-1:0] dout_disp   // display data out (clk_pix)
+    input  wire [ADDRW-1:0] addr_disp,  // display address
+    output reg  [DATAW-1:0] dout_disp   // display data out
     );
 
-    localparam DEPTH=2**ADDRW;  // derive depth from address width
+    localparam DEPTH=2**ADDRW;
 
     reg [DATAW-1:0] clut_mem [0:DEPTH-1];
 
@@ -38,8 +39,8 @@ module clut #(
 
     // system port (read-write, write_mode: no change)
     always @(posedge clk_sys) begin
+        if (re_sys) dout_sys <= clut_mem[addr_sys];
         if (we_sys) clut_mem[addr_sys] <= din_sys;
-        else dout_sys <= clut_mem[addr_sys];
     end
 
     // display port (read-only with additional output register)

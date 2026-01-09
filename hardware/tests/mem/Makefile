@@ -7,13 +7,17 @@
 # add hardware/tests to Python path
 export PYTHONPATH := $(shell pwd)/../..:$(PYTHONPATH)
 
+# test targets
+TESTS = clut vram
+
 clut:
-	make -f clut.mk
+	-make -f clut.mk
 
 vram:
-	make -f vram.mk
+	-make -f vram.mk
 
-all: clut vram
+all: $(TESTS)
+	@../summary.sh $(TESTS)
 
 clean:
 	rm -f results*.xml

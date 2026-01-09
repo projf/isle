@@ -4,6 +4,8 @@ The **clut** (Colour Lookup Table) module [[verilog src](../mem/clut.v)] maps pa
 
 For example, in 16 colour mode each pixel in [vram](vram.md) is represented by a 4-bit colour index. When we come to display that pixel we read the colour index from vram, say **6**, then use the clut to map that to a 15-bit RGB555 colour such as (31, 31, 00), which is bright yellow.
 
+The clut is word-addressed by the CPU; one 32-bit word maps to a single palette entry. Software must use store word (sw) to update palette entries; store half (sh) and store byte (sb) are ignored.
+
 The system (sys) port is for reading and writing palette entries. The system port is designed for interfacing with a CPU and is in the system clock domain. The display (disp) port is for looking up colours for display output and is in the pixel clock domain.
 
 The separate system and displays ports avoid contention between the CPU and display logic and form part of the clock-domain crossing (CDC) architecture that allows the system and display clocks to run independently.
@@ -27,6 +29,7 @@ The clut is dual port, with a system and display port in different clock domains
 * `clk_sys` - system clock
 * `clk_pix` - pixel clock (frequency depends on [display](display.md) mode)
 * `we_sys` - system write enable
+* `re_sys` - system read enable
 * `addr_sys` - system word address
 * `din_sys` - system data in
 * `addr_disp` - display word address
