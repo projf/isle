@@ -1,6 +1,6 @@
-# Earthrise System Memory
+# System Memory
 
-The **sysram** module [[verilog src](../mem/sysram.v)] is Isle's main memory in block ram (bram). The sysram has a 32-bit data bus and uses byte addressing.
+The **sysram** module [[verilog src](../mem/sysram.v)] is Isle's main memory in block ram (bram). The sysram has a 32-bit data bus and uses **word addressing** but with byte write support.
 
 ## Parameters
 
@@ -10,9 +10,9 @@ The **sysram** module [[verilog src](../mem/sysram.v)] is Isle's main memory in 
 * `WORD` - machine word size (bits)
 * `FILE_SOFT` - optional initial software to load
 
-For Isle, `BYTE` must be set to **8**, `BYTE_CNT` must be set to **4**, and `WORD` must be set to **32**.
-
 The command list takes a `FILE_SOFT` parameter, which allows initial $readmemh format [software](../../software/) to be loaded at build time.
+
+The depth (size) of sysram is derived from the address width `ADDRW`. The address width is in words, not bytes; for example, an address width of 12 creates a 16 KiB memory.
 
 ## Signals
 

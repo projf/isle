@@ -9,8 +9,6 @@ The **erlist** (Earthrise Command List) module [[verilog src](../mem/erlist.v)] 
 * `FILE_INIT` - optional initial command list to load
 * `WORD` - machine word size (bits)
 
-For Isle, `BYTE_CNT` must be set to **4** and `WORD` must be set to **32**.
-
 The command list takes a `FILE_INIT` parameter, which allows an initial $readmemh format command list to be loaded at build time. Use the Earthrise assembler, [erasm](../../tools/erasm/), to generate a suitable file.
 
 ## Signals
