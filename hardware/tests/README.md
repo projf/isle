@@ -18,13 +18,11 @@ cd isle/hardware/tests
 source hw-tests-venv/bin/activate
 ```
 
-Change directory into the area you want to test then run tests with `make`.
-
-For example, to test the display module at 1366x768:
+Run tests using `make` within your chosen directory. For example, to test the TMDS encoder:
 
 ```shell
 cd gfx
-make display_1366x768
+make tmds_encoder
 ```
 
 Use `WAVES=1` to generate [FST](https://blog.timhutt.co.uk/fst_spec/) waveform files.
@@ -40,15 +38,15 @@ make WAVES=1 clut
 
 ### Simulation Support
 
-FPGAs, such as Xilinx XC7 and Lattice ECP5, reset registers (flip-flops) to zero when configured at power-on. However, simulators such as Icarus Verilog do not. This isn't usually a problem for Isle, but there are a few cases where this breaks simulation. To handle these cases, Isle Verilog modules may include conditional initial values using; for example:
+FPGAs, such as Xilinx XC7 and Lattice ECP5, reset registers (flip-flops) to zero when configured at power-on. However, simulators such as Icarus Verilog do not. This isn't usually a problem for Isle, but there are a few cases where this breaks simulation. To handle these cases, Isle Verilog modules may include conditional initial values with `BENCH`, for example (from `xd.v`):
 
 ```verilog
-    `ifdef BENCH  // play nicely in sim without reset
-    initial begin
-        toggle_src = 0;
-        shr_dst = 0;
-    end
-    `endif
+`ifdef BENCH  // play nicely in sim without reset
+initial begin
+    toggle_src = 0;
+    shr_dst = 0;
+end
+`endif
 ```
 
 Isle test bench makefiles enable this with:
@@ -61,7 +59,7 @@ I recommend defining `BENCH` if you're doing your own simulation of Isle Verilog
 
 ## Verilator Lint
 
-There is a Verilator lint script in each `hardware/book` chapter directory that checks complete designs.
+There is a Verilator lint script in each `hardware/book` chapter directory that checks the complete design.
 
 For example, to lint chapter 1 designs:
 
@@ -104,4 +102,4 @@ Troubleshooting:
 
 * The latest version of Python isn't necessarily supported (cocotb 2.0 doesn't support Python 14).
 * If you're having issues running cocotb on macOS, try using brew Python instead of the system one.
-* I don't recommend using the version of cocotb from _OSS CAD Suite_ as it's not the stable release.
+* I don't recommend using the version of cocotb from _OSS CAD Suite_ because it's not a stable release.
