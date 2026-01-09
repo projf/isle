@@ -36,6 +36,17 @@ module display #(
     reg signed [CORDW-1:0] v_sta, vs_sta, vs_end, va_sta, va_end;
     reg h_pol, v_pol;  // sync polarity (0:neg, 1:pos)
 
+    `ifdef BENCH  // ensure frame_start and line_start xd works in simulation
+    initial begin
+        frame_start = 0;
+        line_start = 0;
+        x = 0;
+        y = 0;
+        h_sta = 0;
+        v_sta = 0;
+    end
+    `endif
+
     // generate horizontal and vertical sync with correct polarity
     always @(posedge clk_pix) begin
         hsync <= h_pol ? (x >= hs_sta && x < hs_end) : ~(x >= hs_sta && x < hs_end);

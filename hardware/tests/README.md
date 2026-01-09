@@ -38,6 +38,27 @@ make WAVES=1 clut
 
 [Surfer](https://surfer-project.org) (recommended) and [GTKWave](https://gtkwave.github.io/gtkwave/) support FST waveforms.
 
+### Simulation Support
+
+FPGAs, such as Xilinx XC7 and Lattice ECP5, reset registers (flip-flops) to zero when configured at power-on. However, simulators such as Icarus Verilog do not. This isn't usually a problem for Isle, but there are a few cases where this breaks simulation. To handle these cases, Isle Verilog modules may include conditional initial values using; for example:
+
+```verilog
+    `ifdef BENCH  // play nicely in sim without reset
+    initial begin
+        toggle_src = 0;
+        shr_dst = 0;
+    end
+    `endif
+```
+
+Isle test bench makefiles enable this with:
+
+```makefile
+COMPILE_ARGS += -DBENCH
+```
+
+I recommend defining `BENCH` if you're doing your own simulation of Isle Verilog modules.
+
 ## Verilator Lint
 
 There is a Verilator lint script in each `hardware/book` chapter directory that checks complete designs.
