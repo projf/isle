@@ -12,11 +12,12 @@ module xd (
     output wire flag_dst   // flag in destination domain
     );
 
-    // play nicely in sim without reset
+    `ifdef BENCH  // play nicely in sim without reset
     initial begin
         toggle_src = 0;
         shr_dst = 0;
     end
+    `endif
 
     // toggle reg when pulse received in source domain
     reg toggle_src;
