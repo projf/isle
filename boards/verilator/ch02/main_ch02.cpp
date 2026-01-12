@@ -10,7 +10,8 @@
 // display dimensions (must match hardware design or you'll core dump)
 const int H_RES = 672, V_RES = 384;
 
-const int FULLSCREEN = false;
+const bool FULLSCREEN = false;
+const bool VSYNC = true;
 
 typedef struct Pixel {  // for SDL texture (little endian ARGB8888)
     uint8_t b;  // blue
@@ -28,6 +29,7 @@ int main(int argc, char* argv[]) {
     }
 
     Pixel screenbuffer[H_RES*V_RES];
+    Pixel* p = screenbuffer;
 
     SDL_Window*   sdl_window   = NULL;
     SDL_Renderer* sdl_renderer = NULL;
@@ -42,7 +44,7 @@ int main(int argc, char* argv[]) {
     if (FULLSCREEN) SDL_SetWindowFullscreen(sdl_window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 
     sdl_renderer = SDL_CreateRenderer(sdl_window, -1,
-        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+        SDL_RENDERER_ACCELERATED | (VSYNC ? SDL_RENDERER_PRESENTVSYNC : 0));
     if (!sdl_renderer) {
         printf("Renderer creation failed: %s\n", SDL_GetError());
         return 1;
@@ -56,7 +58,7 @@ int main(int argc, char* argv[]) {
     }
 
     sdl_texture = SDL_CreateTexture(sdl_renderer, SDL_PIXELFORMAT_ARGB8888,
-        SDL_TEXTUREACCESS_TARGET, H_RES, V_RES);
+        SDL_TEXTUREACCESS_STREAMING, H_RES, V_RES);
     if (!sdl_texture) {
         printf("Texture creation failed: %s\n", SDL_GetError());
         return 1;
@@ -86,6 +88,7 @@ int main(int argc, char* argv[]) {
 
     uint64_t frame_count = 0;
     uint64_t start_ticks = SDL_GetPerformanceCounter();
+
     while (1) {
         // cycle the clock
         top->clk = 1;
@@ -95,11 +98,11 @@ int main(int argc, char* argv[]) {
 
         // update pixel if not in blanking interval
         if (top->sdl_de) {
-            Pixel* p = &screenbuffer[top->sdl_y*H_RES + top->sdl_x];
             p->a = 0xFF;  // transparency
             p->b = top->sdl_b;
             p->g = top->sdl_g;
             p->r = top->sdl_r;
+            p++;
         }
 
         // update texture once per frame (in blanking)
@@ -119,8 +122,10 @@ int main(int argc, char* argv[]) {
             SDL_RenderCopy(sdl_renderer, sdl_texture, NULL, NULL);
             SDL_RenderPresent(sdl_renderer);
             frame_count++;
+            p = screenbuffer;  // return to start of screenbuffer
         }
     }
+
     uint64_t end_ticks = SDL_GetPerformanceCounter();
     double duration = ((double)(end_ticks-start_ticks))/SDL_GetPerformanceFrequency();
     double fps = (double)frame_count/duration;

@@ -122,7 +122,6 @@ int main(int argc, char* argv[]) {
             SDL_RenderCopy(sdl_renderer, sdl_texture, NULL, NULL);
             SDL_RenderPresent(sdl_renderer);
             frame_count++;
-
             p = screenbuffer;  // return to start of screenbuffer
         }
     }
