@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
     }
 
     sdl_texture = SDL_CreateTexture(sdl_renderer, SDL_PIXELFORMAT_ARGB8888,
-        SDL_TEXTUREACCESS_TARGET, H_RES, V_RES);
+        SDL_TEXTUREACCESS_STREAMING, H_RES, V_RES);
     if (!sdl_texture) {
         printf("Texture creation failed: %s\n", SDL_GetError());
         return 1;
