@@ -33,7 +33,7 @@ Each chapter top module uses an instance of the common chapter design from [hard
 Verilator introduces new lint waivers from time to time; unfortunately, this trips up older versions of Verilator. If Verilator gives an error message of the form "Unknown Verilator lint message code" you have two options:
 
 1. Upgrade to a newer version of Verilator
-2. Remove the lint waivers from the corresponding Verilog files
+2. Use the `-Wfuture-<message>` option; see [verilator Arguments](https://verilator.org/guide/latest/exe_verilator.html#cmdoption-Wfuture-message)
 
 ## Install Dependencies
 
