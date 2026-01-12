@@ -6,7 +6,7 @@
 //  0 -  640 x 480 60 Hz (25.2 MHz) - default
 //  1 - 1024 x 768 60 Hz (65 MHz) - recommended 4:3
 //  2 - 1366 x 768 60 Hz (72 MHz) - recommended 16:9
-//  3 -  672 x 384 60 Hz (25 MHz) - for simulation
+//  3 -  672 x 384 60 Hz (20 MHz) - for simulation
 //  4 - 1280 x 720 60 Hz (74.25 MHz) - HD
 
 `default_nettype none
@@ -155,16 +155,16 @@ module display #(
                 vres   <=  384;
 
                 h_pol  <=    1;
-                h_sta  <= -128;
-                hs_sta <= -112;
-                hs_end <=  -48;
+                h_sta  <= -153;
+                hs_sta <= -130;
+                hs_end <= -110;
                 ha_sta <=    0;
                 ha_end <=  671;
 
                 v_pol  <=    1;
-                v_sta  <= -137;
-                vs_sta <= -127;
-                vs_end <= -125;
+                v_sta  <=  -20;
+                vs_sta <=  -15;
+                vs_end <=  -10;
                 va_sta <=    0;
                 va_end <=  383;
             end

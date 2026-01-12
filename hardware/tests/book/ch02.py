@@ -10,12 +10,12 @@ from cocotb.triggers import RisingEdge, Timer
 from tests.helpers import assert_coord, assert_pixel
 
 # clock frequency
-SYS_TIME = 40  # 40 ns is 25 MHz
+SYS_TIME = 50  # 50 ns is 20 MHz
 
 # 672x384 (DISPLAY_MODE=3)
-DISP_LINE   = 800  # horizontal line including blanking
-DISP_HBLANK = 128  # horizontal blanking
-DISP_VBLANK = 137  # vertical blanking
+DISP_LINE   = 825  # horizontal line including blanking
+DISP_HBLANK = 153  # horizontal blanking
+DISP_VBLANK =  20  # vertical blanking
 
 
 async def reset_dut(dut):

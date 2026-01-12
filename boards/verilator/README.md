@@ -75,26 +75,26 @@ Once you have WSL2 running, you can use the Linux instructions (above). I have s
 
 ## 672x384 Display Timings
 
-Verilator designs use their own 672x384 display timings with 25 MHz clock. The pixel and system clock are both 25 MHz in Verilator simulation. Chapter 1 uses 640x480 display in line with other dev boards.
+Verilator designs use their own 672x384 display timings with 20 MHz clock. The pixel and system clock are both 20 MHz in Verilator simulation.
 
-We want to as near 60 Hz and 25 MHz as possible, so we use modified 640x480 timings with 800x521 total pixels for 59.98 Hz.
+We want to as near 60 Hz and 20 MHz as possible, 825x404 at 20 MHz is 60.006 MHz.
 
 ```
 Horizontal Timings
 Active Pixels        672
-Front Porch           16
-Sync Width            64
-Back Porch            48
-Blanking Total       128
-Total Pixels         800
+Front Porch           23
+Sync Width            20
+Back Porch           110
+Blanking Total       153
+Total Pixels         825
 Sync Polarity        pos
 
 Vertical Timings
 Active Lines         384
-Front Porch           10
-Sync Width             2
-Back Porch           125
-Blanking Total       137
-Total Lines          521
+Front Porch            5
+Sync Width             5
+Back Porch            10
+Blanking Total        20
+Total Lines          404
 Sync Polarity        pos
 ```
