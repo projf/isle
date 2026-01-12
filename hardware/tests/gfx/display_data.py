@@ -45,17 +45,17 @@ DT = [
         'V_SYNC'     :   3
     },
     {  # mode 3 = 672x384
-        'PIX_TIME' :    40.00,  # 25 MHz
+        'PIX_TIME' :   50.00,  # 20 MHz
         'HRES'       : 672,
         'VRES'       : 384,
         'H_POL'      :   1,  # positive polarity
-        'H_BLANK'    : 128,
-        'H_FRONT'    :  16,
-        'H_SYNC'     :  64,
+        'H_BLANK'    : 153,
+        'H_FRONT'    :  23,
+        'H_SYNC'     :  20,
         'V_POL'      :   1,  # positive polarity
-        'V_BLANK'    : 137,
-        'V_FRONT'    :  10,
-        'V_SYNC'     :   2
+        'V_BLANK'    :  20,
+        'V_FRONT'    :   5,
+        'V_SYNC'     :   5
     },
     {  # mode 4 = 1280x720
         'PIX_TIME' :    13.47,  # 74.25 MHz

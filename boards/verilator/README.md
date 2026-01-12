@@ -2,7 +2,7 @@
 
 By combining [Verilator](https://www.veripool.org/verilator/) and [SDL](https://www.libsdl.org), you can run Isle on another computer (Linux, Mac, or Windows). Isle also supports physical FPGA [dev boards](../).
 
-Be aware that Isle typically runs several times slower in simulation than on an FPGA dev board. For Isle designs with a CPU, I see ~18 FPS on an Apple M1. Your mileage may vary.
+Be aware that designs typically run slower in simulation than on an FPGA dev board. For example, the chapter 3 design runs at 43 FPS on an Apple M1 and 32 FPS on Linux with Intel i5-1240P.
 
 On macOS, colour rendering is incorrect on high-gamut displays due to the way LibSDL v2 handles colour spaces. The only fix I've found is to temporarily set your monitor to sRGB colour profile. I plan to move to LibSDL v3 at some point, but it's not a high priority right now.
 
@@ -33,7 +33,7 @@ Each chapter top module uses an instance of the common chapter design from [hard
 Verilator introduces new lint waivers from time to time; unfortunately, this trips up older versions of Verilator. If Verilator gives an error message of the form "Unknown Verilator lint message code" you have two options:
 
 1. Upgrade to a newer version of Verilator
-2. Remove the lint waivers from the corresponding Verilog files
+2. Use the `-Wfuture-<message>` option; see [verilator Arguments](https://verilator.org/guide/latest/exe_verilator.html#cmdoption-Wfuture-message)
 
 ## Install Dependencies
 
@@ -75,26 +75,26 @@ Once you have WSL2 running, you can use the Linux instructions (above). I have s
 
 ## 672x384 Display Timings
 
-Verilator designs use their own 672x384 display timings with 25 MHz clock. The pixel and system clock are both 25 MHz in Verilator simulation. Chapter 1 uses 640x480 display in line with other dev boards.
+Verilator designs use their own 672x384 display timings with 20 MHz clock. The pixel and system clock are both 20 MHz in Verilator simulation.
 
-We want to as near 60 Hz and 25 MHz as possible, so we use modified 640x480 timings with 800x521 total pixels for 59.98 Hz.
+We want to as near 60 Hz and 20 MHz as possible, 825x404 at 20 MHz is 60.006 MHz.
 
 ```
 Horizontal Timings
 Active Pixels        672
-Front Porch           16
-Sync Width            64
-Back Porch            48
-Blanking Total       128
-Total Pixels         800
+Front Porch           23
+Sync Width            20
+Back Porch           110
+Blanking Total       153
+Total Pixels         825
 Sync Polarity        pos
 
 Vertical Timings
 Active Lines         384
-Front Porch           10
-Sync Width             2
-Back Porch           125
-Blanking Total       137
-Total Lines          521
+Front Porch            5
+Sync Width             5
+Back Porch            10
+Blanking Total        20
+Total Lines          404
 Sync Polarity        pos
 ```
