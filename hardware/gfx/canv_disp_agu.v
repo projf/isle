@@ -8,12 +8,12 @@
 `timescale 1ns / 1ps
 
 module canv_disp_agu #(
-    parameter CORDW=0,               // signed coordinate width (bits)
-    parameter WORD=32,               // machine word size (bits)
-    parameter ADDRW=0,               // vram address width (bits)
-    parameter BMAP_LAT=0,            // latency for agu + vram + clut (cycles)
+    parameter ADDRW=14,              // vram address width (bits)
+    parameter BMAP_LAT=6,            // latency for agu + vram + clut (cycles)
     parameter PIX_IDW=$clog2(WORD),  // pixel ID width (bits)
-    parameter SHIFTW=0               // address shift width (bits)
+    parameter SHIFTW=3,              // address shift width (bits)
+    parameter CORDW=16,              // signed coordinate width (bits)
+    parameter WORD=32                // machine word size (bits)
     ) (
     input  wire clk_pix,                  // pixel clock
     input  wire rst_pix,                  // reset in pixel clock domain

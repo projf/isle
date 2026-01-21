@@ -8,13 +8,13 @@
 `timescale 1ns / 1ps
 
 module earthrise #(
-    parameter CORDW=0,               // signed coordinate width (bits)
-    parameter WORD=0,                // machine word size (bits)
-    parameter CANV_SHIFTW=0,         // vram address shift width (bits)
-    parameter COLRW=0,               // colour/pattern width (bits)
-    parameter ER_ADDRW=0,            // command list address width
+    parameter CANV_SHIFTW=3,         // vram address shift width (bits)
+    parameter COLRW=8,               // colour/pattern width (bits)
+    parameter CORDW=16,              // signed coordinate width (bits)
+    parameter ER_ADDRW=10,           // command list address width
     parameter PIX_IDW=$clog2(WORD),  // pixel ID width (bits)
-    parameter VRAM_ADDRW=0           // vram address width (bits)
+    parameter VRAM_ADDRW=14,         // vram address width (bits)
+    parameter WORD=32                // machine word size (bits)
     ) (
     input  wire clk,                           // clock
     input  wire rst,                           // reset

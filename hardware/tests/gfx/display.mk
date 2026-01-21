@@ -13,7 +13,7 @@ HARDWARE = $(PWD)/../..
 VERILOG_SOURCES += $(HARDWARE)/gfx/${DUT}.v
 
 # pass Verilog module parameters to simulator
-COMPILE_ARGS += -P${DUT}.CORDW=16 -P${DUT}.MODE=${DISPLAY_MODE}
+COMPILE_ARGS += -P${DUT}.MODE=${DISPLAY_MODE}
 
 # each test needs its own build dir and results file
 COCOTB_RESULTS_FILE = results_${DUT}_mode_${DISPLAY_MODE}.xml

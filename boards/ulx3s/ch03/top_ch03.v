@@ -31,14 +31,14 @@ module top_ch03 #(
     localparam WIN_STARTX   = 16'd11;    // window horizontal position (pixels)
     localparam WIN_STARTY   = 16'd0;     // window vertical position (lines)
 
-    // system clock - 25 MHz
-    // 25 MHz -> 25 MHz
+    // system clock - 20 MHz
+    // 25 MHz -> 20 MHz
     wire clk_sys, clk_sys_locked;
     clock_gen #(
-        .CLKI_DIV(1),
-        .CLKFB_DIV(1),
-        .CLKOP_DIV(24),
-        .CLKOP_CPHASE(12)
+        .CLKI_DIV(5),
+        .CLKFB_DIV(4),
+        .CLKOP_DIV(30),
+        .CLKOP_CPHASE(15)
     ) clock_sys_inst (
        .clk_in(clk_25m),
        .clk_out(clk_sys),

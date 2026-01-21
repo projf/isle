@@ -13,8 +13,6 @@ See the [Display](http://projectf.io/isle/display.html) blog post for more infor
 * `CORDW` - signed coordinate width (bits)
 * `MODE` - display mode (see below for supported modes)
 
-For Isle, `CORDW` must be set to **16**.
-
 ## Signals
 
 The follow signals are used to drive the display (all in pixel clock domain).

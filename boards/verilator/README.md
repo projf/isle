@@ -2,7 +2,7 @@
 
 By combining [Verilator](https://www.veripool.org/verilator/) and [SDL](https://www.libsdl.org), you can run Isle on another computer (Linux, Mac, or Windows). Isle also supports physical FPGA [dev boards](../).
 
-Be aware that designs typically run slower in simulation than on an FPGA dev board. For example, the chapter 3 design runs at 43 FPS on an Apple M1 and 32 FPS on Linux with Intel i5-1240P.
+Be aware that designs typically run slower in simulation than on an FPGA dev board. For example, the [chapter 3 design](../../hardware/book/ch03/) runs at 43 FPS on an Apple M1 and 32 FPS on Linux with Intel i5-1240P.
 
 On macOS, colour rendering is incorrect on high-gamut displays due to the way LibSDL v2 handles colour spaces. The only fix I've found is to temporarily set your monitor to sRGB colour profile. I plan to move to LibSDL v3 at some point, but it's not a high priority right now.
 
@@ -22,11 +22,11 @@ make
 ./obj_dir/ch04
 ```
 
-To enable full screen display, set `FULLSCREEN` to true in the main C++ file for that chapter, e.g. `boards/verilator/main_ch04.cpp`.
+To enable/disable full screen and vsync, edit the main C++ file for that chapter, e.g. `boards/verilator/main_ch04.cpp`. You can find the C++ function that handles setting up SDL and running the Verilator simulation in [sdl_sim.h](sdl_sim.h).
 
 Many chapters have parameters you can edit in the matching top module. For example, in `top_ch02.v` you can choose the bitmap and palette to load.
 
-Each chapter top module uses an instance of the common chapter design from [hardware/book](../../hardware/book/). There is also a top-level C++ main file for each design.
+Each chapter top module uses an instance of the common chapter design from [hardware/book](../../hardware/book/).
 
 ### Unknown Verilator Lint Message Code
 
@@ -49,10 +49,16 @@ For Debian, Ubuntu, and Pop!_OS:
 apt install build-essential verilator libsdl2-dev
 ```
 
-On Arch:
+On Arch Linux:
 
 ```shell
 pacman -S base-devel verilator sdl2
+```
+
+On Fedora:
+
+```shell
+dnf install @development-tools verilator SDL2-devel
 ```
 
 Other Linux distros and BSD will be similar.
@@ -77,7 +83,7 @@ Once you have WSL2 running, you can use the Linux instructions (above). I have s
 
 Verilator designs use their own 672x384 display timings with 20 MHz clock. The pixel and system clock are both 20 MHz in Verilator simulation.
 
-We want to as near 60 Hz and 20 MHz as possible, 825x404 at 20 MHz is 60.006 MHz.
+We want to as near 60 Hz and 20 MHz as possible, 825x404 at 20 MHz is 60.006 Hz.
 
 ```
 Horizontal Timings

@@ -2,17 +2,12 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// RAM Type:     dual-port block ram
-// Addressing:   word
-// Write Enable: word
-// Write Mode:   no change (WRITEMODE=NORMAL for ECP5)
-
 `default_nettype none
 `timescale 1ns / 1ps
 
 module clut #(
-    parameter ADDRW=0,     // address width (bits)
-    parameter DATAW=0,     // data width (bits)
+    parameter ADDRW=8,     // address width (bits)
+    parameter DATAW=15,    // data width (bits)
     parameter FILE_PAL=""  // initial palette file to load
     ) (
     input  wire clk_sys,                // system clock
@@ -37,7 +32,7 @@ module clut #(
         end
     end
 
-    // system port (read-write, write_mode: no change)
+    // system port (read-write)
     always @(posedge clk_sys) begin
         if (re_sys) dout_sys <= clut_mem[addr_sys];
         if (we_sys) clut_mem[addr_sys] <= din_sys;

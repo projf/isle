@@ -11,6 +11,8 @@ The **erlist** (Earthrise Command List) module [[verilog src](../mem/erlist.v)] 
 
 The command list takes a `FILE_INIT` parameter, which allows an initial $readmemh format command list to be loaded at build time. Use the Earthrise assembler, [erasm](../../tools/erasm/), to generate a suitable file.
 
+The depth of the command list is derived from the address width. [Earthrise](earthrise.md) requires the depth of erlist to be a power of two.
+
 ## Signals
 
 The command list is dual port. The system port is read-write for use of the CPU. Earthrise fetches instructions from a dedicated read-only port. Both ports are in the system domain. The command list has a 32-bit data bus and uses byte addressing. Earthrise instructions are 16-bit, so two instructions are packed (little endian) into each memory location.

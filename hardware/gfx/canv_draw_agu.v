@@ -2,17 +2,17 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// pipelined draw address calculation (3 cycle latency)
+// 3 cycle latency - pipelined draw address calculation
 
 `default_nettype none
 `timescale 1ns / 1ps
 
 module canv_draw_agu #(
-    parameter CORDW=0,               // signed coordinate width (bits)
-    parameter WORD=0,                // machine word size (bits)
-    parameter ADDRW=0,               // address width (bits)
+    parameter ADDRW=14,              // address width (bits)
+    parameter CORDW=16,              // signed coordinate width (bits)
     parameter PIX_IDW=$clog2(WORD),  // pixel ID width (bits)
-    parameter SHIFTW=0               // address shift width (bits)
+    parameter SHIFTW=3,              // address shift width (bits)
+    parameter WORD=32                // machine word size (bits)
     ) (
     input  wire clk,                      // clock
     input  wire signed [CORDW-1:0] w,     // canvas width

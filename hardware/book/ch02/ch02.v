@@ -7,13 +7,13 @@
 
 module ch02 #(
     parameter BPC=5,              // bits per colour channel
+    parameter BG_COLR='h0886,     // background colour (RGB555)
+    parameter CANV_BPP=4,         // canvas bits per pixel (4=16 colours)
+    parameter CANV_SCALE=16'd1,   // canvas scaling factor
     parameter CORDW=16,           // signed coordinate width (bits)
     parameter DISPLAY_MODE=0,     // display mode (see display.v for modes)
-    parameter BG_COLR=0,          // background colour (RGB555)
     parameter FILE_BMAP="",       // initial bitmap file for framebuffer
     parameter FILE_PAL="",        // initial palette for CLUT
-    parameter CANV_BPP=0,         // canvas bits per pixel (4=16 colours)
-    parameter CANV_SCALE=16'd0,   // canvas scaling factor
     parameter WIN_WIDTH=16'd0,    // canvas window width (pixel)
     parameter WIN_HEIGHT=16'd0,   // canvas window height (lines)
     parameter WIN_STARTX=16'd0,   // canvas window horizontal position (pixels)

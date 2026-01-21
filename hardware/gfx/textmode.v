@@ -6,17 +6,17 @@
 `timescale 1ns / 1ps
 
 module textmode #(
-    parameter CORDW=0,         // signed coordinate width (bits)
-    parameter WORD=0,          // machine word size (bits)
-    parameter ADDRW=0,         // tram address width (bits)
-    parameter CIDXW=0,         // colour index width (bits)
-    parameter CLUT_LAT=0,      // CLUT latency (cycles)
-    parameter FILE_FONT="",    // font glyph ROM file
-    parameter FONT_COUNT=0,    // number of glyphs in font ROM
-    parameter GLYPH_HEIGHT=0,  // glyph height (pixels)
-    parameter GLYPH_WIDTH=0,   // half-width glyph width (pixels)
-    parameter TRAM_DEPTH=0,    // tram depth (chars)
-    parameter TRAM_LAT=0       // tram latency (cycles)
+    parameter ADDRW=11,         // tram address width (bits)
+    parameter CIDXW=4,          // colour index width (bits)
+    parameter CLUT_LAT=2,       // CLUT latency (cycles)
+    parameter CORDW=16,         // signed coordinate width (bits)
+    parameter FILE_FONT="",     // font glyph ROM file
+    parameter FONT_COUNT=128,   // number of glyphs in font ROM
+    parameter GLYPH_HEIGHT=16,  // glyph height (pixels)
+    parameter GLYPH_WIDTH=8,    // half-width glyph width (pixels)
+    parameter TRAM_DEPTH=2016,  // tram depth (chars)
+    parameter TRAM_LAT=1,       // tram latency (cycles)
+    parameter WORD=32           // machine word size (bits)
     ) (
     input  wire clk_pix,                       // pixel clock
     input  wire rst_pix,                       // reset in pixel clock domain

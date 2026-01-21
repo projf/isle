@@ -1,6 +1,6 @@
 # 🏝️ Isle FPGA Computer
 
-Welcome to Isle. Isle is a simple, modern computer — an open design that encourages tinkering, experimentation, and doing your own thing. It's early days for the Isle project. The current designs are focused on hardware; CPU and software will follow before too long.
+Welcome to Isle. Isle is a simple, modern computer — an open design that encourages tinkering, experimentation, and doing your own thing. It's early days for the Isle project.
 
 Learn more and get started with the Project F blog: [Isle FPGA Computer](http://projectf.io/isle/fpga-computer.html)
 
@@ -14,7 +14,8 @@ As I build each new component, I introduce it in its own chapter with a dedicate
 * Chapter 2 - **Bitmap Graphics**: [Design](hardware/book/ch02) - [Blog](https://projectf.io/isle/bitmap-graphics.html)
 * Chapter 3 - **2D Drawing**: [Design](hardware/book/ch03) - [Blog](http://projectf.io/isle/2d-drawing.html)
 * Chapter 4 - **Text Mode**: [Design](hardware/book/ch04) - [Blog](http://projectf.io/isle/text-mode.html)
-* Chapter 5 - **RISC-V CPU** (forthcoming)
+* Chapter 5 - **RISC-V CPU**: [Design](hardware/book/ch05) - [Software](software/book/ch05) - Blog (forthcoming)
+* Chapter 6 - Input (forthcoming)
 
 For build instructions see [dev boards](boards). Isle supports Lattice ECP5, Xilinx XC7, and Verilator/SDL simulation on Linux/Mac/Windows.
 
@@ -25,7 +26,7 @@ For build instructions see [dev boards](boards). Isle supports Lattice ECP5, Xil
 * [hardware](hardware) - Verilog hardware
 * [projects](projects) - projects that run on Isle
 * [res](res) - resource files (bitmaps, drawings, palettes)
-* [software](software) - programs to run on Isle (forthcoming)
+* [software](software) - programs to run on Isle
 * [tools](tools) - tools to build Isle software and resources
 
 ## Thank You!

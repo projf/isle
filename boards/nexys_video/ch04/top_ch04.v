@@ -38,13 +38,13 @@ module top_ch04 #(
     localparam GLYPH_HEIGHT =  16;  // glyph height (pixels)
     localparam GLYPH_WIDTH  =   8;  // half-width glyph width (pixels)
 
-    // system clock - 25 MHz
-    // 100 MHz -> 25 MHz
+    // system clock - 20 MHz
+    // 100 MHz -> 20 MHz
     wire clk_sys, clk_sys_locked;
     clock_gen #(
-        .MULT_MASTER(9.125),
+        .MULT_MASTER(9),
         .DIV_MASTER(1),
-        .DIV_1X(36.5),
+        .DIV_1X(45),
         .IN_PERIOD(10.0)
     ) clock_sys_inst (
        .clk_in(clk_100m),

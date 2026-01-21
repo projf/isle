@@ -7,7 +7,7 @@
 `default_nettype none
 `timescale 1ns / 1ps
 
-module fline #(parameter CORDW=0) (  // signed coordinate width
+module fline #(parameter CORDW=16) (  // signed coordinate width
     input  wire clk,    // clock
     input  wire rst,    // reset
     input  wire start,  // start line calculation

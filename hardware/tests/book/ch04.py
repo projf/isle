@@ -10,8 +10,8 @@ from cocotb.triggers import RisingEdge, Timer
 from tests.helpers import assert_coord, assert_pixel
 
 # clock frequencies
-SYS_TIME =  25  # 25 ns is 40 MHz
-PIX_TIME =  50  # 50 ns is 20 MHz
+SYS_TIME = 25  # 25 ns is 40 MHz
+PIX_TIME = 50  # 50 ns is 20 MHz
 
 # 672x384 (DISPLAY_MODE=3)
 DISP_LINE   = 825  # horizontal line including blanking

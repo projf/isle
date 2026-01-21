@@ -6,9 +6,9 @@
 `timescale 1ns / 1ps
 
 module rom_sync #(
-    parameter ADDRW=0,     // address width (bits)
-    parameter DATAW=0,     // data width (bits)
-    parameter DEPTH=0,     // ROM depth
+    parameter ADDRW=7,     // address width (bits)
+    parameter DATAW=8,     // data width (bits)
+    parameter DEPTH=128,   // ROM depth
     parameter FILE_ROM=""  // set ROM contents
     ) (
     input  wire clk,               // clock

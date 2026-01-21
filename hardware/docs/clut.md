@@ -2,7 +2,7 @@
 
 The **clut** (Colour Lookup Table) module [[verilog src](../mem/clut.v)] maps palette indexes to colours.
 
-For example, in 16 colour mode each pixel in [vram](vram.md) is represented by a 4-bit colour index. When we come to display that pixel we read the colour index from vram, say **6**, then use the clut to map that to a 15-bit RGB555 colour such as (31, 31, 00), which is bright yellow.
+For example, in 16 colour mode each pixel colour in [vram](vram.md) is represented by a 4-bit colour index. When we come to display that pixel we read the colour index from vram, say **6**, then use the clut to map that to a 15-bit RGB555 colour such as (31, 31, 00), which is bright yellow.
 
 The clut is word-addressed by the CPU; one 32-bit word maps to a single palette entry. Software must use store word (sw) to update palette entries; store half (sh) and store byte (sb) are ignored.
 
@@ -16,7 +16,7 @@ The separate system and displays ports avoid contention between the CPU and disp
 * `DATAW` - data width (bits)
 * `FILE_PAL` - optional initial palette to load
 
-For Isle, `DATAW` must be set to **15** and `ADDRW` should be set to **8**.
+The address width determines the number of palette entries. The data width depends on the output colour. Isle supports 256 15-bit colours (RGB555), so uses `DATAW=15` and `ADDRW=8`.
 
 The clut takea a `FILE_PAL` parameter, which allows an initial $readmemh format palette to be loaded at build time. Isle includes several palettes to get you started, see [Colour Palettes](../../../docs/colour-palettes.md) for details.
 

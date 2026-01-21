@@ -8,7 +8,6 @@ PATH_LIB  = ../../../hardware
 PATH_PROJ = ../../../projects
 
 # Common Verilog
-PATH_LIB = ../../../hardware
 ADD_SRC += ${PATH_LIB}/book/ch04/ch04.v
 ADD_SRC += ${PATH_LIB}/gfx/display.v
 ADD_SRC += ${PATH_LIB}/gfx/font_glyph.v

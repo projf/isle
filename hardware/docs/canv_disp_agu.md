@@ -14,8 +14,6 @@ See the [Bitmap Graphics](http://projectf.io/isle/bitmap-graphics.html) blog pos
 * `BMAP_LAT` - latency for AGU + VRAM + CLUT
 * `SHIFTW` - address shift width (bits)
 
-For Isle, `CORDW` must be set to **16** and `WORD` must be set to **32**.
-
 ## Signals
 
 ### Input
@@ -39,7 +37,7 @@ The position of the canvas on the display is set by the window start `win_start`
 
 The `BMAP_LAT` parameter corrects for end-to-end bitmap latency in calculating the address, retrieving data from vram, and looking the colour up in the CLUT. For Isle this should be set to 6. See [Display Pipeline](#display-pipeline) for further explanation.
 
-The address shift, `addr_shift`, determines how the raw pixel address is split between vram address and pixel index.
+The address shift, `addr_shift`, determines how the raw pixel address is split between vram address and pixel index. Because the maximum address shift is 5, the `SHIFTW` parameter is set to 3.
 
 Address shift is set based on the bits per pixel:
 

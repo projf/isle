@@ -2,20 +2,15 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// RAM Type:     single-port block ram
-// Addressing:   word
-// Write Enable: byte
-// Write Mode:   no change (WRITEMODE=NORMAL for ECP5)
-
 `default_nettype none
 `timescale 1ns / 1ps
 
 module sysram #(
-    parameter BYTE=0,       // machine byte size (bits)
-    parameter BYTE_CNT=0,   // bytes in machine word
-    parameter WORD=0,       // machine word size (bits)
-    parameter ADDRW=0,      // address width (bits)
-    parameter FILE_SOFT=""  // optional initial software to load
+    parameter ADDRW=12,      // address width (bits)
+    parameter BYTE=8,        // machine byte size (bits)
+    parameter BYTE_CNT=4,    // bytes in machine word
+    parameter FILE_SOFT="",  // optional initial software to load
+    parameter WORD=32        // machine word size (bits)
     ) (
     input  wire clk,                // clock
     input  wire [BYTE_CNT-1:0] we,  // write enable
@@ -36,7 +31,7 @@ module sysram #(
         end
     end
 
-    // system port (read-write, write_mode: no change)
+    // system port (read-write)
     integer i;
     always @(posedge clk) begin
         if (re) dout <= sysram_mem[addr];

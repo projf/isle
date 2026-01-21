@@ -13,8 +13,8 @@
 `timescale 1ns / 1ps
 
 module display #(
-    parameter CORDW=0,  // signed coordinate width (bits)
-    parameter MODE=0    // display mode (see above for supported modes)
+    parameter CORDW=16,  // signed coordinate width (bits)
+    parameter MODE=0     // display mode (see above for supported modes)
     ) (
     input  wire clk_pix,                 // pixel clock
     input  wire rst_pix,                 // reset in pixel clock domain

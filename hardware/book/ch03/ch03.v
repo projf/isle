@@ -7,16 +7,16 @@
 
 module ch03 #(
     parameter BPC=5,              // bits per colour channel
+    parameter BG_COLR='h0886,     // background colour (RGB555)
     parameter CORDW=16,           // signed coordinate width (bits)
-    parameter DISPLAY_MODE=0,     // display mode (see display.v for modes)
-    parameter BG_COLR=0,          // background colour (RGB555)
-    parameter FILE_BMAP="",       // initial bitmap file for vram
-    parameter FILE_PAL="",        // initial palette for CLUT
-    parameter FILE_ER_LIST="",    // initial command list for Earthrise
-    parameter CANV_BPP=0,         // canvas bits per pixel (4=16 colours)
-    parameter CANV_WIDTH=16'd0,   // canvas width (pixels)
+    parameter CANV_BPP=4,         // canvas bits per pixel (4=16 colours)
     parameter CANV_HEIGHT=16'd0,  // canvas height (lines)
     parameter CANV_SCALE=16'd0,   // canvas scaling factor
+    parameter CANV_WIDTH=16'd0,   // canvas width (pixels)
+    parameter DISPLAY_MODE=0,     // display mode (see display.v for modes)
+    parameter FILE_BMAP="",       // initial bitmap file for vram
+    parameter FILE_ER_LIST="",    // initial command list for Earthrise
+    parameter FILE_PAL="",        // initial palette for CLUT
     parameter WIN_WIDTH=16'd0,    // canvas window width (pixel)
     parameter WIN_HEIGHT=16'd0,   // canvas window height (lines)
     parameter WIN_STARTX=16'd0,   // canvas window horizontal position (pixels)

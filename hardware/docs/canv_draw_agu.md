@@ -11,8 +11,6 @@ This module has 3 cycles of latency and supports pipelining. See [Earthrise](ear
 * `ADDRW` - address width (bits)
 * `SHIFTW` - address shift width (bits)
 
-For Isle, `CORDW` must be set to **16** and `WORD` must be set to **32**.
-
 ## Signals
 
 ### Input

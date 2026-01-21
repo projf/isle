@@ -18,5 +18,4 @@ verilator --lint-only -Wall \
     -I${HW_DIR} \
     -I${HW_DIR}/gfx \
     -I${HW_DIR}/mem \
-    -I${HW_DIR}/sys \
     ch04.v

@@ -7,9 +7,9 @@
 
 module ch04 #(
     parameter BPC=5,             // bits per colour channel
+    parameter BG_COLR='h0886,    // background colour (RGB555)
     parameter CORDW=16,          // signed coordinate width (bits)
     parameter DISPLAY_MODE=0,    // display mode (see display.v for modes)
-    parameter BG_COLR=0,         // background colour (RGB555)
     parameter FILE_FONT="",      // font glyph ROM file
     parameter FILE_PAL="",       // initial palette for CLUT
     parameter FILE_TXT="",       // initial text file for tram
@@ -17,8 +17,8 @@ module ch04 #(
     parameter GLYPH_HEIGHT=16,   // font glyph height (pixels)
     parameter GLYPH_WIDTH=8,     // font half-width glyph width (pixels)
     parameter TEXT_SCALE=32'h0,  // text mode scale hYYYYXXXX
-    parameter WIN_START=32'h0,   // text window start coords 'hYYYYXXXX
-    parameter WIN_END=32'h0      // text window end coords 'hYYYYXXXX
+    parameter WIN_END=32'h0,     // text window end coords 'hYYYYXXXX
+    parameter WIN_START=32'h0    // text window start coords 'hYYYYXXXX
     ) (
     input  wire clk_sys,                    // system clock
     input  wire clk_pix,                    // pixel clock (used by display)
@@ -66,10 +66,6 @@ module ch04 #(
     wire [TRAM_ADDRW-1:0] tram_addr_disp;
     wire [WORD-1:0] tram_dout_disp;
 
-    // fixed tram size for now; CPU will control through hardware registers
-    reg signed [TRAM_ADDRW-1:0] text_hres = TRAM_HRES;
-    reg signed [TRAM_ADDRW-1:0] text_vres = TRAM_VRES;
-
     // signals for future CPU use
     wire [BYTE_CNT-1:0] tram_we_sys = 0;
     wire tram_re_sys = 0;
@@ -91,9 +87,9 @@ module ch04 #(
         .we_sys(tram_we_sys),
         .re_sys(tram_re_sys),
         .addr_sys(tram_addr_sys),
-        .addr_disp(tram_addr_disp),
         .din_sys(tram_din_sys),
         .dout_sys(tram_dout_sys),
+        .addr_disp(tram_addr_disp),
         .dout_disp(tram_dout_disp)
     );
 
@@ -102,9 +98,14 @@ module ch04 #(
     // Text Mode
     //
 
+    // fixed tram size for now; CPU will control through hardware registers
+    reg signed [TRAM_ADDRW-1:0] text_hres = TRAM_HRES;
+    reg signed [TRAM_ADDRW-1:0] text_vres = TRAM_VRES;
+
     reg [TRAM_ADDRW-1:0] scroll_offs = 0*84;  // scroll text display (use lines of chars)
     wire [TEXT_CIDXW-1:0] text_pix;
     wire paint_text;  // signals when to enable text painting
+
     textmode #(
         .CORDW(CORDW),
         .WORD(WORD),
@@ -140,7 +141,7 @@ module ch04 #(
     // CLUT
     //
 
-    wire [CIDX_ADDRW-1:0] clut_addr_disp;  // wire to match assign
+    wire [CIDX_ADDRW-1:0] clut_addr_disp;
     wire [COLRW-1:0] clut_dout_disp;
 
     // signals for future CPU use

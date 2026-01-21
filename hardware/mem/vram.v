@@ -2,18 +2,13 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// RAM Type:     dual-port block ram
-// Addressing:   word
-// Write Enable: bit
-// Write Mode:   no change (WRITEMODE=NORMAL for ECP5)
-
 `default_nettype none
 `timescale 1ns / 1ps
 
 module vram #(
-    parameter WORD=0,       // machine word size (bits)
-    parameter ADDRW=0,      // address width ≥14 (bits)
-    parameter FILE_BMAP=""  // optional initial bitmap to load
+    parameter ADDRW=14,      // address width ≥14 (bits)
+    parameter FILE_BMAP="",  // optional initial bitmap to load
+    parameter WORD=32        // machine word size (bits)
     ) (
     input  wire clk_sys,                // system clock
     input  wire clk_pix,                // pixel clock
@@ -37,7 +32,7 @@ module vram #(
         end
     end
 
-    // system port (read-write, write_mode: no change)
+    // system port (read-write)
     integer i;
     always @(posedge clk_sys) begin
         if (re_sys) dout_sys <= vram_mem[addr_sys];

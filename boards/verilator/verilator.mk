@@ -12,7 +12,7 @@ OPT_FLAGS = -O3 -march=native -mtune=native -flto
 %.mk: top_%.v
 	verilator ${VFLAGS} -I.. ${VERILOG_LIBS} \
 	    -cc $< --exe main_$(basename $@).cpp -o $(basename $@) \
-		-CFLAGS "${SDL_CFLAGS} ${OPT_FLAGS}" -LDFLAGS "${SDL_LDFLAGS} ${OPT_FLAGS}"
+		-I.. -CFLAGS "${SDL_CFLAGS} ${OPT_FLAGS}" -LDFLAGS "${SDL_LDFLAGS} ${OPT_FLAGS}"
 
 %.exe: %.mk
 	make -C ./obj_dir -f Vtop_$<

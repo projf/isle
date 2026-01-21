@@ -17,8 +17,6 @@ _I'll add more details on the internal operation of Earthrise in future updates.
 * `ER_ADDRW` - command list address width
 * `VRAM_ADDRW` - vram address width (bits)
 
-For Isle, `CORDW` must be set to **16** and `WORD` must be set to **32**.
-
 ## Signals
 
 ### Input
@@ -62,5 +60,7 @@ See [vram](vram.md) for details on vram write mask.
 Earthrise instructions are all 16 bits long. Earthrise reads instructions from dedicated memory using its own program counter for addressing. This command list memory has a 32-bit data interface to match the RISC-V CPU, so each Earthrise address contains two 16-bit instructions. The command list memory uses byte addressing for consistency with CPU addressing.
 
 Isle uses 4 KiB of dual-port bram for the Earthrise command list. The CPU uses one port to read/write drawing instructions, while Earthrise reads instructions from the second port. With 4 KiB of memory and 16-bit instructions, Earthrise can execute up to 2048 instructions in one run.
+
+The command list depth must be a power of two; Earthrise relies on this to detect the end of the command list when its PC overflows. See the logic in the Earthrise `DECODE` state.
 
 See [erlist](erlist.md) for details on the command list module.

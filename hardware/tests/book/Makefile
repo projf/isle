@@ -8,7 +8,7 @@
 export PYTHONPATH := $(shell pwd)/../..:$(PYTHONPATH)
 
 # test targets
-TESTS = ch01 ch02 ch03 ch04
+TESTS = ch01 ch02 ch03 ch04 ch05
 
 ch01:
 	-make -f ch01.mk
@@ -21,6 +21,9 @@ ch03:
 
 ch04:
 	-make -f ch04.mk
+
+ch05:
+	-make -f ch05.mk
 
 all: $(TESTS)
 	@../summary.sh $(TESTS)
