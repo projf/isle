@@ -8,7 +8,7 @@ If you're new to Isle, the best place to start is [Isle FPGA Computer](http://pr
 
 ## Building
 
-There is a Lakritz top module for each chapter of the _Building Isle_ book, which you can read on the [Isle blog](https://projectf.io/isle/index.html).
+There is a Lakritz top module for each chapter of the _Building Isle_ book, which you can read on the [Isle blog](http://projectf.io/isle/index.html).
 
 Use **make** to build your chosen chapter. For example, to build the chapter 4 design:
 
@@ -41,7 +41,7 @@ The build process also creates an SVF (Serial Vector Format) file if your prefer
 
 ## Clock Settings
 
-The following table shows clock generation parameters for different display modes using the 48 MHz board clock of the Lakritz. To understand how these values are calculated, see [ECP5 FPGA Clock Generation](https://projectf.io/posts/ecp5-fpga-clock/).
+The following table shows clock generation parameters for different display modes using the 48 MHz board clock of the Lakritz. To understand how these values are calculated, see [ECP5 FPGA Clock Generation](http://projectf.io/posts/ecp5-fpga-clock/).
 
 | Parameter         | 640x480    | 1024x768*  | 1366x768   | 1280x720*  |
 | ----------------- | ---------: | ---------: | ---------: | ---------: |

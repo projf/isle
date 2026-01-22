@@ -10,11 +10,11 @@ Follow [@WillFlux@mastodon.social](https://mastodon.social/@WillFlux) for update
 
 As I build each new component, I introduce it in its own chapter with a dedicated Verilog design.
 
-* Chapter 1 - **Display**: [Design](hardware/book/ch01) - [Blog](https://projectf.io/isle/display.html)
-* Chapter 2 - **Bitmap Graphics**: [Design](hardware/book/ch02) - [Blog](https://projectf.io/isle/bitmap-graphics.html)
+* Chapter 1 - **Display**: [Design](hardware/book/ch01) - [Blog](http://projectf.io/isle/display.html)
+* Chapter 2 - **Bitmap Graphics**: [Design](hardware/book/ch02) - [Blog](http://projectf.io/isle/bitmap-graphics.html)
 * Chapter 3 - **2D Drawing**: [Design](hardware/book/ch03) - [Blog](http://projectf.io/isle/2d-drawing.html)
 * Chapter 4 - **Text Mode**: [Design](hardware/book/ch04) - [Blog](http://projectf.io/isle/text-mode.html)
-* Chapter 5 - **RISC-V CPU**: [Design](hardware/book/ch05) - [Software](software/book/ch05) - Blog (forthcoming)
+* Chapter 5 - **RISC-V CPU**: [Design](hardware/book/ch05) - [Software](software/book/ch05) - [Blog](http://projectf.io/isle/riscv-cpu.html)
 * Chapter 6 - Input (forthcoming)
 
 For build instructions see [dev boards](boards). Isle supports Lattice ECP5, Xilinx XC7, and Verilator/SDL simulation on Linux/Mac/Windows.

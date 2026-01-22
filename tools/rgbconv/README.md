@@ -2,7 +2,7 @@
 
 Isle uses 15-bit colour, RGB555, but most contemporary systems use 24-bit RGB888 colour. The **rgbconv** tool converts to/from 15-bit and 24-bit string formats. It's written in Python and reads from stdin and outputs to stdout.
 
-Learn more about [Isle Display Modes](https://projectf.io/isle/display-modes.html), including 15-bit colour.
+Learn more about [Isle Display Modes](http://projectf.io/isle/display-modes.html), including 15-bit colour.
 
 The following 24-bit formats are supported:
 
