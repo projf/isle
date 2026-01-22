@@ -10,7 +10,7 @@ If you're new to Isle, the best place to start is [Isle FPGA Computer](http://pr
 
 ## Building
 
-There is a Verilator top module for each chapter of the _Building Isle_ book, which you can read on the [Isle blog](https://projectf.io/isle/index.html).
+There is a Verilator top module for each chapter of the _Building Isle_ book, which you can read on the [Isle blog](http://projectf.io/isle/index.html).
 
 [Install dependencies](#install-dependencies) if you haven't already.
 

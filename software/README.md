@@ -2,7 +2,7 @@
 
 ## Building Isle Book
 
-The following chapters have accompanying software:
+Each chapter, after we introduce the CPU, has its own software. There's a separate section for [book hardware](../hardware/).
 
-* Chapter 5 - **RISC-V CPU**: [Software](book/ch05) - Blog (forthcoming)
+* Chapter 5 - **RISC-V CPU**: [Software](book/ch05) - [Blog](http://projectf.io/isle/riscv-cpu.html)
 * Chapter 6 - Input (forthcoming)

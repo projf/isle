@@ -17,7 +17,7 @@ Isle hardware is designed in straightforward Verilog.
 
 ### Architecture Specific
 
-Architecture-specific FPGA designs, such as PLLs and I/O, are kept separate under `arch`. Isle currently includes support for two architectures; read [Isle Dev Boards](https://projectf.io/isle/dev-boards.html) for more details.
+Architecture-specific FPGA designs, such as PLLs and I/O, are kept separate under `arch`. Isle currently includes support for two architectures; read [Isle Dev Boards](http://projectf.io/isle/dev-boards.html) for more details.
 
 * Lattice [ECP5](arch/ecp5)
 * Xilinx [XC7](arch/xc7)
