@@ -9,7 +9,7 @@ module top_ch05 #(
     parameter BPC=5,           // system bits per colour channel
     parameter BPC_BOARD=8,     // board bits per colour channel
     parameter CORDW=16,        // signed coordinate width (bits)
-    parameter DISPLAY_MODE=3,  // display mode 3: 672x384 (25 MHz)
+    parameter DISPLAY_MODE=3,  // display mode 3: 672x384 (20 MHz)
     parameter BG_COLR='h0886   // background colour (RGB555)
     ) (
     input  wire clk,                      // sim clock
@@ -43,7 +43,7 @@ module top_ch05 #(
     localparam GLYPH_WIDTH  =   8;  // half-width glyph width (pixels)
 
     // colour channel width adjustment for board display
-    // NB. this logic must be updated if you change BPC or BPC_Board
+    //   NB. this logic must be updated if you change BPC or BPC_Board
     wire [BPC-1:0] disp_r, disp_g, disp_b;
     always @(*) begin  // 5 to 8-bits per channel (BPC to BPC_Board)
         /* verilator lint_off WIDTHEXPAND */

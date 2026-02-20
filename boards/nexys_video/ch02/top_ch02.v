@@ -68,7 +68,7 @@ module top_ch02 #(
     wire disp_hsync, disp_vsync, disp_de;
 
     // colour channel width adjustment for board display
-    // NB. this logic must be updated if you change BPC or BPC_Board
+    //   NB. this logic must be updated if you change BPC or BPC_Board
     wire [BPC-1:0] disp_r, disp_g, disp_b;
     reg [BPC_BOARD-1:0] board_r, board_g, board_b;
     always @(*) begin  // 5 to 8-bits per channel (BPC to BPC_Board)

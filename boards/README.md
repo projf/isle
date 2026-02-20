@@ -1,6 +1,8 @@
 # Isle Dev Boards
 
-Isle currently targets three dev boards and one simulator. Learn more about board support from [Isle Dev Boards](http://projectf.io/isle/dev-boards.html) blog post.
+Isle currently targets three dev boards and one simulator (no dev board required). Learn more about board support from [Isle Dev Boards](http://projectf.io/isle/dev-boards.html) blog post.
+
+Select your board for build instructions:
 
 * Machdyne [Lakritz](lakritz) (Lattice ECP5)
 * Digilent [Nexys Video](nexys_video) (Xilinx XC7)

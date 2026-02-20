@@ -23,7 +23,7 @@ module top_ch01 #(
     );
 
     // colour channel width adjustment for board display
-    // NB. this logic must be updated if you change BPC or BPC_Board
+    //   NB. this logic must be updated if you change BPC or BPC_Board
     wire [BPC-1:0] disp_r, disp_g, disp_b;
     always @(*) begin  // 5 to 8-bits per channel (BPC to BPC_Board)
         /* verilator lint_off WIDTHEXPAND */

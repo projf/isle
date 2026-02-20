@@ -44,7 +44,7 @@ The display module includes five modes (pixel clock):
 0 -  640 x 480 60 Hz (25.2 MHz)
 1 - 1024 x 768 60 Hz (65 MHz)
 2 - 1366 x 768 60 Hz (72 MHz)
-3 -  672 x 384 60 Hz (25 MHz)
+3 -  672 x 384 60 Hz (20 MHz)
 4 - 1280 x 720 60 Hz (74.25 MHz)
 ```
 

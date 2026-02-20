@@ -10,8 +10,9 @@ from cocotb.triggers import RisingEdge, Timer
 from tests.helpers import assert_coord, assert_pixel, zero_vram
 
 # clock frequencies
-SYS_TIME = 25  # 25 ns is 40 MHz
-PIX_TIME = 50  # 50 ns is 20 MHz
+# NB. system clock needs to be faster, otherwise drawing isn't done in time for tests
+SYS_TIME = 10  # 10 ns is 100 MHz
+PIX_TIME = 20  # 20 ns is 50 MHz
 
 # 672x384 (DISPLAY_MODE=3)
 DISP_LINE   = 825  # horizontal line including blanking

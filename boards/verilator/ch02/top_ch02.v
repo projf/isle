@@ -9,7 +9,7 @@ module top_ch02 #(
     parameter BPC=5,           // system bits per colour channel
     parameter BPC_BOARD=8,     // board bits per colour channel
     parameter CORDW=16,        // signed coordinate width (bits)
-    parameter DISPLAY_MODE=3,  // display mode 3: 672x384 (25 MHz)
+    parameter DISPLAY_MODE=3,  // display mode 3: 672x384 (20 MHz)
     parameter BG_COLR='h0886   // background colour (RGB555)
     ) (
     input  wire clk,                      // sim clock

@@ -10,7 +10,7 @@ from cocotb.triggers import RisingEdge
 from tests.helpers import zero_memory
 
 # clock frequencies
-SYS_TIME = 40  # 40 ns is 25 MHz
+SYS_TIME = 50  # 50 ns is 20 MHz
 PIX_TIME = 20  # 20 ns is 50 MHz
 
 # CLUT test data (for writing)

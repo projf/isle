@@ -10,7 +10,7 @@ FPGA_PKG = CABGA381  # CABGA381 for ULX3S
 SHELL = /bin/sh
 FPGA_SPEED = 8    # FPGA speed grade (6,7,8) - all parts seem fine with fastest
 LPF = ulx3s.lpf   # constraints
-TARGET_FREQ = 25  # target frequency (MHz)
+TARGET_FREQ = 20  # target frequency (MHz)
 
 # synthesis (secondary expansion because ADD_SRC is set after rule)
 .SECONDEXPANSION:
