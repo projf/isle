@@ -4,15 +4,16 @@
 
 MAKEFLAGS += --no-builtin-rules --no-builtin-variables
 
-# BIN_PREFIX may need adjusting, e.g. riscv64-elf on Arch Linux and riscv64-linux-gnu on Fedora
+# BIN_PREFIX needs adjusting on some platforms
+#  e.g. riscv64-elf on Arch Linux and riscv64-linux-gnu on Fedora
 BIN_PREFIX := riscv64-unknown-elf
+
+# arch settings
+MARCH := rv32i  # no multiply extension for chapter 5
+MABI  := ilp32
 
 # linker script
 LDSCRIPT := isle16.ld
-
-# arch settings
-MARCH := rv32i  # no compression or multiply for chapter 5
-MABI  := ilp32
 
 # tool names
 AS      := $(BIN_PREFIX)-as
@@ -27,6 +28,10 @@ NAMES := $(SRCS:.s=)
 MEMS  := $(SRCS:.s=.mem)
 
 all: $(MEMS)
+
+#
+# targets
+#
 
 # allow 'make hello' to build hello.mem
 $(NAMES): %: %.mem
