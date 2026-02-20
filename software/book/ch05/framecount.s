@@ -71,14 +71,14 @@ frame_waitn:
 
 
 # int_strx - integer to hexadecimal string
-#   a0: address to hold decoded string (8 bytes + null termination)
+#   a0: address to hold decoded string (8 bytes + null terminator)
 #   a1: integer
 #   return: address of string start
 #
 int_strx:
     li   t5, 0x3A      # threshold for converting to A-F
     addi t6, a0, 8     # start with least significant digit and work back
-    sb   zero, 0(t6)   # store null-termination
+    sb   zero, 0(t6)   # store null terminator
 
 .L_nib_loop:
     addi t6, t6, -1    # decrement string address
@@ -94,9 +94,10 @@ int_strx:
 
 
 .section .data
-
 .balign 4
+
 cnt:
     .word 0
-cnt_str:  # 9 bytes
-    .byte 0, 0, 0, 0, 0, 0, 0, 0, 0
+
+cnt_str:  # 8 bytes + null terminator
+    .zero 9

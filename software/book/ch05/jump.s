@@ -92,14 +92,13 @@ frame_waitn:
 #   no arguments, no return
 #
 clr_text:
-    li t1, TRAM_BASE
-    li t2, TRAM_DEPTH
-    li t3, 0x20  # clear with space and default colours
-    li t6, 0
+    li t5, TRAM_DEPTH
+    slli t5, t5, 2  # convert depth in chars to bytes
+    li t6, TRAM_BASE
+    add t5, t6, t5  # end address (one after last address to clear)
 
 0:  # loop over tram clearing locations
-    sw   t3, 0(t1)   # clear location
-    addi t6, t6, 1   # increment counter
-    addi t1, t1, 4   # increment address (word-based)
-    blt  t6, t2, 0b
+    sw zero, 0(t6)   # clear location
+    addi t6, t6, 4   # next word
+    blt t6, t5, 0b   # stop when we reach end address
     ret
