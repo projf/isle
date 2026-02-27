@@ -15,7 +15,7 @@ Each major component gets its own chapter with a dedicated Verilog design and so
 * Chapter 3 - **2D Drawing**: [Design](hardware/book/ch03) - [Blog](http://projectf.io/isle/2d-drawing.html)
 * Chapter 4 - **Text Mode**: [Design](hardware/book/ch04) - [Blog](http://projectf.io/isle/text-mode.html)
 * Chapter 5 - **RISC-V CPU**: [Design](hardware/book/ch05) - [Software](software/book/ch05) - [Blog](http://projectf.io/isle/riscv-cpu.html)
-* Chapter 6 - Input Output (forthcoming)
+* Chapter 6 - **Input Output** (WIP): [Design](hardware/book/ch06) - [Software](software/book/ch06) - _Blog_
 * Chapter 7 - Debug Monitor (forthcoming)
 * Chapter 8 - Programmable Graphics (forthcoming)
 

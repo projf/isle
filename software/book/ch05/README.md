@@ -1,10 +1,14 @@
 # Isle Chapter 5 Software
 
-Chapter 5 uses a simple RISC-V CPU, FemtoRV32 ([femtorv32_quark_bicycle](https://github.com/BrunoLevy/learn-fpga/tree/master/FemtoRV/RTL/PROCESSOR)), which supports the RV32I ISA. Later chapters will support other extensions, such as multiply (RV32M) and compressed instructions (RV32C). See also: [Chapter 5 Hardware](../../../hardware/book/ch05/).
+This RISC-V software accompanies [RISC-V CPU](https://projectf.io/isle/riscv-cpu.html), chapter 5 of _Building Isle_. See also: [Chapter 5 Hardware](../../../hardware/book/ch05/).
 
-These examples write to text mode memory, so it's a good idea to check out the [tram](../../../hardware/docs/tram.md) documentation. You can see the supported characters by looking at the font file [unifont-rom.mem](../../../res/fonts/unifont-rom.mem).
+Chapter 5 uses a simple RISC-V CPU, FemtoRV32 ([femtorv32_quark_bicycle](https://github.com/BrunoLevy/learn-fpga/tree/master/FemtoRV/RTL/PROCESSOR)), which supports the RV32I ISA. Later chapters will support other extensions, such as multiply (RV32M).
+
+These examples write to text mode memory, see the [tram](../../../hardware/docs/tram.md) documentation for details. You can see the supported characters by looking at the font file [unifont-rom.mem](../../../res/fonts/unifont-rom.mem).
 
 ## Software Toolchain
+
+See the [Isle Software Build](https://projectf.io/isle/software-build.html) page for more details.
 
 Install a RISC-V toolchain:
 

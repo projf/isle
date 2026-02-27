@@ -1,6 +1,6 @@
 # Isle Chapter 4 - Text Mode
 
-These Verilog designs accompany [Text Mode](http://projectf.io/isle/text-mode.html), chapter 4 of the _Building Isle_ book from the Project F blog.
+These Verilog designs accompany [Text Mode](http://projectf.io/isle/text-mode.html), chapter 4 of _Building Isle_.
 
 See [boards](../../../boards/) for build and programming instructions.
 
