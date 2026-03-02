@@ -2,7 +2,7 @@
 
 These Verilog designs accompany [RISC-V CPU](https://projectf.io/isle/riscv-cpu.html), chapter 5 of _Building Isle_. See also: [Chapter 5 Software](../../../software/book/ch05/).
 
-This chapter includes FemtoRV32 ([femtorv32_quark_bicycle](https://github.com/BrunoLevy/learn-fpga/tree/master/FemtoRV/RTL/PROCESSOR)) by Bruno Levy and Matthias Koch under [BSD-3-Clause license](FemtoRV32-LICENSE). This CPU design supports the RV32I ISA and is specific to this chapter. Later chapters will support other extensions, such as multiply (RV32M) and compressed instructions (RV32C).
+This chapter includes [FemtoRV32.v](FemtoRV32.v) ("quark", with RV32I support) by Bruno Levy and Matthias Koch under [BSD-3-Clause license](FemtoRV32-LICENSE). This CPU design is specific to this chapter; later chapters use other CPU variants from [hardware/cpu](../../cpu/). See [From Blinker to RISC-V](https://github.com/BrunoLevy/learn-fpga/blob/master/FemtoRV/TUTORIALS/FROM_BLINKER_TO_RISCV/README.md) for the FemtoRV tutorial by Bruno Levy.
 
 See [boards](../../../boards/) for build and programming instructions.
 

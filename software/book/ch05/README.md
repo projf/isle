@@ -4,11 +4,20 @@ This RISC-V software accompanies [RISC-V CPU](https://projectf.io/isle/riscv-cpu
 
 Chapter 5 uses a simple RISC-V CPU, FemtoRV32 ([femtorv32_quark_bicycle](https://github.com/BrunoLevy/learn-fpga/tree/master/FemtoRV/RTL/PROCESSOR)), which supports the RV32I ISA. Later chapters will support other extensions, such as multiply (RV32M).
 
+## Chapter 5 Programs
+
+* [hello.s](hello.s) - display "Hello!" using text mode
+* [framecount.s](framecount.s) - hexadecimal frame counter
+* [jump.s](jump.s) - jumping figure animation
+* [palette.s](palette.s) - load a palette into clut and display each colour
+
 These examples write to text mode memory, see the [tram](../../../hardware/docs/tram.md) documentation for details. You can see the supported characters by looking at the font file [unifont-rom.mem](../../../res/fonts/unifont-rom.mem).
 
-## Software Toolchain
+## Building Isle Software
 
-See the [Isle Software Build](https://projectf.io/isle/software-build.html) page for more details.
+This README includes a summary of the process; see the [Isle Software Build](https://projectf.io/isle/software-build.html) page for more details.
+
+### Toolchain
 
 Install a RISC-V toolchain:
 
@@ -19,7 +28,7 @@ Install a RISC-V toolchain:
 
 Windows users can run a RISC-V toolchain under Windows Subsystem for Linux (WSL).
 
-## Building Isle Software
+### Build
 
 Before building, Arch Linux and Fedora users need to edit `BIN_PREFIX` in `isle/software/book/ch05/Makefile`.
 
@@ -44,13 +53,6 @@ To change the software run for chapter 5, amend `FILE_SOFT` in your dev board's 
 ```verilog
 localparam FILE_SOFT = {SW, "/book/ch05/blink.mem"};
 ```
-
-## Chapter 5 Programs
-
-* [hello.s](hello.s) - display "Hello!" using text mode
-* [framecount.s](framecount.s) - hexadecimal frame counter
-* [jump.s](jump.s) - jumping figure animation
-* [palette.s](palette.s) - load a palette into clut and display each colour
 
 ## Memory Map
 

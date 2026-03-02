@@ -22,9 +22,9 @@ webtalk.*
 # Verilator
 obj_dir
 
-# asm
-software/obj
-software/bin
+# Isle software
+*.a
+*.o
 
 # cocotb
 results*.xml

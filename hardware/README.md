@@ -9,11 +9,13 @@ Isle hardware is designed in straightforward Verilog.
 
 * [arch](arch) - architecture specific modules (see below)
 * [book](book) - designs to accompany _Building Isle_ book chapters
-* [cpu](cpu) - RISC-V processor (forthcoming)
+* [cpu](cpu) - RISC-V processors
+* [devices](devs) - MMIO devices
 * [graphics](gfx) - display, drawing, text mode
+* [IO](io) - input/output (inc. uart)
 * [math](math) - mathematics
-* [memory](mem) - VRAM, CLUT, system memory
-* [sys](sys) - CDC (and future system hardware)
+* [memory](mem) - vram, fifo, system memory
+* [sys](sys) - system hardware (inc. CDC)
 
 ### Architecture Specific
 
