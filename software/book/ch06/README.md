@@ -5,7 +5,8 @@ This RISC-V software accompanies _Input Output_, chapter 6 of _Building Isle_. S
 ## Chapter 6 Programs
 
 * [echo.s](echo.s) - echos back a line of UTF-8 text (supports backspace)
-...
+* [framecount.s](framecount.s) - decimal frame counter
+* [guess.s](guess.s) - number guessing game
 
 ## Building Isle Software
 

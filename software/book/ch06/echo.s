@@ -2,6 +2,8 @@
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
+# NB. This software is designed for chapter 6 hardware only
+
 .include "include/isle.inc"
 
 .section .text
@@ -22,9 +24,8 @@ _start:
     li a2, TEXT_COLR_TITLE  # text colour
     call tm_print
 
-    la a0, tm_cur  # load cursor address (calls in loop return cursor)
 .L_read:
-    # read a line of text from UART
+    # read a line of text from UART (supports line editing)
     la a1, str_buf
     li a2, STR_LEN_BYTES  # length of str_buf including null terminator
     li a3, TEXT_COLR_IN
@@ -36,6 +37,8 @@ _start:
     li a2, TEXT_COLR_OUT
     call tm_print
 
+    # clear remainder of current line and move to next line
+    call tm_clr_line
     call tm_newline
     j .L_read  # loop forever
 

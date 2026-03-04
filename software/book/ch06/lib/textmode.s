@@ -10,6 +10,7 @@
 .section .text
 .global tm_backspace
 .global tm_clr
+.global tm_clr_line
 .global tm_cur_decx
 .global tm_cur_decy
 .global tm_cur_incx
@@ -54,6 +55,38 @@ tm_clr:
     sw zero, 0(t6)   # clear location
     addi t6, t6, 4   # next word
     blt t6, t5, 0b   # stop when we reach end address
+    ret
+
+
+# tm_clr_line - clear to end of line, returns cursor unchanged
+#   a0: cursor address
+#   return: cursor address
+#
+tm_clr_line:
+    addi sp, sp, -16
+    sw   ra, 12(sp)
+    sw   s1,  8(sp)
+    lhu  t0,  0(a0)  # load cursor
+    sw   t0,  4(sp)  # save existing cursor so we can restore it after clear
+
+    li t6, GFX_DEV
+    lhu s1, TEXT_DIMS(t6)  # load width from lower half of TEXT_DIMS
+
+0:
+    call tm_delete
+    lbu t0, 0(a0)  # load x-coord
+    addi t0, t0, 1  # increment x-cursor
+    beq t0, s1, 1f  # stop if we're at end of line
+    sb t0, 0(a0)  # store cursor x-coord
+    j 0b
+
+1:
+    lhu  t0,  4(sp)  # load original cursor from stack
+    sh   t0,  0(a0)  # store original cursor value
+
+    lw   s1,  8(sp)  # restore original cursor
+    lw   ra, 12(sp)
+    addi sp, sp, 16
     ret
 
 

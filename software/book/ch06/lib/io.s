@@ -54,6 +54,8 @@ read_ln:
     mv a2, s10
     call tm_put
 
+    call tm_clr_line  # clear remainder of text mode line
+
 .L_read_ln_loop:
     mv s4, a0  # stash cursor before decoding UTF-8
 
