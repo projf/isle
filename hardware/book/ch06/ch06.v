@@ -6,20 +6,23 @@
 `timescale 1ns / 1ps
 
 module ch06 #(
-    parameter BPC=5,             // bits per colour channel
-    parameter BG_COLR='h0886,    // background colour (RGB555)
-    parameter CORDW=16,          // signed coordinate width (bits)
-    parameter DISPLAY_MODE=0,    // display mode (see display.v for modes)
-    parameter FILE_FONT="",      // font glyph ROM file
-    parameter FILE_PAL="",       // initial palette for CLUT
-    parameter FILE_SOFT="",      // initial software in system ram
-    parameter FILE_TXT="",       // initial text file for tram
-    parameter FONT_COUNT=128,    // number of glyphs in font ROM
-    parameter GLYPH_HEIGHT=16,   // font glyph height (pixels)
-    parameter GLYPH_WIDTH=8,     // font half-width glyph width (pixels)
-    parameter TEXT_SCALE=32'h0,  // text mode scale hYYYYXXXX
-    parameter WIN_END=32'h0,     // text window end coords 'hYYYYXXXX
-    parameter WIN_START=32'h0    // text window start coords 'hYYYYXXXX
+    parameter BPC=5,              // bits per colour channel
+    parameter BG_COLR='h0886,     // background colour (RGB555)
+    parameter CORDW=16,           // signed coordinate width (bits)
+    parameter DISPLAY_MODE=0,     // display mode (see display.v for modes)
+    parameter FILE_FONT="",       // font glyph ROM file
+    parameter FILE_PAL="",        // initial palette for CLUT
+    parameter FILE_SOFT="",       // initial software in system ram
+    parameter FILE_TXT="",        // initial text file for tram
+    parameter FONT_COUNT=128,     // number of glyphs in font ROM
+    parameter GLYPH_HEIGHT=16,    // font glyph height (pixels)
+    parameter GLYPH_WIDTH=8,      // font half-width glyph width (pixels)
+    parameter TEXT_SCALE=32'h0,   // text mode scale hYYYYXXXX
+    parameter TIMER_DIV=20000,    // millisecond divider
+    parameter UART_CNT_INC=6036,  // 16 x baud counter increment
+    parameter UART_CNT_W=16,      // 16 x baud counter width (bits)
+    parameter WIN_END=32'h0,      // text window end coords 'hYYYYXXXX
+    parameter WIN_START=32'h0     // text window start coords 'hYYYYXXXX
     ) (
     input  wire clk_sys,                    // system clock
     input  wire clk_pix,                    // pixel clock (used by display)
@@ -42,7 +45,6 @@ module ch06 #(
     localparam CPU_RESET_ADDR = 'h8000;  // must match linker script
     localparam BUSW = 14;  // bus address width (words) - 2^14 × 4 bytes = 64K
     localparam SYSRAM_ADDRW = 12;  // sysram word width - 2^12 words = 16K
-    localparam TIMER_DIV = 20000;  // milliseconds divider for 20 MHz clock - move to top level
 
     // text mode
     localparam TEXT_CIDXW =  4;  // 16 colours available in textmode
@@ -52,11 +54,8 @@ module ch06 #(
     localparam [TRAM_ADDRW-1:0] TRAM_DEPTH = TRAM_HRES * TRAM_VRES;
     localparam TRAM_LAT   =  1;  // tram read latency (cycles)
 
-    // uart (115200 baud for 20 MHz system clock) - move to top level
-    //   UART_FIFO_RX_ADDRW=4 give 15 fifo entries (2^4-1)
-    localparam UART_CNT_INC = 6036;  // 16 x baud counter increment
-    localparam UART_CNT_W   =   16;  // 16 x baud counter width (bits)
-    localparam UART_DATAW   =    8;  // UART data width (bits)
+    // uart
+    localparam UART_DATAW = 8;  // uart data width (bits)
     localparam UART_FIFO_RX_ADDRW = 4;  // RX fifo address width (bits)
 
     // internal system params

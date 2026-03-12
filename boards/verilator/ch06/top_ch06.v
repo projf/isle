@@ -44,6 +44,11 @@ module top_ch06 #(
     localparam GLYPH_HEIGHT =  16;  // glyph height (pixels)
     localparam GLYPH_WIDTH  =   8;  // half-width glyph width (pixels)
 
+    // clock params - for 20 MHz clock and 115200 baud uart
+    localparam TIMER_DIV    = 20000;  // millisecond divider
+    localparam UART_CNT_INC =  6036;  // 16 x baud counter increment
+    localparam UART_CNT_W   =    16;  // 16 x baud counter width (bits)
+
     // colour channel width adjustment for board display
     //  NB. this logic must be updated if you change BPC or BPC_Board
     wire [BPC-1:0] disp_r, disp_g, disp_b;
@@ -68,6 +73,9 @@ module top_ch06 #(
         .GLYPH_HEIGHT(GLYPH_HEIGHT),
         .GLYPH_WIDTH(GLYPH_WIDTH),
         .TEXT_SCALE(TEXT_SCALE),
+        .TIMER_DIV(TIMER_DIV),
+        .UART_CNT_INC(UART_CNT_INC),
+        .UART_CNT_W(UART_CNT_W),
         .WIN_START(WIN_START),
         .WIN_END(WIN_END)
     ) ch06_inst (
