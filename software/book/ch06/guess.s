@@ -2,7 +2,7 @@
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
-# NB. This software is designed for chapter 6 hardware only
+# NB. This software is designed for chapter 6 hardware
 
 .include "include/isle.inc"
 
