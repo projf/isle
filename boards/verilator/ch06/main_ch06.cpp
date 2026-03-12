@@ -2,21 +2,23 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// NB. h_res and v_res must match the hardware design
+// NB. h_res and v_res MUST match the hardware design
 
 #include "Vtop_ch06.h"
-#include "sdl_sim_uart.h"
+#include "../sdl_sim.h"
 
 int main(int argc, char* argv[]) {
-    return run<Vtop_ch06>(argc, argv, {
-        .window_title = "Isle - Chapter 6",
-        .h_res = 672,
-        .v_res = 384,
-        .fullscreen = false,
-        .vsync = true,
-        .uart = {  // 115200 @ 20 MHz
-            .cnt_inc = 6036,
-            .cnt_w = 16
-        }
-    });
+    SimConf conf;
+    conf.window_title = "Isle - Chapter 6";
+    conf.h_res = 672;
+    conf.v_res = 384;
+    conf.fullscreen = false;
+    conf.vsync = true;
+
+    // uart: 115200 baud @ 20 MHz
+    conf.uart_conf.cnt_inc = 6036;
+    conf.uart_conf.cnt_w = 16;
+
+    const bool uart_en = true;
+    return run<Vtop_ch06, uart_en>(argc, argv, conf);
 }

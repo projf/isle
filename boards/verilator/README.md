@@ -37,7 +37,7 @@ Verilator introduces new lint waivers from time to time; unfortunately, this tri
 
 ## Install Dependencies
 
-* C++ Toolchain
+* C++ Toolchain (C++17 required)
 * Verilator 5.006+
 * SDL v2
 

@@ -2,17 +2,18 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// NB. h_res and v_res must match the hardware design
+// NB. h_res and v_res MUST match the hardware design
 
 #include "Vtop_ch04.h"
 #include "../sdl_sim.h"
 
 int main(int argc, char* argv[]) {
-    return run<Vtop_ch04>(argc, argv, {
-        .window_title = "Isle - Chapter 4",
-        .h_res = 672,
-        .v_res = 384,
-        .fullscreen = false,
-        .vsync = true
-    });
+    SimConf conf;
+    conf.window_title = "Isle - Chapter 4";
+    conf.h_res = 672;
+    conf.v_res = 384;
+    conf.fullscreen = false;
+    conf.vsync = true;
+
+    return run<Vtop_ch04>(argc, argv, conf);
 }
