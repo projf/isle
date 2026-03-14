@@ -15,7 +15,7 @@ module fifo_sync #(
     input  wire re,                // read enable
     input  wire [DATAW-1:0] din,   // data in
     output reg  [DATAW-1:0] dout,  // data out
-    output wire [ADDRW-1:0] len,   // number of items in fifo (occupancy)
+    output wire [ADDRW-1:0] len,   // length; number of items (occupancy)
     output wire empty,             // fifo empty
     output wire full               // fifo full
     );

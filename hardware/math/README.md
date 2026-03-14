@@ -2,4 +2,4 @@
 
 | Module                           | Reference                    | Book Chapter    | Description                              |
 | -------------------------------- | ---------------------------- | --------------- | ---------------------------------------- |
-| [lfsr](lfsr.v)                   | -                            | Input Output    | Galois Linear-Feedback Shift Register    |
+| [lfsr](lfsr.v)                   | [doc](../docs/lfsr.md)       | Input Output    | Galois Linear-Feedback Shift Register    |
