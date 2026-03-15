@@ -102,6 +102,7 @@ module ch06 #(
         .mem_rstrb(cpu_rstrb),
         .mem_rbusy(cpu_rbusy),
         .mem_wbusy(cpu_wbusy),
+        .interrupt_request(1'b0),
         .reset(!rst_sys)  // reset low
     );
 
