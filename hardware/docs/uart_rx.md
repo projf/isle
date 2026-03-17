@@ -27,3 +27,7 @@ The module defaults to 115200 baud with 20 MHz system clock.
 * `rx_done` - receive complete
 
 `rx_done` is only high for one clock cycle.
+
+## Testing
+
+There is a cocotb test bench [[python src](../tests/io/uart_rx.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
