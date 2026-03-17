@@ -37,19 +37,6 @@ module sys_dev #(
     // timer
     reg [WORD-1:0] timer_0;
 
-    // HW Reg MMIO
-    always @(posedge clk) begin
-        dout <= 0;  // no data out unless enabled
-
-        if (re) begin
-            case (addr)
-                TIMER_0: dout <= timer_0;
-                LFSR_32: dout <= lfsr_32;
-                default: dout <= 0;
-            endcase
-        end
-    end
-
     // timer 0
     always @(posedge clk) begin
         if (timer_0_clr || rst) begin
@@ -76,4 +63,17 @@ module sys_dev #(
         .seed(0),   // use default seed
         .sreg(lfsr_32)
     );
+
+    // HW Reg MMIO
+    always @(posedge clk) begin
+        dout <= 0;  // no data out unless enabled
+
+        if (re) begin
+            case (addr)
+                TIMER_0: dout <= timer_0;
+                LFSR_32: dout <= lfsr_32;
+                default: dout <= 0;
+            endcase
+        end
+    end
 endmodule

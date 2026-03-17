@@ -1,10 +1,10 @@
-# Isle.Computer - Chapter 5 Test Makefile
+# Isle.Computer - Chapter 6 Test Makefile
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
 SIM ?= icarus
 TOPLEVEL_LANG ?= verilog
-DUT = ch05
+DUT = ch06
 
 TOPLEVEL = ${DUT}
 COCOTB_TEST_MODULES = ${DUT}
@@ -13,10 +13,16 @@ HARDWARE = $(PWD)/../..
 VERILOG_SOURCES += $(HARDWARE)/book/${DUT}/${DUT}.v
 
 VERILOG_SOURCES += $(HARDWARE)/cpu/FemtoRV32.v
+VERILOG_SOURCES += $(HARDWARE)/devs/gfx_dev.v
+VERILOG_SOURCES += $(HARDWARE)/devs/sys_dev.v
+VERILOG_SOURCES += $(HARDWARE)/devs/uart_dev.v
 VERILOG_SOURCES += $(HARDWARE)/gfx/display.v
 VERILOG_SOURCES += $(HARDWARE)/gfx/font_glyph.v
 VERILOG_SOURCES += $(HARDWARE)/gfx/textmode.v
+VERILOG_SOURCES += $(HARDWARE)/io/uart_rx.v
+VERILOG_SOURCES += $(HARDWARE)/math/lfsr.v
 VERILOG_SOURCES += $(HARDWARE)/mem/clut.v
+VERILOG_SOURCES += $(HARDWARE)/mem/fifo_sync.v
 VERILOG_SOURCES += $(HARDWARE)/mem/rom_sync.v
 VERILOG_SOURCES += $(HARDWARE)/mem/sysram.v
 VERILOG_SOURCES += $(HARDWARE)/mem/tram.v
@@ -27,7 +33,7 @@ COMPILE_ARGS += -DBENCH  # enable initial blocks for simulation
 COMPILE_ARGS += -P${DUT}.DISPLAY_MODE=3
 COMPILE_ARGS += -P${DUT}.FILE_FONT="\"../../../res/fonts/unifont-rom.mem"\"
 COMPILE_ARGS += -P${DUT}.FILE_PAL="\"../../../res/palettes/go-16.mem"\"
-COMPILE_ARGS += -P${DUT}.FILE_SOFT="\"../../../software/book/ch05/hello.mem"\"
+COMPILE_ARGS += -P${DUT}.FILE_SOFT="\"../../../software/book/ch06/resolution.mem"\"
 COMPILE_ARGS += -P${DUT}.FILE_TXT="\"\""
 COMPILE_ARGS += -P${DUT}.FONT_COUNT=128
 COMPILE_ARGS += -P${DUT}.GLYPH_HEIGHT=16

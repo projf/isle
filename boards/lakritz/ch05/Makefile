@@ -9,7 +9,7 @@ PATH_PROJ = ../../../projects
 
 # Common Verilog
 ADD_SRC += ${PATH_LIB}/book/ch05/ch05.v
-ADD_SRC += ${PATH_LIB}/book/ch05/FemtoRV32.v
+ADD_SRC += ${PATH_LIB}/cpu/FemtoRV32.v
 ADD_SRC += ${PATH_LIB}/gfx/display.v
 ADD_SRC += ${PATH_LIB}/gfx/font_glyph.v
 ADD_SRC += ${PATH_LIB}/gfx/textmode.v

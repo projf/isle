@@ -2,8 +2,6 @@
 
 These Verilog designs accompany [RISC-V CPU](https://projectf.io/isle/riscv-cpu.html), chapter 5 of _Building Isle_. See also: [Chapter 5 Software](../../../software/book/ch05/).
 
-This chapter includes [FemtoRV32.v](FemtoRV32.v) ("quark", with RV32I support) by Bruno Levy and Matthias Koch under [BSD-3-Clause license](FemtoRV32-LICENSE). This CPU design is specific to this chapter; later chapters use other CPU variants from [hardware/cpu](../../cpu/). See [From Blinker to RISC-V](https://github.com/BrunoLevy/learn-fpga/blob/master/FemtoRV/TUTORIALS/FROM_BLINKER_TO_RISCV/README.md) for the FemtoRV tutorial by Bruno Levy.
-
 See [boards](../../../boards/) for build and programming instructions.
 
 ## Verilog Modules
@@ -11,11 +9,11 @@ See [boards](../../../boards/) for build and programming instructions.
 The chapter 5 design uses the following Verilog modules:
 
 * `book/ch05/ch05.v`
-* `book/ch05/FemtoRV32.v`
+* `cpu/FemtoRV32.v`
 * `gfx/display.v`
 * `gfx/font_glyph.v`
 * `gfx/textmode.v`
-* `gfx/tmds_encoder.v` (not used in Verilator sim)
+* `gfx/tmds_encoder.v` (not used by Verilator sim)
 * `mem/clut.v`
 * `mem/rom_sync.v`
 * `mem/sysram.v`

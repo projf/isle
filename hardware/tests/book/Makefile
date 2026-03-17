@@ -25,6 +25,9 @@ ch04:
 ch05:
 	-make -f ch05.mk
 
+ch06:
+	-make -f ch06.mk
+
 all: $(TESTS)
 	@../summary.sh $(TESTS)
 

@@ -47,40 +47,15 @@ module uart_dev #(
 
     // RX fifo signals
     reg rx_fifo_en;  // controls whether the fifo reads from UART
+    wire rx_fifo_empty;
     wire rx_fifo_we = rx_fifo_en && rx_done;
     wire rx_fifo_re = re && !rx_fifo_empty && (addr == UART_RX_DAT);
     wire [UART_DATAW-1:0] rx_fifo_din = rx_data;
     wire [UART_DATAW-1:0] rx_fifo_dout;
     wire [UART_FIFO_RX_ADDRW-1:0] rx_fifo_len;
-    wire rx_fifo_empty;
 
     reg uart_rx_rdy;  // flag for RX read ready (takes one cycle)
     assign rbusy = uart_rx_rdy;  // we're busy for one cycle, reading from fifo
-
-    // HW Reg MMIO
-    always @(posedge clk) begin
-        dout <= 0;  // no data out unless enabled
-
-        if (re) begin
-            case (addr)
-                UART_RX_DAT: if (!rx_fifo_empty) uart_rx_rdy <= 1;  // if not empty, read next cycle
-                UART_RX_DEP: dout <= 2**UART_FIFO_RX_ADDRW - 1;
-                UART_RX_LEN: dout <= {{WORD - UART_FIFO_RX_ADDRW{1'b0}}, rx_fifo_len};
-                default: dout <= 0;
-            endcase
-        end
-        if (we) begin
-            if (addr == UART_RX_EN) rx_fifo_en <= din[0];  // only considers LSB
-        end
-
-        if (rst) rx_fifo_en <= 0;  // rx_fifo_en is used with rx_fifo.rst
-
-        // read data from fifo the following clock cycle
-        if (uart_rx_rdy) begin
-            dout <= {{WORD - UART_DATAW{1'b0}}, rx_fifo_dout};
-            uart_rx_rdy <= 0;
-        end
-    end
 
     fifo_sync #(
         .ADDRW(UART_FIFO_RX_ADDRW),
@@ -113,4 +88,29 @@ module uart_dev #(
         /* verilator lint_on PINCONNECTEMPTY */
         .rx_done(rx_done)
     );
+
+    // HW Reg MMIO
+    always @(posedge clk) begin
+        dout <= 0;  // no data out unless enabled
+
+        if (re) begin
+            case (addr)
+                UART_RX_DAT: if (!rx_fifo_empty) uart_rx_rdy <= 1;  // if not empty, read next cycle
+                UART_RX_DEP: dout <= 2**UART_FIFO_RX_ADDRW - 1;
+                UART_RX_LEN: dout <= {{WORD - UART_FIFO_RX_ADDRW{1'b0}}, rx_fifo_len};
+                default: dout <= 0;
+            endcase
+        end
+        if (we) begin
+            if (addr == UART_RX_EN) rx_fifo_en <= din[0];  // only considers LSB
+        end
+
+        if (rst) rx_fifo_en <= 0;  // rx_fifo_en is used with rx_fifo.rst
+
+        // read data from fifo the following clock cycle
+        if (uart_rx_rdy) begin
+            dout <= {{WORD - UART_DATAW{1'b0}}, rx_fifo_dout};
+            uart_rx_rdy <= 0;
+        end
+    end
 endmodule

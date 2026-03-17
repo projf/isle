@@ -9,7 +9,7 @@ MAKEFLAGS += --no-builtin-rules --no-builtin-variables
 BIN_PREFIX := riscv64-unknown-elf
 
 # arch settings
-MARCH := rv32i  # no multiply extension for chapter 5
+MARCH := rv32i  # RV32I for chapter 5
 MABI  := ilp32
 
 # linker script

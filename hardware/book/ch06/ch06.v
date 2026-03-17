@@ -91,10 +91,11 @@ module ch06 #(
     //
 
     FemtoRV32 #(
-        .ADDR_WIDTH(BUSW+2),  // +2 for byte addressing
+        .ADDRW(BUSW+2),  // +2 for byte addressing
         .RESET_ADDR(CPU_RESET_ADDR)
     ) cpu (
         .clk(clk_sys),
+        .rst_n(!rst_sys),
         .mem_addr(cpu_addr),
         .mem_wdata(cpu_wdata),
         .mem_wmask(cpu_wmask),
@@ -102,8 +103,7 @@ module ch06 #(
         .mem_rstrb(cpu_rstrb),
         .mem_rbusy(cpu_rbusy),
         .mem_wbusy(cpu_wbusy),
-        .interrupt_request(1'b0),
-        .reset(!rst_sys)  // reset low
+        .irq(1'b0)  // no interrupts
     );
 
 

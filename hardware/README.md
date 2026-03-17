@@ -9,7 +9,7 @@ Isle hardware is designed in straightforward Verilog.
 
 * [arch](arch) - architecture specific modules (see below)
 * [book](book) - designs to accompany _Building Isle_ book chapters
-* [cpu](cpu) - RISC-V processors
+* [cpu](cpu) - RISC-V processor
 * [devices](devs) - MMIO devices
 * [graphics](gfx) - display, drawing, text mode
 * [IO](io) - input/output (inc. uart)

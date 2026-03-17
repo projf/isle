@@ -16,7 +16,7 @@ The chapter 3 design uses the following Verilog modules:
 * `gfx/earthrise.v`
 * `gfx/fline.v`
 * `gfx/line.v`
-* `gfx/tmds_encoder.v` (not used in Verilator sim)
+* `gfx/tmds_encoder.v` (not used by Verilator sim)
 * `mem/clut.v`
 * `mem/erlist.v`
 * `mem/vram.v`

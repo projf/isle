@@ -12,7 +12,7 @@ The chapter 4 design uses the following Verilog modules:
 * `gfx/display.v`
 * `gfx/font_glyph.v`
 * `gfx/textmode.v`
-* `gfx/tmds_encoder.v` (not used in Verilator sim)
+* `gfx/tmds_encoder.v` (not used by Verilator sim)
 * `mem/clut.v`
 * `mem/rom_sync.v`
 * `mem/tram.v`
