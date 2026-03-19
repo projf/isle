@@ -39,6 +39,10 @@ openFPGALoader --board ulx3s ch04.bit
 
 The build process also creates an SVF (Serial Vector Format) file if your preferred board programming method requires that.
 
+### UART
+
+See [Serial to Isle](../../docs/serial-to-isle.md) for advice on connecting to Isle UART via USB.
+
 ## Clock Settings
 
 The following table shows clock generation parameters for different display modes using the 25 MHz board clock of the ULX3S. To understand how these values are calculated, see [ECP5 FPGA Clock Generation](http://projectf.io/posts/ecp5-fpga-clock/).

@@ -2,7 +2,7 @@
 
 These Verilog designs accompany _Input Output_, chapter 6 of _Building Isle_. See also: [Chapter 6 Software](../../../software/book/ch06/).
 
-See [boards](../../../boards/) for build and programming instructions.
+See [boards](../../../boards/) for build and programming instructions. See [Serial to Isle](../../../docs/serial-to-isle.md) for advice on connecting to Isle UART via USB.
 
 ## Verilog Modules
 
