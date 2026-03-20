@@ -493,7 +493,7 @@ module FemtoRV32 #(
                     if (~current_cache_hit | fetch_second_half) begin
                         cached_addr <= mem_addr[ADDRW-1:2];
                         cached_data <= mem_rdata;
-                    end;
+                    end
 
                     // Decode instruction
                     rs1 <= registerFile[decompressed[19:15]];

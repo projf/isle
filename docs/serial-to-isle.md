@@ -16,7 +16,9 @@ Identify the device name on **macOS**:
 ls /dev/cu.usbserial-*
 ```
 
-These examples are for ULX3S, depending on your board's UART IC and driver the device name will vary. Some boards, such as the Nexys Video, have a dedicated USB port for UART, so ensure you connect that via USB before attempting to use the UART.
+Depending on your board's UART IC and driver the device name may vary.
+
+Some boards, such as the Nexys Video, have a dedicated USB port for UART, so ensure you connect that via USB before attempting to use the UART. On Linux, you'll see multiple ttyUSB with the Nexys Video connected for programming and UART, if you connect the UART cable after the programming cable the correct device should be `/dev/ttyUSB2`.
 
 ## Connect with Screen
 
