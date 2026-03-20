@@ -4,6 +4,7 @@
 | -------------------------------- | ---------------------------- | --------------- | ---------------------------------------- |
 | [clut](clut.v)                   | [doc](../docs/clut.md)       | Bitmap Graphics | Colour lookup table                      |
 | [erlist](erlist.v)               | [doc](../docs/erlist.md)     | 2D Drawing      | Earthrise command list                   |
+| [fifo_sync](fifo_sync.v)         | [doc](../docs/fifo_sync.md)  | Input Output    | Synchronous FIFO                         |
 | [rom_sync](rom_sync.v)           | [doc](../docs/rom_sync.md)   | Text Mode       | Synchronous ROM                          |
 | [sysram](sysram.v)               | [doc](../docs/sysram.md)     | CPU             | System RAM                               |
 | [tram](tram.v)                   | [doc](../docs/tram.md)       | Text Mode       | Text mode RAM                            |

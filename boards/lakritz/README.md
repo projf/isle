@@ -6,6 +6,10 @@ For the Lakritz dev board, you need [Yosys](https://github.com/YosysHQ/yosys), [
 
 If you're new to Isle, the best place to start is [Isle FPGA Computer](http://projectf.io/isle/fpga-computer.html).
 
+## UART
+
+I'm not currently able to test UART-based designs on Lakritz. The Lakritz board doesn't have a UART and I don't currently have a suitable UART Pmod. However, I do tests UART designs on the ULX3S, which also has an ECP5 FPGA. You're welcome to open an [issue](https://github.com/projf/isle/issues) if you find a problem with the Lakritz UART support.
+
 ## Building
 
 There is a Lakritz top module for each chapter of the _Building Isle_ book, which you can read on the [Isle blog](http://projectf.io/isle/index.html).
@@ -38,6 +42,10 @@ dfu-util -a 0 -e
 See the official [Lakritz README](https://github.com/machdyne/lakritz?tab=readme-ov-file#programming-lakritz) for more programming info.
 
 The build process also creates an SVF (Serial Vector Format) file if your preferred board programming method requires that.
+
+### UART
+
+See [Serial to Isle](../../docs/serial-to-isle.md) for advice on connecting to Isle UART via USB.
 
 ## Clock Settings
 

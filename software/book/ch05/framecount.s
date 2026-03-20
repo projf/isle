@@ -2,7 +2,7 @@
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
-# NB. This software is designed for chapter 5 hardware only
+# NB. This software is designed for chapter 5 hardware
 
 .equ TRAM_BASE,      0x4000  # text mode ram (tram) base address
 .equ HWREG_BASE,     0xC000  # hardware reg base address

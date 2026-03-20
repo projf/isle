@@ -8,7 +8,7 @@
 `timescale 1ns / 1ps
 
 module lfsr #(
-    parameter LEN=8,           // shift register length
+    parameter LEN=8,           // shift register length (bits)
     parameter TAPS='b10111000  // XOR taps
     ) (
     input  wire clk,             // clock

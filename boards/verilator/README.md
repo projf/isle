@@ -22,7 +22,7 @@ make
 ./obj_dir/ch04
 ```
 
-To enable/disable full screen and vsync, edit the main C++ file for that chapter, e.g. `boards/verilator/main_ch04.cpp`. You can find the C++ function that handles setting up SDL and running the Verilator simulation in [sdl_sim.h](sdl_sim.h).
+To enable/disable full screen and vsync, edit the main C++ file for that chapter, e.g. `boards/verilator/main_ch04.cpp`. You can find the C++ function that handles setting up SDL and running the Verilator simulation in [sdl_sim.h](sdl_sim.h). The simulation supports sending keyboard input to Isle via UART, so you can seamlessly type into the simulation window as if you had a keyboard connection to Isle.
 
 Many chapters have parameters you can edit in the matching top module. For example, in `top_ch02.v` you can choose the bitmap and palette to load.
 
@@ -37,7 +37,7 @@ Verilator introduces new lint waivers from time to time; unfortunately, this tri
 
 ## Install Dependencies
 
-* C++ Toolchain
+* C++ Toolchain (C++17 required)
 * Verilator 5.006+
 * SDL v2
 

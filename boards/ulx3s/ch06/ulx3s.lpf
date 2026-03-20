@@ -1,0 +1,32 @@
+# Isle.Computer - ULX3S Board Constraints (Chapter 6)
+# Copyright Will Green and Isle Contributors
+# SPDX-License-Identifier: MIT
+
+BLOCK RESETPATHS;
+BLOCK ASYNCPATHS;
+
+# Board Clock: 25 MHz
+LOCATE COMP "clk_25m" SITE "G2";
+IOBUF  PORT "clk_25m" PULLMODE=NONE IO_TYPE=LVCMOS33;
+FREQUENCY PORT "clk_25m" 25 MHZ;
+
+# GPDI (HDMI-compatible connector)
+#   NB. IO_TYPE=LVCMOS33D generates gpdi_dn from gpdi_dp
+LOCATE COMP "gpdi_dp[0]" SITE "A16";  # channel 0 +
+LOCATE COMP "gpdi_dp[1]" SITE "A14";  # channel 1 +
+LOCATE COMP "gpdi_dp[2]" SITE "A12";  # channel 2 +
+LOCATE COMP "gpdi_dp[3]" SITE "A17";  # clock +
+IOBUF  PORT "gpdi_dp[0]" IO_TYPE=LVCMOS33D DRIVE=4;
+IOBUF  PORT "gpdi_dp[1]" IO_TYPE=LVCMOS33D DRIVE=4;
+IOBUF  PORT "gpdi_dp[2]" IO_TYPE=LVCMOS33D DRIVE=4;
+IOBUF  PORT "gpdi_dp[3]" IO_TYPE=LVCMOS33D DRIVE=4;
+
+# UART
+LOCATE COMP "uart_rx" SITE "M1";  # UART RX to Isle
+LOCATE COMP "uart_tx" SITE "L4";  # UART TX from Isle
+IOBUF  PORT "uart_rx" PULLMODE=UP IO_TYPE=LVCMOS33;
+IOBUF  PORT "uart_tx" PULLMODE=UP IO_TYPE=LVCMOS33 DRIVE=4;
+
+# ESP32
+LOCATE COMP "wifi_en" SITE "F1";  # enable/reset WiFi (ESP32)
+IOBUF  PORT "wifi_en" PULLMODE=UP IO_TYPE=LVCMOS33 DRIVE=4;

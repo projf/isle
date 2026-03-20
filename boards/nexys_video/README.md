@@ -39,6 +39,10 @@ openFPGALoader -b nexysVideo ch04.bit
 
 The Project F blog has a post covering [Vivado Tcl build scripts](http://projectf.io/posts/vivado-tcl-build-script/), including how to script board programming with Vivado.
 
+### UART
+
+See [Serial to Isle](../../docs/serial-to-isle.md) for advice on connecting to Isle UART via USB.
+
 ## Clock Settings
 
 The following table shows clock generation parameters for different display modes using the 100 MHz board clock of the Nexys Video.

@@ -9,6 +9,7 @@ PATH_PROJ = ../../../projects
 
 # Common Verilog
 VERILOG_LIBS += -I${PATH_LIB}/book/ch05
+VERILOG_LIBS += -I${PATH_LIB}/cpu
 VERILOG_LIBS += -I${PATH_LIB}/gfx
 VERILOG_LIBS += -I${PATH_LIB}/mem
 VERILOG_LIBS += -I${PATH_LIB}/sys

@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# Isle.Computer - Chapter 6: Verilator Lint Script
+# Copyright Will Green and Isle Contributors
+# SPDX-License-Identifier: MIT
+
+# check for Verilator 5
+vlt_version=$(verilator --version | cut -d' ' -f2 | cut -d'.' -f1)
+if [ $vlt_version -lt 5 ]; then
+    echo "ERROR: Lint not run - requires Verilator 5 or later."
+    exit 1
+fi
+
+LINT_DIR=`dirname $0`
+HW_DIR="../../${LINT_DIR}"  # hardware source directory
+
+verilator --lint-only -Wall \
+    -I${HW_DIR} \
+    -I${HW_DIR}/cpu \
+    -I${HW_DIR}/devs \
+    -I${HW_DIR}/gfx \
+    -I${HW_DIR}/io \
+    -I${HW_DIR}/math \
+    -I${HW_DIR}/mem \
+    -I${HW_DIR}/sys \
+    ch06.v
