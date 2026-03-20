@@ -1,6 +1,6 @@
 # Isle Chapter 6 Software
 
-This RISC-V software accompanies _Input Output_, chapter 6 of _Building Isle_. See also: [Chapter 6 Hardware](../../../hardware/book/ch06/). Chapter 5 uses instructions from the RV32IM ISA.
+This RISC-V software accompanies [Input Output](http://projectf.io/isle/input-output.html), chapter 6 of _Building Isle_. See also: [Chapter 6 Hardware](../../../hardware/book/ch06/). Chapter 6 software uses instructions from the RV32IM ISA.
 
 There's a blog post covering [Chapter 6 Software](https://projectf.io/isle/ch06-software.html).
 

@@ -1,6 +1,6 @@
 # Isle Chapter 5 Software
 
-This RISC-V software accompanies [RISC-V CPU](https://projectf.io/isle/riscv-cpu.html), chapter 5 of _Building Isle_. See also: [Chapter 5 Hardware](../../../hardware/book/ch05/). Chapter 5 uses instructions from the base RV32I ISA.
+This RISC-V software accompanies [RISC-V CPU](https://projectf.io/isle/riscv-cpu.html), chapter 5 of _Building Isle_. See also: [Chapter 5 Hardware](../../../hardware/book/ch05/). Chapter 5 software uses instructions from the base RV32I ISA.
 
 There's a blog post covering [Chapter 5 Software](https://projectf.io/isle/ch05-software.html).
 

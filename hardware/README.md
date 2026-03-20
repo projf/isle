@@ -23,3 +23,5 @@ Architecture-specific FPGA designs, such as PLLs and I/O, are kept separate unde
 
 * Lattice [ECP5](arch/ecp5)
 * Xilinx [XC7](arch/xc7)
+
+![](../docs/img/guessing-on-ulx3s.jpeg?raw=true "")
