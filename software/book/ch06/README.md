@@ -9,6 +9,7 @@ There's a blog post covering [Chapter 6 Software](https://projectf.io/isle/ch06-
 * [echo.s](echo.s) - echos back a line of UTF-8 text (supports backspace)
 * [framecount.s](framecount.s) - decimal frame counter
 * [guess.s](guess.s) - number guessing game
+* [num_str.s](num_str.s) - tests number string conversion
 * [resolution.s](resolution.s) - print display and text mode resolutions (demos reading hardware registers)
 
 ## Building Isle Software

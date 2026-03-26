@@ -112,6 +112,7 @@ strx_int:
     addi t0, t0, 0x20   # add 0x20 to test for uppercase letters
     bgez t0, .L_char_af # test for uppercase A-F
     addi t0, t0, 7      # add 7 for 0-9 (a further 10 is added below)
+    bgez t0, 1f         # reject in-between code points :;<=>? (U+003A-0x003F)
 .L_char_af:
     addi t0, t0, 10     # add 10 for all chars
     bge  t0, t2, 1f     # test for invalid char >F
