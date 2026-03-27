@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: MIT
 
 .include "include/isle.inc"
-.include "include/unicode.inc"
 
 .section .text
 .global int_strd
