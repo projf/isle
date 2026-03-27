@@ -255,8 +255,8 @@ utf8_decode:
 #   return: byte count (1-4) or 0 if invalid
 #
 utf8_seq_len:
-    srli t0, a0, 8  # shift out the first byte
-    bnez t0, .L_invalid_seq  # 0 unless a0 was larger than a byte
+    srli t0, a0, 8  # check a0 is a single byte
+    bnez t0, .L_invalid_seq
     la t6, utf8_seq_table
     srli t0, a0, 3  # select upper 5 bits
     add t6, t0, t6  # table entry address
