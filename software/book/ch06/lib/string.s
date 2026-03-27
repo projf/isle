@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 .include "include/isle.inc"
+.include "include/unicode.inc"
 
 .section .text
 .global int_strd
@@ -75,22 +76,34 @@ int_strx:
 #   a0: address of null-terminated string
 #   return: integer
 #
+#   Supports negative numbers beginning with "-"
 #   NB. values >2^32-1 overflow and wrap around
 #
 strd_int:
     li t1, 0   # clear return value
     li t2, 10  # decimal digit multiply and overflow
+
+    lbu  t0, 0(a0)      # load first byte from decimal string
+    li   t3, UCS_HYPHEN_MINUS
+    xor  t4, t0, t3     # test first byte for minus sign (xor is zero if equal)
+    seqz t3, t4         # t3=1 if minus set
+    beqz t3, 1f         # if not minus sign, process byte as normal
+    addi a0, a0, 1      # was minus, so increment string address for next byte
 0:
-    lbu  t0, 0(a0)      # load a byte from hex string
-    beqz t0, 1f         # test for null (end of string)
+    lbu  t0, 0(a0)      # load a byte from decimal string
+1:
+    beqz t0, 2f         # test for null (end of string)
     addi t0, t0, -0x30  # subtract U+0030 (zero)
-    bge  t0, t2, 1f     # test for invalid char >9
-    bltz t0, 1f         # test for invalid char <0
+    bge  t0, t2, 2f     # test for invalid char >9
+    bltz t0, 2f         # test for invalid char <0
     mul  t1, t1, t2     # shift existing number left (multiply by 10)
     add  t1, t1, t0     # add current digit
     addi a0, a0, 1      # increment string address
     j 0b
-1:
+2:
+    beqz t3, 3f  # minus flag set?
+    neg  t1, t1  # negate if negative number
+3:
     mv a0, t1  # set return value
     ret
 

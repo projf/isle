@@ -153,7 +153,7 @@ str_d3:
 str_d4:
     .asciz "a"  # invalid decimal
 str_d5:
-    .asciz "4294967299"  # overflow
+    .asciz "4294967299"  # overflow (3)
 str_d6:
     .asciz "123a5"  # stop at non-decimal
 
@@ -168,6 +168,6 @@ str_h3:
 str_h4:
     .asciz "?"  # invalid hexadecimal
 str_h5:
-    .asciz "A987654321"  # overflow
+    .asciz "A987654321"  # overflow (87654321)
 str_h6:
     .asciz "123g5"  # stop at non-hexadecimal
