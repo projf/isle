@@ -5,7 +5,7 @@
 # NB. all functions use and return the cursor address in a0
 
 .include "include/isle.inc"
-.include "include/keyb.inc"
+.include "include/unicode.inc"
 
 .section .text
 .global tm_backspace
@@ -235,7 +235,7 @@ tm_print:
 
     mv a0, s1  # restore cursor address
     lw a1, 0(sp)  # local:ucp, 0(sp)
-    li t5, UNI_LINE_FEED
+    li t5, UCS_LINE_FEED
     beq a1, t5, 1f  # branch line feed
 
     mv a2, s3  # restore text colour

@@ -75,22 +75,32 @@ int_strx:
 #   a0: address of null-terminated string
 #   return: integer
 #
+#   Supports negative numbers beginning with "-"
 #   NB. values >2^32-1 overflow and wrap around
 #
 strd_int:
     li t1, 0   # clear return value
     li t2, 10  # decimal digit multiply and overflow
+
+    lbu  t0, 0(a0)      # load first byte from decimal string
+    li   t3, '-'        # hyphen-minus character
+    xor  t4, t0, t3     # test first byte for minus sign (xor is zero if equal)
+    seqz t3, t4         # t3=1 if minus set
+    beqz t3, 1f         # if not negative, process byte as normal
+    addi a0, a0, 1      # is negative, so increment string address for next byte
 0:
-    lbu  t0, 0(a0)      # load a byte from hex string
-    beqz t0, 1f         # test for null (end of string)
-    addi t0, t0, -0x30  # subtract U+0030 (zero)
-    bge  t0, t2, 1f     # test for invalid char >9
-    bltz t0, 1f         # test for invalid char <0
+    lbu  t0, 0(a0)      # load a byte from decimal string
+1:
+    addi t0, t0, -0x30  # subtract U+0030 (digit zero)
+    bgeu t0, t2, 2f     # test for invalid char (inc. null): <0 or >9
     mul  t1, t1, t2     # shift existing number left (multiply by 10)
     add  t1, t1, t0     # add current digit
     addi a0, a0, 1      # increment string address
     j 0b
-1:
+2:
+    beqz t3, 3f  # minus flag set?
+    neg  t1, t1  # negate if negative number
+3:
     mv a0, t1  # set return value
     ret
 
@@ -112,6 +122,7 @@ strx_int:
     addi t0, t0, 0x20   # add 0x20 to test for uppercase letters
     bgez t0, .L_char_af # test for uppercase A-F
     addi t0, t0, 7      # add 7 for 0-9 (a further 10 is added below)
+    bgez t0, 1f         # reject in-between code points :;<=>? (U+003A-0x003F)
 .L_char_af:
     addi t0, t0, 10     # add 10 for all chars
     bge  t0, t2, 1f     # test for invalid char >F
@@ -243,8 +254,8 @@ utf8_decode:
 #   return: byte count (1-4) or 0 if invalid
 #
 utf8_seq_len:
-    srli t0, a0, 8  # shift out the first byte
-    bnez t0, .L_invalid_seq  # 0 unless a0 was larger than a byte
+    srli t0, a0, 8  # check a0 is a single byte
+    bnez t0, .L_invalid_seq
     la t6, utf8_seq_table
     srli t0, a0, 3  # select upper 5 bits
     add t6, t0, t6  # table entry address

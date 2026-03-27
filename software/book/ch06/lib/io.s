@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 .include "include/isle.inc"
-.include "include/keyb.inc"
+.include "include/unicode.inc"
 
 .section .text
 .global read_ln
@@ -88,10 +88,10 @@ read_ln:
 
     lw t6, 0(sp)  # load local var: ucp
 
-    li t5, UNI_BACKSPACE
+    li t5, UCS_BACKSPACE
     beq t6, t5, .L_backspace  # branch if backspace
 
-    li t5, UNI_CR
+    li t5, UCS_CARRIAGE_RETURN
     beq t6, t5, .L_carriage_return  # branch to end if carriage return
 
 .L_character:
