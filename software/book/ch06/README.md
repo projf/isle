@@ -10,7 +10,7 @@ There's a blog post covering [Chapter 6 Software](https://projectf.io/isle/ch06-
 * [framecount.s](framecount.s) - decimal frame counter
 * [guess.s](guess.s) - number guessing game
 * [num_str.s](num_str.s) - tests number string conversion
-* [resolution.s](resolution.s) - print display and text mode resolutions (demos reading hardware registers)
+* [resolution.s](resolution.s) - print display and text mode resolutions
 
 ## Building Isle Software
 
@@ -34,8 +34,23 @@ cd isle/software/book/ch06
 make echo.dis
 ```
 
-To change the software run for chapter 6, amend `FILE_SOFT` in your dev board's `top_ch06.v` file. For example, to run guess:
+To change the software run for chapter 6, amend `FILE_SOFT` in your dev board's `top_ch06.v` file. For example, to run echo:
 
 ```verilog
-localparam FILE_SOFT = {SW, "/book/ch06/guess.mem"};
+localparam FILE_SOFT = {SW, "/book/ch06/echo.mem"};
 ```
+
+## Memory Map
+
+Chapter 6 uses a simplified memory map with a 16-bit address that can address 64 KiB:
+
+* `0x0000` - clut (to `0x00FF` - 256 bytes)
+* `0x4000` - tram (to `0x5FFF` - 8K)
+* `0x8000` - sysram (to `0xBFFF` - 16K)
+* `0xC000` - system device (to `0xCFFF` - 4K)
+* `0xD000` - graphics device (to `0xDFFF` - 4K)
+* `0xE000` - uart device (to `0xEFFF` - 4K)
+
+The stack pointer (**sp**) points to the address above the top of memory, `0xC000`, and we decrement it to allocate space on the stack.
+
+You can find hardware registers in the device modules in [hardware/devs](../../../hardware/devs/).
