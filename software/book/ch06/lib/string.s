@@ -84,18 +84,16 @@ strd_int:
     li t2, 10  # decimal digit multiply and overflow
 
     lbu  t0, 0(a0)      # load first byte from decimal string
-    li   t3, UCS_HYPHEN_MINUS
+    li   t3, '-'        # hyphen-minus character
     xor  t4, t0, t3     # test first byte for minus sign (xor is zero if equal)
     seqz t3, t4         # t3=1 if minus set
-    beqz t3, 1f         # if not minus sign, process byte as normal
-    addi a0, a0, 1      # was minus, so increment string address for next byte
+    beqz t3, 1f         # if not negative, process byte as normal
+    addi a0, a0, 1      # is negative, so increment string address for next byte
 0:
     lbu  t0, 0(a0)      # load a byte from decimal string
 1:
-    beqz t0, 2f         # test for null (end of string)
-    addi t0, t0, -0x30  # subtract U+0030 (zero)
-    bge  t0, t2, 2f     # test for invalid char >9
-    bltz t0, 2f         # test for invalid char <0
+    addi t0, t0, -0x30  # subtract U+0030 (digit zero)
+    bgeu t0, t2, 2f     # test for invalid char (inc. null): <0 or >9
     mul  t1, t1, t2     # shift existing number left (multiply by 10)
     add  t1, t1, t0     # add current digit
     addi a0, a0, 1      # increment string address
