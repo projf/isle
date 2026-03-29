@@ -40,6 +40,9 @@ module ch03 #(
 
     `define DEBUG  // debug messages in simulation (comment out to disable)
 
+    // slow Earthrise draw rate by this factor
+    localparam ER_DRAW_RATE = 10000;  // set to 1 for full speed
+
     // vram - 16K x 32-bit (64 KiB) with bit write
     //   NB. Due to bit write, minimum depth is 64 KiB with 18 Kb bram
     localparam VRAM_ADDRW = 14;  // vram address width (bits)
@@ -116,6 +119,21 @@ module ch03 #(
     wire er_busy, er_done, er_instr_invalid;  // handy for simulation
     /* verilator lint_on UNUSEDSIGNAL */
 
+    // delay counter to make drawing process visible
+    reg [$clog2(ER_DRAW_RATE)-1:0] cnt_draw_rate;
+    reg er_enable;
+    always @(posedge clk_sys) begin
+        /* verilator lint_off WIDTHEXPAND */
+        if (cnt_draw_rate == ER_DRAW_RATE - 1) begin
+        /* verilator lint_on WIDTHEXPAND */
+            cnt_draw_rate <= 0;
+            er_enable <= 1;
+        end else begin
+            cnt_draw_rate <= cnt_draw_rate + 1;
+            er_enable <= 0;
+        end
+    end
+
     earthrise #(
         .CORDW(CORDW),
         .WORD(WORD),
@@ -126,6 +144,7 @@ module ch03 #(
     ) earthrise_inst (
         .clk(clk_sys),
         .rst(rst_sys),
+        .en(er_enable),
         .start(er_start),
         .canv_w(CANV_WIDTH),
         .canv_h(CANV_HEIGHT),
