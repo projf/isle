@@ -31,7 +31,7 @@ module earthrise #(
     output reg  [WORD-1:0] vram_din,           // vram data in
     output reg  [WORD-1:0] vram_wmask,         // vram write mask
     output reg  busy,                          // execution in progress
-    output reg  done,                          // commands complete (high for one tick)
+    output wire done,                          // commands complete (high for one tick)
     output reg  instr_invalid                  // invalid instruction
     );
 
@@ -100,29 +100,29 @@ module earthrise #(
     reg signed [ICORDW-1:0] tvx2s, tvy2s;
 
     // line A signals
-    reg line_a_start, line_a_oe;
-    wire line_a_busy, line_a_valid, line_a_fill, line_a_done;
+    reg line_a_start;
+    wire line_a_oe, line_a_busy, line_a_valid, line_a_fill;
     reg signed [ICORDW-1:0] line_a_x0, line_a_y0;
     reg signed [ICORDW-1:0] line_a_x1, line_a_y1;
     wire signed [ICORDW-1:0] line_a_x, line_a_y, line_a_lx;
 
     // line B signals
-    reg line_b_start, line_b_oe;
-    wire line_b_busy, line_b_valid, line_b_fill;
+    reg line_b_start;
+    wire line_b_oe, line_b_busy, line_b_valid, line_b_fill;
     reg signed [ICORDW-1:0] line_b_x0, line_b_y0;
     reg signed [ICORDW-1:0] line_b_x1, line_b_y1;
     wire signed [ICORDW-1:0] line_b_x, line_b_y, line_b_lx;
 
     // fast line signals
-    wire fline_valid, fline_done;
     reg fline_start;
+    wire fline_valid, fline_busy;
     reg signed [ICORDW-1:0] fline_x0, fline_x1;
     wire signed [ICORDW-1:0] fline_x;
     reg signed [ICORDW-1:0] fline_y;
 
     // circle signals
-    reg circle_start, circle_oe;
-    wire circle_valid, circle_busy;
+    reg circle_start;
+    wire circle_oe, circle_valid, circle_busy;
     reg signed [ICORDW-1:0] circle_x0, circle_y0;
     reg signed [ICORDW-1:0] circle_r0;
     wire signed [ICORDW-1:0] circle_xa, circle_ya;
@@ -175,26 +175,12 @@ module earthrise #(
     // select instruction from command list data (upper or lower half from word)
     wire [INSTRW-1:0] instr = pc[1] ? cmd_list[2*INSTRW-1:INSTRW] : cmd_list[INSTRW-1:0];
 
-    // latch start and done signals so we can act on them later if !en
+    // latch start signal so we can act on it later if Earthrise is disabled
     reg start_pending;
     always @(posedge clk) begin
         if (rst) start_pending <= 0;
         else if (start) start_pending <= 1;
         else if (state == IDLE && en) start_pending <= 0;
-    end
-
-    reg line_a_done_latch;
-    always @(posedge clk) begin
-        if (rst) line_a_done_latch <= 0;
-        else if (line_a_done) line_a_done_latch <= 1;
-        else if (en) line_a_done_latch <= 0;
-    end
-
-    reg fline_done_latch;
-    always @(posedge clk) begin
-        if (rst) fline_done_latch <= 0;
-        else if (fline_done) fline_done_latch <= 1;
-        else if (en) fline_done_latch <= 0;
     end
 
     always @(posedge clk) begin
@@ -300,11 +286,7 @@ module earthrise #(
                         'hD: begin
                             // handle colour once for all shapes; fill colours work for shapes without filled forms
                             colr <= imm8[OPT_FILL] ? (imm8[OPT_COLR] ? fcb : fca)
-                                                : (imm8[OPT_COLR] ? lcb : lca);
-
-                            // disable line output by default
-                            line_a_oe <= 0;
-                            line_b_oe <= 0;
+                                                   : (imm8[OPT_COLR] ? lcb : lca);
 
                             // select drawing function
                             case (fun)
@@ -324,7 +306,6 @@ module earthrise #(
                                         `debug_er($display("0x%x: fline    (%d,%d)->(%d,%d)", pc_debug, tvx0, tvy0, tvx1, tvy1));
                                     end else begin
                                         state <= LINE_EXEC;
-                                        line_a_oe <= 1;
                                         line_a_start <= 1;   // use line instance A
                                         line_a_x0 <= tvx0;
                                         line_a_y0 <= tvy0;
@@ -380,15 +361,14 @@ module earthrise #(
                     endcase
                 end
                 LINE_EXEC: begin
-                    if (line_a_done_latch) state <= DECODE;
+                    if (!line_a_busy) state <= DECODE;
                     line_a_start <= 0;
                     drawing <= line_a_valid;
                     x <= line_a_x;
                     y <= line_a_y;
                 end
                 CIRCLE_CALC: begin
-                    if (circle_valid) begin
-                        // register the result because circle calc keeps going due to oe implementation
+                    if (circle_valid) begin  // register the result before leaving CIRCLE_CALC
                         circle_x_offs <= circle_xa;
                         circle_y_offs <= circle_ya;
                         state <= (imm8[OPT_FILL] == 0) ? CIRCLE_PIX : CIRCLE_FILL_DI;
@@ -396,7 +376,7 @@ module earthrise #(
                     circle_start <= 0;
                 end
                 CIRCLE_PIX: begin
-                    if (cnt_draw == 3) state <= (circle_busy) ? CIRCLE_CALC : DECODE;
+                    if (cnt_draw == 3) state <= circle_busy ? CIRCLE_CALC : DECODE;
                     drawing <= 1;
                     cnt_draw <= cnt_draw + 1;
                     case (cnt_draw)
@@ -414,7 +394,7 @@ module earthrise #(
                     fline_x1 <= circle_x0 - circle_x_offs;
                 end
                 CIRCLE_FILL_DD: begin
-                    if (fline_done_latch) state <= CIRCLE_FILL_UI;
+                    if (!fline_busy) state <= CIRCLE_FILL_UI;
                     fline_start <= 0;
                     drawing <= fline_valid;
                     x <= fline_x;
@@ -426,14 +406,14 @@ module earthrise #(
                     fline_y  <= circle_y0 - circle_y_offs;
                 end
                 CIRCLE_FILL_UD: begin  // almost duplicate of CIRCLE_FILL_DD - could we use return state?
-                    if (fline_done_latch) state <= (circle_busy) ? CIRCLE_CALC : DECODE;
+                    if (!fline_busy) state <= circle_busy ? CIRCLE_CALC : DECODE;
                     fline_start <= 0;
                     drawing <= fline_valid;
                     x <= fline_x;
                     y <= fline_y;
                 end
                 FLINE_EXEC: begin
-                    if (fline_done_latch) state <= DECODE;
+                    if (!fline_busy) state <= DECODE;
                     fline_start <= 0;
                     drawing <= fline_valid;
                     x <= fline_x;
@@ -441,7 +421,6 @@ module earthrise #(
                 end
                 RECT_INIT: begin
                     state <= RECT_EXEC;
-                    line_a_oe <= 1;
                     line_a_start <= 1;
                     cnt_draw <= cnt_draw + 1;
                     case (cnt_draw)
@@ -480,7 +459,7 @@ module earthrise #(
                     endcase
                 end
                 RECT_EXEC: begin
-                    if (line_a_done_latch) state <= state_return;
+                    if (!line_a_busy) state <= state_return;
                     line_a_start <= 0;
                     drawing <= line_a_valid;
                     x <= line_a_x;
@@ -496,7 +475,7 @@ module earthrise #(
                     fline_x1 <= tvx1s;
                 end
                 RECTF_EXEC: begin
-                    if (fline_done_latch) state <= state_return;
+                    if (!fline_busy) state <= state_return;
                     fline_start <= 0;
                     drawing <= fline_valid;
                     x <= fline_x;
@@ -537,13 +516,7 @@ module earthrise #(
                 end
                 TRI_WAIT: begin
                     // `debug_er($display("  tri_b_left=%b", tri_b_left));
-                    if (tri_b1_skip) begin  // B line repeats at start of B1: jump ahead one line
-                        state <= TRI_LINE_B;
-                        line_b_oe <= 1;
-                    end else begin
-                        state <= TRI_LINE_A;
-                        line_a_oe <= 1;
-                    end
+                    state <= tri_b1_skip ? TRI_LINE_B : TRI_LINE_A;  // B line repeats at start of B1: jump ahead one line
                     line_a_start <= 0;  // clear start signals
                     line_b_start <= 0;
                 end
@@ -558,8 +531,6 @@ module earthrise #(
                         state <= TRI_LINE_B;
                         if (!tri_b_left) fline_x0 <= tri_a_xdec ? line_a_lx + 1 : line_a_x + 1;
                         else fline_x1 <= tri_a_xdec ? line_a_x - 1 : line_a_lx - 1;
-                        line_a_oe <= 0;
-                        line_b_oe <= 1;
                     end
                 end
                 TRI_LINE_B: begin
@@ -574,7 +545,6 @@ module earthrise #(
                         if (tri_b_left) fline_x0 <= tri_b_xdec ? line_b_lx + 1 : line_b_x + 1;
                         else fline_x1 <= tri_b_xdec ? line_b_x - 1 : line_b_lx - 1;
                         fline_y <= line_b_y;
-                        line_b_oe <= 0;
                     end
                 end
                 TRI_FILL_INIT: begin
@@ -594,7 +564,7 @@ module earthrise #(
                     end
                 end
                 TRI_FILL_EXEC: begin
-                    if (fline_done_latch) state <= TRI_NEXT_Y;
+                    if (!fline_busy) state <= TRI_NEXT_Y;
                     else if (fline_valid) begin
                         drawing <= 1;
                         x <= fline_x;
@@ -603,11 +573,8 @@ module earthrise #(
                     fline_start <= 0;
                 end
                 TRI_NEXT_Y: begin
-                    if (!line_b_busy) state <= (tri_b_edge == 0) ? TRI_INIT_B1 : DECODE;
-                    else begin
-                        state <= TRI_LINE_A;
-                        line_a_oe <= 1;
-                    end
+                    if (!line_b_busy) state <= tri_b_edge ? DECODE : TRI_INIT_B1;
+                    else state <= TRI_LINE_A;
                     // `debug_er($display("  -- next tri line --"));
                 end
                 DONE: begin
@@ -629,10 +596,11 @@ module earthrise #(
         end
     end
 
-    always @(*) done = (state == DONE);
+    assign done = (state == DONE);
 
-    // circle output enable (consider using registered signal in FSM like other OE)
-    always @(*) circle_oe = (state == CIRCLE_CALC);
+    assign line_a_oe = (state == LINE_EXEC || state == RECT_EXEC || state == TRI_LINE_A);
+    assign line_b_oe = (state == TRI_LINE_B);
+    assign circle_oe = (state == CIRCLE_CALC);
 
     line #(.CORDW(ICORDW)) line_a_inst (
         .clk(clk),
@@ -646,10 +614,9 @@ module earthrise #(
         .x(line_a_x),
         .y(line_a_y),
         .lx(line_a_lx),
-        .busy(line_a_busy),
-        .valid(line_a_valid),
         .fill(line_a_fill),
-        .done(line_a_done)
+        .busy(line_a_busy),
+        .valid(line_a_valid)
     );
 
     line #(.CORDW(ICORDW)) line_b_inst (
@@ -664,12 +631,9 @@ module earthrise #(
         .x(line_b_x),
         .y(line_b_y),
         .lx(line_b_lx),
-        .busy(line_b_busy),
-        .valid(line_b_valid),
         .fill(line_b_fill),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .done()  // not needed
-        /* verilator lint_on PINCONNECTEMPTY */
+        .busy(line_b_busy),
+        .valid(line_b_valid)
     );
 
     fline #(.CORDW(ICORDW)) fline_inst (
@@ -680,11 +644,8 @@ module earthrise #(
         .x0(fline_x0),
         .x1(fline_x1),
         .x(fline_x),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .busy(),
-        /* verilator lint_on PINCONNECTEMPTY */
-        .valid(fline_valid),
-        .done(fline_done)
+        .busy(fline_busy),
+        .valid(fline_valid)
     );
 
     circle #(.CORDW(ICORDW)) circle_inst (
@@ -696,10 +657,7 @@ module earthrise #(
         .xa(circle_xa),
         .ya(circle_ya),
         .busy(circle_busy),
-        .valid(circle_valid),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .done()
-        /* verilator lint_on PINCONNECTEMPTY */
+        .valid(circle_valid)
     );
 
 

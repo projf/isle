@@ -29,6 +29,5 @@ Output enable `oe` lets you pause the calculation, so you can use the `xa`, `ya`
 * `xa`, `ya` - x and y distances
 * `busy` - calculation in progress
 * `valid` - output coordinates valid
-* `done` - calculation complete (high for one tick)
 
 The output distances `xa`, `ya` are relative to the circle centre.
