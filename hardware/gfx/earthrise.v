@@ -43,12 +43,6 @@ module earthrise #(
 
     localparam ICORDW = CORDW - 4;  // use integer coordinates (4 bits reserved for fraction)
 
-    // sign extension needed for tri_b_left cross product
-    function signed [2*ICORDW+1:0] sext;
-        input signed [ICORDW-1:0] v;
-        sext = {{(ICORDW+2){v[ICORDW-1]}}, v};
-    endfunction
-
     localparam INSTRW = 16;  // instruction width (bits)
     localparam OPCW   =  4;  // opcode width (bits)
     localparam FUNW   =  4;  // function width
@@ -104,14 +98,15 @@ module earthrise #(
     wire line_a_oe, line_a_busy, line_a_valid, line_a_fill;
     reg signed [ICORDW-1:0] line_a_x0, line_a_y0;
     reg signed [ICORDW-1:0] line_a_x1, line_a_y1;
-    wire signed [ICORDW-1:0] line_a_x, line_a_y, line_a_lx;
+    reg signed [ICORDW-1:0] line_a_xlo, line_a_xhi;
+    wire signed [ICORDW-1:0] line_a_x, line_a_y, line_a_xs;
 
     // line B signals
     reg line_b_start;
     wire line_b_oe, line_b_busy, line_b_valid, line_b_fill;
     reg signed [ICORDW-1:0] line_b_x0, line_b_y0;
     reg signed [ICORDW-1:0] line_b_x1, line_b_y1;
-    wire signed [ICORDW-1:0] line_b_x, line_b_y, line_b_lx;
+    wire signed [ICORDW-1:0] line_b_x, line_b_y, line_b_xs;
 
     // fast line signals
     reg fline_start;
@@ -130,7 +125,6 @@ module earthrise #(
 
     // triangle signals
     reg tri_b_edge;   // flag: drawing edge B0 or B1
-    reg tri_b_left;   // flag: B edges are on the left
     reg tri_a_xdec;   // flag: x-coordinate is decreasing on edge A
     reg tri_b_xdec;   // flag: x-coordinate is decreasing on edge B
     reg tri_b1_skip;  // flag: skip drawing at start of edge B1
@@ -484,8 +478,6 @@ module earthrise #(
                 TRI_INIT_B0: begin  // A: tv0s -> tv2s; B0: tv0s -> tv1s
                     state <= TRI_WAIT;
                     // `debug_er($display("  sorted (%d,%d) (%d,%d) (%d,%d)", tvx0s, tvy0s, tvx1s, tvy1s, tvx2s, tvy2s));
-                    tri_b_left <= (sext(tvx1s) - sext(tvx0s))*(sext(tvy2s) - sext(tvy0s)) <  // sign extend for cross product
-                                (sext(tvy1s) - sext(tvy0s))*(sext(tvx2s) - sext(tvx0s));
                     // line A
                     line_a_x0 <= tvx0s;
                     line_a_y0 <= tvy0s;
@@ -515,7 +507,6 @@ module earthrise #(
                     line_b_start <= 1;
                 end
                 TRI_WAIT: begin
-                    // `debug_er($display("  tri_b_left=%b", tri_b_left));
                     state <= tri_b1_skip ? TRI_LINE_B : TRI_LINE_A;  // B line repeats at start of B1: jump ahead one line
                     line_a_start <= 0;  // clear start signals
                     line_b_start <= 0;
@@ -529,8 +520,8 @@ module earthrise #(
                     end
                     if (line_a_fill || (!line_a_busy)) begin
                         state <= TRI_LINE_B;
-                        if (!tri_b_left) fline_x0 <= tri_a_xdec ? line_a_lx + 1 : line_a_x + 1;
-                        else fline_x1 <= tri_a_xdec ? line_a_x - 1 : line_a_lx - 1;
+                        line_a_xlo <= tri_a_xdec ? line_a_x  : line_a_xs;  // x is leftmost with dec x
+                        line_a_xhi <= tri_a_xdec ? line_a_xs : line_a_x;   // xs is rightmost with dec x
                     end
                 end
                 TRI_LINE_B: begin
@@ -542,9 +533,15 @@ module earthrise #(
                     end
                     if (line_b_fill || (!line_b_busy)) begin
                         state <= TRI_FILL_INIT;
-                        if (tri_b_left) fline_x0 <= tri_b_xdec ? line_b_lx + 1 : line_b_x + 1;
-                        else fline_x1 <= tri_b_xdec ? line_b_x - 1 : line_b_lx - 1;
                         fline_y <= line_b_y;
+                        // is line A or B on the left-hand side?
+                        if (line_a_xlo < (tri_b_xdec ? line_b_xs : line_b_x)) begin
+                            fline_x0 <= line_a_xhi + 1;  // line A on left
+                            fline_x1 <= (tri_b_xdec ? line_b_x : line_b_xs) - 1;
+                        end else begin  // line B on left
+                            fline_x0 <= (tri_b_xdec ? line_b_xs : line_b_x) + 1;
+                            fline_x1 <= line_a_xlo - 1;
+                        end
                     end
                 end
                 TRI_FILL_INIT: begin
@@ -554,7 +551,7 @@ module earthrise #(
                         state <= TRI_NEXT_Y;
                         tri_b1_skip <= 0;
                         // `debug_er($display("  line B1 ** skip fill on first y ** - a_y=%d, b_y=%d", line_a_y, line_b_y));
-                    end else if (fline_x0 <= fline_x1) begin  // do we have a line to draw? Depends indirectly on dot product.
+                    end else if (fline_x0 <= fline_x1) begin  // do we have a filled line to draw?
                         state <= TRI_FILL_EXEC;
                         fline_start <= 1;
                         // `debug_er($display("  fline   - draw (%d->%d) y=%d", fline_x0, fline_x1, fline_y));
@@ -565,12 +562,10 @@ module earthrise #(
                 end
                 TRI_FILL_EXEC: begin
                     if (!fline_busy) state <= TRI_NEXT_Y;
-                    else if (fline_valid) begin
-                        drawing <= 1;
-                        x <= fline_x;
-                        y <= fline_y;
-                    end
                     fline_start <= 0;
+                    drawing <= fline_valid;
+                    x <= fline_x;
+                    y <= fline_y;
                 end
                 TRI_NEXT_Y: begin
                     if (!line_b_busy) state <= tri_b_edge ? DECODE : TRI_INIT_B1;
@@ -602,6 +597,11 @@ module earthrise #(
     assign line_b_oe = (state == TRI_LINE_B);
     assign circle_oe = (state == CIRCLE_CALC);
 
+
+    //
+    // graphics primitves
+    //
+
     line #(.CORDW(ICORDW)) line_a_inst (
         .clk(clk),
         .rst(rst),
@@ -613,7 +613,7 @@ module earthrise #(
         .y1(line_a_y1),
         .x(line_a_x),
         .y(line_a_y),
-        .lx(line_a_lx),
+        .xs(line_a_xs),
         .fill(line_a_fill),
         .busy(line_a_busy),
         .valid(line_a_valid)
@@ -630,7 +630,7 @@ module earthrise #(
         .y1(line_b_y1),
         .x(line_b_x),
         .y(line_b_y),
-        .lx(line_b_lx),
+        .xs(line_b_xs),
         .fill(line_b_fill),
         .busy(line_b_busy),
         .valid(line_b_valid)

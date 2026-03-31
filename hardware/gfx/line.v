@@ -13,7 +13,7 @@ module line #(parameter CORDW=16) (  // signed coordinate width
     input  wire signed [CORDW-1:0] x0, y0,  // point 0
     input  wire signed [CORDW-1:0] x1, y1,  // point 1
     output reg  signed [CORDW-1:0] x,  y,   // line position
-    output reg  signed [CORDW-1:0] lx,      // first x-coordinate for this y
+    output reg  signed [CORDW-1:0] xs,      // start x-coordinate for this y
     output wire fill,  // ready for fill
     output wire busy,  // calculation in progress
     output wire valid  // output coordinates valid
@@ -61,7 +61,7 @@ module line #(parameter CORDW=16) (  // signed coordinate width
                     else begin
                         if (movx && movy) begin
                             x <= right ? x + 1 : x - 1;
-                            lx <= right ? x + 1 : x - 1;
+                            xs <= right ? x + 1 : x - 1;
                             y <= y + 1;
                             err <= err + dy + dx;
                         end else if (movx) begin
@@ -84,7 +84,7 @@ module line #(parameter CORDW=16) (  // signed coordinate width
                 err <= dx + dy;
                 x <= xa;
                 y <= ya;
-                lx <= xa;
+                xs <= xa;
                 x_end <= xb;
                 y_end <= yb;
             end
@@ -94,7 +94,7 @@ module line #(parameter CORDW=16) (  // signed coordinate width
                     right <= (xa < xb);  // draw right to left?
                     x <= x0;  // init to start coords to avoid spurious pixels
                     y <= y0;
-                    lx <= x0;
+                    xs <= x0;
                 end
             end
         endcase
