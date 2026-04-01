@@ -142,26 +142,22 @@ module earthrise #(
     localparam DECODE         =  3;
     localparam EXEC           =  4;  // all instr use this state
     localparam LINE_EXEC      =  5;  // drawing instr have their own states
-    localparam FLINE_EXEC     =  6;
+    localparam FLINE_EXEC     =  6;  // used for fast and fill lines
     localparam RECT_INIT      =  7;
     localparam RECT_EXEC      =  8;
     localparam RECTF_INIT     =  9;
-    localparam RECTF_EXEC     = 10;
-    localparam CIRCLE_CALC    = 11;
-    localparam CIRCLE_PIX     = 12;
-    localparam CIRCLE_FILL_DI = 13;  // init circle down line
-    localparam CIRCLE_FILL_DD = 14;  // draw circle down line
-    localparam CIRCLE_FILL_UI = 15;  // init circle up line
-    localparam CIRCLE_FILL_UD = 16;  // draw circle up line
-    localparam TRI_INIT_B0    = 17;
-    localparam TRI_INIT_B1    = 18;
-    localparam TRI_WAIT       = 19;
-    localparam TRI_LINE_A     = 20;
-    localparam TRI_LINE_B     = 21;
-    localparam TRI_FILL_INIT  = 22;
-    localparam TRI_FILL_EXEC  = 23;
-    localparam TRI_NEXT_Y     = 24;
-    localparam JUMP_WAIT      = 25;
+    localparam CIRCLE_CALC    = 10;
+    localparam CIRCLE_PIX     = 11;
+    localparam CIRCLE_FILL_DN = 12;
+    localparam CIRCLE_FILL_UP = 13;
+    localparam TRI_INIT_B0    = 14;
+    localparam TRI_INIT_B1    = 15;
+    localparam TRI_WAIT       = 16;
+    localparam TRI_LINE_A     = 17;
+    localparam TRI_LINE_B     = 18;
+    localparam TRI_FILL_INIT  = 19;
+    localparam TRI_NEXT_Y     = 20;
+    localparam JUMP_WAIT      = 21;
 
     localparam STATEW = 5;  // state width (bits)
     reg [STATEW-1:0] state, state_return;
@@ -293,6 +289,7 @@ module earthrise #(
                                 'h1: begin  // draw line
                                     if (tvy0 == tvy1) begin  // fast line
                                         state <= FLINE_EXEC;
+                                        state_return <= DECODE;
                                         fline_start <= 1;
                                         fline_x0 <= tvx0;
                                         fline_x1 <= tvx1;
@@ -365,7 +362,7 @@ module earthrise #(
                     if (circle_valid) begin  // register the result before leaving CIRCLE_CALC
                         circle_x_offs <= circle_xa;
                         circle_y_offs <= circle_ya;
-                        state <= (imm8[OPT_FILL] == 0) ? CIRCLE_PIX : CIRCLE_FILL_DI;
+                        state <= (imm8[OPT_FILL] == 0) ? CIRCLE_PIX : CIRCLE_FILL_DN;
                     end
                     circle_start <= 0;
                 end
@@ -380,34 +377,22 @@ module earthrise #(
                         'd3: begin x <= circle_x0 - circle_x_offs; end
                     endcase
                 end
-                CIRCLE_FILL_DI: begin
-                    state <= CIRCLE_FILL_DD;
+                CIRCLE_FILL_DN: begin
+                    state <= FLINE_EXEC;
+                    state_return <= CIRCLE_FILL_UP;
                     fline_start <= 1;
                     fline_y  <= circle_y0 + circle_y_offs;
                     fline_x0 <= circle_x0 + circle_x_offs;
                     fline_x1 <= circle_x0 - circle_x_offs;
                 end
-                CIRCLE_FILL_DD: begin
-                    if (!fline_busy) state <= CIRCLE_FILL_UI;
-                    fline_start <= 0;
-                    drawing <= fline_valid;
-                    x <= fline_x;
-                    y <= fline_y;
-                end
-                CIRCLE_FILL_UI: begin
-                    state <= CIRCLE_FILL_UD;
+                CIRCLE_FILL_UP: begin  // fline_x0,fline_x1 unchanged from CIRCLE_FILL_DN
+                    state <= FLINE_EXEC;
+                    state_return <= circle_busy ? CIRCLE_CALC : DECODE;
                     fline_start <= 1;
-                    fline_y  <= circle_y0 - circle_y_offs;
-                end
-                CIRCLE_FILL_UD: begin  // almost duplicate of CIRCLE_FILL_DD - could we use return state?
-                    if (!fline_busy) state <= circle_busy ? CIRCLE_CALC : DECODE;
-                    fline_start <= 0;
-                    drawing <= fline_valid;
-                    x <= fline_x;
-                    y <= fline_y;
+                    fline_y <= circle_y0 - circle_y_offs;
                 end
                 FLINE_EXEC: begin
-                    if (!fline_busy) state <= DECODE;
+                    if (!fline_busy) state <= state_return;
                     fline_start <= 0;
                     drawing <= fline_valid;
                     x <= fline_x;
@@ -461,19 +446,12 @@ module earthrise #(
                 end
                 RECTF_INIT: begin
                     cnt_fill <= cnt_fill + 1;
-                    state <= RECTF_EXEC;
+                    state <= FLINE_EXEC;
                     state_return <= (tvy0s + cnt_fill < tvy1s) ? RECTF_INIT : DECODE;
                     fline_start <= 1;
                     fline_y  <= tvy0s + cnt_fill;
                     fline_x0 <= tvx0s;
                     fline_x1 <= tvx1s;
-                end
-                RECTF_EXEC: begin
-                    if (!fline_busy) state <= state_return;
-                    fline_start <= 0;
-                    drawing <= fline_valid;
-                    x <= fline_x;
-                    y <= fline_y;
                 end
                 TRI_INIT_B0: begin  // A: tv0s -> tv2s; B0: tv0s -> tv1s
                     state <= TRI_WAIT;
@@ -552,20 +530,14 @@ module earthrise #(
                         tri_b1_skip <= 0;
                         // `debug_er($display("  line B1 ** skip fill on first y ** - a_y=%d, b_y=%d", line_a_y, line_b_y));
                     end else if (fline_x0 <= fline_x1) begin  // do we have a filled line to draw?
-                        state <= TRI_FILL_EXEC;
+                        state <= FLINE_EXEC;
+                        state_return <= TRI_NEXT_Y;
                         fline_start <= 1;
                         // `debug_er($display("  fline   - draw (%d->%d) y=%d", fline_x0, fline_x1, fline_y));
                     end else begin
                         state <= TRI_NEXT_Y;
                         // `debug_er($display("  fline   - no   (%d->%d) y=%d", fline_x0, fline_x1, fline_y));
                     end
-                end
-                TRI_FILL_EXEC: begin
-                    if (!fline_busy) state <= TRI_NEXT_Y;
-                    fline_start <= 0;
-                    drawing <= fline_valid;
-                    x <= fline_x;
-                    y <= fline_y;
                 end
                 TRI_NEXT_Y: begin
                     if (!line_b_busy) state <= tri_b_edge ? DECODE : TRI_INIT_B1;
