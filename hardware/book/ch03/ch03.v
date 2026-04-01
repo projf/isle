@@ -38,8 +38,6 @@ module ch03 #(
     output reg  [BPC-1:0] disp_b            // blue display channel
     );
 
-    `define DEBUG  // debug messages in simulation (comment out to disable)
-
     // slow Earthrise draw rate by this factor
     localparam ER_DRAW_RATE = 1;  // 1 for full speed
 

@@ -4,6 +4,7 @@
 
 VFLAGS = -O3
 CFLAGS = -std=c++17
+VERILOG_DEBUG = -DDEBUG
 SDL_CFLAGS = `sdl2-config --cflags`
 SDL_LDFLAGS = `sdl2-config --libs`
 OPT_FLAGS = -O3 -march=native -mtune=native -flto
@@ -12,7 +13,7 @@ OPT_FLAGS = -O3 -march=native -mtune=native -flto
 .SECONDEXPANSION:
 %.mk: top_%.v
 	verilator ${VFLAGS} -I.. ${VERILOG_LIBS} \
-	    -cc $< --exe main_$(basename $@).cpp -o $(basename $@) \
+	    -cc $< --exe main_$(basename $@).cpp -o $(basename $@) $(VERILOG_DEBUG) \
 		-I.. -CFLAGS "${CFLAGS} ${SDL_CFLAGS} ${OPT_FLAGS}" -LDFLAGS "${SDL_LDFLAGS} ${OPT_FLAGS}"
 
 %.exe: %.mk

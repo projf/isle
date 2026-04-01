@@ -28,6 +28,12 @@ Many chapters have parameters you can edit in the matching top module. For examp
 
 Each chapter top module uses an instance of the common chapter design from [hardware/book](../../hardware/book/).
 
+### Verilog Debug Messages
+
+Some Isle components (such as Earthrise) output debug messages using `$display(...)`. These messages are enabled or disabled in: `/Users/flux/src/isle/boards/verilator/verilator.mk`
+
+Simply comment out `VERILOG_DEBUG` if you don't want debug output.
+
 ### Unknown Verilator Lint Message Code
 
 Verilator introduces new lint waivers from time to time; unfortunately, this trips up older versions of Verilator. If Verilator gives an error message of the form "Unknown Verilator lint message code" you have two options:
