@@ -54,9 +54,12 @@ For example, 2 bits per pixel mean you have 16 pixels per 32-bit word, and 16 is
 * `vram_wmask` - vram bit-write mask
 * `busy` - execution in progress
 * `done` - commands complete (high for one tick)
+* `cycle_cnt` - number of clock cycles to execute command list
 * `instr_invalid` - invalid instruction
 
 See [vram](vram.md) for details on vram write mask.
+
+You can use `cycle_cnt` to learn how many clock cycles Earthrise took to execute your command list. This isn't adjusted for enable (`en`) so, cycle counts will vary if Earthrise is sharing vram with other devices.
 
 ## Earthrise Command List
 

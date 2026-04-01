@@ -154,8 +154,11 @@ module ch03 #(
         .vram_addr(draw_addr),
         .vram_din(vram_din_sys),
         .vram_wmask(vram_wmask_sys),
-        .done(er_done),
         .busy(er_busy),
+        .done(er_done),
+        /* verilator lint_off PINCONNECTEMPTY */
+        .cycle_cnt(),
+        /* verilator lint_on PINCONNECTEMPTY */
         .instr_invalid(er_instr_invalid)
     );
 

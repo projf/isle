@@ -32,6 +32,7 @@ module earthrise #(
     output reg  [WORD-1:0] vram_wmask,         // vram write mask
     output reg  busy,                          // execution in progress
     output wire done,                          // commands complete (high for one tick)
+    output reg  [WORD-1:0] cycle_cnt,          // number of clock cycles to execute command list
     output reg  instr_invalid                  // invalid instruction
     );
 
@@ -182,6 +183,7 @@ module earthrise #(
             pc_start <= 0;
             drawing <= 0;
             busy <= 0;
+            cycle_cnt <= 0;
             instr_invalid <= 0;
             line_a_start <= 0;
             line_b_start <= 0;
@@ -213,7 +215,6 @@ module earthrise #(
                         imm8 <= instr[IMM8-1:0];
                         cnt_draw <= 0;  // draw counter
                         cnt_fill <= 0;  // fill counter
-                        // `debug_er($display(">> decode  %x - instr: %x", pc, instr));
                     end
                 end
                 EXEC: begin
@@ -238,38 +239,21 @@ module earthrise #(
                         end
                         'hC: begin  // colour and control
                             case (fun)
-                                'h0: begin
-                                    lca <= imm8;
-                                    `debug_er($display("0x%x: lca      %x", pc_debug, imm8));
-                                end
-                                'h1: begin
-                                    lcb <= imm8;
-                                    `debug_er($display("0x%x: lcb      %x", pc_debug, imm8));
-                                end
-                                'h2: begin
-                                    fca <= imm8;
-                                    `debug_er($display("0x%x: fca      %x", pc_debug, imm8));
-                                end
-                                'h3: begin
-                                    fcb <= imm8;
-                                    `debug_er($display("0x%x: fcb      %x", pc_debug, imm8));
-                                end
+                                'h0: lca <= imm8;
+                                'h1: lcb <= imm8;
+                                'h2: fca <= imm8;
+                                'h3: fcb <= imm8;
                                 'hA: begin  // 0xCA - Jump (Change Address)
                                     state <= JUMP_WAIT;  // wait a cycle after changing PC
                                     pc_reg <= {1'b0, pc_start};
-                                    `debug_er($display("0x%x: jump     %x", pc_debug, pc_start));
+                                    `debug_er($display("%d - 0x%x: jump     %x", cycle_cnt, pc_debug, pc_start));
                                 end
-                                'hC: begin  // 0xCC - NOP (Continue)
-                                    state <= FETCH;
-                                end
-                                'hE: begin  // 0xCE Stop (CEase)
-                                    state <= DONE;
-                                    `debug_er($display("0x%x: stop", pc_debug));  // use pc_debug because pc points at NEXT instruction
-                                end
-                                default: begin
+                                'hC: state <= FETCH;  // 0xCC - NOP (Continue)
+                                'hE: state <= DONE;   // 0xCE Stop (CEase)
+                                default: begin  // invalid instruction
                                     state <= DONE;
                                     instr_invalid <= 1;
-                                    `debug_er($display("0x%x: Invalid Instruction - no such instruction '0xC%x'.", pc_debug, fun));
+                                    `debug_er($display("%d - 0x%x: Invalid Instruction - no such instruction '0xC%x'.", cycle_cnt, pc_debug, fun));
                                 end
                             endcase
                         end
@@ -284,7 +268,7 @@ module earthrise #(
                                     x <= tvx0;
                                     y <= tvy0;
                                     drawing <= 1;
-                                    `debug_er($display("0x%x: pixel    (%d,%d)", pc_debug, tvx0, tvy0));
+                                    `debug_er($display("%d - 0x%x: pixel    (%d,%d)", cycle_cnt, pc_debug, tvx0, tvy0));
                                 end
                                 'h1: begin  // draw line
                                     if (tvy0 == tvy1) begin  // fast line
@@ -294,7 +278,7 @@ module earthrise #(
                                         fline_x0 <= tvx0;
                                         fline_x1 <= tvx1;
                                         fline_y <= tvy0;  // use tvy0 for vertical position
-                                        `debug_er($display("0x%x: fline    (%d,%d)->(%d,%d)", pc_debug, tvx0, tvy0, tvx1, tvy1));
+                                        `debug_er($display("%d - 0x%x: fline    (%d,%d)->(%d,%d)", cycle_cnt, pc_debug, tvx0, tvy0, tvx1, tvy1));
                                     end else begin
                                         state <= LINE_EXEC;
                                         line_a_start <= 1;   // use line instance A
@@ -302,7 +286,7 @@ module earthrise #(
                                         line_a_y0 <= tvy0;
                                         line_a_x1 <= tvx1;
                                         line_a_y1 <= tvy1;
-                                        `debug_er($display("0x%x: line     (%d,%d)->(%d,%d)", pc_debug, tvx0, tvy0, tvx1, tvy1));
+                                        `debug_er($display("%d - 0x%x: line     (%d,%d)->(%d,%d)", cycle_cnt, pc_debug, tvx0, tvy0, tvx1, tvy1));
                                     end
                                 end
                                 'h2: begin  // draw circle
@@ -313,13 +297,13 @@ module earthrise #(
                                         circle_y0 <= tvy0;
                                         circle_r0 <= r0;
                                     end else state <= FETCH;
-                                    `debug_er($display("0x%x: circle   (%d,%d) r=%d", pc_debug, tvx0, tvy0, r0));
+                                    `debug_er($display("%d - 0x%x: circle   (%d,%d) r=%d", cycle_cnt, pc_debug, tvx0, tvy0, r0));
                                 end
                                 'h3: begin  // draw triangle (sort vertices first)
                                     if (tri_min == tri_max || tri_degen_x) begin  // degenerate triangle
                                         state <= DONE;
                                         instr_invalid <= 1;
-                                        `debug_er($display("0x%x: Invalid Instruction - degenerate triangle.", pc_debug));
+                                        `debug_er($display("%d - 0x%x: Invalid Instruction - degenerate triangle.", cycle_cnt, pc_debug));
                                     end else state <= TRI_INIT_B0;
                                     tvx0s <= (tri_min == 0) ? tvx0 : (tri_min == 1) ? tvx1 : tvx2;
                                     tvy0s <= (tri_min == 0) ? tvy0 : (tri_min == 1) ? tvy1 : tvy2;
@@ -327,7 +311,7 @@ module earthrise #(
                                     tvy1s <= (tri_mid == 0) ? tvy0 : (tri_mid == 1) ? tvy1 : tvy2;
                                     tvx2s <= (tri_max == 0) ? tvx0 : (tri_max == 1) ? tvx1 : tvx2;
                                     tvy2s <= (tri_max == 0) ? tvy0 : (tri_max == 1) ? tvy1 : tvy2;
-                                    `debug_er($display("0x%x: triangle (%d,%d) (%d,%d) (%d,%d)", pc_debug, tvx0, tvy0, tvx1, tvy1, tvx2, tvy2));
+                                    `debug_er($display("%d - 0x%x: triangle (%d,%d) (%d,%d) (%d,%d)", cycle_cnt, pc_debug, tvx0, tvy0, tvx1, tvy1, tvx2, tvy2));
                                 end
                                 'h4: begin  // draw rect (sort vertices first)
                                     tvx0s <= (tvx0 < tvx1) ? tvx0 : tvx1;
@@ -335,19 +319,19 @@ module earthrise #(
                                     tvx1s <= (tvx0 < tvx1) ? tvx1 : tvx0;
                                     tvy1s <= (tvy0 < tvy1) ? tvy1 : tvy0;
                                     state <= (imm8[OPT_FILL] == 0) ? RECT_INIT : RECTF_INIT;
-                                    `debug_er($display("0x%x: rect     (%d,%d)->(%d,%d)", pc_debug, tvx0, tvy0, tvx1, tvy1));
+                                    `debug_er($display("%d - 0x%x: rect     (%d,%d)->(%d,%d)", cycle_cnt, pc_debug, tvx0, tvy0, tvx1, tvy1));
                                 end
                                 default: begin
                                     state <= DONE;
                                     instr_invalid <= 1;
-                                    `debug_er($display("0x%x: Invalid Instruction - no such draw function '%x'.", pc_debug, fun));
+                                    `debug_er($display("%d - 0x%x: Invalid Instruction - no such draw function '%x'.", cycle_cnt, pc_debug, fun));
                                 end
                             endcase
                         end
                         default: begin
                             state <= DONE;
                             instr_invalid <= 1;
-                            `debug_er($display("0x%x: Invalid Instruction - no such opcode '%x'.", pc_debug, opc));
+                            `debug_er($display("%d - 0x%x: Invalid Instruction - no such opcode '%x'.", cycle_cnt, pc_debug, opc));
                         end
                     endcase
                 end
@@ -409,7 +393,6 @@ module earthrise #(
                             line_a_y0 <= tvy0s;
                             line_a_x1 <= tvx1s;
                             line_a_y1 <= tvy0s;
-                            // `debug_er($display("  0: (%d,%d) -> (%d,%d)", tvx0s, tvy0s, tvx1s, tvy0s));
                         end
                         'd1: begin
                             state_return <= RECT_INIT;  // return for third edge
@@ -417,7 +400,6 @@ module earthrise #(
                             line_a_y0 <= tvy1s;
                             line_a_x1 <= tvx1s;
                             line_a_y1 <= tvy1s;
-                            // `debug_er($display("  1: (%d,%d) -> (%d,%d)", tvx0s, tvy1s, tvx1s, tvy1s));
                         end
                         'd2: begin
                             state_return <= RECT_INIT;  // return for fourth edge
@@ -425,7 +407,6 @@ module earthrise #(
                             line_a_y0 <= tvy0s;
                             line_a_x1 <= tvx0s;
                             line_a_y1 <= tvy1s;
-                            // `debug_er($display("  2: (%d,%d) -> (%d,%d)", tvx0s, tvy0s, tvx0s, tvy1s));
                         end
                         default: begin
                             state_return <= DECODE;  // decode next instruction after draw
@@ -433,7 +414,6 @@ module earthrise #(
                             line_a_y0 <= tvy0s;
                             line_a_x1 <= tvx1s;
                             line_a_y1 <= tvy1s;
-                            // `debug_er($display("  3: (%d,%d) -> (%d,%d)", tvx1s, tvy0s, tvx1s, tvy1s));
                         end
                     endcase
                 end
@@ -455,7 +435,6 @@ module earthrise #(
                 end
                 TRI_INIT_B0: begin  // A: tv0s -> tv2s; B0: tv0s -> tv1s
                     state <= TRI_WAIT;
-                    // `debug_er($display("  sorted (%d,%d) (%d,%d) (%d,%d)", tvx0s, tvy0s, tvx1s, tvy1s, tvx2s, tvy2s));
                     // line A
                     line_a_x0 <= tvx0s;
                     line_a_y0 <= tvy0s;
@@ -494,7 +473,6 @@ module earthrise #(
                         drawing <= 1;
                         x <= line_a_x;
                         y <= line_a_y;
-                        // `debug_er($display("  line A  - draw (%d,%d)", line_a_x, line_a_y));
                     end
                     if (line_a_fill || (!line_a_busy)) begin
                         state <= TRI_LINE_B;
@@ -507,7 +485,6 @@ module earthrise #(
                         drawing <= 1;
                         x <= line_b_x;
                         y <= line_b_y;
-                        // `debug_er($display("  line B%b - draw (%d,%d)", tri_b_edge, line_b_x, line_b_y));
                     end
                     if (line_b_fill || (!line_b_busy)) begin
                         state <= TRI_FILL_INIT;
@@ -528,28 +505,22 @@ module earthrise #(
                     end else if (tri_b1_skip == 1) begin
                         state <= TRI_NEXT_Y;
                         tri_b1_skip <= 0;
-                        // `debug_er($display("  line B1 ** skip fill on first y ** - a_y=%d, b_y=%d", line_a_y, line_b_y));
                     end else if (fline_x0 <= fline_x1) begin  // do we have a filled line to draw?
                         state <= FLINE_EXEC;
                         state_return <= TRI_NEXT_Y;
                         fline_start <= 1;
-                        // `debug_er($display("  fline   - draw (%d->%d) y=%d", fline_x0, fline_x1, fline_y));
-                    end else begin
-                        state <= TRI_NEXT_Y;
-                        // `debug_er($display("  fline   - no   (%d->%d) y=%d", fline_x0, fline_x1, fline_y));
-                    end
+                    end else state <= TRI_NEXT_Y;
                 end
                 TRI_NEXT_Y: begin
                     if (!line_b_busy) state <= tri_b_edge ? DECODE : TRI_INIT_B1;
                     else state <= TRI_LINE_A;
-                    // `debug_er($display("  -- next tri line --"));
                 end
                 DONE: begin
                     state <= IDLE;
                     busy <= 0;
                     pc_reg <= 0;  // reset pc: execution always starts from address 0
                     pc_debug <= 0;
-                    `debug_er($display("** DONE **"));
+                    `debug_er($display("** DONE ** %d cycles", cycle_cnt));
                 end
                 default: begin // IDLE
                     busy <= 0;
@@ -557,10 +528,12 @@ module earthrise #(
                         state <= FETCH;
                         instr_invalid <= 0;
                         busy <= 1;
+                        cycle_cnt <= 1;  // cycle counter starts
                     end
                 end
             endcase
         end
+        if (busy && state != DONE) cycle_cnt <= cycle_cnt + 1;
     end
 
     assign done = (state == DONE);
