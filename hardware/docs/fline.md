@@ -32,4 +32,3 @@ Output enable `oe` lets you pause the fast line calculation, which is useful for
 * `x` - line position (output coordinate)
 * `busy` - calculation in progress
 * `valid` - output coordinates valid
-* `done` - calculation complete (high for one tick)

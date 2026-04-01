@@ -28,10 +28,9 @@ Output enable `oe` lets you pause the line calculation, which is useful for mult
 ### Output
 
 * `x`, `y` - line position (output coordinates)
-* `lx` - first x-coordinate for this y
+* `xs` - start x-coordinate for this y
+* `fill` - ready for fill; current y complete (used by Earthrise)
 * `busy` - calculation in progress
 * `valid` - output coordinates valid
-* `fill` - ready for fill; current y complete (used by Earthrise)
-* `done` - calculation complete (high for one tick)
 
-`lx` is helpful when drawing filled triangles. When `fill` occurs, Earthrise can use `lx` or `x` depending on whether it needs the left or right pixel for this line. You can see this logic in the [Earthrise](earthrise.md) module.
+`xs` is helpful when drawing filled triangles. When `fill` occurs, Earthrise can use `xs` or `x` depending on whether it needs the left or right pixel for this line. You can see this logic in the [Earthrise](earthrise.md) module.

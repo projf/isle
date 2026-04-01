@@ -1,0 +1,329 @@
+# Isle.Computer - Earthrise Filled Triangles Example
+# Copyright Will Green and Isle Contributors
+# SPDX-License-Identifier: MIT
+
+# colours
+lca 0xA
+lcb 0xD
+fca 0x4
+fcb 0x5
+
+
+#
+# A slopes steep dec - right angle
+#
+
+# 1a - A-left steep dec - (10,16) -> (4,26) -> (10,26)
+xt  0
+yt  0
+x0 10
+y0 16
+x1  4
+y1 26
+x2 10
+y2 26
+draw trif ca
+
+# 1b - A-left steep dec - (10,16) -> (10,26) -> (4,26)
+xt 16
+yt  0
+x0 10
+y0 16
+x1 10
+y1 26
+x2  4
+y2 26
+draw trif ca
+draw tri ca
+
+# 2a - A-right steep dec - (10,16) -> (4,26) -> (4,16)
+xt 48
+yt  0
+x0 10
+y0 16
+x1  4
+y1 26
+x2  4
+y2 16
+draw trif cb
+
+# 2b - A-right steep dec - (4,16) -> (4,26) -> (10,16)
+xt 64
+yt  0
+x0  4
+y0 16
+x1  4
+y1 26
+x2 10
+y2 16
+draw trif cb
+draw tri cb
+
+
+#
+# A slopes steep dec - not right angle
+#
+
+# 3a - A-left steep dec - (10,16) -> (4,26) -> (10,26)
+xt  0
+yt 16
+x0 11
+y0 16
+x1  4
+y1 26
+x2 10
+y2 26
+draw trif ca
+
+# 3b - A-left steep dec - (10,16) -> (10,26) -> (4,26)
+xt 16
+yt 16
+x0 11
+y0 16
+x1 10
+y1 26
+x2  4
+y2 26
+draw trif ca
+draw tri ca
+
+# 4a - A-right steep dec - (10,16) -> (4,26) -> (4,16)
+xt 48
+yt 16
+x0 10
+y0 16
+x1  4
+y1 26
+x2  3
+y2 16
+draw trif cb
+
+# 4b - A-right steep dec - (4,16) -> (4,26) -> (10,16)
+xt 64
+yt 16
+x0  3
+y0 16
+x1  4
+y1 26
+x2 10
+y2 16
+draw trif cb
+draw tri cb
+
+
+#
+# A slopes shallow dec - right angle
+#
+
+# 5a - A-left shallow dec - (14,16) -> (4,22) -> (14,22)
+xt  0
+yt 48
+x0 14
+y0 16
+x1  4
+y1 22
+x2 14
+y2 22
+draw trif ca
+
+# 5b - A-left shallow dec - (14,16) -> (14,22) -> (4,22)
+xt 16
+yt 48
+x0 14
+y0 16
+x1 14
+y1 22
+x2  4
+y2 22
+draw trif ca
+draw tri ca
+
+# 6a - A-right shallow dec - (14,16) -> (4,22) -> (4,16)
+xt 48
+yt 48
+x0 14
+y0 16
+x1  4
+y1 22
+x2  4
+y2 16
+draw trif cb
+
+# 6b - A-right shallow dec - (4,16) -> (4,22) -> (14,16)
+xt 64
+yt 48
+x0  4
+y0 16
+x1  4
+y1 22
+x2 14
+y2 16
+draw trif cb
+draw tri cb
+
+
+#
+# A slopes steep inc - right angle
+#
+
+# 7a - A-left steep inc - (10,16) -> (10,26) -> (4,16)
+xt  0
+yt 80
+x0 10
+y0 16
+x1 10
+y1 26
+x2  4
+y2 16
+draw trif ca
+
+# 7b - A-left steep inc - (4,16) -> (10,26) -> (10,16)
+xt 16
+yt 80
+x0  4
+y0 16
+x1 10
+y1 26
+x2 10
+y2 16
+draw trif ca
+draw tri ca
+
+# 8a - A-right steep inc - (4,16) -> (4,26) -> (10,26)
+xt 48
+yt 80
+x0  4
+y0 16
+x1  4
+y1 26
+x2 10
+y2 26
+draw trif cb
+
+# 8b - A-right steep inc - (4,16) -> (10,26) -> (4,26)
+xt 64
+yt 80
+x0  4
+y0 16
+x1 10
+y1 26
+x2  4
+y2 26
+draw trif cb
+draw tri cb
+
+
+#
+# A slopes shallow inc - right angle
+#
+
+# 9a - A-left shallow inc - (14,16) -> (14,22) -> (4,16)
+xt  0
+yt 112
+x0 14
+y0 16
+x1 14
+y1 22
+x2  4
+y2 16
+draw trif ca
+
+# 9b - A-left shallow inc - (4,16) -> (14,22) -> (14,16)
+xt 16
+yt 112
+x0  4
+y0 16
+x1 14
+y1 22
+x2 14
+y2 16
+draw trif ca
+draw tri ca
+
+# 10a - A-right shallow inc - (4,16) -> (4,22) -> (14,22)
+xt 48
+yt 112
+x0  4
+y0 16
+x1  4
+y1 22
+x2 14
+y2 22
+draw trif cb
+
+# 10b - A-right shallow inc - (4,16) -> (14,22) -> (4,22)
+xt 64
+yt 112
+x0  4
+y0 16
+x1 14
+y1 22
+x2  4
+y2 22
+draw trif cb
+draw tri cb
+
+
+#
+# B slopes
+#
+
+# 11 - B-left steep dec, shallow inc - (12,16) -> (6,26) -> (16,32)
+xt 127
+yt 16
+x0 12
+y0 16
+x1  6
+y1 26
+x2 16
+y2 32
+draw trif ca
+
+# 12 - B-right steep dec, shallow inc - (6,32) -> (10,16) -> (16,26)
+xt 143
+yt 16
+x0  6
+y0 32
+x1 10
+y1 16
+x2 16
+y2 26
+draw trif cb
+
+# 13 - B-left shallow dec, steep inc - (16,20) -> (4,24) -> (8,36)
+xt 128
+yt 32
+x0 16
+y0 20
+x1  4
+y1 24
+x2  8
+y2 36
+draw trif ca
+
+# 14 - B-right shallow dec, steep inc - (4,20) -> (16,24) -> (12,36)
+xt 144
+yt 32
+x0  4
+y0 20
+x1 16
+y1 24
+x2 12
+y2 36
+draw trif cb
+
+# 15 - minimal triangle - (1,0) -> (0,1) -> (2,1)
+xt 144
+yt 16
+x0 1
+y0 0
+x1 0
+y1 1
+x2 2
+y2 1
+draw trif cb
+
+#
+# stop
+#
+stop

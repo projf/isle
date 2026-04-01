@@ -15,6 +15,7 @@ module canv_draw_agu #(
     parameter WORD=32                // machine word size (bits)
     ) (
     input  wire clk,                      // clock
+    input  wire en,                       // enable
     input  wire signed [CORDW-1:0] w,     // canvas width
     input  wire signed [CORDW-1:0] h,     // canvas height
     input  wire signed [CORDW-1:0] x,     // horizontal pixel coordinate
@@ -36,29 +37,31 @@ module canv_draw_agu #(
     reg [ADDRW-1:0] addr_base_p1, addr_base_p2;
 
     always @(posedge clk) begin
-        // stage 1
-        x_p1 <= x;  // use x in the next stage
-        clip_p1x <= (x < 0 || x > w-1);  // horizontal clip
-        clip_p1y <= (y < 0 || y > h-1);  // vertical clip
-        pix_mul_p1 <= w * y;  // unsigned result, but clip flags x<0 or y<0
-        addr_shift_p1 <= addr_shift;
-        addr_base_p1 <= addr_base;
+        if (en) begin
+            // stage 1
+            x_p1 <= x;  // use x in the next stage
+            clip_p1x <= (x < 0 || x > w-1);  // horizontal clip
+            clip_p1y <= (y < 0 || y > h-1);  // vertical clip
+            pix_mul_p1 <= w * y;  // unsigned result, but clip flags x<0 or y<0
+            addr_shift_p1 <= addr_shift;
+            addr_base_p1 <= addr_base;
 
-        // stage 2
-        clip_p2 <= clip_p1x || clip_p1y;
-        /* verilator lint_off WIDTHEXPAND */
-        pix_addr_p2 <= pix_mul_p1 + x_p1;
-        /* verilator lint_on WIDTHEXPAND */
-        addr_shift_p2 <= addr_shift_p1;
-        addr_base_p2 <= addr_base_p1;
+            // stage 2
+            clip_p2 <= clip_p1x || clip_p1y;
+            /* verilator lint_off WIDTHEXPAND */
+            pix_addr_p2 <= pix_mul_p1 + x_p1;
+            /* verilator lint_on WIDTHEXPAND */
+            addr_shift_p2 <= addr_shift_p1;
+            addr_base_p2 <= addr_base_p1;
 
-        // stage 3
-        clip <= clip_p2;
-        /* verilator lint_off WIDTHTRUNC */
-        /* verilator lint_off WIDTHEXPAND */
-        addr <= addr_base_p2 + (pix_addr_p2 >> addr_shift_p2);
-        pix_id <= pix_addr_p2 & ((1 << addr_shift_p2) - 1);
-        /* verilator lint_on WIDTHEXPAND */
-        /* verilator lint_on WIDTHTRUNC */
+            // stage 3
+            clip <= clip_p2;
+            /* verilator lint_off WIDTHTRUNC */
+            /* verilator lint_off WIDTHEXPAND */
+            addr <= addr_base_p2 + (pix_addr_p2 >> addr_shift_p2);
+            pix_id <= pix_addr_p2 & ((1 << addr_shift_p2) - 1);
+            /* verilator lint_on WIDTHEXPAND */
+            /* verilator lint_on WIDTHTRUNC */
+        end
     end
 endmodule

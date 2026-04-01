@@ -12,9 +12,8 @@ module circle #(parameter CORDW=16) (  // signed coordinate width
     input  wire oe,     // output enable
     input  wire signed [CORDW-1:0] r0,      // radius
     output reg  signed [CORDW-1:0] xa, ya,  // x and y distances
-    output reg  busy,   // calculation in progress
-    output reg  valid,  // output coordinates valid
-    output reg  done    // calculation complete (high for one tick)
+    output wire busy,  // calculation in progress
+    output wire valid  // output coordinates valid
     );
 
     // internal variables
@@ -33,11 +32,8 @@ module circle #(parameter CORDW=16) (  // signed coordinate width
     always @(posedge clk) begin
         case (state)
             CALC_Y: begin
-                if (xa == 0) begin
-                    state <= IDLE;
-                    busy <= 0;
-                    done <= 1;
-                end else begin
+                if (xa == 0) state <= IDLE;
+                else begin
                     state <= CALC_X;
                     err_tmp <= err;  // save existing error for next step
                     /* verilator lint_off WIDTH */
@@ -60,10 +56,8 @@ module circle #(parameter CORDW=16) (  // signed coordinate width
             VALID: if (oe) state <= WAIT;
             WAIT: state <= CALC_Y;  // wait one cycle after validity so we can latch values
             default: begin  // IDLE
-                done <= 0;
                 if (start) begin
                     state <= VALID;  // first coords from input
-                    busy <= 1;
                     xa <= -r0;
                     ya <= 0;
                     err <= 2 - (2 * r0);
@@ -71,12 +65,9 @@ module circle #(parameter CORDW=16) (  // signed coordinate width
             end
         endcase
 
-        if (rst) begin
-            state <= IDLE;
-            busy <= 0;
-            done <= 0;
-        end
+        if (rst) state <= IDLE;
     end
 
-    always @(*) valid = (state == VALID);
+    assign busy  = (state != IDLE) || start;
+    assign valid = (state == VALID);
 endmodule

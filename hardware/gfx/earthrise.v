@@ -18,6 +18,7 @@ module earthrise #(
     ) (
     input  wire clk,                           // clock
     input  wire rst,                           // reset
+    input  wire en,                            // enable
     input  wire start,                         // start execution
     input  wire signed [CORDW-1:0] canv_w,     // canvas width
     input  wire signed [CORDW-1:0] canv_h,     // canvas height
@@ -30,7 +31,8 @@ module earthrise #(
     output reg  [WORD-1:0] vram_din,           // vram data in
     output reg  [WORD-1:0] vram_wmask,         // vram write mask
     output reg  busy,                          // execution in progress
-    output reg  done,                          // commands complete (high for one tick)
+    output wire done,                          // commands complete (high for one tick)
+    output reg  [WORD-1:0] cycle_cnt,          // number of clock cycles to execute command list
     output reg  instr_invalid                  // invalid instruction
     );
 
@@ -41,12 +43,6 @@ module earthrise #(
     `endif
 
     localparam ICORDW = CORDW - 4;  // use integer coordinates (4 bits reserved for fraction)
-
-    // sign extension needed for tri_b_left cross product
-    function signed [2*ICORDW+1:0] sext;
-        input signed [ICORDW-1:0] v;
-        sext = {{(ICORDW+2){v[ICORDW-1]}}, v};
-    endfunction
 
     localparam INSTRW = 16;  // instruction width (bits)
     localparam OPCW   =  4;  // opcode width (bits)
@@ -99,29 +95,30 @@ module earthrise #(
     reg signed [ICORDW-1:0] tvx2s, tvy2s;
 
     // line A signals
-    reg line_a_start, line_a_oe;
-    wire line_a_busy, line_a_valid, line_a_fill, line_a_done;
+    reg line_a_start;
+    wire line_a_oe, line_a_busy, line_a_valid, line_a_fill;
     reg signed [ICORDW-1:0] line_a_x0, line_a_y0;
     reg signed [ICORDW-1:0] line_a_x1, line_a_y1;
-    wire signed [ICORDW-1:0] line_a_x, line_a_y, line_a_lx;
+    reg signed [ICORDW-1:0] line_a_xlo, line_a_xhi;
+    wire signed [ICORDW-1:0] line_a_x, line_a_y, line_a_xs;
 
     // line B signals
-    reg line_b_start, line_b_oe;
-    wire line_b_busy, line_b_valid, line_b_fill;
+    reg line_b_start;
+    wire line_b_oe, line_b_busy, line_b_valid, line_b_fill;
     reg signed [ICORDW-1:0] line_b_x0, line_b_y0;
     reg signed [ICORDW-1:0] line_b_x1, line_b_y1;
-    wire signed [ICORDW-1:0] line_b_x, line_b_y, line_b_lx;
+    wire signed [ICORDW-1:0] line_b_x, line_b_y, line_b_xs;
 
     // fast line signals
-    wire fline_valid, fline_done;
     reg fline_start;
+    wire fline_valid, fline_busy;
     reg signed [ICORDW-1:0] fline_x0, fline_x1;
     wire signed [ICORDW-1:0] fline_x;
     reg signed [ICORDW-1:0] fline_y;
 
     // circle signals
-    reg circle_start, circle_oe;
-    wire circle_valid, circle_busy;
+    reg circle_start;
+    wire circle_oe, circle_valid, circle_busy;
     reg signed [ICORDW-1:0] circle_x0, circle_y0;
     reg signed [ICORDW-1:0] circle_r0;
     wire signed [ICORDW-1:0] circle_xa, circle_ya;
@@ -129,7 +126,6 @@ module earthrise #(
 
     // triangle signals
     reg tri_b_edge;   // flag: drawing edge B0 or B1
-    reg tri_b_left;   // flag: B edges are on the left
     reg tri_a_xdec;   // flag: x-coordinate is decreasing on edge A
     reg tri_b_xdec;   // flag: x-coordinate is decreasing on edge B
     reg tri_b1_skip;  // flag: skip drawing at start of edge B1
@@ -147,26 +143,22 @@ module earthrise #(
     localparam DECODE         =  3;
     localparam EXEC           =  4;  // all instr use this state
     localparam LINE_EXEC      =  5;  // drawing instr have their own states
-    localparam FLINE_EXEC     =  6;
+    localparam FLINE_EXEC     =  6;  // used for fast and fill lines
     localparam RECT_INIT      =  7;
     localparam RECT_EXEC      =  8;
     localparam RECTF_INIT     =  9;
-    localparam RECTF_EXEC     = 10;
-    localparam CIRCLE_CALC    = 11;
-    localparam CIRCLE_PIX     = 12;
-    localparam CIRCLE_FILL_DI = 13;  // init circle down line
-    localparam CIRCLE_FILL_DD = 14;  // draw circle down line
-    localparam CIRCLE_FILL_UI = 15;  // init circle up line
-    localparam CIRCLE_FILL_UD = 16;  // draw circle up line
-    localparam TRI_INIT_B0    = 17;
-    localparam TRI_INIT_B1    = 18;
-    localparam TRI_WAIT       = 19;
-    localparam TRI_LINE_A     = 20;
-    localparam TRI_LINE_B     = 21;
-    localparam TRI_FILL_INIT  = 22;
-    localparam TRI_FILL_EXEC  = 23;
-    localparam TRI_NEXT_Y     = 24;
-    localparam JUMP_WAIT      = 25;
+    localparam CIRCLE_CALC    = 10;
+    localparam CIRCLE_PIX     = 11;
+    localparam CIRCLE_FILL_DN = 12;
+    localparam CIRCLE_FILL_UP = 13;
+    localparam TRI_INIT_B0    = 14;
+    localparam TRI_INIT_B1    = 15;
+    localparam TRI_WAIT       = 16;
+    localparam TRI_LINE_A     = 17;
+    localparam TRI_LINE_B     = 18;
+    localparam TRI_FILL_INIT  = 19;
+    localparam TRI_NEXT_Y     = 20;
+    localparam JUMP_WAIT      = 21;
 
     localparam STATEW = 5;  // state width (bits)
     reg [STATEW-1:0] state, state_return;
@@ -174,412 +166,15 @@ module earthrise #(
     // select instruction from command list data (upper or lower half from word)
     wire [INSTRW-1:0] instr = pc[1] ? cmd_list[2*INSTRW-1:INSTRW] : cmd_list[INSTRW-1:0];
 
+    // latch start signal so we can act on it later if Earthrise is disabled
+    reg start_pending;
     always @(posedge clk) begin
-        drawing <= 0;
-        case (state)
-            JUMP_WAIT: state <= FETCH;  // wait an extra cycle after changing PC before we can fetch
-            FETCH: state <= DECODE;
-            DECODE: begin
-                if (pc_reg[ER_ADDRW+2]) state <= DONE;  // stop if overflow bit of PC set
-                else begin
-                    state <= EXEC;
-                    pc_reg <= pc_reg + 2;  // next instruction by default (16-bit instr)
-                    pc_debug <= pc_reg[ER_ADDRW+1:0];  // save address of current instr for debug
-                    opc <= instr[INSTRW-1:INSTRW-OPCW];
-                    imm12 <= instr[IMM12-1:0];
-                    fun <= instr[COLRW+FUNW-1:COLRW];
-                    imm8 <= instr[IMM8-1:0];
-                    cnt_draw <= 0;  // draw counter
-                    cnt_fill <= 0;  // fill counter
-                    // `debug_er($display(">> decode  %x - instr: %x", pc, instr));
-                end
-            end
-            EXEC: begin
-                state <= FETCH;
-                case (opc)
-                    'h0: tvx0 <= imm12 + xt;  // translated vertex x0
-                    'h1: tvy0 <= imm12 + yt;
-                    'h2: begin
-                        r0  <= imm12;  // radius r0 (not translated)
-                        tvx1 <= imm12 + xt;  // translated vertex x1
-                    end
-                    'h3: tvy1 <= imm12 + yt;
-                    'h4: tvx2 <= imm12 + xt;
-                    'h5: tvy2 <= imm12 + yt;
-                    'h6: tvx3 <= imm12 + xt;
-                    'h7: tvy3 <= imm12 + yt;
-                    'h8: xt   <= imm12;
-                    'h9: yt   <= imm12;
-                    'hA: begin
-                        pc_start <= imm12[ER_ADDRW+1:0];
-                        `debug_er($display("0x%x: pc_next  %x", pc_debug, imm12[ER_ADDRW-1:0]));
-                    end
-                    'hC: begin  // colour and control
-                        case (fun)
-                            'h0: begin
-                                lca <= imm8;
-                                `debug_er($display("0x%x: lca      %x", pc_debug, imm8));
-                            end
-                            'h1: begin
-                                lcb <= imm8;
-                                `debug_er($display("0x%x: lcb      %x", pc_debug, imm8));
-                            end
-                            'h2: begin
-                                fca <= imm8;
-                                `debug_er($display("0x%x: fca      %x", pc_debug, imm8));
-                            end
-                            'h3: begin
-                                fcb <= imm8;
-                                `debug_er($display("0x%x: fcb      %x", pc_debug, imm8));
-                            end
-                            'hA: begin  // 0xCA - Jump (Change Address)
-                                state <= JUMP_WAIT;  // wait a cycle after changing PC
-                                pc_reg <= {1'b0, pc_start};
-                                `debug_er($display("0x%x: jump     %x", pc_debug, pc_start));
-                            end
-                            'hC: begin  // 0xCC - NOP (Continue)
-                                state <= FETCH;
-                            end
-                            'hE: begin  // 0xCE Stop (CEase)
-                                state <= DONE;
-                                `debug_er($display("0x%x: stop", pc_debug));  // use pc_debug because pc points at NEXT instruction
-                            end
-                            default: begin
-                                state <= DONE;
-                                instr_invalid <= 1;
-                                `debug_er($display("0x%x: Invalid Instruction - no such instruction '0xC%x'.", pc_debug, fun));
-                            end
-                        endcase
-                    end
-                    'hD: begin
-                        // handle colour once for all shapes; fill colours work for shapes without filled forms
-                        colr <= imm8[OPT_FILL] ? (imm8[OPT_COLR] ? fcb : fca)
-                                               : (imm8[OPT_COLR] ? lcb : lca);
+        if (rst) start_pending <= 0;
+        else if (start) start_pending <= 1;
+        else if (state == IDLE && en) start_pending <= 0;
+    end
 
-                        // disable line output by default
-                        line_a_oe <= 0;
-                        line_b_oe <= 0;
-
-                        // select drawing function
-                        case (fun)
-                            'h0: begin  // draw pixel
-                                x <= tvx0;
-                                y <= tvy0;
-                                drawing <= 1;
-                                `debug_er($display("0x%x: pixel    (%d,%d)", pc_debug, tvx0, tvy0));
-                            end
-                            'h1: begin  // draw line
-                                if (tvy0 == tvy1) begin  // fast line
-                                    state <= FLINE_EXEC;
-                                    fline_start <= 1;
-                                    fline_x0 <= tvx0;
-                                    fline_x1 <= tvx1;
-                                    fline_y <= tvy0;  // use tvy0 for vertical position
-                                    `debug_er($display("0x%x: fline    (%d,%d)->(%d,%d)", pc_debug, tvx0, tvy0, tvx1, tvy1));
-                                end else begin
-                                    state <= LINE_EXEC;
-                                    line_a_oe <= 1;
-                                    line_a_start <= 1;   // use line instance A
-                                    line_a_x0 <= tvx0;
-                                    line_a_y0 <= tvy0;
-                                    line_a_x1 <= tvx1;
-                                    line_a_y1 <= tvy1;
-                                    `debug_er($display("0x%x: line     (%d,%d)->(%d,%d)", pc_debug, tvx0, tvy0, tvx1, tvy1));
-                                end
-                            end
-                            'h2: begin  // draw circle
-                                if (r0 > 0) begin  // only draw with positive radius
-                                    state <= CIRCLE_CALC;
-                                    circle_start <= 1;
-                                    circle_x0 <= tvx0;
-                                    circle_y0 <= tvy0;
-                                    circle_r0 <= r0;
-                                end else state <= FETCH;
-                                `debug_er($display("0x%x: circle   (%d,%d) r=%d", pc_debug, tvx0, tvy0, r0));
-                            end
-                            'h3: begin  // draw triangle (sort vertices first)
-                                if (tri_min == tri_max || tri_degen_x) begin  // degenerate triangle
-                                    state <= DONE;
-                                    instr_invalid <= 1;
-                                    `debug_er($display("0x%x: Invalid Instruction - degenerate triangle.", pc_debug));
-                                end else state <= TRI_INIT_B0;
-                                tvx0s <= (tri_min == 0) ? tvx0 : (tri_min == 1) ? tvx1 : tvx2;
-                                tvy0s <= (tri_min == 0) ? tvy0 : (tri_min == 1) ? tvy1 : tvy2;
-                                tvx1s <= (tri_mid == 0) ? tvx0 : (tri_mid == 1) ? tvx1 : tvx2;
-                                tvy1s <= (tri_mid == 0) ? tvy0 : (tri_mid == 1) ? tvy1 : tvy2;
-                                tvx2s <= (tri_max == 0) ? tvx0 : (tri_max == 1) ? tvx1 : tvx2;
-                                tvy2s <= (tri_max == 0) ? tvy0 : (tri_max == 1) ? tvy1 : tvy2;
-                                `debug_er($display("0x%x: triangle (%d,%d) (%d,%d) (%d,%d)", pc_debug, tvx0, tvy0, tvx1, tvy1, tvx2, tvy2));
-                            end
-                            'h4: begin  // draw rect (sort vertices first)
-                                tvx0s <= (tvx0 < tvx1) ? tvx0 : tvx1;
-                                tvy0s <= (tvy0 < tvy1) ? tvy0 : tvy1;
-                                tvx1s <= (tvx0 < tvx1) ? tvx1 : tvx0;
-                                tvy1s <= (tvy0 < tvy1) ? tvy1 : tvy0;
-                                state <= (imm8[OPT_FILL] == 0) ? RECT_INIT : RECTF_INIT;
-                                `debug_er($display("0x%x: rect     (%d,%d)->(%d,%d)", pc_debug, tvx0, tvy0, tvx1, tvy1));
-                            end
-                            default: begin
-                                state <= DONE;
-                                instr_invalid <= 1;
-                                `debug_er($display("0x%x: Invalid Instruction - no such draw function '%x'.", pc_debug, fun));
-                            end
-                        endcase
-                    end
-                    default: begin
-                        state <= DONE;
-                        instr_invalid <= 1;
-                        `debug_er($display("0x%x: Invalid Instruction - no such opcode '%x'.", pc_debug, opc));
-                    end
-                endcase
-            end
-            LINE_EXEC: begin
-                if (line_a_done) state <= DECODE;
-                line_a_start <= 0;
-                drawing <= line_a_valid;
-                x <= line_a_x;
-                y <= line_a_y;
-            end
-            CIRCLE_CALC: begin
-                if (circle_valid) begin
-                    // register the result because circle calc keeps going due to oe implementation
-                    circle_x_offs <= circle_xa;
-                    circle_y_offs <= circle_ya;
-                    state <= (imm8[OPT_FILL] == 0) ? CIRCLE_PIX : CIRCLE_FILL_DI;
-                end
-                circle_start <= 0;
-            end
-            CIRCLE_PIX: begin
-                if (cnt_draw == 3) state <= (circle_busy) ? CIRCLE_CALC : DECODE;
-                drawing <= 1;
-                cnt_draw <= cnt_draw + 1;
-                case (cnt_draw)
-                    'd0: begin x <= circle_x0 - circle_x_offs; y <= circle_y0 + circle_y_offs; end
-                    'd1: begin x <= circle_x0 + circle_x_offs; end
-                    'd2: begin y <= circle_y0 - circle_y_offs; end
-                    'd3: begin x <= circle_x0 - circle_x_offs; end
-                endcase
-            end
-            CIRCLE_FILL_DI: begin
-                state <= CIRCLE_FILL_DD;
-                fline_start <= 1;
-                fline_y  <= circle_y0 + circle_y_offs;
-                fline_x0 <= circle_x0 + circle_x_offs;
-                fline_x1 <= circle_x0 - circle_x_offs;
-            end
-            CIRCLE_FILL_DD: begin
-                if (fline_done) state <= CIRCLE_FILL_UI;
-                fline_start <= 0;
-                drawing <= fline_valid;
-                x <= fline_x;
-                y <= fline_y;
-            end
-            CIRCLE_FILL_UI: begin
-                state <= CIRCLE_FILL_UD;
-                fline_start <= 1;
-                fline_y  <= circle_y0 - circle_y_offs;
-            end
-            CIRCLE_FILL_UD: begin  // almost duplicate of CIRCLE_FILL_DD - could we use return state?
-                if (fline_done) state <= (circle_busy) ? CIRCLE_CALC : DECODE;
-                fline_start <= 0;
-                drawing <= fline_valid;
-                x <= fline_x;
-                y <= fline_y;
-            end
-            FLINE_EXEC: begin
-                if (fline_done) state <= DECODE;
-                fline_start <= 0;
-                drawing <= fline_valid;
-                x <= fline_x;
-                y <= fline_y;
-            end
-            RECT_INIT: begin
-                state <= RECT_EXEC;
-                line_a_oe <= 1;
-                line_a_start <= 1;
-                cnt_draw <= cnt_draw + 1;
-                case (cnt_draw)
-                    'd0: begin
-                        state_return <= RECT_INIT;  // return for second edge
-                        line_a_x0 <= tvx0s;
-                        line_a_y0 <= tvy0s;
-                        line_a_x1 <= tvx1s;
-                        line_a_y1 <= tvy0s;
-                        // `debug_er($display("  0: (%d,%d) -> (%d,%d)", tvx0s, tvy0s, tvx1s, tvy0s));
-                    end
-                    'd1: begin
-                        state_return <= RECT_INIT;  // return for third edge
-                        line_a_x0 <= tvx0s;
-                        line_a_y0 <= tvy1s;
-                        line_a_x1 <= tvx1s;
-                        line_a_y1 <= tvy1s;
-                        // `debug_er($display("  1: (%d,%d) -> (%d,%d)", tvx0s, tvy1s, tvx1s, tvy1s));
-                    end
-                    'd2: begin
-                        state_return <= RECT_INIT;  // return for fourth edge
-                        line_a_x0 <= tvx0s;
-                        line_a_y0 <= tvy0s;
-                        line_a_x1 <= tvx0s;
-                        line_a_y1 <= tvy1s;
-                        // `debug_er($display("  2: (%d,%d) -> (%d,%d)", tvx0s, tvy0s, tvx0s, tvy1s));
-                    end
-                    default: begin
-                        state_return <= DECODE;  // decode next instruction after draw
-                        line_a_x0 <= tvx1s;
-                        line_a_y0 <= tvy0s;
-                        line_a_x1 <= tvx1s;
-                        line_a_y1 <= tvy1s;
-                        // `debug_er($display("  3: (%d,%d) -> (%d,%d)", tvx1s, tvy0s, tvx1s, tvy1s));
-                    end
-                endcase
-            end
-            RECT_EXEC: begin
-                if (line_a_done) state <= state_return;
-                line_a_start <= 0;
-                drawing <= line_a_valid;
-                x <= line_a_x;
-                y <= line_a_y;
-            end
-            RECTF_INIT: begin
-                cnt_fill <= cnt_fill + 1;
-                state <= RECTF_EXEC;
-                state_return <= (tvy0s + cnt_fill < tvy1s) ? RECTF_INIT : DECODE;
-                fline_start <= 1;
-                fline_y  <= tvy0s + cnt_fill;
-                fline_x0 <= tvx0s;
-                fline_x1 <= tvx1s;
-            end
-            RECTF_EXEC: begin
-                if (fline_done) state <= state_return;
-                fline_start <= 0;
-                drawing <= fline_valid;
-                x <= fline_x;
-                y <= fline_y;
-            end
-            TRI_INIT_B0: begin  // A: tv0s -> tv2s; B0: tv0s -> tv1s
-                state <= TRI_WAIT;
-                // `debug_er($display("  sorted (%d,%d) (%d,%d) (%d,%d)", tvx0s, tvy0s, tvx1s, tvy1s, tvx2s, tvy2s));
-                tri_b_left <= (sext(tvx1s) - sext(tvx0s))*(sext(tvy2s) - sext(tvy0s)) <  // sign extend for cross product
-                              (sext(tvy1s) - sext(tvy0s))*(sext(tvx2s) - sext(tvx0s));
-                // line A
-                line_a_x0 <= tvx0s;
-                line_a_y0 <= tvy0s;
-                line_a_x1 <= tvx2s;
-                line_a_y1 <= tvy2s;
-                tri_a_xdec <= (tvx0s > tvx2s);  // does x decrease as we draw A?
-                line_a_start <= 1;
-                // line B0
-                line_b_x0 <= tvx0s;
-                line_b_y0 <= tvy0s;
-                line_b_x1 <= tvx1s;
-                line_b_y1 <= tvy1s;
-                tri_b_edge <= 0;
-                tri_b_xdec <= (tvx0s > tvx1s);  // does x decrease as we draw B0?
-                tri_b1_skip <= 0;  // no skip on B0
-                line_b_start <= 1;
-            end
-            TRI_INIT_B1: begin  // B1: tv1s -> tv2s
-                state <= TRI_WAIT;
-                line_b_x0 <= tvx1s;
-                line_b_y0 <= tvy1s;
-                line_b_x1 <= tvx2s;
-                line_b_y1 <= tvy2s;
-                tri_b_edge <= 1;
-                tri_b_xdec <= (tvx1s > tvx2s);  // does x decrease as we draw?
-                tri_b1_skip <= 1;  // skip for y for B1 (handled by end of B0)
-                line_b_start <= 1;
-            end
-            TRI_WAIT: begin
-                // `debug_er($display("  tri_b_left=%b", tri_b_left));
-                if (tri_b1_skip) begin  // B line repeats at start of B1: jump ahead one line
-                    state <= TRI_LINE_B;
-                    line_b_oe <= 1;
-                end else begin
-                    state <= TRI_LINE_A;
-                    line_a_oe <= 1;
-                end
-                line_a_start <= 0;  // clear start signals
-                line_b_start <= 0;
-            end
-            TRI_LINE_A: begin
-                if (line_a_valid) begin
-                    drawing <= 1;
-                    x <= line_a_x;
-                    y <= line_a_y;
-                    // `debug_er($display("  line A  - draw (%d,%d)", line_a_x, line_a_y));
-                end
-                if (line_a_fill || (!line_a_busy)) begin
-                    state <= TRI_LINE_B;
-                    if (!tri_b_left) fline_x0 <= tri_a_xdec ? line_a_lx + 1 : line_a_x + 1;
-                    else fline_x1 <= tri_a_xdec ? line_a_x - 1 : line_a_lx - 1;
-                    line_a_oe <= 0;
-                    line_b_oe <= 1;
-                end
-            end
-            TRI_LINE_B: begin
-                if (line_b_valid) begin
-                    drawing <= 1;
-                    x <= line_b_x;
-                    y <= line_b_y;
-                    // `debug_er($display("  line B%b - draw (%d,%d)", tri_b_edge, line_b_x, line_b_y));
-                end
-                if (line_b_fill || (!line_b_busy)) begin
-                    state <= TRI_FILL_INIT;
-                    if (tri_b_left) fline_x0 <= tri_b_xdec ? line_b_lx + 1 : line_b_x + 1;
-                    else fline_x1 <= tri_b_xdec ? line_b_x - 1 : line_b_lx - 1;
-                    fline_y <= line_b_y;
-                    line_b_oe <= 0;
-                end
-            end
-            TRI_FILL_INIT: begin
-                if (imm8[OPT_FILL] == 0 || (line_a_busy | line_b_busy) == 0) begin  // skip if unfilled or both lines are done
-                    state <= TRI_NEXT_Y;
-                end else if (tri_b1_skip == 1) begin
-                    state <= TRI_NEXT_Y;
-                    tri_b1_skip <= 0;
-                    // `debug_er($display("  line B1 ** skip fill on first y ** - a_y=%d, b_y=%d", line_a_y, line_b_y));
-                end else if (fline_x0 <= fline_x1) begin  // do we have a line to draw? Depends indirectly on dot product.
-                    state <= TRI_FILL_EXEC;
-                    fline_start <= 1;
-                    // `debug_er($display("  fline   - draw (%d->%d) y=%d", fline_x0, fline_x1, fline_y));
-                end else begin
-                    state <= TRI_NEXT_Y;
-                    // `debug_er($display("  fline   - no   (%d->%d) y=%d", fline_x0, fline_x1, fline_y));
-                end
-            end
-            TRI_FILL_EXEC: begin
-                if (fline_done) state <= TRI_NEXT_Y;
-                else if (fline_valid) begin
-                    drawing <= 1;
-                    x <= fline_x;
-                    y <= fline_y;
-                end
-                fline_start <= 0;
-            end
-            TRI_NEXT_Y: begin
-                if (!line_b_busy) state <= (tri_b_edge == 0) ? TRI_INIT_B1 : DECODE;
-                else begin
-                    state <= TRI_LINE_A;
-                    line_a_oe <= 1;
-                end
-                // `debug_er($display("  -- next tri line --"));
-            end
-            DONE: begin
-                state <= IDLE;
-                busy <= 0;
-                pc_reg <= 0;  // reset pc: execution always starts from address 0
-                pc_debug <= 0;
-                `debug_er($display("** DONE **"));
-            end
-            default: begin // IDLE
-                busy <= 0;
-                if (start) begin
-                    state <= FETCH;
-                    instr_invalid <= 0;
-                    busy <= 1;
-                end
-            end
-        endcase
+    always @(posedge clk) begin
         if (rst) begin
             state <= IDLE;
             state_return <= IDLE;
@@ -588,6 +183,7 @@ module earthrise #(
             pc_start <= 0;
             drawing <= 0;
             busy <= 0;
+            cycle_cnt <= 0;
             instr_invalid <= 0;
             line_a_start <= 0;
             line_b_start <= 0;
@@ -601,80 +197,412 @@ module earthrise #(
             // initialise translate coords to 0 to play nice in simulation
             xt <= 0;
             yt <= 0;
+        end else if (en) begin
+            drawing <= 0;
+
+            case (state)
+                JUMP_WAIT: state <= FETCH;  // wait an extra cycle after changing PC before we can fetch
+                FETCH: state <= DECODE;
+                DECODE: begin
+                    if (pc_reg[ER_ADDRW+2]) state <= DONE;  // stop if overflow bit of PC set
+                    else begin
+                        state <= EXEC;
+                        pc_reg <= pc_reg + 2;  // next instruction by default (16-bit instr)
+                        pc_debug <= pc_reg[ER_ADDRW+1:0];  // save address of current instr for debug
+                        opc <= instr[INSTRW-1:INSTRW-OPCW];
+                        imm12 <= instr[IMM12-1:0];
+                        fun <= instr[COLRW+FUNW-1:COLRW];
+                        imm8 <= instr[IMM8-1:0];
+                        cnt_draw <= 0;  // draw counter
+                        cnt_fill <= 0;  // fill counter
+                    end
+                end
+                EXEC: begin
+                    state <= FETCH;
+                    case (opc)
+                        'h0: tvx0 <= imm12 + xt;  // translated vertex x0
+                        'h1: tvy0 <= imm12 + yt;
+                        'h2: begin
+                            r0  <= imm12;  // radius r0 (not translated)
+                            tvx1 <= imm12 + xt;  // translated vertex x1
+                        end
+                        'h3: tvy1 <= imm12 + yt;
+                        'h4: tvx2 <= imm12 + xt;
+                        'h5: tvy2 <= imm12 + yt;
+                        'h6: tvx3 <= imm12 + xt;
+                        'h7: tvy3 <= imm12 + yt;
+                        'h8: xt   <= imm12;
+                        'h9: yt   <= imm12;
+                        'hA: begin
+                            pc_start <= imm12[ER_ADDRW+1:0];
+                            `debug_er($display("0x%x: pc_next  %x", pc_debug, imm12[ER_ADDRW-1:0]));
+                        end
+                        'hC: begin  // colour and control
+                            case (fun)
+                                'h0: lca <= imm8;
+                                'h1: lcb <= imm8;
+                                'h2: fca <= imm8;
+                                'h3: fcb <= imm8;
+                                'hA: begin  // 0xCA - Jump (Change Address)
+                                    state <= JUMP_WAIT;  // wait a cycle after changing PC
+                                    pc_reg <= {1'b0, pc_start};
+                                    `debug_er($display("%d - 0x%x: jump     %x", cycle_cnt, pc_debug, pc_start));
+                                end
+                                'hC: state <= FETCH;  // 0xCC - NOP (Continue)
+                                'hE: state <= DONE;   // 0xCE Stop (CEase)
+                                default: begin  // invalid instruction
+                                    state <= DONE;
+                                    instr_invalid <= 1;
+                                    `debug_er($display("%d - 0x%x: Invalid Instruction - no such instruction '0xC%x'.", cycle_cnt, pc_debug, fun));
+                                end
+                            endcase
+                        end
+                        'hD: begin
+                            // handle colour once for all shapes; fill colours work for shapes without filled forms
+                            colr <= imm8[OPT_FILL] ? (imm8[OPT_COLR] ? fcb : fca)
+                                                   : (imm8[OPT_COLR] ? lcb : lca);
+
+                            // select drawing function
+                            case (fun)
+                                'h0: begin  // draw pixel
+                                    x <= tvx0;
+                                    y <= tvy0;
+                                    drawing <= 1;
+                                    `debug_er($display("%d - 0x%x: pixel    (%d,%d)", cycle_cnt, pc_debug, tvx0, tvy0));
+                                end
+                                'h1: begin  // draw line
+                                    if (tvy0 == tvy1) begin  // fast line
+                                        state <= FLINE_EXEC;
+                                        state_return <= DECODE;
+                                        fline_start <= 1;
+                                        fline_x0 <= tvx0;
+                                        fline_x1 <= tvx1;
+                                        fline_y <= tvy0;  // use tvy0 for vertical position
+                                        `debug_er($display("%d - 0x%x: fline    (%d,%d)->(%d,%d)", cycle_cnt, pc_debug, tvx0, tvy0, tvx1, tvy1));
+                                    end else begin
+                                        state <= LINE_EXEC;
+                                        line_a_start <= 1;   // use line instance A
+                                        line_a_x0 <= tvx0;
+                                        line_a_y0 <= tvy0;
+                                        line_a_x1 <= tvx1;
+                                        line_a_y1 <= tvy1;
+                                        `debug_er($display("%d - 0x%x: line     (%d,%d)->(%d,%d)", cycle_cnt, pc_debug, tvx0, tvy0, tvx1, tvy1));
+                                    end
+                                end
+                                'h2: begin  // draw circle
+                                    if (r0 > 0) begin  // only draw with positive radius
+                                        state <= CIRCLE_CALC;
+                                        circle_start <= 1;
+                                        circle_x0 <= tvx0;
+                                        circle_y0 <= tvy0;
+                                        circle_r0 <= r0;
+                                    end else state <= FETCH;
+                                    `debug_er($display("%d - 0x%x: circle   (%d,%d) r=%d", cycle_cnt, pc_debug, tvx0, tvy0, r0));
+                                end
+                                'h3: begin  // draw triangle (sort vertices first)
+                                    if (tri_min == tri_max || tri_degen_x) begin  // degenerate triangle
+                                        state <= DONE;
+                                        instr_invalid <= 1;
+                                        `debug_er($display("%d - 0x%x: Invalid Instruction - degenerate triangle.", cycle_cnt, pc_debug));
+                                    end else state <= TRI_INIT_B0;
+                                    tvx0s <= (tri_min == 0) ? tvx0 : (tri_min == 1) ? tvx1 : tvx2;
+                                    tvy0s <= (tri_min == 0) ? tvy0 : (tri_min == 1) ? tvy1 : tvy2;
+                                    tvx1s <= (tri_mid == 0) ? tvx0 : (tri_mid == 1) ? tvx1 : tvx2;
+                                    tvy1s <= (tri_mid == 0) ? tvy0 : (tri_mid == 1) ? tvy1 : tvy2;
+                                    tvx2s <= (tri_max == 0) ? tvx0 : (tri_max == 1) ? tvx1 : tvx2;
+                                    tvy2s <= (tri_max == 0) ? tvy0 : (tri_max == 1) ? tvy1 : tvy2;
+                                    `debug_er($display("%d - 0x%x: triangle (%d,%d) (%d,%d) (%d,%d)", cycle_cnt, pc_debug, tvx0, tvy0, tvx1, tvy1, tvx2, tvy2));
+                                end
+                                'h4: begin  // draw rect (sort vertices first)
+                                    tvx0s <= (tvx0 < tvx1) ? tvx0 : tvx1;
+                                    tvy0s <= (tvy0 < tvy1) ? tvy0 : tvy1;
+                                    tvx1s <= (tvx0 < tvx1) ? tvx1 : tvx0;
+                                    tvy1s <= (tvy0 < tvy1) ? tvy1 : tvy0;
+                                    state <= (imm8[OPT_FILL] == 0) ? RECT_INIT : RECTF_INIT;
+                                    `debug_er($display("%d - 0x%x: rect     (%d,%d)->(%d,%d)", cycle_cnt, pc_debug, tvx0, tvy0, tvx1, tvy1));
+                                end
+                                default: begin
+                                    state <= DONE;
+                                    instr_invalid <= 1;
+                                    `debug_er($display("%d - 0x%x: Invalid Instruction - no such draw function '%x'.", cycle_cnt, pc_debug, fun));
+                                end
+                            endcase
+                        end
+                        default: begin
+                            state <= DONE;
+                            instr_invalid <= 1;
+                            `debug_er($display("%d - 0x%x: Invalid Instruction - no such opcode '%x'.", cycle_cnt, pc_debug, opc));
+                        end
+                    endcase
+                end
+                LINE_EXEC: begin
+                    if (!line_a_busy) state <= DECODE;
+                    line_a_start <= 0;
+                    drawing <= line_a_valid;
+                    x <= line_a_x;
+                    y <= line_a_y;
+                end
+                CIRCLE_CALC: begin
+                    if (circle_valid) begin  // register the result before leaving CIRCLE_CALC
+                        circle_x_offs <= circle_xa;
+                        circle_y_offs <= circle_ya;
+                        state <= (imm8[OPT_FILL] == 0) ? CIRCLE_PIX : CIRCLE_FILL_DN;
+                    end
+                    circle_start <= 0;
+                end
+                CIRCLE_PIX: begin
+                    if (cnt_draw == 3) state <= circle_busy ? CIRCLE_CALC : DECODE;
+                    drawing <= 1;
+                    cnt_draw <= cnt_draw + 1;
+                    case (cnt_draw)
+                        'd0: begin x <= circle_x0 - circle_x_offs; y <= circle_y0 + circle_y_offs; end
+                        'd1: begin x <= circle_x0 + circle_x_offs; end
+                        'd2: begin y <= circle_y0 - circle_y_offs; end
+                        'd3: begin x <= circle_x0 - circle_x_offs; end
+                    endcase
+                end
+                CIRCLE_FILL_DN: begin
+                    state <= FLINE_EXEC;
+                    state_return <= CIRCLE_FILL_UP;
+                    fline_start <= 1;
+                    fline_y  <= circle_y0 + circle_y_offs;
+                    fline_x0 <= circle_x0 + circle_x_offs;
+                    fline_x1 <= circle_x0 - circle_x_offs;
+                end
+                CIRCLE_FILL_UP: begin  // fline_x0,fline_x1 unchanged from CIRCLE_FILL_DN
+                    state <= FLINE_EXEC;
+                    state_return <= circle_busy ? CIRCLE_CALC : DECODE;
+                    fline_start <= 1;
+                    fline_y <= circle_y0 - circle_y_offs;
+                end
+                FLINE_EXEC: begin
+                    if (!fline_busy) state <= state_return;
+                    fline_start <= 0;
+                    drawing <= fline_valid;
+                    x <= fline_x;
+                    y <= fline_y;
+                end
+                RECT_INIT: begin
+                    state <= RECT_EXEC;
+                    line_a_start <= 1;
+                    cnt_draw <= cnt_draw + 1;
+                    case (cnt_draw)
+                        'd0: begin
+                            state_return <= RECT_INIT;  // return for second edge
+                            line_a_x0 <= tvx0s;
+                            line_a_y0 <= tvy0s;
+                            line_a_x1 <= tvx1s;
+                            line_a_y1 <= tvy0s;
+                        end
+                        'd1: begin
+                            state_return <= RECT_INIT;  // return for third edge
+                            line_a_x0 <= tvx0s;
+                            line_a_y0 <= tvy1s;
+                            line_a_x1 <= tvx1s;
+                            line_a_y1 <= tvy1s;
+                        end
+                        'd2: begin
+                            state_return <= RECT_INIT;  // return for fourth edge
+                            line_a_x0 <= tvx0s;
+                            line_a_y0 <= tvy0s;
+                            line_a_x1 <= tvx0s;
+                            line_a_y1 <= tvy1s;
+                        end
+                        default: begin
+                            state_return <= DECODE;  // decode next instruction after draw
+                            line_a_x0 <= tvx1s;
+                            line_a_y0 <= tvy0s;
+                            line_a_x1 <= tvx1s;
+                            line_a_y1 <= tvy1s;
+                        end
+                    endcase
+                end
+                RECT_EXEC: begin
+                    if (!line_a_busy) state <= state_return;
+                    line_a_start <= 0;
+                    drawing <= line_a_valid;
+                    x <= line_a_x;
+                    y <= line_a_y;
+                end
+                RECTF_INIT: begin
+                    cnt_fill <= cnt_fill + 1;
+                    state <= FLINE_EXEC;
+                    state_return <= (tvy0s + cnt_fill < tvy1s) ? RECTF_INIT : DECODE;
+                    fline_start <= 1;
+                    fline_y  <= tvy0s + cnt_fill;
+                    fline_x0 <= tvx0s;
+                    fline_x1 <= tvx1s;
+                end
+                TRI_INIT_B0: begin  // A: tv0s -> tv2s; B0: tv0s -> tv1s
+                    state <= TRI_WAIT;
+                    // line A
+                    line_a_x0 <= tvx0s;
+                    line_a_y0 <= tvy0s;
+                    line_a_x1 <= tvx2s;
+                    line_a_y1 <= tvy2s;
+                    tri_a_xdec <= (tvx0s > tvx2s);  // does x decrease as we draw A?
+                    line_a_start <= 1;
+                    // line B0
+                    line_b_x0 <= tvx0s;
+                    line_b_y0 <= tvy0s;
+                    line_b_x1 <= tvx1s;
+                    line_b_y1 <= tvy1s;
+                    tri_b_edge <= 0;
+                    tri_b_xdec <= (tvx0s > tvx1s);  // does x decrease as we draw B0?
+                    tri_b1_skip <= 0;  // no skip on B0
+                    line_b_start <= 1;
+                end
+                TRI_INIT_B1: begin  // B1: tv1s -> tv2s
+                    state <= TRI_WAIT;
+                    line_b_x0 <= tvx1s;
+                    line_b_y0 <= tvy1s;
+                    line_b_x1 <= tvx2s;
+                    line_b_y1 <= tvy2s;
+                    tri_b_edge <= 1;
+                    tri_b_xdec <= (tvx1s > tvx2s);  // does x decrease as we draw?
+                    tri_b1_skip <= 1;  // skip for y for B1 (handled by end of B0)
+                    line_b_start <= 1;
+                end
+                TRI_WAIT: begin
+                    state <= tri_b1_skip ? TRI_LINE_B : TRI_LINE_A;  // B line repeats at start of B1: jump ahead one line
+                    line_a_start <= 0;  // clear start signals
+                    line_b_start <= 0;
+                end
+                TRI_LINE_A: begin
+                    if (line_a_valid) begin
+                        drawing <= 1;
+                        x <= line_a_x;
+                        y <= line_a_y;
+                    end
+                    if (line_a_fill || (!line_a_busy)) begin
+                        state <= TRI_LINE_B;
+                        line_a_xlo <= tri_a_xdec ? line_a_x  : line_a_xs;  // x is leftmost with dec x
+                        line_a_xhi <= tri_a_xdec ? line_a_xs : line_a_x;   // xs is rightmost with dec x
+                    end
+                end
+                TRI_LINE_B: begin
+                    if (line_b_valid) begin
+                        drawing <= 1;
+                        x <= line_b_x;
+                        y <= line_b_y;
+                    end
+                    if (line_b_fill || (!line_b_busy)) begin
+                        state <= TRI_FILL_INIT;
+                        fline_y <= line_b_y;
+                        // is line A or B on the left-hand side?
+                        if (line_a_xlo < (tri_b_xdec ? line_b_xs : line_b_x)) begin
+                            fline_x0 <= line_a_xhi + 1;  // line A on left
+                            fline_x1 <= (tri_b_xdec ? line_b_x : line_b_xs) - 1;
+                        end else begin  // line B on left
+                            fline_x0 <= (tri_b_xdec ? line_b_xs : line_b_x) + 1;
+                            fline_x1 <= line_a_xlo - 1;
+                        end
+                    end
+                end
+                TRI_FILL_INIT: begin
+                    if (imm8[OPT_FILL] == 0 || (line_a_busy | line_b_busy) == 0) begin  // skip if unfilled or both lines are done
+                        state <= TRI_NEXT_Y;
+                    end else if (tri_b1_skip == 1) begin
+                        state <= TRI_NEXT_Y;
+                        tri_b1_skip <= 0;
+                    end else if (fline_x0 <= fline_x1) begin  // do we have a filled line to draw?
+                        state <= FLINE_EXEC;
+                        state_return <= TRI_NEXT_Y;
+                        fline_start <= 1;
+                    end else state <= TRI_NEXT_Y;
+                end
+                TRI_NEXT_Y: begin
+                    if (!line_b_busy) state <= tri_b_edge ? DECODE : TRI_INIT_B1;
+                    else state <= TRI_LINE_A;
+                end
+                DONE: begin
+                    state <= IDLE;
+                    busy <= 0;
+                    pc_reg <= 0;  // reset pc: execution always starts from address 0
+                    pc_debug <= 0;
+                    `debug_er($display("** DONE ** %d cycles", cycle_cnt));
+                end
+                default: begin // IDLE
+                    busy <= 0;
+                    if (start_pending) begin
+                        state <= FETCH;
+                        instr_invalid <= 0;
+                        busy <= 1;
+                        cycle_cnt <= 1;  // cycle counter starts
+                    end
+                end
+            endcase
         end
+        if (busy && state != DONE) cycle_cnt <= cycle_cnt + 1;
     end
 
-    always @(*) done = (state == DONE);
+    assign done = (state == DONE);
 
-    // circle output enable (consider using registered signal in FSM like other OE)
-    always @(*) circle_oe = (state == CIRCLE_CALC);
+    assign line_a_oe = (state == LINE_EXEC || state == RECT_EXEC || state == TRI_LINE_A);
+    assign line_b_oe = (state == TRI_LINE_B);
+    assign circle_oe = (state == CIRCLE_CALC);
+
+
+    //
+    // graphics primitves
+    //
 
     line #(.CORDW(ICORDW)) line_a_inst (
         .clk(clk),
         .rst(rst),
         .start(line_a_start),
-        .oe(line_a_oe),
+        .oe(line_a_oe && en),
         .x0(line_a_x0),
         .y0(line_a_y0),
         .x1(line_a_x1),
         .y1(line_a_y1),
         .x(line_a_x),
         .y(line_a_y),
-        .lx(line_a_lx),
-        .busy(line_a_busy),
-        .valid(line_a_valid),
+        .xs(line_a_xs),
         .fill(line_a_fill),
-        .done(line_a_done)
+        .busy(line_a_busy),
+        .valid(line_a_valid)
     );
 
     line #(.CORDW(ICORDW)) line_b_inst (
         .clk(clk),
         .rst(rst),
         .start(line_b_start),
-        .oe(line_b_oe),
+        .oe(line_b_oe && en),
         .x0(line_b_x0),
         .y0(line_b_y0),
         .x1(line_b_x1),
         .y1(line_b_y1),
         .x(line_b_x),
         .y(line_b_y),
-        .lx(line_b_lx),
-        .busy(line_b_busy),
-        .valid(line_b_valid),
+        .xs(line_b_xs),
         .fill(line_b_fill),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .done()  // not needed
-        /* verilator lint_on PINCONNECTEMPTY */
+        .busy(line_b_busy),
+        .valid(line_b_valid)
     );
 
     fline #(.CORDW(ICORDW)) fline_inst (
         .clk(clk),
         .rst(rst),
         .start(fline_start),
-        .oe(1'b1),
+        .oe(en),
         .x0(fline_x0),
         .x1(fline_x1),
         .x(fline_x),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .busy(),
-        /* verilator lint_on PINCONNECTEMPTY */
-        .valid(fline_valid),
-        .done(fline_done)
+        .busy(fline_busy),
+        .valid(fline_valid)
     );
 
     circle #(.CORDW(ICORDW)) circle_inst (
         .clk(clk),
         .rst(rst),
         .start(circle_start),
-        .oe(circle_oe),
+        .oe(circle_oe && en),
         .r0(circle_r0),
         .xa(circle_xa),
         .ya(circle_ya),
         .busy(circle_busy),
-        .valid(circle_valid),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .done()
-        /* verilator lint_on PINCONNECTEMPTY */
+        .valid(circle_valid)
     );
 
 
@@ -689,6 +617,7 @@ module earthrise #(
         .SHIFTW(CANV_SHIFTW)
     ) canv_draw_agu_inst (
         .clk(clk),
+        .en(en),
         .w(canv_w),
         .h(canv_h),
         .x({{4{x[ICORDW-1]}}, x}),  // widen 12-bit integers (sign extension)
@@ -704,16 +633,18 @@ module earthrise #(
     localparam ADDR_LAT = 3;
     reg [ADDR_LAT-1:0] vram_we_sr;
     always @(posedge clk) begin
-        vram_we_sr <= {drawing, vram_we_sr[ADDR_LAT-1:1]};
         if (rst) vram_we_sr <= 0;
+        else if (en) vram_we_sr <= {drawing, vram_we_sr[ADDR_LAT-1:1]};
     end
 
     // delay colour to match address calculation
     reg [COLRW-1:0] colr_p1, colr_p2, colr_p3;
     always @(posedge clk) begin
-        colr_p1 <= colr;
-        colr_p2 <= colr_p1;
-        colr_p3 <= colr_p2;
+        if (en) begin
+            colr_p1 <= colr;
+            colr_p2 <= colr_p1;
+            colr_p3 <= colr_p2;
+        end
     end
 
     // vram write mask - use latency-corrected write-enable and colour

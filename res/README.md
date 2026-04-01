@@ -16,6 +16,7 @@ Earthrise drawings in assembler format using extension `.eas`. Use [erasm](../to
 * [16 Squares](drawings/16-squares.eas) - 16 different coloured squares
 * [Doc Examples](drawings/doc-examples.eas) - examples from [Earthrise Programming](../docs/earthrise-programming.md)
 * [Large Shapes](drawings/large-shapes.eas) - some large shapes for testing edge cases
+* [Triangle Fill](drawings/triangle-fill.eas) - many different filled triangles
 
 The _All Shapes_ and _Basic Test_ drawings are also available pre-compiled in $readmemh format.
 
