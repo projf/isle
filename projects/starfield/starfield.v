@@ -1,4 +1,4 @@
-// Isle.Computer - Starfield
+// Isle.Computer - Starfield (Chapter 1)
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
@@ -57,25 +57,33 @@ module starfield #(
     // LFSR
     //
 
-    // 512 * 256 = 2^17
-    localparam WIDTH = 512;
-    localparam HEIGHT = 256;
-    wire paint = (dx >= 0 && dx < WIDTH) && (dy >= 0 && dy < HEIGHT);
+    localparam HRES = 640;
+    localparam VRES = 480;
+    localparam INC = -1;  // negative goes left, positive goes right
+    localparam RST_CNT = HRES * VRES + INC - 1;
 
-    // 17-bit LFSR (matches paint area)
-    localparam LFSRW = 17;
-    localparam TAPS = 'b10010000000000000;
+    localparam LFSRW = 21;
+    localparam TAPS = 'b101000000000000000000;
     /* verilator lint_off UNUSEDSIGNAL */
     wire [LFSRW-1:0] sreg;  // we don't use all bits
     /* verilator lint_on UNUSEDSIGNAL */
+
+    // counter restarts lfsr at end of screen
+    reg [LFSRW-1:0] cnt;
+    always @(posedge clk) begin
+        if (de) begin
+            if (cnt == RST_CNT) cnt <= 0;
+            else cnt <= cnt + 1;
+        end
+    end
 
     lfsr #(
         .LEN(LFSRW),
         .TAPS(TAPS)
     ) lfsr_inst (
         .clk(clk),
-        .rst(rst),
-        .en(paint),
+        .rst(cnt == 0),
+        .en(de),  // enable in display area
         .seed(0),  // use default seed
         .sreg(sreg)
     );
@@ -83,10 +91,10 @@ module starfield #(
     // control star density
     wire star = &{sreg[LFSRW-1:LFSRW-6]};  // 6 bits == 1/64 pixels are stars
 
-    // paint colour
-    wire [BPC-1:0] paint_r = (paint && star) ? sreg[BPC-1:0] : 'h02;
-    wire [BPC-1:0] paint_g = (paint && star) ? sreg[BPC-1:0] : 'h00;
-    wire [BPC-1:0] paint_b = (paint && star) ? sreg[BPC-1:0] : 'h01;
+    // paint colour - use random star brightness, but not too dim
+    wire [BPC-1:0] paint_r = star ? {1'b1, sreg[BPC-2:0]} : 'h02;
+    wire [BPC-1:0] paint_g = star ? {1'b1, sreg[BPC-2:0]} : 'h00;
+    wire [BPC-1:0] paint_b = star ? {1'b1, sreg[BPC-2:0]} : 'h01;
 
 
     //

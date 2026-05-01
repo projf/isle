@@ -1,4 +1,4 @@
-// Isle.Computer - Hitomezashi Pattern
+// Isle.Computer - Hitomezashi (Chapter 1)
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
