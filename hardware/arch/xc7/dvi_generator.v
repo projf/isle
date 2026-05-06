@@ -22,60 +22,60 @@ module dvi_generator (
     output wire clk_dout         // clock channel - serial TMDS
     );
 
-    wire [9:0] tmds_ch0, tmds_ch1, tmds_ch2;
+    wire [9:0] ch0_tmds, ch1_tmds, ch2_tmds;
 
-    tmds_encoder encode_ch0 (
+    tmds_encoder ch0_encoder (
         .clk_pix(clk_pix),
         .rst_pix(rst_pix),
         .din(ch0_din),
         .ctrl_in(ch0_ctrl),
         .de(de),
-        .tmds(tmds_ch0)
+        .tmds(ch0_tmds)
     );
 
-    tmds_encoder encode_ch1 (
+    tmds_encoder ch1_encoder (
         .clk_pix(clk_pix),
         .rst_pix(rst_pix),
         .din(ch1_din),
         .ctrl_in(ch1_ctrl),
         .de(de),
-        .tmds(tmds_ch1)
+        .tmds(ch1_tmds)
     );
 
-    tmds_encoder encode_ch2 (
+    tmds_encoder ch2_encoder (
         .clk_pix(clk_pix),
         .rst_pix(rst_pix),
         .din(ch2_din),
         .ctrl_in(ch2_ctrl),
         .de(de),
-        .tmds(tmds_ch2)
+        .tmds(ch2_tmds)
     );
 
-    oserdes_10b serialize_ch0 (
+    oserdes_10b ch0_oserdes (
         .clk(clk_pix),
         .clk_hs(clk_pix_5x),
         .rst(rst_pix),
-        .data_in(tmds_ch0),
+        .data_in(ch0_tmds),
         .serial_out(ch0_dout)
     );
 
-    oserdes_10b serialize_ch1 (
+    oserdes_10b ch1_oserdes (
         .clk(clk_pix),
         .clk_hs(clk_pix_5x),
         .rst(rst_pix),
-        .data_in(tmds_ch1),
+        .data_in(ch1_tmds),
         .serial_out(ch1_dout)
     );
 
-    oserdes_10b serialize_ch2 (
+    oserdes_10b ch2_oserdes (
         .clk(clk_pix),
         .clk_hs(clk_pix_5x),
         .rst(rst_pix),
-        .data_in(tmds_ch2),
+        .data_in(ch2_tmds),
         .serial_out(ch2_dout)
     );
 
-    oserdes_10b serialize_chc (
+    oserdes_10b clk_oserdes (
         .clk(clk_pix),
         .clk_hs(clk_pix_5x),
         .rst(rst_pix),
