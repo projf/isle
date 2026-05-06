@@ -54,7 +54,7 @@ module clock2_gen #(
 
     // explicitly buffer output clocks
     BUFG bufg_clk(.I(clk_unbuf), .O(clk_out));
-    BUFG bufg_clk_5x_out(.I(clk_5x_unbuf), .O(clk_5x_out));
+    BUFIO bufio_clk_5x(.I(clk_5x_unbuf), .O(clk_5x_out));
 
     // ensure clock lock is synced with output clock
     reg locked_sync;
