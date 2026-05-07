@@ -330,11 +330,9 @@ module ch03 #(
     end
 
     // delay background visibility for clut latency
-    wire bg_visible = ~canv_paint;
-    reg [CLUT_LAT-1:0] bg_visible_pipe;
-    /* verilator lint_off WIDTHEXPAND */
+    wire [CLUT_LAT-1:0] bg_visible = {{(CLUT_LAT-1){1'b0}}, ~canv_paint};
+    reg  [CLUT_LAT-1:0] bg_visible_pipe;
     always @(posedge clk_pix) bg_visible_pipe <= (bg_visible_pipe << 1) | bg_visible;
-    /* verilator lint_on WIDTHEXPAND */
 
     // paint colours
     reg [BPC-1:0] paint_r, paint_g, paint_b;
