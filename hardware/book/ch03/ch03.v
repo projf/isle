@@ -136,7 +136,10 @@ module ch03 #(
     reg [$clog2(ER_DRAW_RATE):0] cnt_draw_rate;
     reg er_enable;
     always @(posedge clk_sys) begin
-        if (cnt_draw_rate == ER_DRAW_RATE - 1) begin
+        if (rst_sys) begin
+            cnt_draw_rate <= 0;
+            er_enable <= 0;
+        end else if (cnt_draw_rate == ER_DRAW_RATE - 1) begin
             cnt_draw_rate <= 0;
             er_enable <= 1;
         end else begin
@@ -204,14 +207,14 @@ module ch03 #(
     // Canvas Display Address
     //
 
-    wire [CANV_SHIFTW-1:0] disp_addr_shift;  // address shift based on canvas bits per pixel
-    wire [VRAM_ADDRW-1:0] disp_addr;  // pixel memory address
-    wire [$clog2(WORD)-1:0] disp_pix_id;  // pixel ID within word
+    wire [CANV_SHIFTW-1:0] canv_addr_shift;  // address shift based on canvas bits per pixel
+    wire [VRAM_ADDRW-1:0] canv_addr;  // pixel memory address
+    wire [$clog2(WORD)-1:0] canv_pix_id;  // pixel ID within word
     wire canv_paint;
 
     // CANV_BPP is currently a parameter, but will be hardware register later
     /* verilator lint_off WIDTHTRUNC */
-    assign disp_addr_shift = 5 - $clog2(CANV_BPP);
+    assign canv_addr_shift = 5 - $clog2(CANV_BPP);
     /* verilator lint_on WIDTHTRUNC */
 
     canv_disp_agu #(
@@ -229,12 +232,12 @@ module ch03 #(
         .dx(dx),
         .dy(dy),
         .addr_base({VRAM_ADDRW{1'b0}}),  // fixed base address for now
-        .addr_shift(disp_addr_shift),
+        .addr_shift(canv_addr_shift),
         .win_start({WIN_STARTY, WIN_STARTX}),
         .win_end({WIN_HEIGHT + WIN_STARTY, WIN_WIDTH + WIN_STARTX}),
         .scale({CANV_SCALE, CANV_SCALE}),
-        .addr(disp_addr),
-        .pix_id(disp_pix_id),
+        .addr(canv_addr),
+        .pix_id(canv_pix_id),
         .paint(canv_paint)
     );
 
@@ -296,23 +299,26 @@ module ch03 #(
     // Painting & Display Output
     //
 
-    assign vram_addr_disp = disp_addr;
+    assign vram_addr_disp = canv_addr;
 
-    // CLUT lookup takes two cycles; delay disp_pix_id to match
-    reg [PIX_IDW-1:0] pix_id_p1, pix_id_p2;
+    // delay pix_id for vram latency
+    reg [PIX_IDW-1:0] pix_id_pipe [0:VRAM_LAT-1];
+    integer i;
     always @(posedge clk_pix) begin
-        pix_id_p1 <= disp_pix_id;
-        pix_id_p2 <= pix_id_p1;
+        pix_id_pipe[0] <= canv_pix_id;
+        for (i=1; i<VRAM_LAT; i=i+1)
+            pix_id_pipe[i] <= pix_id_pipe[i-1];
     end
+    wire [PIX_IDW-1:0] pix_id_disp = pix_id_pipe[VRAM_LAT-1];
 
     // select pixel ID from word depending on colour depth
     reg [CIDX_ADDRW-1:0] pcidx_1, pcidx_2, pcidx_4, pcidx_8;
     always @(*) begin
         /* verilator lint_off WIDTHTRUNC */
-        pcidx_1 = (vram_dout_disp >> pix_id_p2)        & 'b1;
-        pcidx_2 = (vram_dout_disp >> (pix_id_p2 << 1)) & 'b11;
-        pcidx_4 = (vram_dout_disp >> (pix_id_p2 << 2)) & 'b1111;
-        pcidx_8 = (vram_dout_disp >> (pix_id_p2 << 3)) & 'b11111111;
+        pcidx_1 = (vram_dout_disp >> pix_id_disp)        & 'b1;
+        pcidx_2 = (vram_dout_disp >> (pix_id_disp << 1)) & 'b11;
+        pcidx_4 = (vram_dout_disp >> (pix_id_disp << 2)) & 'b1111;
+        pcidx_8 = (vram_dout_disp >> (pix_id_disp << 3)) & 'b11111111;
         /* verilator lint_on WIDTHTRUNC */
         case (CANV_BPP)
             1: clut_addr_disp = pcidx_1;
@@ -323,8 +329,16 @@ module ch03 #(
         endcase
     end
 
+    // delay background visibility for clut latency
+    wire bg_visible = ~canv_paint;
+    reg [CLUT_LAT-1:0] bg_visible_pipe;
+    /* verilator lint_off WIDTHEXPAND */
+    always @(posedge clk_pix) bg_visible_pipe <= (bg_visible_pipe << 1) | bg_visible;
+    /* verilator lint_on WIDTHEXPAND */
+
+    // paint colours
     reg [BPC-1:0] paint_r, paint_g, paint_b;
-    always @(*) {paint_r, paint_g, paint_b} = canv_paint ? clut_dout_disp : BG_COLR;
+    always @(*) {paint_r, paint_g, paint_b} = bg_visible_pipe[CLUT_LAT-1] ? BG_COLR : clut_dout_disp;
 
     // register display signals
     always @(posedge clk_pix) begin
