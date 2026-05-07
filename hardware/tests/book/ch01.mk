@@ -16,6 +16,7 @@ VERILOG_SOURCES += $(HARDWARE)/gfx/display_timings.v
 VERILOG_INCLUDE_DIRS += $(HARDWARE)/include
 
 # pass Verilog module parameters to simulator
+COMPILE_ARGS += -DBENCH  # enable initial blocks for simulation
 COMPILE_ARGS += -P${DUT}.DISPLAY_MODE=0
 
 # each test needs its own build dir and results file

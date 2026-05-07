@@ -25,6 +25,7 @@ VERILOG_SOURCES += $(HARDWARE)/mem/vram.v
 VERILOG_INCLUDE_DIRS += $(HARDWARE)/include
 
 # pass Verilog module parameters to simulator
+COMPILE_ARGS += -DBENCH  # enable initial blocks for simulation
 COMPILE_ARGS += -P${DUT}.DISPLAY_MODE=3
 COMPILE_ARGS += -P${DUT}.FILE_ER_LIST="\"../../../res/drawings/basic-test.mem"\"
 COMPILE_ARGS += -P${DUT}.FILE_PAL="\"../../../res/palettes/aqua-4.mem"\"

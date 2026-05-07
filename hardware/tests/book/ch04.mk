@@ -21,6 +21,7 @@ VERILOG_SOURCES += $(HARDWARE)/mem/tram.v
 VERILOG_INCLUDE_DIRS += $(HARDWARE)/include
 
 # pass Verilog module parameters to simulator
+COMPILE_ARGS += -DBENCH  # enable initial blocks for simulation
 COMPILE_ARGS += -P${DUT}.DISPLAY_MODE=3
 COMPILE_ARGS += -P${DUT}.FILE_FONT="\"../../../res/fonts/unifont-rom.mem"\"
 COMPILE_ARGS += -P${DUT}.FILE_PAL="\"../../../res/palettes/go-16.mem"\"
