@@ -2,8 +2,6 @@
 
 The **fifo_sync** [[verilog src](../mem/fifo_sync.v)] module create a synchronous fifo: first in, first out. Isle uses this module to buffer data, for example, keyboard input. A small synchronous fifo is typically implemented in logic, while larger fifos may infer bram.
 
-You can see an example of this module in [uart_dev.v](../devs/uart_dev.v).
-
 ## Parameters
 
 * `ADDRW` - address width (bits)

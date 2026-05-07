@@ -9,10 +9,10 @@ See [boards](../../../boards/) for build and programming instructions. See [Seri
 The chapter 6 design uses the following Verilog modules:
 
 * `book/ch06/ch06.v`
+* `book/ch06/gfx_dev.v`
+* `book/ch06/sys_dev.v`
+* `book/ch06/uart_dev.v`
 * `cpu/FemtoRV32.v`
-* `devs/gfx_dev.v`
-* `devs/sys_dev.v`
-* `devs/uart_dev.v`
 * `gfx/display_timings.v`
 * `gfx/font_glyph.v`
 * `gfx/textmode.v`

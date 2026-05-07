@@ -33,7 +33,7 @@ module starfield #(
 
     display #(
         .CORDW(CORDW),
-        .MODE(DISPLAY_MODE)
+        .DISPLAY_MODE(DISPLAY_MODE)
     ) display_inst (
         .clk_pix(clk),
         .rst_pix(rst),

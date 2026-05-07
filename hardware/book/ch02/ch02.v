@@ -161,7 +161,7 @@ module ch02 #(
 
     display_timings #(
         .CORDW(CORDW),
-        .MODE(DISPLAY_MODE)
+        .DISPLAY_MODE(DISPLAY_MODE)
     ) display_timings_inst (
         .clk_pix(clk),
         .rst_pix(rst),

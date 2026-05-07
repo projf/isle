@@ -2,7 +2,7 @@
 
 The **uart_rx** [[verilog src](../io/uart_rx.v)] module receives uart data. There is also a uart transmit module [uart_tx.v](uart_tx.md).
 
-Combine with [fifo_sync](../mem/fifo_sync.v) to avoid having to handle every piece of data individually. You can see an example of uart with fifo in [uart_dev.v](../devs/uart_dev.v), which wraps the UART for MMIO from the CPU.
+Combine with [fifo_sync](../mem/fifo_sync.v) to avoid having to handle every piece of data individually.
 
 ## Parameters
 

@@ -45,15 +45,15 @@ See [Serial to Isle](../../docs/serial-to-isle.md) for advice on connecting to I
 
 ## Clock Settings
 
-The following table shows clock generation parameters for different display modes using the 100 MHz board clock of the Nexys Video.
+The following table shows clock generation parameters for different [display modes](../../hardware/include/display_modes.vh) using the 100 MHz board clock of the Nexys Video.
 
-| Parameter         | 640x480    | 1024x768   | 1366x768   | 1280x720   |
-| ----------------- | ---------: | ---------: | ---------: | ---------: |
-| Pixel Clock (MHz) | 25.2       | 65         | 72         | 74.25      |
-| MULT_MASTER       | 31.5       | 32.5       | 54         | 37.125     |
-| DIV_MASTER        | 5          | 5          | 5          | 5          |
-| DIV_5X            | 5.0        | 2.0        | 3.0        | 2.0        |
-| DIV_1X            | 25         | 10         | 15         | 10         |
+| Parameter         | 640x480    | 1024x768   | 1366x768   | 1280x720   | 1920x1080  |
+| ----------------- | ---------: | ---------: | ---------: | ---------: | ---------: |
+| Pixel Clock (MHz) | 25.2       | 65         | 72         | 74.25      | 74.25      |
+| MULT_MASTER       | 31.5       | 32.5       | 54         | 37.125     | 37.125     |
+| DIV_MASTER        | 5          | 5          | 5          | 5          | 5          |
+| DIV_5X            | 5.0        | 2.0        | 3.0        | 2.0        | 1.0        |
+| DIV_1X            | 25         | 10         | 15         | 10         | 5          |
 
 `IN_PERIOD` should always be set to 10.0 (ns) to match the 100 MHz board clock.
 

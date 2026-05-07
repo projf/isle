@@ -41,7 +41,6 @@ module ch06 #(
     output wire uart_tx                     // UART transmit from Isle
     );
 
-    localparam MODE = DISPLAY_MODE;
     `include "display_modes.vh"
 
     // CPU, bus, sysram
@@ -350,7 +349,7 @@ module ch06 #(
 
     display_timings #(
         .CORDW(CORDW),
-        .MODE(DISPLAY_MODE)
+        .DISPLAY_MODE(DISPLAY_MODE)
     ) display_timings_inst (
         .clk_pix(clk_pix),
         .rst_pix(rst_pix),

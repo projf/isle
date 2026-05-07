@@ -11,11 +11,11 @@ COCOTB_TEST_MODULES = ${DUT}
 HARDWARE = $(PWD)/../..
 
 VERILOG_SOURCES += $(HARDWARE)/book/${DUT}/${DUT}.v
+VERILOG_SOURCES += $(HARDWARE)/book/${DUT}/gfx_dev.v
+VERILOG_SOURCES += $(HARDWARE)/book/${DUT}/sys_dev.v
+VERILOG_SOURCES += $(HARDWARE)/book/${DUT}/uart_dev.v
 
 VERILOG_SOURCES += $(HARDWARE)/cpu/FemtoRV32.v
-VERILOG_SOURCES += $(HARDWARE)/devs/gfx_dev.v
-VERILOG_SOURCES += $(HARDWARE)/devs/sys_dev.v
-VERILOG_SOURCES += $(HARDWARE)/devs/uart_dev.v
 VERILOG_SOURCES += $(HARDWARE)/gfx/display_timings.v
 VERILOG_SOURCES += $(HARDWARE)/gfx/font_glyph.v
 VERILOG_SOURCES += $(HARDWARE)/gfx/textmode.v

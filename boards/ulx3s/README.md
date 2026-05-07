@@ -45,7 +45,7 @@ See [Serial to Isle](../../docs/serial-to-isle.md) for advice on connecting to I
 
 ## Clock Settings
 
-The following table shows clock generation parameters for different display modes using the 25 MHz board clock of the ULX3S. To understand how these values are calculated, see [ECP5 FPGA Clock Generation](http://projectf.io/posts/ecp5-fpga-clock/).
+The following table shows clock generation parameters for different [display modes](../../hardware/include/display_modes.vh) using the 25 MHz board clock of the ULX3S. To understand how these values are calculated, see [ECP5 FPGA Clock Generation](http://projectf.io/posts/ecp5-fpga-clock/).
 
 | Parameter         | 640x480    | 1024x768   | 1366x768   | 1280x720*  |
 | ----------------- | ---------: | ---------: | ---------: | ---------: |

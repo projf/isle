@@ -8,8 +8,8 @@
 `timescale 1ns / 1ps
 
 module display_timings #(
-    parameter CORDW=16,  // signed coordinate width (bits)
-    parameter MODE=0     // display mode (see display_modes.vh)
+    parameter CORDW=16,       // signed coordinate width (bits)
+    parameter DISPLAY_MODE=0  // display mode (see display_modes.vh)
     ) (
     input  wire clk_pix,                 // pixel clock
     input  wire rst_pix,                 // reset in pixel clock domain

@@ -2,7 +2,7 @@
 
 The **display timings** module [[verilog src](../gfx/display_timings.v)] generates sync signals and display coordinates.
 
-The `MODE` parameter controls the display mode (resolution and refresh rate). The input pixel clock must match the mode to generate a valid display signal. For example, `MODE=2` is 1366x768 and requires a 72 MHz pixel clock. See [[display_modes.vh](../include/display_modes.vh)] for supported modes.
+The `DISPLAY_MODE` parameter controls the display mode (resolution and refresh rate). The input pixel clock must match the mode to generate a valid display signal. For example, `DISPLAY_MODE=2` is 1366x768 and requires a 72 MHz pixel clock. See [[display_modes.vh](../include/display_modes.vh)] for supported modes.
 
 Signed 16-bit coordinates are used throughout these designs for flexibility and consistency. Using signed coordinates allows negative coordinates for the blanking interval, with the origin of the display at (0,0) irrespective of the display mode.
 
@@ -11,7 +11,7 @@ See the [Display](http://projectf.io/isle/display.html) blog post for more infor
 ## Parameters
 
 * `CORDW` - signed coordinate width (bits)
-* `MODE` - display mode (see below for supported modes)
+* `DISPLAY_MODE` - display mode (see below for supported modes)
 
 ## Signals
 
@@ -35,7 +35,7 @@ The frame and line flags allow you to take action each line or frame. For exampl
 
 ### Static Display Mode
 
-Mode could have been a signal to allow runtime resolution changes. However, this requires programmable PLLs, which is relatively complex and architecture dependent. By making MODE a a parameter we reduce complexity for developers and in logic. Meeting timing for display logic is vital as it only works at a particular frequency.
+Mode could have been a signal to allow runtime resolution changes. However, this requires programmable PLLs, which is relatively complex and architecture dependent. By making DISPLAY_MODE a a parameter we reduce complexity for developers and in logic. Meeting timing for a particular display mode is vital as it only works at a particular frequency.
 
 ## Testing
 
