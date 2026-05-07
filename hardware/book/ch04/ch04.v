@@ -9,7 +9,7 @@ module ch04 #(
     parameter BPC=5,             // bits per colour channel
     parameter BG_COLR='h0886,    // background colour (RGB555)
     parameter CORDW=16,          // signed coordinate width (bits)
-    parameter DISPLAY_MODE=0,    // display mode (see display.v for modes)
+    parameter DISPLAY_MODE=0,    // display mode (see display_modes.vh)
     parameter FILE_FONT="",      // font glyph ROM file
     parameter FILE_PAL="",       // initial palette for CLUT
     parameter FILE_TXT="",       // initial text file for tram
@@ -43,7 +43,7 @@ module ch04 #(
     localparam TRAM_HRES  = 84;  // tram width (chars) - 84x8 = 672
     localparam TRAM_VRES  = 24;  // tram height (chars) - 24x16 = 384
     localparam [TRAM_ADDRW-1:0] TRAM_DEPTH = TRAM_HRES * TRAM_VRES;
-    localparam TRAM_LAT   =  1;  // tram read latency (cycles)
+    localparam TRAM_LAT   =  2;  // tram read latency (cycles, min=1)
 
     // internal system params
     localparam WORD = 32;  // machine word size (bits)
@@ -51,7 +51,7 @@ module ch04 #(
     localparam BYTE_CNT = WORD / BYTE;  // bytes in word (for write enable)
     localparam CIDX_ADDRW = 8;   // colour index address width 2^8 = 256 colours
     localparam COLRW = 3 * BPC;  // colour width across three channels (bits)
-    localparam CLUT_LAT =   2;   // CLUT read latency (cycles)
+    localparam CLUT_LAT =   2;   // clut display read latency (cycles, min=1)
 
     // display signals
     wire signed [CORDW-1:0] dx, dy;
@@ -171,19 +171,15 @@ module ch04 #(
 
 
     //
-    // Display Controller
+    // Display Timings
     //
 
-    display #(
+    display_timings #(
         .CORDW(CORDW),
         .MODE(DISPLAY_MODE)
-    ) display_inst (
+    ) display_timings_inst (
         .clk_pix(clk_pix),
         .rst_pix(rst_pix),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .hres(),
-        .vres(),
-        /* verilator lint_on PINCONNECTEMPTY */
         .dx(dx),
         .dy(dy),
         .hsync(hsync),

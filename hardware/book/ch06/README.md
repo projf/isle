@@ -13,7 +13,7 @@ The chapter 6 design uses the following Verilog modules:
 * `devs/gfx_dev.v`
 * `devs/sys_dev.v`
 * `devs/uart_dev.v`
-* `gfx/display.v`
+* `gfx/display_timings.v`
 * `gfx/font_glyph.v`
 * `gfx/textmode.v`
 * `gfx/tmds_encoder.v` (not used by Verilator sim)

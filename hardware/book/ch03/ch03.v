@@ -13,7 +13,7 @@ module ch03 #(
     parameter CANV_HEIGHT=16'd0,  // canvas height (lines)
     parameter CANV_SCALE=16'd0,   // canvas scaling factor
     parameter CANV_WIDTH=16'd0,   // canvas width (pixels)
-    parameter DISPLAY_MODE=0,     // display mode (see display.v for modes)
+    parameter DISPLAY_MODE=0,     // display mode (see display_modes.vh)
     parameter FILE_BMAP="",       // initial bitmap file for vram
     parameter FILE_ER_LIST="",    // initial command list for Earthrise
     parameter FILE_PAL="",        // initial palette for CLUT
@@ -44,6 +44,7 @@ module ch03 #(
     // vram - 16K x 32-bit (64 KiB) with bit write
     //   NB. Due to bit write, minimum depth is 64 KiB with 18 Kb bram
     localparam VRAM_ADDRW = 14;  // vram address width (bits)
+    localparam VRAM_LAT   =  2;  // vram display read latency (cycles, min=1)
 
     // internal system params
     localparam WORD = 32;  // machine word size (bits)
@@ -53,11 +54,25 @@ module ch03 #(
     localparam COLRW = 3 * BPC;  // colour width across three channels (bits)
     localparam CANV_SHIFTW = 3;  // max shift is 5 bits (2^5 = 32 bits)
     localparam PIX_IDW=$clog2(WORD);  // pixel ID width (bits)
+    localparam CLUT_LAT =   2;   // clut display read latency (cycles, min=1)
 
     // display signals
     wire signed [CORDW-1:0] dx, dy;
     wire hsync, vsync, de;
     wire frame_start, line_start;
+
+    // VRAM signals
+    wire [VRAM_ADDRW-1:0] vram_addr_sys;
+    wire [WORD-1:0] vram_wmask_sys;
+    wire vram_re_sys = 0;
+    wire [WORD-1:0] vram_din_sys;
+    wire [VRAM_ADDRW-1:0] vram_addr_disp;  // pixel clock domain
+    wire [WORD-1:0] vram_dout_disp;  // pixel clock domain
+
+    // signals for future Earthrise/CPU use
+    /* verilator lint_off UNUSEDSIGNAL */
+    wire [WORD-1:0] vram_dout_sys;
+    /* verilator lint_on UNUSEDSIGNAL */
 
 
     //
@@ -165,18 +180,6 @@ module ch03 #(
     // Video RAM (vram)
     //
 
-    wire [VRAM_ADDRW-1:0] vram_addr_sys;
-    wire [WORD-1:0] vram_wmask_sys;
-    wire vram_re_sys = 0;
-    wire [WORD-1:0] vram_din_sys;
-    wire [VRAM_ADDRW-1:0] vram_addr_disp;  // pixel clock domain
-    wire [WORD-1:0] vram_dout_disp;  // pixel clock domain
-
-    // signals for future Earthrise/CPU use
-    /* verilator lint_off UNUSEDSIGNAL */
-    wire [WORD-1:0] vram_dout_sys;
-    /* verilator lint_on UNUSEDSIGNAL */
-
     // use Earthrise address for vram (will multiplex with CPU later)
     assign vram_addr_sys = draw_addr;  // doesn't validate address, but vram depth is power of two
 
@@ -201,7 +204,6 @@ module ch03 #(
     // Canvas Display Address
     //
 
-    localparam BMAP_LAT = 6;  // bitmap display latency: agu(2) + vram(2) + clut(2)
     wire [CANV_SHIFTW-1:0] disp_addr_shift;  // address shift based on canvas bits per pixel
     wire [VRAM_ADDRW-1:0] disp_addr;  // pixel memory address
     wire [$clog2(WORD)-1:0] disp_pix_id;  // pixel ID within word
@@ -213,11 +215,12 @@ module ch03 #(
     /* verilator lint_on WIDTHTRUNC */
 
     canv_disp_agu #(
-        .CORDW(CORDW),
-        .WORD(WORD),
         .ADDRW(VRAM_ADDRW),
-        .BMAP_LAT(BMAP_LAT),
-        .SHIFTW(CANV_SHIFTW)
+        .CLUT_LAT(CLUT_LAT),
+        .CORDW(CORDW),
+        .SHIFTW(CANV_SHIFTW),
+        .VRAM_LAT(VRAM_LAT),
+        .WORD(WORD)
     ) canv_disp_agu_inst (
         .clk_pix(clk_pix),
         .rst_pix(rst_pix),
@@ -270,19 +273,15 @@ module ch03 #(
 
 
     //
-    // Display Controller
+    // Display Timings
     //
 
-    display #(
+    display_timings #(
         .CORDW(CORDW),
         .MODE(DISPLAY_MODE)
-    ) display_inst (
+    ) display_timings_inst (
         .clk_pix(clk_pix),
         .rst_pix(rst_pix),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .hres(),
-        .vres(),
-        /* verilator lint_on PINCONNECTEMPTY */
         .dx(dx),
         .dy(dy),
         .hsync(hsync),

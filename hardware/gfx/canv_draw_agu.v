@@ -8,11 +8,11 @@
 `timescale 1ns / 1ps
 
 module canv_draw_agu #(
-    parameter ADDRW=14,              // address width (bits)
-    parameter CORDW=16,              // signed coordinate width (bits)
-    parameter PIX_IDW=$clog2(WORD),  // pixel ID width (bits)
-    parameter SHIFTW=3,              // address shift width (bits)
-    parameter WORD=32                // machine word size (bits)
+    parameter ADDRW=14,             // address width (bits)
+    parameter CORDW=16,             // signed coordinate width (bits)
+    parameter SHIFTW=3,             // address shift width (bits)
+    parameter WORD=32,              // machine word size (bits)
+    parameter PIX_IDW=$clog2(WORD)  // pixel ID width (bits)
     ) (
     input  wire clk,                      // clock
     input  wire en,                       // enable

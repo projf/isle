@@ -19,6 +19,7 @@ verilator --lint-only -Wall \
     -I${HW_DIR}/cpu \
     -I${HW_DIR}/devs \
     -I${HW_DIR}/gfx \
+    -I${HW_DIR}/include \
     -I${HW_DIR}/io \
     -I${HW_DIR}/math \
     -I${HW_DIR}/mem \

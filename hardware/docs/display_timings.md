@@ -1,8 +1,8 @@
-# Display Controller
+# Display Timings
 
-The **display** module [[verilog src](../gfx/display.v)] uses _display timings_ to generate sync signals and display coordinates.
+The **display timings** module [[verilog src](../gfx/display_timings.v)] generates sync signals and display coordinates.
 
-The `MODE` parameter controls the display mode (resolution and refresh rate). The input pixel clock must match the mode to generate a valid display signal. For example, `MODE=2` is 1366x768 and requires a 72 MHz pixel clock.
+The `MODE` parameter controls the display mode (resolution and refresh rate). The input pixel clock must match the mode to generate a valid display signal. For example, `MODE=2` is 1366x768 and requires a 72 MHz pixel clock. See [[display_modes.vh](../include/display_modes.vh)] for supported modes.
 
 Signed 16-bit coordinates are used throughout these designs for flexibility and consistency. Using signed coordinates allows negative coordinates for the blanking interval, with the origin of the display at (0,0) irrespective of the display mode.
 
@@ -24,7 +24,6 @@ The follow signals are used to drive the display (all in pixel clock domain).
 
 ### Output
 
-* `hres, vres` - resolution of chosen display mode
 * `dx, dy` - coordinates of current display pixel
 * `hsync` - horizontal sync signal
 * `vsync` - vertical sync signal
@@ -32,29 +31,7 @@ The follow signals are used to drive the display (all in pixel clock domain).
 * `frame_start` - high for one cycle at frame start
 * `line_start` - high for one cycle at line start
 
-The resolution signals, `hres` and `vres`, allow logic to adapt to the screen resolution:
-
 The frame and line flags allow you to take action each line or frame. For example, you might begin drawing when you receive a `frame_start` signal or start fetching pixel data at `line_start`.
-
-## Mode
-
-The display module includes five modes (pixel clock):
-
-```
-0 -  640 x 480 60 Hz (25.2 MHz)
-1 - 1024 x 768 60 Hz (65 MHz)
-2 - 1366 x 768 60 Hz (72 MHz)
-3 -  672 x 384 60 Hz (20 MHz)
-4 - 1280 x 720 60 Hz (74.25 MHz)
-```
-
-Additional display modes can easily be added to the case block at the end of the module. Remember to create a matching clock frequency for your mode.
-
-For Isle, use the following display modes if possible:
-
-* Widescreen display: 1366 x 768 (mode 2)
-* 4:3 display: 1024 x 768 (mode 1)
-* Simulation: 672 x 384 (mode 3)
 
 ### Static Display Mode
 

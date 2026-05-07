@@ -1,4 +1,4 @@
-// Isle.Computer - Colour Lookup Table (CLUT)
+// Isle.Computer - Colour Lookup Table (clut)
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 

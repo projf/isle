@@ -5,6 +5,7 @@
 include ../verilator.mk
 
 PATH_LIB  = ../../../hardware
+PATH_INCLUDE = ${PATH_LIB}/include
 PATH_PROJ = ../../../projects
 
 # Common Verilog
@@ -16,6 +17,7 @@ VERILOG_LIBS += -I${PATH_LIB}/io
 VERILOG_LIBS += -I${PATH_LIB}/math
 VERILOG_LIBS += -I${PATH_LIB}/mem
 VERILOG_LIBS += -I${PATH_LIB}/sys
+VERILOG_LIBS += -I${PATH_INCLUDE}
 
 
 ch06: ch06.exe

@@ -13,7 +13,7 @@ HARDWARE = $(PWD)/../..
 VERILOG_SOURCES += $(HARDWARE)/book/${DUT}/${DUT}.v
 
 VERILOG_SOURCES += $(HARDWARE)/cpu/FemtoRV32.v
-VERILOG_SOURCES += $(HARDWARE)/gfx/display.v
+VERILOG_SOURCES += $(HARDWARE)/gfx/display_timings.v
 VERILOG_SOURCES += $(HARDWARE)/gfx/font_glyph.v
 VERILOG_SOURCES += $(HARDWARE)/gfx/textmode.v
 VERILOG_SOURCES += $(HARDWARE)/mem/clut.v
@@ -21,6 +21,8 @@ VERILOG_SOURCES += $(HARDWARE)/mem/rom_sync.v
 VERILOG_SOURCES += $(HARDWARE)/mem/sysram.v
 VERILOG_SOURCES += $(HARDWARE)/mem/tram.v
 VERILOG_SOURCES += $(HARDWARE)/sys/xd.v
+
+VERILOG_INCLUDE_DIRS += $(HARDWARE)/include
 
 # pass Verilog module parameters to simulator
 COMPILE_ARGS += -DBENCH  # enable initial blocks for simulation

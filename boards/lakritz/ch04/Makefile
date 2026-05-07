@@ -5,11 +5,12 @@
 include ../lakritz.mk
 
 PATH_LIB  = ../../../hardware
+PATH_INCLUDE = ${PATH_LIB}/include
 PATH_PROJ = ../../../projects
 
 # Common Verilog
 ADD_SRC += ${PATH_LIB}/book/ch04/ch04.v
-ADD_SRC += ${PATH_LIB}/gfx/display.v
+ADD_SRC += ${PATH_LIB}/gfx/display_timings.v
 ADD_SRC += ${PATH_LIB}/gfx/font_glyph.v
 ADD_SRC += ${PATH_LIB}/gfx/textmode.v
 ADD_SRC += ${PATH_LIB}/gfx/tmds_encoder.v

@@ -69,5 +69,18 @@ DT = [
         'V_BLANK'    :  30,
         'V_FRONT'    :   5,
         'V_SYNC'     :   5
+    },
+    {  # mode 5 = 1920x1080
+        'PIX_TIME' :    6.73,  # 148.5 MHz
+        'HRES'       :1920,
+        'VRES'       :1080,
+        'H_POL'      :   1,  # positive polarity
+        'H_BLANK'    : 280,
+        'H_FRONT'    :  88,
+        'H_SYNC'     :  44,
+        'V_POL'      :   1,  # positive polarity
+        'V_BLANK'    :  45,
+        'V_FRONT'    :   4,
+        'V_SYNC'     :   5
     }
 ]

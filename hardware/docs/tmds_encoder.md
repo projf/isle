@@ -18,7 +18,7 @@ The follow signals are used by the encoder (all in pixel clock domain).
 * `ctrl_in` - 2-bit control data (channel 0 only, otherwise 0)
 * `de` - data enable (from display controller)
 
-Channel 0 encodes horizontal and vertical sync using the `ctrl_in` signal with values from the [display controller](display.md). For channel 1 and 2, `ctrl_in` should be zero:
+Channel 0 encodes horizontal and vertical sync using the `ctrl_in` signal with values from [display timings](display_timings.md). For channel 1 and 2, `ctrl_in` should be zero:
 
 ```verilog
     .ch0_ctrl({disp_vsync, disp_hsync}),

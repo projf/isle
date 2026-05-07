@@ -19,7 +19,7 @@ read_verilog "${lib_dir}/book/ch03/ch03.v"
 read_verilog "${lib_dir}/gfx/canv_disp_agu.v"
 read_verilog "${lib_dir}/gfx/canv_draw_agu.v"
 read_verilog "${lib_dir}/gfx/circle.v"
-read_verilog "${lib_dir}/gfx/display.v"
+read_verilog "${lib_dir}/gfx/display_timings.v"
 read_verilog "${lib_dir}/gfx/earthrise.v"
 read_verilog "${lib_dir}/gfx/fline.v"
 read_verilog "${lib_dir}/gfx/line.v"
@@ -40,8 +40,9 @@ read_xdc "${design_name}.xdc"
 
 
 # Build
-synth_design -top "top_${design_name}" -part ${fpga_part}
+synth_design -top "top_${design_name}" -part ${fpga_part} -include_dirs "${lib_dir}/include"
 opt_design
 place_design
 route_design
+report_timing_summary
 write_bitstream -force "${design_name}.bit"

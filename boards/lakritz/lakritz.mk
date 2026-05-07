@@ -15,11 +15,15 @@ TARGET_FREQ = 20   # target frequency (MHz)
 # synthesis (secondary expansion because ADD_SRC is set after rule)
 .SECONDEXPANSION:
 %.json: top_%.v $$(ADD_SRC)
-	yosys -ql $(basename $@)-yosys.log -p 'synth_ecp5 -top top_$(basename $@) -json $@' $< $(ADD_SRC)
+	yosys -ql $(basename $@)-yosys.log \
+		  -p 'read_verilog -I$(PATH_INCLUDE) $< $(ADD_SRC)' \
+	      -p 'synth_ecp5 -top top_$(basename $@) -json $@'
 
 # place and route
 %.config: %.json
-	nextpnr-ecp5 --randomize-seed --${FPGA_TYPE} --package ${FPGA_PKG} --freq ${TARGET_FREQ} --speed ${FPGA_SPEED} --json $< --textcfg $@ --lpf ${LPF}
+	nextpnr-ecp5 --randomize-seed --${FPGA_TYPE} --package ${FPGA_PKG} \
+	             --freq ${TARGET_FREQ} --speed ${FPGA_SPEED} \
+				 --json $< --textcfg $@ --lpf ${LPF}
 
 # pack bitstream
 %.bit: %.config

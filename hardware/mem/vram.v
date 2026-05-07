@@ -1,4 +1,4 @@
-// Isle.Computer - Video RAM (VRAM)
+// Isle.Computer - Video RAM (vram)
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 

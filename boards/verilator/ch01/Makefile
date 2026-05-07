@@ -5,11 +5,13 @@
 include ../verilator.mk
 
 PATH_LIB  = ../../../hardware
+PATH_INCLUDE = ${PATH_LIB}/include
 PATH_PROJ = ../../../projects
 
 # Common Verilog
 VERILOG_LIBS += -I${PATH_LIB}/book/ch01
 VERILOG_LIBS += -I${PATH_LIB}/gfx
+VERILOG_LIBS += -I${PATH_INCLUDE}
 
 # Project: Hitomezashi
 VERILOG_LIBS += -I${PATH_PROJ}/hitomezashi

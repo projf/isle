@@ -11,7 +11,7 @@ module ch02 #(
     parameter CANV_BPP=4,         // canvas bits per pixel (4=16 colours)
     parameter CANV_SCALE=16'd1,   // canvas scaling factor
     parameter CORDW=16,           // signed coordinate width (bits)
-    parameter DISPLAY_MODE=0,     // display mode (see display.v for modes)
+    parameter DISPLAY_MODE=0,     // display mode (see display_modes.vh)
     parameter FILE_BMAP="",       // initial bitmap file for framebuffer
     parameter FILE_PAL="",        // initial palette for CLUT
     parameter WIN_WIDTH=16'd0,    // canvas window width (pixel)
@@ -35,6 +35,7 @@ module ch02 #(
     // vram - 16K x 32-bit (64 KiB) with bit write
     //   NB. Due to bit write, minimum depth is 64 KiB with 18 Kb bram
     localparam VRAM_ADDRW = 14;  // vram address width (bits)
+    localparam VRAM_LAT   =  2;  // vram display read latency (cycles, min=1)
 
     // internal system params
     localparam WORD = 32;  // machine word size (bits)
@@ -42,6 +43,7 @@ module ch02 #(
     localparam COLRW = 3 * BPC;  // colour width across three channels (bits)
     localparam CANV_SHIFTW = 3;  // max shift is 5 bits (2^5 = 32 bits)
     localparam PIX_IDW=$clog2(WORD);  // pixel ID width (bits)
+    localparam CLUT_LAT =   2;   // clut display read latency (cycles, min=1)
 
     // display signals
     wire signed [CORDW-1:0] dx, dy;
@@ -86,7 +88,6 @@ module ch02 #(
     // Canvas Display Address
     //
 
-    localparam BMAP_LAT = 6;  // bitmap display latency: agu(2) + vram(2) + clut(2)
     wire [CANV_SHIFTW-1:0] disp_addr_shift;  // address shift based on canvas bits per pixel
     wire [VRAM_ADDRW-1:0] disp_addr;  // pixel memory address
     wire [$clog2(WORD)-1:0] disp_pix_id;  // pixel ID within word
@@ -97,11 +98,12 @@ module ch02 #(
     /* verilator lint_on WIDTHTRUNC */
 
     canv_disp_agu #(
-        .CORDW(CORDW),
-        .WORD(WORD),
         .ADDRW(VRAM_ADDRW),
-        .BMAP_LAT(BMAP_LAT),
-        .SHIFTW(CANV_SHIFTW)
+        .CLUT_LAT(CLUT_LAT),
+        .CORDW(CORDW),
+        .SHIFTW(CANV_SHIFTW),
+        .VRAM_LAT(VRAM_LAT),
+        .WORD(WORD)
     ) canv_disp_agu_inst (
         .clk_pix(clk),
         .rst_pix(rst),
@@ -154,19 +156,15 @@ module ch02 #(
 
 
     //
-    // Display Controller
+    // Display Timings
     //
 
-    display #(
+    display_timings #(
         .CORDW(CORDW),
         .MODE(DISPLAY_MODE)
-    ) display_inst (
+    ) display_timings_inst (
         .clk_pix(clk),
         .rst_pix(rst),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .hres(),
-        .vres(),
-        /* verilator lint_on PINCONNECTEMPTY */
         .dx(dx),
         .dy(dy),
         .hsync(hsync),

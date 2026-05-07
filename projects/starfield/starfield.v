@@ -8,7 +8,7 @@
 module starfield #(
     parameter BPC=5,          // bits per colour channel
     parameter CORDW=16,       // signed coordinate width (bits)
-    parameter DISPLAY_MODE=0  // display mode (see display.v for modes)
+    parameter DISPLAY_MODE=0  // display mode (see display_modes.vh)
     ) (
     input  wire clk,                        // system clock
     input  wire rst,                        // reset

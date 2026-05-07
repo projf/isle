@@ -5,6 +5,7 @@
 include ../ulx3s.mk
 
 PATH_LIB  = ../../../hardware
+PATH_INCLUDE = ${PATH_LIB}/include
 PATH_PROJ = ../../../projects
 
 # Common Verilog
@@ -12,7 +13,7 @@ ADD_SRC += ${PATH_LIB}/book/ch03/ch03.v
 ADD_SRC += ${PATH_LIB}/gfx/canv_disp_agu.v
 ADD_SRC += ${PATH_LIB}/gfx/canv_draw_agu.v
 ADD_SRC += ${PATH_LIB}/gfx/circle.v
-ADD_SRC += ${PATH_LIB}/gfx/display.v
+ADD_SRC += ${PATH_LIB}/gfx/display_timings.v
 ADD_SRC += ${PATH_LIB}/gfx/earthrise.v
 ADD_SRC += ${PATH_LIB}/gfx/fline.v
 ADD_SRC += ${PATH_LIB}/gfx/line.v

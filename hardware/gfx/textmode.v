@@ -8,14 +8,14 @@
 module textmode #(
     parameter ADDRW=11,         // tram address width (bits)
     parameter CIDXW=4,          // colour index width (bits)
-    parameter CLUT_LAT=2,       // CLUT latency (cycles)
+    parameter CLUT_LAT=2,       // clut display read latency (cycles, min=1)
     parameter CORDW=16,         // signed coordinate width (bits)
     parameter FILE_FONT="",     // font glyph ROM file
     parameter FONT_COUNT=128,   // number of glyphs in font ROM
     parameter GLYPH_HEIGHT=16,  // glyph height (pixels)
     parameter GLYPH_WIDTH=8,    // half-width glyph width (pixels)
     parameter TRAM_DEPTH=2016,  // tram depth (chars)
-    parameter TRAM_LAT=1,       // tram latency (cycles)
+    parameter TRAM_LAT=2,       // tram display read latency (cycles, min=1, max 2)
     parameter WORD=32           // machine word size (bits)
     ) (
     input  wire clk_pix,                       // pixel clock
@@ -33,7 +33,7 @@ module textmode #(
     /* verilator lint_on UNUSEDSIGNAL */
     output reg  [ADDRW-1:0] tram_addr,         // tram address (word)
     output reg  [CIDXW-1:0] pix,               // pixel colour index
-    output reg  paint                          // text mode painting enable
+    output reg  paint                          // text mode painting enable (pre-clut)
     );
 
     localparam UCPW    = 21;  // Unicode code point width (bits)
@@ -54,7 +54,8 @@ module textmode #(
     // paint area defined by window
     wire win_y = (dy >= win_start_y) && (dy < win_end_y);
     always @(posedge clk_pix) begin
-        paint <= (dx >= win_start_x-1) && (dx < win_end_x-1) && win_y;  // -1 for registering
+        paint <= (dx >= win_start_x - CLUT_LAT - 1)  // -1 for registering
+              && (dx < win_end_x - CLUT_LAT - 1) && win_y;
     end
 
     // draw start depends on window and latency
