@@ -49,7 +49,7 @@ The following table shows clock generation parameters for different [display mod
 
 | Parameter         | 640x480    | 1024x768   | 1366x768   | 1280x720   | 1920x1080  |
 | ----------------- | ---------: | ---------: | ---------: | ---------: | ---------: |
-| Pixel Clock (MHz) | 25.2       | 65         | 72         | 74.25      | 74.25      |
+| Pixel Clock (MHz) | 25.2       | 65         | 72         | 74.25      | 148.5      |
 | MULT_MASTER       | 31.5       | 32.5       | 54         | 37.125     | 37.125     |
 | DIV_MASTER        | 5          | 5          | 5          | 5          | 5          |
 | DIV_5X            | 5.0        | 2.0        | 3.0        | 2.0        | 1.0        |
