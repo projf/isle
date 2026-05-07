@@ -23,6 +23,8 @@ module ch01 #(
     output reg  [BPC-1:0] disp_b            // blue display channel
     );
 
+    `include "display_modes.vh"
+
     //
     // Display Timings
     //
@@ -53,7 +55,9 @@ module ch01 #(
     //
 
     // define a square with display coordinates
-    wire square = (dx >= 220 && dx < 420) && (dy >= 140 && dy < 340);
+    //   HRES and VRES are defined in display_modes.vh
+    wire square = (dx >= HRES/2-100 && dx < HRES/2+100) &&
+                  (dy >= VRES/2-100 && dy < VRES/2+100);
 
     // paint colour: white inside square, blue outside
     wire [BPC-1:0] paint_r = (square) ? 'h1F : 'h02;
