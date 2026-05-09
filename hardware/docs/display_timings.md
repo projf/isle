@@ -11,7 +11,7 @@ See the [Display](http://projectf.io/isle/display.html) blog post for more infor
 ## Parameters
 
 * `CORDW` - signed coordinate width (bits)
-* `DISPLAY_MODE` - display mode (see below for supported modes)
+* `DISPLAY_MODE` - display mode (see [display_modes.vh](../include/display_modes.vh))
 
 ## Signals
 
@@ -31,11 +31,11 @@ The follow signals are used to drive the display (all in pixel clock domain).
 * `frame_start` - high for one cycle at frame start
 * `line_start` - high for one cycle at line start
 
-The frame and line flags allow you to take action each line or frame. For example, you might begin drawing when you receive a `frame_start` signal or start fetching pixel data at `line_start`.
+The frame and line flags allow you to take action each line or frame. For example, you might begin drawing when you receive a `frame_start` signal or start fetching pixel data at `line_start`. These flags can be made available in the system clock domain using [xd.v](xd.md).
 
 ### Static Display Mode
 
-Mode could have been a signal to allow runtime resolution changes. However, this requires programmable PLLs, which is relatively complex and architecture dependent. By making DISPLAY_MODE a a parameter we reduce complexity for developers and in logic. Meeting timing for a particular display mode is vital as it only works at a particular frequency.
+Display mode could have been a signal to allow runtime resolution changes. However, this requires programmable PLLs, which are architecture dependent and relatively complex. By making DISPLAY_MODE a parameter we reduce complexity for developers and in logic. Meeting timing for a particular display mode is vital as it only works at one frequency.
 
 ## Testing
 
