@@ -21,7 +21,7 @@ cd isle/boards/lakritz/ch04
 make
 ```
 
-If you get a timing failure, run `make clean && make`. The Makefile uses `--randomize-seed` with nextpnr and sometimes you'll be unlucky with placement.
+If you get a timing failure, run `make clean && make`. The Makefile uses `--randomize-seed` with nextpnr and sometimes you'll be unlucky with placement. You should also ensure you're running recent versions of Yosys and nextpnr.
 
 Many chapters have parameters you can edit in the matching top module. For example, in `top_ch02.v` you can choose the bitmap and palette to load.
 
@@ -49,7 +49,7 @@ See [Serial to Isle](../../docs/serial-to-isle.md) for advice on connecting to I
 
 ## Clock Settings
 
-The following table shows clock generation parameters for different display modes using the 48 MHz board clock of the Lakritz. To understand how these values are calculated, see [ECP5 FPGA Clock Generation](http://projectf.io/posts/ecp5-fpga-clock/).
+The following table shows clock generation parameters for different [display modes](../../hardware/include/display_modes.vh) using the 48 MHz board clock of the Lakritz. To understand how these values are calculated, see [ECP5 FPGA Clock Generation](http://projectf.io/posts/ecp5-fpga-clock/).
 
 | Parameter         | 640x480    | 1024x768*  | 1366x768   | 1280x720*  |
 | ----------------- | ---------: | ---------: | ---------: | ---------: |

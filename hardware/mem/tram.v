@@ -1,4 +1,4 @@
-// Isle.Computer - Textmode RAM (TRAM)
+// Isle.Computer - Textmode RAM (tram)
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
@@ -43,8 +43,10 @@ module tram #(
         end
     end
 
-    // display port (read-only)
+    // display port (read-only with additional output register)
+    reg [WORD-1:0] dout_disp_reg;
     always @(posedge clk_pix) begin
-        dout_disp <= tram_mem[addr_disp];
+        dout_disp_reg <= tram_mem[addr_disp];
+        dout_disp <= dout_disp_reg;
     end
 endmodule

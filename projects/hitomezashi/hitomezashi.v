@@ -2,13 +2,15 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
+// NB. This project is hard-coded for DISPLAY_MODE=0 (640x480)
+
 `default_nettype none
 `timescale 1ns / 1ps
 
 module hitomezashi #(
     parameter BPC=5,          // bits per colour channel
     parameter CORDW=16,       // signed coordinate width (bits)
-    parameter DISPLAY_MODE=0  // display mode (see display.v for modes)
+    parameter DISPLAY_MODE=0  // display mode (see display_modes.vh)
     ) (
     input  wire clk,                        // system clock
     input  wire rst,                        // reset
@@ -31,16 +33,12 @@ module hitomezashi #(
     wire hsync, vsync, de;
     wire frame_start;
 
-    display #(
+    display_timings #(
         .CORDW(CORDW),
-        .MODE(DISPLAY_MODE)
-    ) display_inst (
+        .DISPLAY_MODE(DISPLAY_MODE)
+    ) display_timings_inst (
         .clk_pix(clk),
         .rst_pix(rst),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .hres(),
-        .vres(),
-        /* verilator lint_on PINCONNECTEMPTY */
         .dx(dx),
         .dy(dy),
         .hsync(hsync),

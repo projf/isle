@@ -8,7 +8,7 @@
 module ch01 #(
     parameter BPC=5,          // bits per colour channel
     parameter CORDW=16,       // signed coordinate width (bits)
-    parameter DISPLAY_MODE=0  // display mode (see display.v for modes)
+    parameter DISPLAY_MODE=0  // display mode (see display_modes.vh)
     ) (
     input  wire clk,                        // system clock
     input  wire rst,                        // reset
@@ -23,24 +23,22 @@ module ch01 #(
     output reg  [BPC-1:0] disp_b            // blue display channel
     );
 
+    `include "display_modes.vh"
+
     //
-    // Display Controller
+    // Display Timings
     //
 
     wire signed [CORDW-1:0] dx, dy;
     wire hsync, vsync, de;
     wire frame_start;
 
-    display #(
+    display_timings #(
         .CORDW(CORDW),
-        .MODE(DISPLAY_MODE)
-    ) display_inst (
+        .DISPLAY_MODE(DISPLAY_MODE)
+    ) display_timings_inst (
         .clk_pix(clk),
         .rst_pix(rst),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .hres(),
-        .vres(),
-        /* verilator lint_on PINCONNECTEMPTY */
         .dx(dx),
         .dy(dy),
         .hsync(hsync),
@@ -52,13 +50,14 @@ module ch01 #(
         /* verilator lint_on PINCONNECTEMPTY */
     );
 
-
     //
     // Painting
     //
 
     // define a square with display coordinates
-    wire square = (dx >= 220 && dx < 420) && (dy >= 140 && dy < 340);
+    //   HRES and VRES are defined in display_modes.vh
+    wire square = (dx >= HRES/2-100 && dx < HRES/2+100) &&
+                  (dy >= VRES/2-100 && dy < VRES/2+100);
 
     // paint colour: white inside square, blue outside
     wire [BPC-1:0] paint_r = (square) ? 'h1F : 'h02;

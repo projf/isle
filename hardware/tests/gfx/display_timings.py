@@ -1,8 +1,8 @@
-# Isle.Computer - Display Controller Test Bench
+# Isle.Computer - Display Timings Test Bench
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
-"""Display Controller Test Bench (cocotb)"""
+"""Display Timings Test Bench (cocotb)"""
 
 import os
 
@@ -37,18 +37,6 @@ async def reset_dut(dut):
     await RisingEdge(dut.clk_pix)
     dut.rst_pix.value = 0
     await RisingEdge(dut.clk_pix)
-
-@cocotb.test()  # pylint: disable=no-value-for-parameter
-async def display_res_freq(dut):
-    """Test mode resolution and frequency"""
-    cocotb.start_soon(Clock(dut.clk_pix, pix_time, unit="ns").start())
-    await reset_dut(dut)
-
-    await RisingEdge(dut.clk_pix)
-    assert dut.hres.value.to_signed() == hres, \
-        f"hres {dut.hres.value.to_signed()} is not {hres}!"
-    assert dut.vres.value.to_signed() == vres, \
-        f"vres {dut.vres.value.to_signed()} is not {vres}!"
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 async def display_de(dut):

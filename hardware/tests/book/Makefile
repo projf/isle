@@ -8,7 +8,7 @@
 export PYTHONPATH := $(shell pwd)/../..:$(PYTHONPATH)
 
 # test targets
-TESTS = ch01 ch02 ch03 ch04 ch05
+TESTS = ch01 ch02 ch03 ch04 ch05 ch06
 
 ch01:
 	-make -f ch01.mk

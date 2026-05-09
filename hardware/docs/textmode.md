@@ -4,7 +4,7 @@ The **textmode** module [[verilog src](../gfx/textmode.v)] displays text mode, l
 
 Text mode includes a 2 KiB character ROM holding 128 characters for basic system functionality before additional storage is available; these characters cover Basic Latin and Block Elements. Text mode is currently limited by Isle's lack of storage; future versions will extend Unicode coverage and add support for full-width glyphs.
 
-The latency of tram and font glyph retrieval is hidden by the cycles required to process one row of a glyph. You may see rendering issues if your font is less than 8 pixels wide.
+Text mode is not pipelined and the logic takes 6 cycles + 2 cycles for [tram](tram.md) access; if you set `GLYPH_WIDTH` to less than 8 pixels you'll have rendering issues. If `GLYPH_HEIGHT` isn't a power of 2, the [font_glyph](font_glyph.md) module may infer a multiplier.
 
 See the [Text Mode](http://projectf.io/isle/text-mode.html) blog post for more information on this module.
 
@@ -26,9 +26,9 @@ The textmode module depends on three other modules:
 * `FILE_FONT` - font glyph ROM file
 * `FONT_COUNT` - number of glyphs in font ROM
 * `GLYPH_HEIGHT` - glyph height (pixels)
-* `GLYPH_WIDTH` - half-width glyph width (pixels)
+* `GLYPH_WIDTH` - half-width glyph width (pixels; min=8)
 * `TRAM_DEPTH` - tram depth (chars)
-* `TRAM_LAT` - tram latency (cycles)
+* `TRAM_LAT` - tram latency (cycles; min=1, max=2)
 
 For Isle, `CORDW` must be set to **16**, `WORD` must be set to **32**, and `CIDXW` must be set to 4.
 

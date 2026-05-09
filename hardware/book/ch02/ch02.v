@@ -11,7 +11,7 @@ module ch02 #(
     parameter CANV_BPP=4,         // canvas bits per pixel (4=16 colours)
     parameter CANV_SCALE=16'd1,   // canvas scaling factor
     parameter CORDW=16,           // signed coordinate width (bits)
-    parameter DISPLAY_MODE=0,     // display mode (see display.v for modes)
+    parameter DISPLAY_MODE=0,     // display mode (see display_modes.vh)
     parameter FILE_BMAP="",       // initial bitmap file for framebuffer
     parameter FILE_PAL="",        // initial palette for CLUT
     parameter WIN_WIDTH=16'd0,    // canvas window width (pixel)
@@ -35,6 +35,7 @@ module ch02 #(
     // vram - 16K x 32-bit (64 KiB) with bit write
     //   NB. Due to bit write, minimum depth is 64 KiB with 18 Kb bram
     localparam VRAM_ADDRW = 14;  // vram address width (bits)
+    localparam VRAM_LAT   =  2;  // vram display read latency (cycles; min=1)
 
     // internal system params
     localparam WORD = 32;  // machine word size (bits)
@@ -42,6 +43,7 @@ module ch02 #(
     localparam COLRW = 3 * BPC;  // colour width across three channels (bits)
     localparam CANV_SHIFTW = 3;  // max shift is 5 bits (2^5 = 32 bits)
     localparam PIX_IDW=$clog2(WORD);  // pixel ID width (bits)
+    localparam CLUT_LAT =   2;   // clut display read latency (cycles; min=1)
 
     // display signals
     wire signed [CORDW-1:0] dx, dy;
@@ -86,22 +88,23 @@ module ch02 #(
     // Canvas Display Address
     //
 
-    localparam BMAP_LAT = 6;  // bitmap display latency: agu(2) + vram(2) + clut(2)
-    wire [CANV_SHIFTW-1:0] disp_addr_shift;  // address shift based on canvas bits per pixel
-    wire [VRAM_ADDRW-1:0] disp_addr;  // pixel memory address
-    wire [$clog2(WORD)-1:0] disp_pix_id;  // pixel ID within word
+    wire [CANV_SHIFTW-1:0] canv_addr_shift;  // address shift based on canvas bits per pixel
+    wire [VRAM_ADDRW-1:0] canv_addr;  // pixel memory address
+    wire [$clog2(WORD)-1:0] canv_pix_id;  // pixel ID within word
     wire canv_paint;
 
+    // CANV_BPP is currently a parameter, but will be hardware register later
     /* verilator lint_off WIDTHTRUNC */
-    assign disp_addr_shift = 5 - $clog2(CANV_BPP);
+    assign canv_addr_shift = 5 - $clog2(CANV_BPP);
     /* verilator lint_on WIDTHTRUNC */
 
     canv_disp_agu #(
-        .CORDW(CORDW),
-        .WORD(WORD),
         .ADDRW(VRAM_ADDRW),
-        .BMAP_LAT(BMAP_LAT),
-        .SHIFTW(CANV_SHIFTW)
+        .CLUT_LAT(CLUT_LAT),
+        .CORDW(CORDW),
+        .SHIFTW(CANV_SHIFTW),
+        .VRAM_LAT(VRAM_LAT),
+        .WORD(WORD)
     ) canv_disp_agu_inst (
         .clk_pix(clk),
         .rst_pix(rst),
@@ -110,12 +113,12 @@ module ch02 #(
         .dx(dx),
         .dy(dy),
         .addr_base({VRAM_ADDRW{1'b0}}),  // fixed base address for now
-        .addr_shift(disp_addr_shift),
+        .addr_shift(canv_addr_shift),
         .win_start({WIN_STARTY, WIN_STARTX}),
         .win_end({WIN_HEIGHT + WIN_STARTY, WIN_WIDTH + WIN_STARTX}),
         .scale({CANV_SCALE, CANV_SCALE}),
-        .addr(disp_addr),
-        .pix_id(disp_pix_id),
+        .addr(canv_addr),
+        .pix_id(canv_pix_id),
         .paint(canv_paint)
     );
 
@@ -154,19 +157,15 @@ module ch02 #(
 
 
     //
-    // Display Controller
+    // Display Timings
     //
 
-    display #(
+    display_timings #(
         .CORDW(CORDW),
-        .MODE(DISPLAY_MODE)
-    ) display_inst (
+        .DISPLAY_MODE(DISPLAY_MODE)
+    ) display_timings_inst (
         .clk_pix(clk),
         .rst_pix(rst),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .hres(),
-        .vres(),
-        /* verilator lint_on PINCONNECTEMPTY */
         .dx(dx),
         .dy(dy),
         .hsync(hsync),
@@ -181,23 +180,26 @@ module ch02 #(
     // Painting & Display Output
     //
 
-    assign vram_addr_disp = disp_addr;
+    assign vram_addr_disp = canv_addr;
 
-    // CLUT lookup takes two cycles; delay disp_pix_id to match
-    reg [PIX_IDW-1:0] pix_id_p1, pix_id_p2;
+    // delay pix_id for vram latency
+    reg [PIX_IDW-1:0] pix_id_pipe [0:VRAM_LAT-1];
+    integer i;
     always @(posedge clk) begin
-        pix_id_p1 <= disp_pix_id;
-        pix_id_p2 <= pix_id_p1;
+        pix_id_pipe[0] <= canv_pix_id;
+        for (i=1; i<VRAM_LAT; i=i+1)
+            pix_id_pipe[i] <= pix_id_pipe[i-1];
     end
+    wire [PIX_IDW-1:0] pix_id_disp = pix_id_pipe[VRAM_LAT-1];
 
     // select pixel ID from word depending on colour depth
     reg [CIDX_ADDRW-1:0] pcidx_1, pcidx_2, pcidx_4, pcidx_8;
     always @(*) begin
         /* verilator lint_off WIDTHTRUNC */
-        pcidx_1 = (vram_dout_disp >> pix_id_p2)        & 'b1;
-        pcidx_2 = (vram_dout_disp >> (pix_id_p2 << 1)) & 'b11;
-        pcidx_4 = (vram_dout_disp >> (pix_id_p2 << 2)) & 'b1111;
-        pcidx_8 = (vram_dout_disp >> (pix_id_p2 << 3)) & 'b11111111;
+        pcidx_1 = (vram_dout_disp >> pix_id_disp)        & 'b1;
+        pcidx_2 = (vram_dout_disp >> (pix_id_disp << 1)) & 'b11;
+        pcidx_4 = (vram_dout_disp >> (pix_id_disp << 2)) & 'b1111;
+        pcidx_8 = (vram_dout_disp >> (pix_id_disp << 3)) & 'b11111111;
         /* verilator lint_on WIDTHTRUNC */
         case (CANV_BPP)
             1: clut_addr_disp = pcidx_1;
@@ -208,8 +210,14 @@ module ch02 #(
         endcase
     end
 
+    // delay background visibility for clut latency
+    wire [CLUT_LAT-1:0] bg_visible = {{(CLUT_LAT-1){1'b0}}, ~canv_paint};
+    reg  [CLUT_LAT-1:0] bg_visible_pipe;
+    always @(posedge clk) bg_visible_pipe <= (bg_visible_pipe << 1) | bg_visible;
+
+    // paint colours
     reg [BPC-1:0] paint_r, paint_g, paint_b;
-    always @(*) {paint_r, paint_g, paint_b} = canv_paint ? clut_dout_disp : BG_COLR;
+    always @(*) {paint_r, paint_g, paint_b} = bg_visible_pipe[CLUT_LAT-1] ? BG_COLR : clut_dout_disp;
 
     // register display signals
     always @(posedge clk) begin

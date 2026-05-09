@@ -18,6 +18,7 @@ verilator --lint-only -Wall \
     -I${HW_DIR} \
     -I${HW_DIR}/cpu \
     -I${HW_DIR}/gfx \
+    -I${HW_DIR}/include \
     -I${HW_DIR}/mem \
     -I${HW_DIR}/sys \
     ch05.v

@@ -8,7 +8,7 @@
 module starfield #(
     parameter BPC=5,          // bits per colour channel
     parameter CORDW=16,       // signed coordinate width (bits)
-    parameter DISPLAY_MODE=0  // display mode (see display.v for modes)
+    parameter DISPLAY_MODE=0  // display mode (see display_modes.vh)
     ) (
     input  wire clk,                        // system clock
     input  wire rst,                        // reset
@@ -23,6 +23,8 @@ module starfield #(
     output reg  [BPC-1:0] disp_b            // blue display channel
     );
 
+    `include "display_modes.vh"
+
     //
     // Display Controller
     //
@@ -31,16 +33,12 @@ module starfield #(
     wire hsync, vsync, de;
     wire frame_start;
 
-    display #(
+    display_timings #(
         .CORDW(CORDW),
-        .MODE(DISPLAY_MODE)
-    ) display_inst (
+        .DISPLAY_MODE(DISPLAY_MODE)
+    ) display_timings_inst (
         .clk_pix(clk),
         .rst_pix(rst),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .hres(),
-        .vres(),
-        /* verilator lint_on PINCONNECTEMPTY */
         .dx(dx),
         .dy(dy),
         .hsync(hsync),
@@ -57,8 +55,6 @@ module starfield #(
     // LFSR
     //
 
-    localparam HRES = 640;
-    localparam VRES = 480;
     localparam INC = -1;  // negative goes left, positive goes right
     localparam RST_CNT = HRES * VRES + INC - 1;
 

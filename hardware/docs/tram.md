@@ -35,7 +35,7 @@ The tram is dual port, with a system and display port in different clock domains
 ### Input
 
 * `clk_sys` - system clock
-* `clk_pix` - pixel clock (frequency depends on [display](display.md) mode)
+* `clk_pix` - pixel clock (frequency depends on [display mode](display_timings.md))
 * `we_sys` - system write enable (byte mask)
 * `re_sys` - system read enable
 * `addr_sys` - system port word address
@@ -56,6 +56,6 @@ The separate system and displays ports avoid contention between the graphics eng
 ### Latencies
 
 * **system port** - 1 cycle read latency
-* **display port** - 1 cycle read latency
+* **display port** - 2 cycle read latency
 
-The display port may have an additional output register added following work on [textmode](textmode.md).
+The display port has a higher latency because of the additional output register to improve timing.

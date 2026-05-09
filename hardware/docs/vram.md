@@ -23,7 +23,7 @@ The vram is dual port, with a system and display port in different clock domains
 ### Input
 
 * `clk_sys` - system clock
-* `clk_pix` - pixel clock (frequency depends on [display](display.md) mode)
+* `clk_pix` - pixel clock (frequency depends on [display mode](display_timings.md))
 * `wmask_sys` - system write enable (32-bit write mask)
 * `re_sys` - system read enable
 * `addr_sys` - system port word address

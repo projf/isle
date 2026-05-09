@@ -9,7 +9,7 @@ module ch06 #(
     parameter BPC=5,              // bits per colour channel
     parameter BG_COLR='h0886,     // background colour (RGB555)
     parameter CORDW=16,           // signed coordinate width (bits)
-    parameter DISPLAY_MODE=0,     // display mode (see display.v for modes)
+    parameter DISPLAY_MODE=0,     // display mode (see display_modes.vh)
     parameter FILE_FONT="",       // font glyph ROM file
     parameter FILE_PAL="",        // initial palette for CLUT
     parameter FILE_SOFT="",       // initial software in system ram
@@ -41,6 +41,8 @@ module ch06 #(
     output wire uart_tx                     // UART transmit from Isle
     );
 
+    `include "display_modes.vh"
+
     // CPU, bus, sysram
     localparam CPU_RESET_ADDR = 'h8000;  // must match linker script
     localparam BUSW = 14;  // bus address width (words) - 2^14 × 4 bytes = 64K
@@ -52,7 +54,7 @@ module ch06 #(
     localparam TRAM_HRES  = 84;  // tram width (chars) - 84x8 = 672
     localparam TRAM_VRES  = 24;  // tram height (chars) - 24x16 = 384
     localparam [TRAM_ADDRW-1:0] TRAM_DEPTH = TRAM_HRES * TRAM_VRES;
-    localparam TRAM_LAT   =  1;  // tram read latency (cycles)
+    localparam TRAM_LAT   =  2;  // tram read latency (cycles; min=1, max=2)
 
     // uart
     localparam UART_DATAW = 8;  // uart data width (bits)
@@ -64,11 +66,10 @@ module ch06 #(
     localparam BYTE_CNT = WORD / BYTE;  // bytes in word (for write enable)
     localparam CIDX_ADDRW = 8;   // colour index address width 2^8 = 256 colours
     localparam COLRW = 3 * BPC;  // colour width across three channels (bits)
-    localparam CLUT_LAT =   2;   // CLUT read latency (cycles)
+    localparam CLUT_LAT =   2;   // clut display read latency (cycles; min=1)
     localparam DEV_ADDRW = 10;   // device word address width
 
     // display signals
-    wire signed [CORDW-1:0] disp_hres, disp_vres;
     wire signed [CORDW-1:0] dx, dy;
     wire hsync, vsync, de;
     wire frame_start;
@@ -215,7 +216,7 @@ module ch06 #(
 
     reg [TRAM_ADDRW-1:0] scroll_offs = 0*84;  // scroll text display (use lines of chars)
     wire [TEXT_CIDXW-1:0] text_pix;
-    wire paint_text;  // signals when to enable text painting
+    wire text_paint;  // signals when to enable text painting
 
     textmode #(
         .CORDW(CORDW),
@@ -244,7 +245,7 @@ module ch06 #(
         .tram_data(tram_dout_disp),
         .tram_addr(tram_addr_disp),
         .pix(text_pix),
-        .paint(paint_text)
+        .paint(text_paint)
     );
 
 
@@ -308,8 +309,8 @@ module ch06 #(
         .addr_sys(io_addr[DEV_ADDRW-1:0]),
         .din_sys(io_wdata),
         .dout_sys(gfx_dev_dout),
-        .disp_hres(disp_hres),
-        .disp_vres(disp_vres),
+        .disp_hres(HRES),
+        .disp_vres(VRES),
         .frame_start_sys(frame_start_sys),
         .text_hres({{CORDW-TRAM_ADDRW{1'b0}}, text_hres}),
         .text_vres({{CORDW-TRAM_ADDRW{1'b0}}, text_vres}),
@@ -343,17 +344,15 @@ module ch06 #(
 
 
     //
-    // Display Controller
+    // Display Timings
     //
 
-    display #(
+    display_timings #(
         .CORDW(CORDW),
-        .MODE(DISPLAY_MODE)
-    ) display_inst (
+        .DISPLAY_MODE(DISPLAY_MODE)
+    ) display_timings_inst (
         .clk_pix(clk_pix),
         .rst_pix(rst_pix),
-        .hres(disp_hres),
-        .vres(disp_vres),
         .dx(dx),
         .dy(dy),
         .hsync(hsync),
@@ -379,8 +378,14 @@ module ch06 #(
 
     assign clut_addr_disp = {{CIDX_ADDRW-TEXT_CIDXW{1'b0}}, text_pix};
 
+    // delay background visibility for clut latency
+    wire [CLUT_LAT-1:0] bg_visible = {{(CLUT_LAT-1){1'b0}}, ~text_paint};
+    reg  [CLUT_LAT-1:0] bg_visible_pipe;
+    always @(posedge clk_pix) bg_visible_pipe <= (bg_visible_pipe << 1) | bg_visible;
+
+    // paint colours
     reg [BPC-1:0] paint_r, paint_g, paint_b;
-    always @(*) {paint_r, paint_g, paint_b} = paint_text ? clut_dout_disp : BG_COLR;
+    always @(*) {paint_r, paint_g, paint_b} = bg_visible_pipe[CLUT_LAT-1] ? BG_COLR : clut_dout_disp;
 
     // register display signals
     always @(posedge clk_pix) begin

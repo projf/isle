@@ -53,4 +53,4 @@ Chapter 6 uses a simplified memory map with a 16-bit address that can address 64
 
 The stack pointer (**sp**) points to the address above the top of memory, `0xC000`, and we decrement it to allocate space on the stack.
 
-You can find hardware registers in the device modules in [hardware/devs](../../../hardware/devs/).
+You can find hardware registers in the device modules in [hardware/book/ch06](../../../hardware/book/ch06/).

@@ -16,11 +16,11 @@ read_verilog "top_${design_name}.v"
 
 # Common Verilog
 read_verilog "${lib_dir}/book/ch06/ch06.v"
+read_verilog "${lib_dir}/book/ch06/gfx_dev.v"
+read_verilog "${lib_dir}/book/ch06/sys_dev.v"
+read_verilog "${lib_dir}/book/ch06/uart_dev.v"
 read_verilog "${lib_dir}/cpu/FemtoRV32.v"
-read_verilog "${lib_dir}/devs/gfx_dev.v"
-read_verilog "${lib_dir}/devs/sys_dev.v"
-read_verilog "${lib_dir}/devs/uart_dev.v"
-read_verilog "${lib_dir}/gfx/display.v"
+read_verilog "${lib_dir}/gfx/display_timings.v"
 read_verilog "${lib_dir}/gfx/font_glyph.v"
 read_verilog "${lib_dir}/gfx/textmode.v"
 read_verilog "${lib_dir}/gfx/tmds_encoder.v"
@@ -45,8 +45,9 @@ read_xdc "${design_name}.xdc"
 
 
 # Build
-synth_design -top "top_${design_name}" -part ${fpga_part}
+synth_design -top "top_${design_name}" -part ${fpga_part} -include_dirs "${lib_dir}/include"
 opt_design
 place_design
 route_design
+report_timing_summary
 write_bitstream -force "${design_name}.bit"

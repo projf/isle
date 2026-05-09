@@ -9,7 +9,7 @@ module ch05 #(
     parameter BPC=5,             // bits per colour channel
     parameter BG_COLR='h0886,    // background colour (RGB555)
     parameter CORDW=16,          // signed coordinate width (bits)
-    parameter DISPLAY_MODE=0,    // display mode (see display.v for modes)
+    parameter DISPLAY_MODE=0,    // display mode (see display_modes.vh)
     parameter FILE_FONT="",      // font glyph ROM file
     parameter FILE_PAL="",       // initial palette for CLUT
     parameter FILE_SOFT="",      // initial software in system ram
@@ -47,7 +47,7 @@ module ch05 #(
     localparam TRAM_HRES  = 84;  // tram width (chars) - 84x8 = 672
     localparam TRAM_VRES  = 24;  // tram height (chars) - 24x16 = 384
     localparam [TRAM_ADDRW-1:0] TRAM_DEPTH = TRAM_HRES * TRAM_VRES;
-    localparam TRAM_LAT   =  1;  // tram read latency (cycles)
+    localparam TRAM_LAT   =  2;  // tram read latency (cycles; min=1, max=2)
 
     // internal system params
     localparam WORD = 32;  // machine word size (bits)
@@ -55,7 +55,7 @@ module ch05 #(
     localparam BYTE_CNT = WORD / BYTE;  // bytes in word (for write enable)
     localparam CIDX_ADDRW = 8;   // colour index address width 2^8 = 256 colours
     localparam COLRW = 3 * BPC;  // colour width across three channels (bits)
-    localparam CLUT_LAT =   2;   // CLUT read latency (cycles)
+    localparam CLUT_LAT =   2;   // clut display read latency (cycles; min=1)
 
     // display signals
     wire signed [CORDW-1:0] dx, dy;
@@ -189,7 +189,7 @@ module ch05 #(
 
     reg [TRAM_ADDRW-1:0] scroll_offs = 0*84;  // scroll text display (use lines of chars)
     wire [TEXT_CIDXW-1:0] text_pix;
-    wire paint_text;  // signals when to enable text painting
+    wire text_paint;  // signals when to enable text painting
 
     textmode #(
         .CORDW(CORDW),
@@ -218,7 +218,7 @@ module ch05 #(
         .tram_data(tram_dout_disp),
         .tram_addr(tram_addr_disp),
         .pix(text_pix),
-        .paint(paint_text)
+        .paint(text_paint)
     );
 
 
@@ -278,19 +278,15 @@ module ch05 #(
 
 
     //
-    // Display Controller
+    // Display Timings
     //
 
-    display #(
+    display_timings #(
         .CORDW(CORDW),
-        .MODE(DISPLAY_MODE)
-    ) display_inst (
+        .DISPLAY_MODE(DISPLAY_MODE)
+    ) display_timings_inst (
         .clk_pix(clk_pix),
         .rst_pix(rst_pix),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .hres(),
-        .vres(),
-        /* verilator lint_on PINCONNECTEMPTY */
         .dx(dx),
         .dy(dy),
         .hsync(hsync),
@@ -316,8 +312,14 @@ module ch05 #(
 
     assign clut_addr_disp = {{CIDX_ADDRW-TEXT_CIDXW{1'b0}}, text_pix};
 
+    // delay background visibility for clut latency
+    wire [CLUT_LAT-1:0] bg_visible = {{(CLUT_LAT-1){1'b0}}, ~text_paint};
+    reg  [CLUT_LAT-1:0] bg_visible_pipe;
+    always @(posedge clk_pix) bg_visible_pipe <= (bg_visible_pipe << 1) | bg_visible;
+
+    // paint colours
     reg [BPC-1:0] paint_r, paint_g, paint_b;
-    always @(*) {paint_r, paint_g, paint_b} = paint_text ? clut_dout_disp : BG_COLR;
+    always @(*) {paint_r, paint_g, paint_b} = bg_visible_pipe[CLUT_LAT-1] ? BG_COLR : clut_dout_disp;
 
     // register display signals
     always @(posedge clk_pix) begin

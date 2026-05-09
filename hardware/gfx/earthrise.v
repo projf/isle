@@ -8,13 +8,13 @@
 `timescale 1ns / 1ps
 
 module earthrise #(
-    parameter CANV_SHIFTW=3,         // vram address shift width (bits)
-    parameter COLRW=8,               // colour/pattern width (bits)
-    parameter CORDW=16,              // signed coordinate width (bits)
-    parameter ER_ADDRW=10,           // command list address width
-    parameter PIX_IDW=$clog2(WORD),  // pixel ID width (bits)
-    parameter VRAM_ADDRW=14,         // vram address width (bits)
-    parameter WORD=32                // machine word size (bits)
+    parameter CANV_SHIFTW=3,        // vram address shift width (bits)
+    parameter COLRW=8,              // colour/pattern width (bits)
+    parameter CORDW=16,             // signed coordinate width (bits)
+    parameter ER_ADDRW=10,          // command list address width
+    parameter VRAM_ADDRW=14,        // vram address width (bits)
+    parameter WORD=32,              // machine word size (bits)
+    parameter PIX_IDW=$clog2(WORD)  // pixel ID width (bits)
     ) (
     input  wire clk,                           // clock
     input  wire rst,                           // reset
@@ -69,7 +69,9 @@ module earthrise #(
 
     // PC registers
     reg [ER_ADDRW+2:0] pc_reg;  // PC points to next instruction (extra bit to detect overflow)
+    /* verilator lint_off UNUSEDSIGNAL */
     reg [ER_ADDRW+1:0] pc_debug;  // currently executing instruction address for debugging
+    /* verilator lint_on UNUSEDSIGNAL */
     assign pc = pc_reg[ER_ADDRW+1:0];  // output PC without overflow check bit
 
     // Earthrise registers

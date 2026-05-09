@@ -1,19 +1,20 @@
-# Isle.Computer - Display Controller Test Makefile
+# Isle.Computer - Display Timings Test Makefile
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
 SIM ?= icarus
 TOPLEVEL_LANG ?= verilog
-DUT = display
+DUT = display_timings
 
 TOPLEVEL = ${DUT}
 COCOTB_TEST_MODULES = ${DUT}
 HARDWARE = $(PWD)/../..
 
 VERILOG_SOURCES += $(HARDWARE)/gfx/${DUT}.v
+VERILOG_INCLUDE_DIRS += $(HARDWARE)/include
 
 # pass Verilog module parameters to simulator
-COMPILE_ARGS += -P${DUT}.MODE=${DISPLAY_MODE}
+COMPILE_ARGS += -P${DUT}.DISPLAY_MODE=${DISPLAY_MODE}
 
 # each test needs its own build dir and results file
 COCOTB_RESULTS_FILE = results_${DUT}_mode_${DISPLAY_MODE}.xml

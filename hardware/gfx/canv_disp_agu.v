@@ -8,12 +8,13 @@
 `timescale 1ns / 1ps
 
 module canv_disp_agu #(
-    parameter ADDRW=14,              // vram address width (bits)
-    parameter BMAP_LAT=6,            // latency for agu + vram + clut (cycles)
-    parameter PIX_IDW=$clog2(WORD),  // pixel ID width (bits)
-    parameter SHIFTW=3,              // address shift width (bits)
-    parameter CORDW=16,              // signed coordinate width (bits)
-    parameter WORD=32                // machine word size (bits)
+    parameter ADDRW=14,             // vram address width (bits)
+    parameter CLUT_LAT=2,           // clut display read latency (cycles; min=1)
+    parameter CORDW=16,             // signed coordinate width (bits)
+    parameter SHIFTW=3,             // address shift width (bits)
+    parameter VRAM_LAT=2,           // vram display read latency (cycles; min=1)
+    parameter WORD=32,              // machine word size (bits)
+    parameter PIX_IDW=$clog2(WORD)  // pixel ID width (bits)
     ) (
     input  wire clk_pix,                  // pixel clock
     input  wire rst_pix,                  // reset in pixel clock domain
@@ -28,8 +29,11 @@ module canv_disp_agu #(
     input  wire [2*CORDW-1:0] scale,      // canvas scale
     output reg  [ADDRW-1:0] addr,         // pixel memory address
     output reg  [PIX_IDW-1:0] pix_id,     // pixel ID within word
-    output reg  paint                     // canvas painting enable
+    output reg  paint                     // canvas painting enable (pre-clut)
     );
+
+    localparam AGU_LAT = 2;  // address generation latency (this module)
+    localparam BMAP_LAT = AGU_LAT + VRAM_LAT + CLUT_LAT;  // end-to-end latency for vram read
 
     // separate y and x from canvas window signals
     reg signed [CORDW-1:0] win_start_y, win_start_x;
@@ -47,7 +51,8 @@ module canv_disp_agu #(
     reg vram_read;
     wire win_y = (dy >= win_start_y) && (dy < win_end_y);
     always @(posedge clk_pix) begin
-        paint <= (dx >= win_start_x-1) && (dx < win_end_x-1) && win_y;  // -1 for registering
+        paint <= (dx >= win_start_x - VRAM_LAT - 1)  // -1 for registering
+              && (dx < win_end_x - VRAM_LAT - 1) && win_y;
         vram_read <= (dx >= win_start_x-BMAP_LAT) && (dx < win_end_x-BMAP_LAT) && win_y;
     end
 
