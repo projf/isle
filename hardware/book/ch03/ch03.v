@@ -44,7 +44,7 @@ module ch03 #(
     // vram - 16K x 32-bit (64 KiB) with bit write
     //   NB. Due to bit write, minimum depth is 64 KiB with 18 Kb bram
     localparam VRAM_ADDRW = 14;  // vram address width (bits)
-    localparam VRAM_LAT   =  2;  // vram display read latency (cycles, min=1)
+    localparam VRAM_LAT   =  2;  // vram display read latency (cycles; min=1)
 
     // internal system params
     localparam WORD = 32;  // machine word size (bits)
@@ -54,7 +54,7 @@ module ch03 #(
     localparam COLRW = 3 * BPC;  // colour width across three channels (bits)
     localparam CANV_SHIFTW = 3;  // max shift is 5 bits (2^5 = 32 bits)
     localparam PIX_IDW=$clog2(WORD);  // pixel ID width (bits)
-    localparam CLUT_LAT =   2;   // clut display read latency (cycles, min=1)
+    localparam CLUT_LAT =   2;   // clut display read latency (cycles; min=1)
 
     // display signals
     wire signed [CORDW-1:0] dx, dy;

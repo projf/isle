@@ -21,7 +21,7 @@ cd isle/boards/lakritz/ch04
 make
 ```
 
-If you get a timing failure, run `make clean && make`. The Makefile uses `--randomize-seed` with nextpnr and sometimes you'll be unlucky with placement.
+If you get a timing failure, run `make clean && make`. The Makefile uses `--randomize-seed` with nextpnr and sometimes you'll be unlucky with placement. You should also ensure you're running recent versions of Yosys and nextpnr.
 
 Many chapters have parameters you can edit in the matching top module. For example, in `top_ch02.v` you can choose the bitmap and palette to load.
 

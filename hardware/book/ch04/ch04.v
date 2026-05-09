@@ -43,7 +43,7 @@ module ch04 #(
     localparam TRAM_HRES  = 84;  // tram width (chars) - 84x8 = 672
     localparam TRAM_VRES  = 24;  // tram height (chars) - 24x16 = 384
     localparam [TRAM_ADDRW-1:0] TRAM_DEPTH = TRAM_HRES * TRAM_VRES;
-    localparam TRAM_LAT   =  2;  // tram read latency (cycles, min=1)
+    localparam TRAM_LAT   =  2;  // tram read latency (cycles; min=1, max=2)
 
     // internal system params
     localparam WORD = 32;  // machine word size (bits)
@@ -51,7 +51,7 @@ module ch04 #(
     localparam BYTE_CNT = WORD / BYTE;  // bytes in word (for write enable)
     localparam CIDX_ADDRW = 8;   // colour index address width 2^8 = 256 colours
     localparam COLRW = 3 * BPC;  // colour width across three channels (bits)
-    localparam CLUT_LAT =   2;   // clut display read latency (cycles, min=1)
+    localparam CLUT_LAT =   2;   // clut display read latency (cycles; min=1)
 
     // display signals
     wire signed [CORDW-1:0] dx, dy;

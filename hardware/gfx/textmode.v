@@ -8,14 +8,14 @@
 module textmode #(
     parameter ADDRW=11,         // tram address width (bits)
     parameter CIDXW=4,          // colour index width (bits)
-    parameter CLUT_LAT=2,       // clut display read latency (cycles, min=1)
+    parameter CLUT_LAT=2,       // clut display read latency (cycles; min=1)
     parameter CORDW=16,         // signed coordinate width (bits)
     parameter FILE_FONT="",     // font glyph ROM file
     parameter FONT_COUNT=128,   // number of glyphs in font ROM
     parameter GLYPH_HEIGHT=16,  // glyph height (pixels)
     parameter GLYPH_WIDTH=8,    // half-width glyph width (pixels)
     parameter TRAM_DEPTH=2016,  // tram depth (chars)
-    parameter TRAM_LAT=2,       // tram display read latency (cycles, min=1, max 2)
+    parameter TRAM_LAT=2,       // tram display read latency (cycles; min=1, max 2)
     parameter WORD=32           // machine word size (bits)
     ) (
     input  wire clk_pix,                       // pixel clock

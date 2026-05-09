@@ -9,10 +9,10 @@
 
 module canv_disp_agu #(
     parameter ADDRW=14,             // vram address width (bits)
-    parameter CLUT_LAT=2,           // clut display read latency (cycles, min=1)
+    parameter CLUT_LAT=2,           // clut display read latency (cycles; min=1)
     parameter CORDW=16,             // signed coordinate width (bits)
     parameter SHIFTW=3,             // address shift width (bits)
-    parameter VRAM_LAT=2,           // vram display read latency (cycles, min=1)
+    parameter VRAM_LAT=2,           // vram display read latency (cycles; min=1)
     parameter WORD=32,              // machine word size (bits)
     parameter PIX_IDW=$clog2(WORD)  // pixel ID width (bits)
     ) (
