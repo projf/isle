@@ -24,13 +24,15 @@ Install a RISC-V toolchain:
 * Debian/Ubuntu/Pop!_OS: `apt install gcc-riscv64-unknown-elf`
 * Arch Linux: `pacman -S riscv64-elf-gcc`
 * Fedora: `dnf install gcc-riscv64-linux-gnu`
-* macOS: `brew install riscv-gnu-toolchain`
+* macOS: `brew install riscv64-elf-gcc`
 
 Windows users can run a RISC-V toolchain under Windows Subsystem for Linux (WSL).
 
+NB. Fedora doesn't provide a bare metal RISC-V toolchain, but `gcc-riscv64-linux-gnu` works for Isle (though it doesn't include newlib).
+
 ### Build
 
-Before building, Arch Linux and Fedora users need to edit `BIN_PREFIX` in `isle/software/book/ch05/Makefile`.
+Before building, ensure `BIN_PREFIX` in `isle/software/book/ch05/Makefile` matches your toolchain (the default is correct for Arch Linux and macOS as installed above).
 
 To build all the chapter 5 software:
 
