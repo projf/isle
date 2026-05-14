@@ -5,8 +5,7 @@
 MAKEFLAGS += --no-builtin-rules --no-builtin-variables
 
 # BIN_PREFIX needs adjusting on some platforms
-#  e.g. riscv64-elf on Arch Linux and riscv64-linux-gnu on Fedora
-BIN_PREFIX := riscv64-unknown-elf
+BIN_PREFIX := riscv64-elf
 
 # arch settings
 MARCH := rv32i  # RV32I for chapter 5
@@ -21,6 +20,11 @@ LD      := $(BIN_PREFIX)-ld
 OBJDUMP := $(BIN_PREFIX)-objdump
 OBJCOPY := $(BIN_PREFIX)-objcopy
 HEXDUMP := hexdump
+
+# check for toolchain
+ifeq (,$(shell command -v $(AS) 2>/dev/null))
+$(error $(AS) not found. Check your BIN_PREFIX or install a RISC-V toolchain)
+endif
 
 # find sources and derive program names and .mem targets
 SRCS  := $(wildcard *.s)

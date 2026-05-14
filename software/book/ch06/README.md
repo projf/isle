@@ -16,7 +16,7 @@ There's a blog post covering [Chapter 6 Software](https://projectf.io/isle/ch06-
 
 If you've previously built [chapter 5 software](../ch05/README.md), you have everything you need. Consult the [Isle Software Build](https://projectf.io/isle/software-build.html) guide for advice on setting up the toolchain.
 
-Before building, Arch Linux and Fedora users need to edit `BIN_PREFIX` in `isle/software/book/ch06/Makefile`.
+Before building, ensure `BIN_PREFIX` in `isle/software/book/ch06/Makefile` matches your toolchain.
 
 To build all the chapter 6 software:
 

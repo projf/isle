@@ -5,8 +5,7 @@
 MAKEFLAGS += --no-builtin-rules --no-builtin-variables
 
 # BIN_PREFIX needs adjusting on some platforms
-#  e.g. riscv64-elf on Arch Linux and riscv64-linux-gnu on Fedora
-BIN_PREFIX := riscv64-unknown-elf
+BIN_PREFIX := riscv64-elf
 
 # arch settings
 MARCH := rv32im  # RV32IM for chapter 6
@@ -30,6 +29,11 @@ INCS     := $(wildcard include/*.inc)
 SRCS     := $(wildcard *.s)
 MEMS     := $(SRCS:.s=.mem)
 NAMES    := $(SRCS:.s=)
+
+# check for toolchain
+ifeq (,$(shell command -v $(AS) 2>/dev/null))
+$(error $(AS) not found. Check your BIN_PREFIX or install a RISC-V toolchain)
+endif
 
 # lib archive
 LIB_ISLE := lib/libisle.a
