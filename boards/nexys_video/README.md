@@ -8,11 +8,11 @@ If you're new to Isle, the best place to start is [Isle FPGA Computer](http://pr
 
 ## Building
 
-There is a Nexys Video top module for each chapter of the _Building Isle_ book, which you can read on the [Isle blog](http://projectf.io/isle/index.html).
+There is a Nexys Video top module for each chapter of the _Building Isle_ book, available on the [Isle blog](http://projectf.io/isle/index.html).
 
 Before you begin, locate your Vivado directory.
 
-On **Linux** source the Vivado setting script to set the environment:
+On **Linux**, source the Vivado setting script to set the environment:
 
 ```shell
 source /opt/Xilinx/2025.1/Vivado/settings64.sh  # adjust this path for your system
@@ -20,14 +20,14 @@ source /opt/Xilinx/2025.1/Vivado/settings64.sh  # adjust this path for your syst
 
 On **Windows**, run the `settings64.bat` batch file from the `Vivado` directory.
 
-Then run **vivado** to build your chosen chapter. For example, to build the chapter 4 design:
+Then run **Vivado** to build your chosen chapter. For example, to build the chapter 4 design:
 
 ```shell
 cd isle/boards/nexys_video/ch04
 vivado -mode batch -nojournal -source build.tcl
 ```
 
-Each chapter top module uses an instance of the common chapter design from [hardware/book](../../hardware/book/).
+Each chapter's top module uses an instance of the common chapter design from [hardware/book](../../hardware/book/).
 
 ### Board Programming
 
@@ -49,6 +49,7 @@ The following table shows clock generation parameters for different [display mod
 
 | Parameter         | 640x480    | 1024x768   | 1366x768   | 1280x720   | 1920x1080  |
 | ----------------- | ---------: | ---------: | ---------: | ---------: | ---------: |
+| Isle DISPLAY_MODE | 0          | 1          | 2          | 4          | 5          |
 | Pixel Clock (MHz) | 25.2       | 65         | 72         | 74.25      | 148.5      |
 | MULT_MASTER       | 31.5       | 32.5       | 54         | 37.125     | 37.125     |
 | DIV_MASTER        | 5          | 5          | 5          | 5          | 5          |

@@ -21,7 +21,7 @@ As I build Isle, each major component gets its own chapter with a dedicated Veri
 
 _Further chapters under development._
 
-For hardware build instructions see [dev boards](boards). For software build instructions see [Isle Software Build](https://projectf.io/isle/software-build.html).
+For hardware build instructions, see [dev boards](boards). For software build instructions, see [Isle Software Build](https://projectf.io/isle/software-build.html).
 
 ## Repo Layout
 

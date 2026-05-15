@@ -26,7 +26,7 @@ Breaking down a drawing example **0xD301**:
 * The 4-bit function is **0x3** - triangle
 * The 8-bit binary options are **00000001** - a filled triangle in colour A
 
-_The coordinates and colour for the triangle come from the registers._
+_The triangle's coordinates and colour come from the registers._
 
 You can generate Earthrise instructions either through the Isle system library (to follow with the CPU) or by using the provided assembler [erasm](../tools/erasm/), which converts mnemonics to hexadecimal instructions.
 
@@ -47,7 +47,7 @@ Earthrise uses **coordinate registers** to define shapes.
 
 Coordinate registers are signed 12-bit values, allowing a range from -2048 to +2047. There are four coordinate register pairs, `(x0, y0)` to `(x3, y3)`, and one translation register pair `(xt, yt)`.
 
-Coordinate registers are signed and 12-bits long, covering -2048 to +2047. There are four pairs of coordinate registers `(x0, y0)` to `(x3, y3)` for defining shapes and one pair of translation registers. For example, when you tell Earthrise to draw a line, it starts at `(x0, y0)` and ends at `(x1, y1)`.
+Coordinate registers are signed and 12 bits long, covering -2048 to +2047. There are four pairs of coordinate registers `(x0, y0)` to `(x3, y3)` for defining shapes and one pair of translation registers. For example, when you tell Earthrise to draw a line, it starts at `(x0, y0)` and ends at `(x1, y1)`.
 
 The load immediate opcode for each register:
 
@@ -57,7 +57,7 @@ The load immediate opcode for each register:
 * **0x6**, **0x7** - `(x3, y3)`
 * **0x8**, **0x9** - `(xt, yt)` - translation registers
 
-The **translation** registers `(xt, yt)` are added to the initial coordinates used by drawing functions. For example, when `(xt=4, yt=8)`, all coordinates will be shifted right 4 pixels and down 8 pixels. You can use negative translation values, so `(xt=-4, yt=0)` will move the x coordinates left by 4 pixels. Translation applies to all subsequent coordinates, so you can define a complex shape, then update the translation registers to move the whole shape without having to revise hundreds of coordinates. If you translate beyond the coordinates range (-2048 to +2047) the coordinates will overflow and big positive numbers become negative and vice versa.
+The **translation** registers `(xt, yt)` are added to the initial coordinates used by drawing functions. For example, when `(xt=4, yt=8)`, all coordinates will be shifted right 4 pixels and down 8 pixels. You can use negative translation values, so `(xt=-4, yt=0)` will move the x coordinates left by 4 pixels. Translation applies to all subsequent coordinates, so you can define a complex shape, then update the translation registers to move the whole shape without having to revise hundreds of coordinates. If you translate beyond the coordinate range (-2048 to +2047), the coordinates will overflow, and large positive numbers will become negative, and vice versa.
 
 Taking the line example from the overview (above):
 
@@ -70,7 +70,7 @@ Taking the line example from the overview (above):
 0xD100  # draw line ca
 ```
 
-To express negative values in hex, use two's complement: -1 is 0xFFF and -16 is 0xFF0. For example, instruction `0x8FFC` sets `xt` to -4, which shifts coordinates left 4 pixels.
+To express negative values in hex, use two's complement: -1 is 0xFFF, and -16 is 0xFF0. For example, instruction `0x8FFC` sets `xt` to -4, which shifts coordinates left 4 pixels.
 
 Earthrises uses coordinates to determine which address in [VRAM](../hardware/mem/docs/vram.md) to write to.
 
@@ -87,7 +87,7 @@ Future Features:
 
 ## Colour Registers
 
-Earthrise uses **colour registers** to define the colours shapes are drawn in.
+Earthrise uses **colour registers** to define the colour of shapes.
 
 Colour registers are 8 bits in length, supporting 2-256 colours. There are two colour registers for lines and two for fills; drawing instructions (discussed below) select colour A or B. A colour load immediate instruction consists of **0xC** (for colour) followed by a 4-bit register ID and an 8-bit immediate.
 
@@ -100,7 +100,7 @@ The load immediate opcode for each register:
 
 Earthrise uses the colour registers to determine what value to write to vram. The colour to display is looked up in the [CLUT](../hardware/mem/docs/clut.md).
 
-By default, colour registers are set to 1 (one), this avoids users accidentally drawing in colour 0 on a background of 0.
+By default, colour registers are set to 1 (one); this avoids users accidentally drawing in colour 0 on a background of 0.
 
 In future, Earthrise may support pattern registers to draw dotted and dashed lines.
 
@@ -108,14 +108,13 @@ In future, Earthrise may support pattern registers to draw dotted and dashed lin
 
 **Drawing instructions** use the coordinate and colour registers to draw pixels, lines, and shapes.
 
-A drawing instruction has the **0xD** opcode follow by the function representing a 4-bit shape ID, and up to 8 bits of options.
+A drawing instruction has the **0xD** opcode followed by the function representing a 4-bit shape ID, and up to 8 bits of options.
 
 * pixel (**0xD0**)
     - draw a single pixel at `(x0, y0)`
 * line (**0xD1**)
     - draw a line from `(x0, y0)` to `(x1, y1)`
     - automatically detects horizontal lines for faster performance
-    - NB. the line fast (**0xDF**) instruction is NO LONGER SUPPORTED; use normal line
 * circle (**0xD2**)
     - draw a circle with centre `(x0, y0)` and radius `r0` (same reg as `x1`)
     - does nothing if radius is zero or negative
@@ -124,7 +123,7 @@ A drawing instruction has the **0xD** opcode follow by the function representing
 * rect (**0xD4**)
     - draw a rect with opposite corners `(x0, y0)` and `(x1, y1)`
 
-Drawing instructions leave coordinate and colour registers untouched.
+Drawing instructions leave the coordinate and colour registers untouched.
 
 _NB. Execution halts if you specify a degenerate triangle (common vertices)._
 
@@ -139,17 +138,15 @@ Use up to 8 bits in the instruction to control drawing. Only _filled_ and _colou
 * Bit 2 - **Pattern** (0=solid, 1=pattern) - **future feature**
     - Details to follow when pattern is implemented
 * Bit 3 - **Edge Style** (0=complete, 1=connect) - **future feature**
-    - Connect has missing edges so one line/shape is responsible for each line
+    - Connect has missing edges so one shape is responsible for each line
     - Top-left rule for filled triangles/rects with connect set
-    - First but not last pixel for lines with connect set
-        - the diamond-exit rule is more complex and counterintuitive at times
     - Does not apply to circles
 * Bit 4 - **Shape option** - extra shape-specific option - **future feature**
     - circle - (0=circle, 1=arc/sector) - arc/sector uses angle registers
 
-Earthrise ensures outline and filled shapes are aligned; an outline triangle will precisely match the edges of a filled triangle with the same coordinates.
+Earthrise ensures that outline and filled shapes are aligned; an outline triangle will precisely match the edges of a filled triangle with the same coordinates.
 
-You need two instructions to draw a shape with outline and fill, but you get to reuse the coordinates. For example, drawing an outline triangle takes 7 instructions (including 6 coordinate instructions), while an outlined and filled triangle takes one more instruction (8 in total). The draw outline instruction needs to follow the draw filled instruction, otherwise the fill will cover the outline.
+You need two instructions to draw a shape with outline and fill, but you get to reuse the coordinates. For example, drawing an outline triangle takes 7 instructions (including 6 coordinate instructions), while an outlined and filled triangle takes one more instruction (8 in total). The draw outline instruction must follow the draw filled instruction; otherwise, the fill will cover the outline.
 
 ## Control Instructions
 
@@ -164,9 +161,9 @@ I intend to add jump and return instructions for limited flow control depending 
 
 ## Assembler Mnemonics
 
-The Earthrise assembler [erasm](../tools/erasm/), converts instruction mnemonics into hexadecimal instructions. The assembler is written in Python for running on an external computer.
+The Earthrise assembler [erasm](../tools/erasm/) converts instruction mnemonics into hexadecimal instructions. The assembler is written in Python for running on an external computer.
 
-For coordinate registers, specify the name of the register and the signed immediate to load in decimal or hexadecimal. Valid immediates are in the range -2048 to 2047. Possible registers: `x0, y0, x1, y1, x2, y2, x3, y3, xt, yt`.
+For coordinate registers, specify the register name and the signed immediate to load in decimal or hexadecimal. Valid immediates are in the range -2048 to 2047. Possible registers: `x0, y0, x1, y1, x2, y2, x3, y3, xt, yt`.
 
 * `x0 21`
 * `y0 -1`
@@ -192,13 +189,13 @@ The assembler uses **#** to begin comments.
 
 ## Instruction Examples
 
-The following examples demonstrate each of the opcodes and shapes.
+The following examples demonstrate each opcode and shape.
 
 The following examples are also ready to run as [res/drawings/doc-examples.eas](../res/drawings/doc-examples.eas).
 
 ### Colours
 
-Set all the line and fill colours as you like. For these examples I'll use:
+Set all the line and fill colours as you like. For these examples, I use:
 
 ```
 0xC00A  // line colour A = 0xA
@@ -315,7 +312,7 @@ Here's a filled diamond. We keep the common coordinates unchanged, which minimis
 0xD301  // draw filled triangle (colour A)
 ```
 
-In this case, `y2` was the same for both triangles because the diamond shape is symmetrical but this isn't generally true.
+In this case, `y2` was the same for both triangles because the diamond shape is symmetrical, but this isn't generally true.
 
 ### Stopping
 

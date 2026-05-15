@@ -8,11 +8,11 @@ If you're new to Isle, the best place to start is [Isle FPGA Computer](http://pr
 
 ## UART
 
-I'm not currently able to test UART-based designs on Lakritz. The Lakritz board doesn't have a UART and I don't currently have a suitable UART Pmod. However, I do tests UART designs on the ULX3S, which also has an ECP5 FPGA. You're welcome to open an [issue](https://github.com/projf/isle/issues) if you find a problem with the Lakritz UART support.
+I'm not currently able to test UART-based designs on Lakritz. The Lakritz board doesn't include a UART, and I don't currently have a suitable UART Pmod. However, I do tests UART designs on the ULX3S, which also has an ECP5 FPGA. You're welcome to open an [issue](https://github.com/projf/isle/issues) if you find a problem with the Lakritz UART support.
 
 ## Building
 
-There is a Lakritz top module for each chapter of the _Building Isle_ book, which you can read on the [Isle blog](http://projectf.io/isle/index.html).
+There is a Lakritz top module for each chapter of the _Building Isle_ book, available on the [Isle blog](http://projectf.io/isle/index.html).
 
 Use **make** to build your chosen chapter. For example, to build the chapter 4 design:
 
@@ -21,11 +21,11 @@ cd isle/boards/lakritz/ch04
 make
 ```
 
-If you get a timing failure, run `make clean && make`. The Makefile uses `--randomize-seed` with nextpnr and sometimes you'll be unlucky with placement. You should also ensure you're running recent versions of Yosys and nextpnr.
+If you get a timing failure, run `make clean && make`. The Makefile uses `--randomize-seed` with nextpnr, and sometimes you'll be unlucky with placement. You should also ensure you're running recent versions of Yosys and nextpnr.
 
 Many chapters have parameters you can edit in the matching top module. For example, in `top_ch02.v` you can choose the bitmap and palette to load.
 
-Each chapter top module uses an instance of the common chapter design from [hardware/book](../../hardware/book/).
+Each chapter's top module uses an instance of the common chapter design from [hardware/book](../../hardware/book/).
 
 ### Board Programming
 
@@ -53,6 +53,7 @@ The following table shows clock generation parameters for different [display mod
 
 | Parameter         | 640x480    | 1024x768*  | 1366x768   | 1280x720*  |
 | ----------------- | ---------: | ---------: | ---------: | ---------: |
+| Isle DISPLAY_MODE | 0          | 1          | 2          | 4          |
 | Pixel Clock (MHz) | 25.2       | 64.8       | 72         | 74.4       |
 | CLKI_DIV          | 8          | 4          | 2          | 4          |
 | CLKFB_DIV         | 21         | 27         | 15         | 31         |
