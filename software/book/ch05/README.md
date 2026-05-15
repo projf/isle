@@ -11,7 +11,7 @@ There's a blog post covering [Chapter 5 Software](https://projectf.io/isle/ch05-
 * [jump.s](jump.s) - jumping figure animation
 * [palette.s](palette.s) - load a palette into clut and display each colour
 
-These examples write to text mode memory, see the [tram](../../../hardware/docs/tram.md) documentation for details. You can see the supported characters by looking at the font file [unifont-rom.mem](../../../res/fonts/unifont-rom.mem).
+These examples write to text mode memory; see the [tram](../../../hardware/docs/tram.md) documentation for details. You can see the supported characters by looking at the font file [unifont-rom.mem](../../../res/fonts/unifont-rom.mem).
 
 ## Building Isle Software
 

@@ -8,7 +8,7 @@ If you're new to Isle, the best place to start is [Isle FPGA Computer](http://pr
 
 ## Building
 
-There is a ULX3S top module for each chapter of the _Building Isle_ book, which you can read on the [Isle blog](http://projectf.io/isle/index.html).
+There is a ULX3S top module for each chapter of the _Building Isle_ book, available on the [Isle blog](http://projectf.io/isle/index.html).
 
 Before building, update `FPGA_TYPE` in `isle/boards/ulx3s/ulx3s.mk` to match your FPGA:
 
@@ -23,11 +23,11 @@ cd isle/boards/ulx3s/ch04
 make
 ```
 
-If you get a timing failure, run `make clean && make`. The Makefile uses `--randomize-seed` with nextpnr and sometimes you'll be unlucky with placement. You should also ensure you're running recent versions of Yosys and nextpnr.
+If you get a timing failure, run `make clean && make`. The Makefile uses `--randomize-seed` with nextpnr, and sometimes you'll be unlucky with placement. You should also ensure you're running recent versions of Yosys and nextpnr.
 
 Many chapters have parameters you can edit in the matching top module. For example, in `top_ch02.v` you can choose the bitmap and palette to load.
 
-Each chapter top module uses an instance of the common chapter design from [hardware/book](../../hardware/book/).
+Each chapter's top module uses an instance of the common chapter design from [hardware/book](../../hardware/book/).
 
 ### Board Programming
 
@@ -49,6 +49,7 @@ The following table shows clock generation parameters for different [display mod
 
 | Parameter         | 640x480    | 1024x768   | 1366x768   | 1280x720*  |
 | ----------------- | ---------: | ---------: | ---------: | ---------: |
+| Isle DISPLAY_MODE | 0          | 1          | 2          | 4          |
 | Pixel Clock (MHz) | 25.2       | 65         | 72         | 74         |
 | CLKI_DIV          | 25         | 1          | 5          | 5          |
 | CLKFB_DIV         | 126        | 13         | 72         | 74         |

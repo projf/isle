@@ -27,18 +27,18 @@ Bitmap fonts.
 * [Unifont ROM](fonts/unifont-rom.mem) - [GNU Unifont](https://www.unifoundry.com/unifont/) 8x16
 * [Unscii ROM](fonts/unscii-rom.mem) - [Unscii](http://viznut.fi/unscii/) 8x16
 
-Fonts resources with "ROM" in their name are 128 character 8x16 pixel fonts for internal [text mode](../hardware/docs/textmode.md) ROM.
+Font resources with "ROM" in their name are 128-character 8x16-pixel fonts for internal [text mode](../hardware/docs/textmode.md) ROM.
 
 _Fonts have their own licences; see font file header for details._
 
 ## Palettes
 
-See [Colour Palettes](../docs/colour-palettes.md) for details including reference images.
+See [Colour Palettes](../docs/colour-palettes.md) for details, including palette reference images.
 
 ## Textmaps
 
 Test textmaps for text mode. See [tram](../hardware/mem/docs/tram.md) docs for details on format.
 
 * [ROM Glyphs](textmaps/rom-84x24.mem) - tests all 128 internal ROM glyphs
-* [Edge Tests](textmaps/edge-84x24.mem) - test display edge cases
+* [Edge Tests](textmaps/edge-84x24.mem) - test display edge cases (latency)
 * [Hello World](textmaps/hello-84x24.mem) - greetings from text mode

@@ -4,13 +4,13 @@ By combining [Verilator](https://www.veripool.org/verilator/) and [SDL](https://
 
 Be aware that designs typically run slower in simulation than on an FPGA dev board. For example, the [chapter 3 design](../../hardware/book/ch03/) runs at 43 FPS on an Apple M1 and 32 FPS on Linux with Intel i5-1240P.
 
-On macOS, colour rendering is incorrect on high-gamut displays due to the way LibSDL v2 handles colour spaces. The only fix I've found is to temporarily set your monitor to sRGB colour profile. I plan to move to LibSDL v3 at some point, but it's not a high priority right now.
+On macOS, colour rendering is incorrect on high-gamut displays due to LibSDL v2 colour space handling. The only fix I've found is to temporarily set your monitor to sRGB colour profile. I plan to move to LibSDL v3 at some point, but it's not a high priority right now.
 
 If you're new to Isle, the best place to start is [Isle FPGA Computer](http://projectf.io/isle/fpga-computer.html).
 
 ## Building
 
-There is a Verilator top module for each chapter of the _Building Isle_ book, which you can read on the [Isle blog](http://projectf.io/isle/index.html).
+There is a Verilator top module for each chapter of the _Building Isle_ book, available on the [Isle blog](http://projectf.io/isle/index.html).
 
 [Install dependencies](#install-dependencies) if you haven't already.
 
@@ -26,7 +26,7 @@ To enable/disable full screen and vsync, edit the main C++ file for that chapter
 
 Many chapters have parameters you can edit in the matching top module. For example, in `top_ch02.v` you can choose the bitmap and palette to load.
 
-Each chapter top module uses an instance of the common chapter design from [hardware/book](../../hardware/book/).
+Each chapter's top module uses an instance of the common chapter design from [hardware/book](../../hardware/book/).
 
 ### Verilog Debug Messages
 
@@ -36,7 +36,7 @@ Simply comment out `VERILOG_DEBUG` if you don't want debug output.
 
 ### Unknown Verilator Lint Message Code
 
-Verilator introduces new lint waivers from time to time; unfortunately, this trips up older versions of Verilator. If Verilator gives an error message of the form "Unknown Verilator lint message code" you have two options:
+Verilator introduces new lint waivers from time to time; unfortunately, this trips up older versions of Verilator. If Verilator gives an error message of the form "Unknown Verilator lint message code", you have two options:
 
 1. Upgrade to a newer version of Verilator
 2. Use the `-Wfuture-<message>` option; see [verilator Arguments](https://verilator.org/guide/latest/exe_verilator.html#cmdoption-Wfuture-message)
@@ -87,9 +87,9 @@ Once you have WSL2 running, you can use the Linux instructions (above). I have s
 
 ## 672x384 Display Timings
 
-Verilator designs use their own 672x384 display timings with 20 MHz clock. The pixel and system clock are both 20 MHz in Verilator simulation.
+Verilator designs use their own 672x384 display timings (`DISPLAY_MODE=3`) with a 20 MHz clock. The pixel and system clock are both 20 MHz in Verilator simulation.
 
-We want to as near 60 Hz and 20 MHz as possible, 825x404 at 20 MHz is 60.006 Hz.
+We want to be as close to 60 Hz and 20 MHz as possible; 825x404 at 20 MHz is 60.006 Hz.
 
 ```
 Horizontal Timings

@@ -1,6 +1,6 @@
 # Serial to Isle
 
-Rough notes for connecting to Isle UART using screen. You could use PuTTY on Windows. By default, Isle UART uses 115200 baud 8N1.
+Rough notes for connecting to the Isle UART using the screen command. You could use PuTTY on Windows. By default, Isle UART uses 115200 baud 8N1.
 
 ## Identify Device
 
@@ -16,9 +16,9 @@ Identify the device name on **macOS**:
 ls /dev/cu.usbserial-*
 ```
 
-Depending on your board's UART IC and driver the device name may vary.
+Depending on your board's UART IC and driver, the device name may vary.
 
-Some boards, such as the Nexys Video, have a dedicated USB port for UART, so ensure you connect that via USB before attempting to use the UART. On Linux, you'll see multiple ttyUSB with the Nexys Video connected for programming and UART, if you connect the UART cable after the programming cable the correct device should be `/dev/ttyUSB2`.
+Some boards, such as the Nexys Video, have a dedicated USB port for UART; ensure you connect it via USB before attempting to use the UART. On Linux, you'll see multiple ttyUSB with the Nexys Video connected for programming and UART. If you connect the UART cable after the programming cable, the correct device should be `/dev/ttyUSB2`.
 
 ## Connect with Screen
 
@@ -28,7 +28,7 @@ Then use **screen** to connect, replacing "foo" with the correct device name.
 screen /dev/foo 115200
 ```
 
-To exit screen, press Ctrl-a then type ":quit" and press return.
+To exit screen, press Ctrl-a, then type ":quit" and press return.
 
 _NB. You won't be able to program the ULX3S while screen is connected to the UART._
 
