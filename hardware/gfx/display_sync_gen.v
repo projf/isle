@@ -2,7 +2,7 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// NB. pixel clock must match display mode
+// NB. pixel clock must be correct for the display mode
 
 `default_nettype none
 `timescale 1ns / 1ps
@@ -11,22 +11,22 @@ module display_sync_gen #(
     parameter CORDW=16,       // signed coordinate width (bits)
     parameter DISPLAY_MODE=0  // display mode (see display_modes.vh)
     ) (
-    input  wire clk_pix,                 // pixel clock
-    input  wire rst_pix,                 // reset in pixel clock domain
-    output reg signed [CORDW-1:0] dx,    // horizontal display position
-    output reg signed [CORDW-1:0] dy,    // vertical display position
-    output reg hsync,                    // horizontal sync
-    output reg vsync,                    // vertical sync
-    output reg de,                       // data enable (low in blanking)
-    output reg frame_start,              // high for one cycle at frame start
-    output reg line_start                // high for one cycle at line start
+    input  wire clk_pix,               // pixel clock
+    input  wire rst_pix,               // reset in pixel clock domain
+    output reg signed [CORDW-1:0] dx,  // horizontal display position
+    output reg signed [CORDW-1:0] dy,  // vertical display position
+    output reg hsync,                  // horizontal sync
+    output reg vsync,                  // vertical sync
+    output reg de,                     // data enable (low in blanking)
+    output reg frame_start,            // high for one cycle at frame start
+    output reg line_start              // high for one cycle at line start
     );
 
     `include "display_modes.vh"
 
-    reg signed [CORDW-1:0] x, y;  // uncorrected display position (1 cycle early)
+    reg signed [CORDW-1:0] x, y;  // display position (prior to latency correction)
 
-    `ifdef BENCH  // ensure frame_start and line_start xd works in simulation
+    `ifdef BENCH  // ensure frame_start and line_start CDC work in simulation
     initial begin
         frame_start = 0;
         line_start = 0;

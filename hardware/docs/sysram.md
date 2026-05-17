@@ -1,6 +1,6 @@
 # System Memory
 
-The **sysram** module [[verilog src](../mem/sysram.v)] is Isle's main memory in block ram (bram). The sysram has a 32-bit data bus and uses **word addressing** but with byte write support.
+The system memory module [[hardware/mem/sysram.v](../mem/sysram.v)] is Isle's main memory in block ram (bram). The sysram has a 32-bit data bus and uses **word addressing** but with byte write support.
 
 ## Parameters
 

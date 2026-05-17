@@ -1,15 +1,15 @@
 # Synchronous ROM
 
-The **rom_sync** [[verilog src](../mem/rom_sync.v)] module create a synchronous ROM, typically in block ram. Isle uses small synchronous ROMs for vital data, such as the core system font.
+The sync rom module [[hardware/mem/rom_sync.v](../mem/rom_sync.v)] create a synchronous (clocked) rom, typically in block ram. Isle uses small synchronous ROMs for vital data that can't be loaded from external memory, such as the core system font.
 
 ## Parameters
 
 * `ADDRW` - address width (bits)
 * `DATAW` - data width (bits)
-* `DEPTH` - ROM depth
-* `FILE_ROM` - set ROM contents
+* `DEPTH` - rom depth
+* `FILE_ROM` - set rom contents
 
-Because this module creates a ROM, you must set `FILE_ROM` to a suitable $readmemh file or the ROM will be empty.
+Because this module creates a rom, you must set `FILE_ROM` to a suitable $readmemh file or the ROM will be empty.
 
 ## Signals
 

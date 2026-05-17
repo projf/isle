@@ -1,10 +1,10 @@
 # TMDS Encoder (DVI)
 
-The **tmds_encoder** module [[verilog src](../gfx/tmds_encoder.v)] encodes a channel for DVI TMDS (transition-minimized differential signaling) suitable for output to a DVI or HDMI display. You encode each of the red, green, and blue channels separately using this module.
+The TMDS encoder module [[hardware/gfx/tmds_encoder.v](../gfx/tmds_encoder.v)] encodes a channel for DVI TMDS (transition-minimized differential signaling) suitable for output to a DVI or HDMI display. You encode each of the red, green, and blue channels separately using this module.
 
-After encoding, the TMDS signals pass through architecture specific DVI generator module before being output: [[ECP5 Verilog src](../arch/ecp5/dvi_generator.v)] and [[XC7 Verilog src](../arch/xc7/dvi_generator.v)].
+After encoding, the TMDS signals pass through architecture specific DVI generator module before being output: [[arch/ecp5/dvi_generator.v)](../arch/ecp5/dvi_generator.v)] or [[arch/xc7/dvi_generator.v](../arch/xc7/dvi_generator.v)].
 
-See the [Display](http://projectf.io/isle/display.html) blog post for more information on this module.
+See the [Display Controller](http://projectf.io/isle/display-controller.html) blog post for more information on this module.
 
 ## Signals
 
@@ -32,4 +32,4 @@ Channel 0 encodes horizontal and vertical sync using the `ctrl_in` signal with v
 
 ## Testing
 
-There is a comprehensive test [[python src](../tests/gfx/tmds_encoder.py)] of the encoding using a Python model [[python src](../tests/gfx/tmds_model.py)].  For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
+There is a comprehensive test [[hardware/tests/gfx/tmds_encoder.py](../tests/gfx/tmds_encoder.py)] of the encoding using a Python model [[hardware/tests/gfx/tmds_model.py](../tests/gfx/tmds_model.py)].  For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).

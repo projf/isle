@@ -1,6 +1,6 @@
-# CLUT
+# Colour Lookup Table
 
-The **clut** (Colour Lookup Table) module [[verilog src](../mem/clut.v)] maps palette indexes to colours.
+The colour lookup table (clut) module [[hardware/mem/clut.v](../mem/clut.v)] maps palette indexes to colours.
 
 For example, in 16 colour mode each pixel colour in [vram](vram.md) is represented by a 4-bit colour index. When we come to display that pixel we read the colour index from vram, say **6**, then use the clut to map that to a 15-bit RGB555 colour such as (31, 31, 00), which is bright yellow.
 
@@ -50,6 +50,6 @@ The display port has a higher latency because of the output register to improve 
 
 ## Testing
 
-There is a cocotb test bench [[python src](../tests/mem/clut.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
+There is a cocotb test bench [[hardware/tests/mem/clut.py](../tests/mem/clut.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
 
 Most of the complexity depends on the dual-port bram implementation, which isn't visible with this inferred memory design.

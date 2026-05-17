@@ -1,12 +1,12 @@
 # Display Sync Signal Generation
 
-The **display sync gen** module [[verilog src](../gfx/display_sync_gen.v)] generates sync signals and display coordinates.
+The sync signal generation module [[hardware/gfx/display_sync_gen.v](../gfx/display_sync_gen.v)] generates display sync signals (horizontal and vertical blanking) and coordinates.
 
-The `DISPLAY_MODE` parameter controls the display mode (resolution and refresh rate). The input pixel clock must match the mode to generate a valid display signal. For example, `DISPLAY_MODE=2` is 1366x768 and requires a 72 MHz pixel clock. See [[display_modes.vh](../include/display_modes.vh)] for supported modes.
+The `DISPLAY_MODE` parameter controls the display mode (resolution and refresh rate). The input pixel clock _must_ be correct for the display mode to generate a valid display signal. For example, `DISPLAY_MODE=2` is 1366x768 and requires a 72 MHz pixel clock. See [display_modes.vh](../include/display_modes.vh) for supported display modes, including 1024x768, 1366x768, and 1280x720.
 
-Signed 16-bit coordinates are used throughout these designs for flexibility and consistency. Using signed coordinates allows negative coordinates for the blanking interval, with the origin of the display at (0,0) irrespective of the display mode.
+Signed 16-bit coordinates are used throughout Isle for flexibility and consistency. Using signed coordinates allows negative coordinates for the blanking interval, with the origin of the display at (0,0) irrespective of the display mode.
 
-See the [Display Controller](http://projectf.io/isle/display-controller.html) blog post for more information on this module.
+See the [Display Controller](http://projectf.io/isle/display-controller.html) blog post to learn about this module in context.
 
 ## Parameters
 
@@ -39,4 +39,4 @@ Display mode could have been a signal to allow runtime resolution changes. Howev
 
 ## Testing
 
-There is a cocotb test bench [[python src](../tests/gfx/display.py)] that exercises this module with the included display modes. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
+There is a cocotb test bench [[hardware/tests/gfx/display.py](../tests/gfx/display.py)] that exercises this module with the included display modes. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).

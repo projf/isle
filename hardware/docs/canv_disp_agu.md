@@ -1,6 +1,6 @@
 # Canvas Display Address Generation
 
-The canvas display address generation unit **canv_disp_agu** [[verilog src](../gfx/canv_disp_agu.v)] calculates the [vram](vram.md) address in a canvas buffer for display.
+The canvas display address generation unit [[hardware/gfx/canv_disp_agu.v](../gfx/canv_disp_agu.v)] calculates the [vram](vram.md) address within a canvas buffer for display output.
 
 The address calculation supports different colour depths, canvas positioning, and scaling. This module has 2 cycles of latency, supports pipelining, and avoids multiplication.
 
@@ -110,4 +110,4 @@ Our display controller begins each line with the horizontal blanking internal. T
 
 ### Testing
 
-There is a cocotb test bench [[python src](../tests/gfx/canv_disp_agu.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
+There is a cocotb test bench [[hardware/tests/gfx/canv_disp_agu.py](../tests/gfx/canv_disp_agu.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).

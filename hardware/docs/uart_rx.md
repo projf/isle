@@ -1,6 +1,6 @@
-# UART Receiver
+# Uart Receiver
 
-The **uart_rx** [[verilog src](../io/uart_rx.v)] module receives uart data. There is also a uart transmit module [uart_tx.v](uart_tx.md).
+The uart receiver (RX) module [[hardware/io/uart_rx.v](../io/uart_rx.v)] receives serial uart data. There is also a uart transmit module [uart_tx.v](uart_tx.md).
 
 Combine with [fifo_sync](../mem/fifo_sync.v) to avoid having to handle every piece of data individually.
 

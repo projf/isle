@@ -4,7 +4,7 @@ These projects are based on a chapter of _Building Isle_.
 
 ## Chapter 1
 
-Based on the hardware from [Chapter 1 - Isle Display](https://projectf.io/isle/display.html).
+Based on the hardware from [Chapter 1 - Display Controller](https://projectf.io/isle/display-controller.html).
 
 [Hitomezashi](hitomezashi) races the beam to create a stitch pattern, which appears both ordered and random. Build by editing `top_ch01.v` to use `hitomezashi` in place of `ch01`, ensure you're using `DISPLAY_MODE=0` with a suitable clock frequency, then run ch01 make or build.tcl.
 
