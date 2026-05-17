@@ -1,4 +1,4 @@
-# Isle.Computer - Display Sync Generator Test Makefile
+# Isle.Computer - Display Sync Signal Generator Test Makefile
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 

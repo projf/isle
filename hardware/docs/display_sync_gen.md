@@ -39,4 +39,4 @@ Display mode could have been a signal to allow runtime resolution changes. Howev
 
 ## Testing
 
-There is a cocotb test bench [[hardware/tests/gfx/display_sync_gen.py](../tests/gfx/display_sync_gen.py)] that exercises this module with the included display modes. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
+There is a cocotb test bench [[display_sync_gen.py](../tests/gfx/display_sync_gen.py)] that exercises this module with the included display modes. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).

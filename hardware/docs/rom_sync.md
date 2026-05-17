@@ -1,6 +1,6 @@
 # Synchronous ROM
 
-The sync rom module [[rom_sync.v](../mem/rom_sync.v)] create a synchronous (clocked) rom, typically in block ram. Isle uses small synchronous ROMs for vital data that can't be loaded from external memory, such as the core system font.
+The sync rom module [[rom_sync.v](../mem/rom_sync.v)] create a synchronous (clocked) rom, typically in block ram. Isle uses small synchronous roms for vital data that can't be loaded from external memory, such as the core system font.
 
 ## Parameters
 

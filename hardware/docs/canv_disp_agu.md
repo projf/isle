@@ -35,7 +35,7 @@ The position of the canvas on the display is set by the window start `win_start`
 
 `addr_base` is the base address of the canvas buffer in vram. You can switch this at the start of a frame for double buffering. Or even mid-way through a frame to combine different buffers to form a display.
 
-The `BMAP_LAT` parameter corrects for end-to-end bitmap latency in calculating the address, retrieving data from vram, and looking the colour up in the CLUT. For Isle this should be set to 6. See [Display Pipeline](#display-pipeline) for further explanation.
+The `BMAP_LAT` parameter corrects for end-to-end bitmap latency in calculating the address, retrieving data from vram, and looking the colour up in the CLUT. For Isle this should be set to 6. See [display pipeline](#display-pipeline) for further explanation.
 
 The address shift, `addr_shift`, determines how the raw pixel address is split between vram address and pixel index. Because the maximum address shift is 5, the `SHIFTW` parameter is set to 3.
 
@@ -101,8 +101,8 @@ scale:  0x00020002
 The bitmap display pipeline has three stages:
 
 1. Canvas Display AGU (this module) - calculates vram address
-2. [VRAM](vram.md) - returns pixel data
-3. [CLUT](clut.md) - looks up pixel colour
+2. [vram](vram.md) - returns pixel data
+3. [clut](clut.md) - looks up pixel colour
 
 This process takes several clock cycles. If we don't account for latency, the pixel would be displayed in the wrong position (too far to the right). VRAM and CLUT use brams with additional output registers, hence taking two cycles from address generation to receiving data.
 
@@ -110,4 +110,4 @@ Our display controller begins each line with the horizontal blanking internal. T
 
 ### Testing
 
-There is a cocotb test bench [[hardware/tests/gfx/canv_disp_agu.py](../tests/gfx/canv_disp_agu.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
+There is a cocotb test bench [[canv_disp_agu.py](../tests/gfx/canv_disp_agu.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).

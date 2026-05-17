@@ -1,6 +1,6 @@
 # Circle Drawing
 
-The circle module [[circle.v](../gfx/circle.v)] provides the x and y distances to draw a circle with the midpoint circle algorithm. This implementation supports signed integer coordinates. See [Earthrise](earthrise.md) for an example drawing complete circles with this module.
+The circle module [[circle.v](../gfx/circle.v)] provides the x and y distances to draw a circle with the midpoint circle algorithm. This implementation supports signed integer coordinates. See [Earthrise](earthrise.md) for an example of drawing complete circles with this module.
 
 ## Parameters
 

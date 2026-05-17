@@ -4,6 +4,8 @@ The uart transmitted (TX) module [[uart_tx.v](../io/uart_tx.v)] transmits uart s
 
 As of May 2026, `uart_tx` is not yet used in Isle. The Verilator/SDL simulator uses a similar design to `uart_tx` to send keyboard input to Isle when running in simulation; see [sdl_sim.h](../../boards/verilator/sdl_sim.h).
 
+Combine with [fifo_sync](fifo_sync.md) to avoid having to handle every piece of data individually.
+
 ## Parameters
 
 * `UART_CNT_INC` - 16 x baud counter increment
@@ -31,4 +33,4 @@ The module defaults to 115200 baud with 20 MHz system clock.
 
 ## Testing
 
-There is a cocotb test bench [[hardware/tests/io/uart_tx.py](../tests/io/uart_tx.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
+There is a cocotb test bench [[uart_tx.py](../tests/io/uart_tx.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).

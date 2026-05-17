@@ -18,7 +18,7 @@ The separate system and displays ports avoid contention between the CPU and disp
 
 The address width determines the number of palette entries. The data width depends on the output colour. Isle supports 256 15-bit colours (RGB555), so uses `DATAW=15` and `ADDRW=8`.
 
-The clut takea a `FILE_PAL` parameter, which allows an initial $readmemh format palette to be loaded at build time. Isle includes several palettes to get you started, see [Colour Palettes](../../../docs/colour-palettes.md) for details.
+The clut takea a `FILE_PAL` parameter, which allows an initial $readmemh format palette to be loaded at build time. Isle includes several palettes to get you started, see [Colour Palettes](../../docs/colour-palettes.md) for details.
 
 ## Signals
 
@@ -50,6 +50,6 @@ The display port has a higher latency because of the output register to improve 
 
 ## Testing
 
-There is a cocotb test bench [[hardware/tests/mem/clut.py](../tests/mem/clut.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
+There is a cocotb test bench [[clut.py](../tests/mem/clut.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
 
 Most of the complexity depends on the dual-port bram implementation, which isn't visible with this inferred memory design.

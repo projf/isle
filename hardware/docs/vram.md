@@ -12,7 +12,7 @@ If vram shared main memory, we'd have to arbitrate between the display, drawing 
 
 `ADDRW` should be set to **14**, but may be set larger if you have enough block ram. Because bit write infers 32 x 2 KiB brams, you don't save any resources by setting `ADDRW` to less than 14.
 
-The optional `FILE_BMAP` parameter allows $readmemh format [bitmaps](../../../res/bitmaps/) to be loaded at build time; this is mostly useful for testing; for example `/res/bitmaps/crocus/crocus-336x192.mem`.
+The optional `FILE_BMAP` parameter allows $readmemh format [bitmaps](../../res/bitmaps/) to be loaded at build time; this is mostly useful for testing; for example `/res/bitmaps/crocus/crocus-336x192.mem`.
 
 You can create a suitable $readmemh bitmap with [img2fmem](https://github.com/projf/fpgatools/tree/main/img2fmem).
 
@@ -65,6 +65,6 @@ The display port has a higher latency because of the additional output register 
 
 ## Testing
 
-There is a cocotb test bench [[hardware/tests/mem/vram.py](../tests/mem/vram.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
+There is a cocotb test bench [[vram.py](../tests/mem/vram.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
 
 Most of the complexity depends on the dual-port bram implementation, which isn't visible with this inferred memory design.

@@ -26,7 +26,7 @@ The CPU can write the Unicode code point, together with foreground and backgroun
 * `ADDRW` - address width (bits)
 * `FILE_TXT` - optional initial text to load
 
-The optional `FILE_TXT` parameter allows $readmemh format [textmaps](../../../res/textmaps/) to be loaded at build time; this is mostly useful for testing; for example `/res/textmaps/rom-84x24.mem`.
+The optional `FILE_TXT` parameter allows $readmemh format [textmaps](../../res/textmaps/) to be loaded at build time; this is mostly useful for testing; for example `/res/textmaps/rom-84x24.mem`.
 
 ## Signals
 
