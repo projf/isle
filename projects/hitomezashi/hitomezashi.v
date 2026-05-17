@@ -26,17 +26,17 @@ module hitomezashi #(
     );
 
     //
-    // Display Controller
+    // Display Sync Signals and Coordinates
     //
 
     wire signed [CORDW-1:0] dx, dy;
     wire hsync, vsync, de;
     wire frame_start;
 
-    display_timings #(
+    display_sync_gen #(
         .CORDW(CORDW),
         .DISPLAY_MODE(DISPLAY_MODE)
-    ) display_timings_inst (
+    ) display_sync_gen_inst (
         .clk_pix(clk),
         .rst_pix(rst),
         .dx(dx),

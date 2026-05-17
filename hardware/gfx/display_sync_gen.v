@@ -1,4 +1,4 @@
-// Isle.Computer - Display Timings
+// Isle.Computer - Display Sync Signal Generator
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
@@ -7,7 +7,7 @@
 `default_nettype none
 `timescale 1ns / 1ps
 
-module display_timings #(
+module display_sync_gen #(
     parameter CORDW=16,       // signed coordinate width (bits)
     parameter DISPLAY_MODE=0  // display mode (see display_modes.vh)
     ) (

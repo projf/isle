@@ -10,7 +10,7 @@ The chapter 5 design uses the following Verilog modules:
 
 * `book/ch05/ch05.v`
 * `cpu/FemtoRV32.v`
-* `gfx/display_timings.v`
+* `gfx/display_sync_gen.v`
 * `gfx/font_glyph.v`
 * `gfx/textmode.v`
 * `gfx/tmds_encoder.v` (not used by Verilator sim)

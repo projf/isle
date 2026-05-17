@@ -9,7 +9,7 @@ See [boards](../../../boards/) for build and programming instructions.
 The chapter 1 design uses the following Verilog modules:
 
 * `book/ch01/ch01.v`
-* `gfx/display_timings.v`
+* `gfx/display_sync_gen.v`
 * `gfx/tmds_encoder.v` (not used by Verilator sim)
 
 Each [board](../../../boards/) has its own top module plus relevant architecture-specific modules under `arch/ecp5` and `arch/xc7`; check board make/build files for details.

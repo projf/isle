@@ -27,7 +27,7 @@ The clut is dual port, with a system and display port in different clock domains
 ### Input
 
 * `clk_sys` - system clock
-* `clk_pix` - pixel clock (frequency depends on [display mode](display_timings.md))
+* `clk_pix` - pixel clock (frequency depends on [display mode](display_sync_gen.md))
 * `we_sys` - system write enable
 * `re_sys` - system read enable
 * `addr_sys` - system word address

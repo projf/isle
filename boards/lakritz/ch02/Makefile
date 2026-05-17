@@ -11,7 +11,7 @@ PATH_PROJ = ../../../projects
 # Common Verilog
 ADD_SRC += ${PATH_LIB}/book/ch02/ch02.v
 ADD_SRC += ${PATH_LIB}/gfx/canv_disp_agu.v
-ADD_SRC += ${PATH_LIB}/gfx/display_timings.v
+ADD_SRC += ${PATH_LIB}/gfx/display_sync_gen.v
 ADD_SRC += ${PATH_LIB}/gfx/tmds_encoder.v
 ADD_SRC += ${PATH_LIB}/mem/clut.v
 ADD_SRC += ${PATH_LIB}/mem/vram.v

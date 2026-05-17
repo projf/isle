@@ -278,13 +278,13 @@ module ch05 #(
 
 
     //
-    // Display Timings
+    // Display Sync Signals and Coordinates
     //
 
-    display_timings #(
+    display_sync_gen #(
         .CORDW(CORDW),
         .DISPLAY_MODE(DISPLAY_MODE)
-    ) display_timings_inst (
+    ) display_sync_gen_inst (
         .clk_pix(clk_pix),
         .rst_pix(rst_pix),
         .dx(dx),

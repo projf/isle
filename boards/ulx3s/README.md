@@ -58,4 +58,4 @@ The following table shows clock generation parameters for different [display mod
 | CLKOS_DIV         | 20         | 10         | 10         | 10         |
 | CLKOS_CPHASE      | 10         | 5          | 5          | 5          |
 
-_\*1280x720 should be 74.25 MHz, but this clock frequency is still withing spec ±0.5%._
+_\*1280x720 should be 74.25 MHz, but this clock frequency is still within spec ±0.5%._

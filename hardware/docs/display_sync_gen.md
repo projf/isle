@@ -1,12 +1,12 @@
-# Display Timings
+# Display Sync Signal Generation
 
-The **display timings** module [[verilog src](../gfx/display_timings.v)] generates sync signals and display coordinates.
+The **display sync gen** module [[verilog src](../gfx/display_sync_gen.v)] generates sync signals and display coordinates.
 
 The `DISPLAY_MODE` parameter controls the display mode (resolution and refresh rate). The input pixel clock must match the mode to generate a valid display signal. For example, `DISPLAY_MODE=2` is 1366x768 and requires a 72 MHz pixel clock. See [[display_modes.vh](../include/display_modes.vh)] for supported modes.
 
 Signed 16-bit coordinates are used throughout these designs for flexibility and consistency. Using signed coordinates allows negative coordinates for the blanking interval, with the origin of the display at (0,0) irrespective of the display mode.
 
-See the [Display](http://projectf.io/isle/display.html) blog post for more information on this module.
+See the [Display Controller](http://projectf.io/isle/display-controller.html) blog post for more information on this module.
 
 ## Parameters
 

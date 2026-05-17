@@ -29,7 +29,7 @@ See the [Bitmap Graphics](http://projectf.io/isle/bitmap-graphics.html) blog pos
 * `win_end` - canvas window end coords
 * `scale` - canvas scale
 
-Several of these input signals come from [display timings](display_timings.md).
+Several of these input signals come from the [display sync generator](display_sync_gen.md).
 
 The position of the canvas on the display is set by the window start `win_start` and end `win_end` signals, while horizontal and vertical scale are controlled by `scale`. These signals are discussed in more detail below.
 
