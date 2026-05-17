@@ -1,6 +1,6 @@
 # Text Mode
 
-The text mode module [[hardware/gfx/textmode.v](../gfx/textmode.v)] displays text using character data and colour from a dedicate memory: [tram](tram.md).
+The text mode module [[textmode.v](../gfx/textmode.v)] displays text using character data and colour from a dedicate memory: [tram](tram.md).
 
 Text mode includes a 2 KiB character rom holding 128 characters for basic system functionality before additional storage is available; these characters cover Basic Latin and Block Elements. Text mode is currently limited by Isle's lack of storage; future versions will extend Unicode coverage and add support for full-width glyphs.
 

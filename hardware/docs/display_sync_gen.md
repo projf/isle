@@ -1,6 +1,6 @@
 # Display Sync Signal Generation
 
-The sync signal generation module [[hardware/gfx/display_sync_gen.v](../gfx/display_sync_gen.v)] generates display sync signals (horizontal and vertical blanking) and coordinates.
+The sync signal generation module [[display_sync_gen.v](../gfx/display_sync_gen.v)] generates display sync signals (horizontal and vertical blanking) and coordinates.
 
 The `DISPLAY_MODE` parameter controls the display mode (resolution and refresh rate). The input pixel clock _must_ be correct for the display mode to generate a valid display signal. For example, `DISPLAY_MODE=2` is 1366x768 and requires a 72 MHz pixel clock. See [display_modes.vh](../include/display_modes.vh) for supported display modes, including 1024x768, 1366x768, and 1280x720.
 
@@ -39,4 +39,4 @@ Display mode could have been a signal to allow runtime resolution changes. Howev
 
 ## Testing
 
-There is a cocotb test bench [[hardware/tests/gfx/display.py](../tests/gfx/display.py)] that exercises this module with the included display modes. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
+There is a cocotb test bench [[hardware/tests/gfx/display_sync_gen.py](../tests/gfx/display_sync_gen.py)] that exercises this module with the included display modes. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).

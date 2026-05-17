@@ -1,6 +1,6 @@
 # Text Mode Ram
 
-The text mode ram (tram) module [[hardware/mem/tram.v](../mem/tram.v)] module holds text mode characters in block ram (bram). The default Isle tram design is 8 KiB as 2K x 32 bit, which supports 84x24 (672z384) and 80x25 (640x400). The tram is byte write. The [text mode](textmode.md) module connects to tram to retrieve character data for display.
+The text mode ram (tram) module [[tram.v](../mem/tram.v)] module holds text mode characters in block ram (bram). The default Isle tram design is 8 KiB as 2K x 32 bit, which supports 84x24 (672z384) and 80x25 (640x400). The tram is byte write. The [text mode](textmode.md) module connects to tram to retrieve character data for display.
 
 The tram holds 32-bit word per character consisting of (LSB to MSB):
 

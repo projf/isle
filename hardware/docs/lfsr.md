@@ -1,6 +1,6 @@
 # Linear Feedback Shift Register
 
-The linear-feedback shift register module [[hardware/math/lfsr.v](../math/lfsr.v)] creates a [Galois linear-feedback shift register](https://en.wikipedia.org/wiki/Linear-feedback_shift_register#Galois_LFSRs), which is ideal for pseudorandom number or noise generation.
+The linear-feedback shift register module [[lfsr.v](../math/lfsr.v)] creates a [Galois linear-feedback shift register](https://en.wikipedia.org/wiki/Linear-feedback_shift_register#Galois_LFSRs), which is ideal for pseudorandom number or noise generation.
 
 The LFSR module is used in the [Starfield](../../projects/starfield) project.
 

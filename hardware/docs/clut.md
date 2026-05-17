@@ -1,6 +1,6 @@
 # Colour Lookup Table
 
-The colour lookup table (clut) module [[hardware/mem/clut.v](../mem/clut.v)] maps palette indexes to colours.
+The colour lookup table module [[clut.v](../mem/clut.v)] maps palette indexes to colours.
 
 For example, in 16 colour mode each pixel colour in [vram](vram.md) is represented by a 4-bit colour index. When we come to display that pixel we read the colour index from vram, say **6**, then use the clut to map that to a 15-bit RGB555 colour such as (31, 31, 00), which is bright yellow.
 

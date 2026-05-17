@@ -1,6 +1,6 @@
 # Uart Transmitter
 
-The uart transmitted (TX) module [[hardware/io/uart_tx.v](../io/uart_tx.v)] transmits uart serial data. There is also a uart receive module [uart_rx.v](uart_rx.md).
+The uart transmitted (TX) module [[uart_tx.v](../io/uart_tx.v)] transmits uart serial data. There is also a uart receive module [uart_rx.v](uart_rx.md).
 
 As of May 2026, `uart_tx` is not yet used in Isle. The Verilator/SDL simulator uses a similar design to `uart_tx` to send keyboard input to Isle when running in simulation; see [sdl_sim.h](../../boards/verilator/sdl_sim.h).
 

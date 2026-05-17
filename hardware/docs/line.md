@@ -1,6 +1,6 @@
 # Line Drawing
 
-The line module [[hardware/gfx/line.v](../gfx/line.v)] calculates lines with Bresenham's line algorithm. This implementation supports signed integer coordinates and works towards increasing Y, swapping the input coordinates if necessary. Increasing Y is down the display, see [display sync generation](display_sync_gen.md).
+The line module [[line.v](../gfx/line.v)] calculates lines with Bresenham's line algorithm. This implementation supports signed integer coordinates and works towards increasing Y, swapping the input coordinates if necessary. Increasing Y is down the display, see [display sync generation](display_sync_gen.md).
 
 ## Parameters
 

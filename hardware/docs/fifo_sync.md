@@ -1,6 +1,6 @@
 # Synchronous FIFO
 
-The sync FIFO module [[hardware/mem/fifo_sync.v](../mem/fifo_sync.v)] create a synchronous fifo: first in, first out. Isle uses this module to buffer data, for example, keyboard input. A small synchronous fifo is typically implemented in logic, while larger fifos may infer bram.
+The sync fifo module [[fifo_sync.v](../mem/fifo_sync.v)] create a synchronous fifo (first in, first out AKA queue). Isle uses this module to buffer data, for example, keyboard input. A small synchronous fifo is typically implemented in logic, while larger fifos may infer bram.
 
 ## Parameters
 

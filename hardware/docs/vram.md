@@ -1,6 +1,6 @@
 # Video Ram
 
-The video ram (vram) module [[hardware/mem/vram.v](../mem/vram.v)] holds bitmap graphics in block ram (bram). The default Isle vram design is 64 KiB as 16K x 32 bit. The vram is bit write, with a 32-bit write mask so you can set individual bits.
+The video ram module [[vram.v](../mem/vram.v)] holds bitmap graphics in block ram (bram). The default Isle vram design is 64 KiB as 16K x 32 bit. The vram is bit write, with a 32-bit write mask so you can set individual bits.
 
 If vram shared main memory, we'd have to arbitrate between the display, drawing engine, and CPU, all while handling clock domain crossing and the latency of sdram. Having dedicated vram keeps things simple and predictable. We also support bit write, making 1, 2, and 4 bit graphics simpler and faster.
 

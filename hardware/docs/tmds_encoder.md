@@ -1,6 +1,6 @@
 # TMDS Encoder (DVI)
 
-The TMDS encoder module [[hardware/gfx/tmds_encoder.v](../gfx/tmds_encoder.v)] encodes a channel for DVI TMDS (transition-minimized differential signaling) suitable for output to a DVI or HDMI display. You encode each of the red, green, and blue channels separately using this module.
+The TMDS encoder module [[tmds_encoder.v](../gfx/tmds_encoder.v)] encodes a channel for DVI TMDS (transition-minimized differential signaling) suitable for output to a DVI or HDMI display. You encode each of the red, green, and blue channels separately using this module.
 
 After encoding, the TMDS signals pass through architecture specific DVI generator module before being output: [[arch/ecp5/dvi_generator.v)](../arch/ecp5/dvi_generator.v)] or [[arch/xc7/dvi_generator.v](../arch/xc7/dvi_generator.v)].
 
