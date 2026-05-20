@@ -23,7 +23,7 @@ end
 /* verilator lint_off UNUSEDPARAM */
 
 //
-// display timings
+// Display Timings
 //
 
 localparam HRES =
@@ -142,7 +142,7 @@ localparam VA_END = VRES - 16'sd1;
 
 
 //
-// initial display window and scaling
+// Default Bitmap and Text Mode Display Parameters
 //
 
 localparam WIN_START_INIT =

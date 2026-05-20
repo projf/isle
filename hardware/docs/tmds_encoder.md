@@ -1,10 +1,10 @@
 # TMDS Encoder (DVI)
 
-The **tmds_encoder** module [[verilog src](../gfx/tmds_encoder.v)] encodes a channel for DVI TMDS (transition-minimized differential signaling) suitable for output to a DVI or HDMI display. You encode each of the red, green, and blue channels separately using this module.
+The TMDS encoder module [[tmds_encoder.v](../gfx/tmds_encoder.v)] encodes a channel for DVI TMDS (transition-minimized differential signaling) suitable for output to a DVI or HDMI display. You encode each of the red, green, and blue channels separately using this module.
 
-After encoding, the TMDS signals pass through architecture specific DVI generator module before being output: [[ECP5 Verilog src](../arch/ecp5/dvi_generator.v)] and [[XC7 Verilog src](../arch/xc7/dvi_generator.v)].
+After encoding, the TMDS signals pass through architecture specific DVI generator module before being output: [[ecp5/dvi_generator.v)](../arch/ecp5/dvi_generator.v)] or [[xc7/dvi_generator.v](../arch/xc7/dvi_generator.v)].
 
-See the [Display](http://projectf.io/isle/display.html) blog post for more information on this module.
+See the [Display Controller](http://projectf.io/isle/display-controller.html) blog post for more information on this module.
 
 ## Signals
 
@@ -18,7 +18,7 @@ The follow signals are used by the encoder (all in pixel clock domain).
 * `ctrl_in` - 2-bit control data (channel 0 only, otherwise 0)
 * `de` - data enable (from display controller)
 
-Channel 0 encodes horizontal and vertical sync using the `ctrl_in` signal with values from [display timings](display_timings.md). For channel 1 and 2, `ctrl_in` should be zero:
+Channel 0 encodes horizontal and vertical sync using the `ctrl_in` signal with values from [display sync generator](display_sync_gen.md). For channel 1 and 2, `ctrl_in` should be zero:
 
 ```verilog
     .ch0_ctrl({disp_vsync, disp_hsync}),
@@ -32,4 +32,4 @@ Channel 0 encodes horizontal and vertical sync using the `ctrl_in` signal with v
 
 ## Testing
 
-There is a comprehensive test [[python src](../tests/gfx/tmds_encoder.py)] of the encoding using a Python model [[python src](../tests/gfx/tmds_model.py)].  For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
+There is a comprehensive test [[tmds_encoder.py](../tests/gfx/tmds_encoder.py)] of the encoding using a Python model [[tmds_model.py](../tests/gfx/tmds_model.py)].  For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).

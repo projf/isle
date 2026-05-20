@@ -1,6 +1,6 @@
 # Circle Drawing
 
-The **circle** module [[verilog src](../gfx/circle.v)] provides the x and y distances to draw a circle with the midpoint circle algorithm. This implementation supports signed integer coordinates. See [Earthrise](earthrise.md) for an example drawing complete circles with this module.
+The circle module [[circle.v](../gfx/circle.v)] provides the x and y distances to draw a circle with the midpoint circle algorithm. This implementation supports signed integer coordinates. See [Earthrise](earthrise.md) for an example of drawing complete circles with this module.
 
 ## Parameters
 
@@ -22,7 +22,7 @@ The follow signals are used for circle drawing. Isle drawing takes place in the 
 
 The `start` signal only works when if the module isn't already calculating. If you want to stop the calculation and start afresh you need to reset with `rst` then use `start`.
 
-Output enable `oe` lets you pause the calculation, so you can use the `xa`, `ya` distances to calculate the circle coordinates.
+Output enable `oe` lets you pause the calculation, so you can use the `xa`, `ya` distances to calculate the circle coordinates in different quadrants.
 
 ### Output
 

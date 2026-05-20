@@ -16,7 +16,7 @@ VERILOG_SOURCES += $(HARDWARE)/book/${DUT}/sys_dev.v
 VERILOG_SOURCES += $(HARDWARE)/book/${DUT}/uart_dev.v
 
 VERILOG_SOURCES += $(HARDWARE)/cpu/FemtoRV32.v
-VERILOG_SOURCES += $(HARDWARE)/gfx/display_timings.v
+VERILOG_SOURCES += $(HARDWARE)/gfx/display_sync_gen.v
 VERILOG_SOURCES += $(HARDWARE)/gfx/font_glyph.v
 VERILOG_SOURCES += $(HARDWARE)/gfx/textmode.v
 VERILOG_SOURCES += $(HARDWARE)/io/uart_rx.v

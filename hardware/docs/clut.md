@@ -1,6 +1,6 @@
-# CLUT
+# Colour Lookup Table
 
-The **clut** (Colour Lookup Table) module [[verilog src](../mem/clut.v)] maps palette indexes to colours.
+The colour lookup table module [[clut.v](../mem/clut.v)] maps palette indexes to colours.
 
 For example, in 16 colour mode each pixel colour in [vram](vram.md) is represented by a 4-bit colour index. When we come to display that pixel we read the colour index from vram, say **6**, then use the clut to map that to a 15-bit RGB555 colour such as (31, 31, 00), which is bright yellow.
 
@@ -18,7 +18,7 @@ The separate system and displays ports avoid contention between the CPU and disp
 
 The address width determines the number of palette entries. The data width depends on the output colour. Isle supports 256 15-bit colours (RGB555), so uses `DATAW=15` and `ADDRW=8`.
 
-The clut takea a `FILE_PAL` parameter, which allows an initial $readmemh format palette to be loaded at build time. Isle includes several palettes to get you started, see [Colour Palettes](../../../docs/colour-palettes.md) for details.
+The clut takea a `FILE_PAL` parameter, which allows an initial $readmemh format palette to be loaded at build time. Isle includes several palettes to get you started, see [Colour Palettes](../../docs/colour-palettes.md) for details.
 
 ## Signals
 
@@ -27,7 +27,7 @@ The clut is dual port, with a system and display port in different clock domains
 ### Input
 
 * `clk_sys` - system clock
-* `clk_pix` - pixel clock (frequency depends on [display mode](display_timings.md))
+* `clk_pix` - pixel clock (frequency depends on [display mode](display_sync_gen.md))
 * `we_sys` - system write enable
 * `re_sys` - system read enable
 * `addr_sys` - system word address
@@ -50,6 +50,6 @@ The display port has a higher latency because of the output register to improve 
 
 ## Testing
 
-There is a cocotb test bench [[python src](../tests/mem/clut.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
+There is a cocotb test bench [[clut.py](../tests/mem/clut.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
 
 Most of the complexity depends on the dual-port bram implementation, which isn't visible with this inferred memory design.

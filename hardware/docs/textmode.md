@@ -1,8 +1,8 @@
 # Text Mode
 
-The **textmode** module [[verilog src](../gfx/textmode.v)] displays text mode, loading character data and colour from [tram](tram.md).
+The text mode module [[textmode.v](../gfx/textmode.v)] displays text using character data and colour from a dedicated memory: [tram](tram.md).
 
-Text mode includes a 2 KiB character ROM holding 128 characters for basic system functionality before additional storage is available; these characters cover Basic Latin and Block Elements. Text mode is currently limited by Isle's lack of storage; future versions will extend Unicode coverage and add support for full-width glyphs.
+Text mode includes a 2 KiB character rom holding 128 characters for basic system functionality before additional storage is available; these characters cover Basic Latin and Block Elements. Text mode is currently limited by Isle's lack of storage; future versions will extend Unicode coverage and add support for full-width glyphs.
 
 Text mode is not pipelined and the logic takes 6 cycles + 2 cycles for [tram](tram.md) access; if you set `GLYPH_WIDTH` to less than 8 pixels you'll have rendering issues. If `GLYPH_HEIGHT` isn't a power of 2, the [font_glyph](font_glyph.md) module may infer a multiplier.
 
@@ -34,7 +34,7 @@ For Isle, `CORDW` must be set to **16**, `WORD` must be set to **32**, and `CIDX
 
 In tram, we pack two colours into a _word_ along with the Unicode code point; there isn't room for 8-bit (256 colours).
 
-See [font_glyph](font_glyph.md) for details on font and glyph parameters.
+See [font glyph](font_glyph.md) for details on font and glyph parameters.
 
 ## Signals
 

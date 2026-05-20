@@ -1,6 +1,6 @@
-# TRAM
+# Text Mode Ram
 
-The **tram** (text mode ram) [[verilog src](../mem/tram.v)] module holds text mode characters in block ram (bram). The default Isle tram design is 8 KiB as 2K x 32 bit, which supports 84x24 (672z384) and 80x25 (640x400). The tram is byte write. The [textmode](textmode.md) module connects to tram to retrieve character data for display.
+The text mode ram (tram) module [[tram.v](../mem/tram.v)] module holds text mode characters in block ram (bram). The default Isle tram design is 8 KiB as 2K x 32 bit, which supports 84x24 (672z384) and 80x25 (640x400). The tram is byte write. The [text mode](textmode.md) module connects to tram to retrieve character data for display.
 
 The tram holds 32-bit word per character consisting of (LSB to MSB):
 
@@ -26,7 +26,7 @@ The CPU can write the Unicode code point, together with foreground and backgroun
 * `ADDRW` - address width (bits)
 * `FILE_TXT` - optional initial text to load
 
-The optional `FILE_TXT` parameter allows $readmemh format [textmaps](../../../res/textmaps/) to be loaded at build time; this is mostly useful for testing; for example `/res/textmaps/rom-84x24.mem`.
+The optional `FILE_TXT` parameter allows $readmemh format [textmaps](../../res/textmaps/) to be loaded at build time; this is mostly useful for testing; for example `/res/textmaps/rom-84x24.mem`.
 
 ## Signals
 
@@ -35,7 +35,7 @@ The tram is dual port, with a system and display port in different clock domains
 ### Input
 
 * `clk_sys` - system clock
-* `clk_pix` - pixel clock (frequency depends on [display mode](display_timings.md))
+* `clk_pix` - pixel clock (frequency depends on [display mode](display_sync_gen.md))
 * `we_sys` - system write enable (byte mask)
 * `re_sys` - system read enable
 * `addr_sys` - system port word address

@@ -1,6 +1,6 @@
-# VRAM
+# Video Ram
 
-The **vram** (video ram) [[verilog src](../mem/vram.v)] module holds bitmap graphics in block ram (bram). The default Isle vram design is 64 KiB as 16K x 32 bit. The vram is bit write, with a 32-bit write mask so you can set individual bits.
+The video ram module [[vram.v](../mem/vram.v)] holds bitmap graphics in block ram (bram). The default Isle vram design is 64 KiB as 16K x 32 bit. The vram is bit write, with a 32-bit write mask so you can set individual bits.
 
 If vram shared main memory, we'd have to arbitrate between the display, drawing engine, and CPU, all while handling clock domain crossing and the latency of sdram. Having dedicated vram keeps things simple and predictable. We also support bit write, making 1, 2, and 4 bit graphics simpler and faster.
 
@@ -12,7 +12,7 @@ If vram shared main memory, we'd have to arbitrate between the display, drawing 
 
 `ADDRW` should be set to **14**, but may be set larger if you have enough block ram. Because bit write infers 32 x 2 KiB brams, you don't save any resources by setting `ADDRW` to less than 14.
 
-The optional `FILE_BMAP` parameter allows $readmemh format [bitmaps](../../../res/bitmaps/) to be loaded at build time; this is mostly useful for testing; for example `/res/bitmaps/crocus/crocus-336x192.mem`.
+The optional `FILE_BMAP` parameter allows $readmemh format [bitmaps](../../res/bitmaps/) to be loaded at build time; this is mostly useful for testing; for example `/res/bitmaps/crocus/crocus-336x192.mem`.
 
 You can create a suitable $readmemh bitmap with [img2fmem](https://github.com/projf/fpgatools/tree/main/img2fmem).
 
@@ -23,7 +23,7 @@ The vram is dual port, with a system and display port in different clock domains
 ### Input
 
 * `clk_sys` - system clock
-* `clk_pix` - pixel clock (frequency depends on [display mode](display_timings.md))
+* `clk_pix` - pixel clock (frequency depends on [display mode](display_sync_gen.md))
 * `wmask_sys` - system write enable (32-bit write mask)
 * `re_sys` - system read enable
 * `addr_sys` - system port word address
@@ -65,6 +65,6 @@ The display port has a higher latency because of the additional output register 
 
 ## Testing
 
-There is a cocotb test bench [[python src](../tests/mem/vram.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
+There is a cocotb test bench [[vram.py](../tests/mem/vram.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
 
 Most of the complexity depends on the dual-port bram implementation, which isn't visible with this inferred memory design.

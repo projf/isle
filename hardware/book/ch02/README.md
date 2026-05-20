@@ -10,7 +10,7 @@ The chapter 2 design uses the following Verilog modules:
 
 * `book/ch02/ch02.v`
 * `gfx/canv_disp_agu.v`
-* `gfx/display_timings.v`
+* `gfx/display_sync_gen.v`
 * `gfx/tmds_encoder.v` (not used by Verilator sim)
 * `mem/clut.v`
 * `mem/vram.v`

@@ -12,7 +12,7 @@ The chapter 3 design uses the following Verilog modules:
 * `gfx/canv_disp_agu.v`
 * `gfx/canv_draw_agu.v`
 * `gfx/circle.v`
-* `gfx/display_timings.v`
+* `gfx/display_sync_gen.v`
 * `gfx/earthrise.v`
 * `gfx/fline.v`
 * `gfx/line.v`

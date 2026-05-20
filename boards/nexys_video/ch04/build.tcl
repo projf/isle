@@ -16,7 +16,7 @@ read_verilog "top_${design_name}.v"
 
 # Common Verilog
 read_verilog "${lib_dir}/book/ch04/ch04.v"
-read_verilog "${lib_dir}/gfx/display_timings.v"
+read_verilog "${lib_dir}/gfx/display_sync_gen.v"
 read_verilog "${lib_dir}/gfx/font_glyph.v"
 read_verilog "${lib_dir}/gfx/textmode.v"
 read_verilog "${lib_dir}/gfx/tmds_encoder.v"

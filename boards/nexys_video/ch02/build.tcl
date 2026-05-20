@@ -17,7 +17,7 @@ read_verilog "top_${design_name}.v"
 # Common Verilog
 read_verilog "${lib_dir}/book/ch02/ch02.v"
 read_verilog "${lib_dir}/gfx/canv_disp_agu.v"
-read_verilog "${lib_dir}/gfx/display_timings.v"
+read_verilog "${lib_dir}/gfx/display_sync_gen.v"
 read_verilog "${lib_dir}/gfx/tmds_encoder.v"
 read_verilog "${lib_dir}/mem/clut.v"
 read_verilog "${lib_dir}/mem/vram.v"

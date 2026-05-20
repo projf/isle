@@ -1,10 +1,10 @@
-# Isle.Computer - Display Timings Test Makefile
+# Isle.Computer - Display Sync Signal Generator Test Makefile
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
 SIM ?= icarus
 TOPLEVEL_LANG ?= verilog
-DUT = display_timings
+DUT = display_sync_gen
 
 TOPLEVEL = ${DUT}
 COCOTB_TEST_MODULES = ${DUT}

@@ -1,8 +1,8 @@
-# Isle.Computer - Display Timings Test Bench
+# Isle.Computer - Display Sync Signal Generator Test Bench
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
-"""Display Timings Test Bench (cocotb)"""
+"""Display Sync Signal Generator (cocotb)"""
 
 import os
 
