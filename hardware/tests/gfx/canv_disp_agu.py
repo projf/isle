@@ -26,6 +26,7 @@ Y_MAX = 7
 # latencies (must match canv_disp_agu.mk)
 CLUT_LAT = 1
 VRAM_LAT = 3
+ADDR_LAT = CLUT_LAT + VRAM_LAT
 
 @dataclass(frozen=True)
 class CanvasParams:
@@ -110,13 +111,17 @@ async def canv_disp_agu_paint(dut, params):
                 await ReadOnly()
                 actual_paint = dut.paint.value
 
-                in_window = (params.win_start.y <= dy < params.win_end.y
-                    and params.win_start.x <= dx+CLUT_LAT < params.win_end.x)
+                in_window = (
+                    params.win_start.y <= dy < params.win_end.y
+                    and params.win_start.x <= dx+CLUT_LAT < params.win_end.x
+                )
                 expected_paint = Logic(1) if in_window else Logic(0)
 
                 if actual_paint.is_resolvable:
-                    assert actual_paint == expected_paint, \
-                        f"paint: '{actual_paint}' is not expected '{expected_paint}' at ({dx}, {dy}) in frame={frame}!"
+                    assert actual_paint == expected_paint, (
+                        f"paint: '{actual_paint}' is not expected '{expected_paint}'"
+                        f"at ({dx}, {dy}) in frame={frame}!"
+                    )
 
                 await RisingEdge(dut.clk_pix)
 
@@ -151,16 +156,16 @@ async def canv_disp_agu_addr(dut, params):
                 dut.line_start.value = 1 if dx == X_MIN else 0
 
                 await ReadOnly()
-                actual_addr_pix = dut.addr_pix.value
                 actual_addr = dut.addr.value
                 actual_pix_id = dut.pix_id.value
 
                 scale_x = params.scale.x if params.scale.x > 0 else 1
                 scale_y = params.scale.y if params.scale.y > 0 else 1
 
-                ADDR_LAT = CLUT_LAT + VRAM_LAT
-                vram_read = (params.win_start.y <= dy < params.win_end.y
-                    and params.win_start.x <= dx+ADDR_LAT < params.win_end.x)
+                vram_read = (
+                    params.win_start.y <= dy < params.win_end.y
+                    and params.win_start.x <= dx+ADDR_LAT < params.win_end.x
+                )
 
                 line_s = (params.win_end.x - params.win_start.x) // scale_x
                 expected_addr_pix = ((dy - params.win_start.y) // scale_y) * line_s \
@@ -172,9 +177,13 @@ async def canv_disp_agu_addr(dut, params):
                 expected_pix_id = expected_addr_pix & pix_id_mask
 
                 if vram_read and actual_addr.is_resolvable and actual_pix_id.is_resolvable:
-                    assert int(actual_addr) == expected_addr, \
-                        f"addr: '{int(actual_addr)}' is not expected '{expected_addr}' at ({dx}, {dy}) in frame={frame}!"
-                    assert int(actual_pix_id) == expected_pix_id, \
-                        f"pix_id: '{int(actual_pix_id)}' is not expected '{expected_pix_id}' at ({dx}, {dy}) in frame={frame}!"
+                    assert int(actual_addr) == expected_addr, (
+                        f"addr: '{int(actual_addr)}' is not expected '{expected_addr}'"
+                        f"at ({dx}, {dy}) in frame={frame}!"
+                    )
+                    assert int(actual_pix_id) == expected_pix_id, (
+                        f"pix_id: '{int(actual_pix_id)}' is not expected '{expected_pix_id}'"
+                        f"at ({dx}, {dy}) in frame={frame}!"
+                    )
 
                 await RisingEdge(dut.clk_pix)
