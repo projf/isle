@@ -42,8 +42,8 @@ async def reset_pix_dut(dut):
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-async def ch05(dut):
-    """ch05 test"""
+async def ch06(dut):
+    """ch06 test"""
     cocotb.start_soon(Clock(dut.clk_sys, SYS_TIME, unit="ns").start())
     cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, unit="ns").start())
     await reset_sys_dut(dut)

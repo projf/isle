@@ -8,11 +8,12 @@ See the [Bitmap Graphics](http://projectf.io/isle/bitmap-graphics.html) blog pos
 
 ## Parameters
 
-* `CORDW` - signed coordinate width (bits)
-* `WORD` - machine word size (bits)
 * `ADDRW` - address width (bits)
-* `BMAP_LAT` - latency for AGU + VRAM + CLUT
+* `CLUT_LAT` - clut display read latency (cycles; min=1)
+* `CORDW` - signed coordinate width (bits)
 * `SHIFTW` - address shift width (bits)
+* `VRAM_LAT` - vram display read latency (cycles; min=1)
+* `WORD` - machine word size (bits)
 
 ## Signals
 
@@ -23,7 +24,7 @@ See the [Bitmap Graphics](http://projectf.io/isle/bitmap-graphics.html) blog pos
 * `frame_start` - frame start flag
 * `line_start` - line start flag
 * (`dx`, `dy`) - display position
-* `addr_base` - canvas base address
+* `addr_base` - canvas base address (word address)
 * `addr_shift` - address shift bits (for colour depth)
 * `win_start` - canvas window start coords
 * `win_end` - canvas window end coords
@@ -33,9 +34,9 @@ Several of these input signals come from the [display sync generator](display_sy
 
 The position of the canvas on the display is set by the window start `win_start` and end `win_end` signals, while horizontal and vertical scale are controlled by `scale`. These signals are discussed in more detail below.
 
-`addr_base` is the base address of the canvas buffer in vram. You can switch this at the start of a frame for double buffering. Or even mid-way through a frame to combine different buffers to form a display.
+`addr_base` is the base _word_ address of the canvas buffer in vram. You can switch this at the start of a frame for double buffering. Or even mid-way through a frame to combine different buffers to form a display.
 
-The `BMAP_LAT` parameter corrects for end-to-end bitmap latency in calculating the address, retrieving data from vram, and looking the colour up in the CLUT. For Isle this should be set to 6. See [display pipeline](#display-pipeline) for further explanation.
+The `VRAM_LAT` and `CLUT_LAT` parameters correct for latency in retrieving data from vram and looking the colour up in the CLUT. For Isle they should both be set to 2. See [display pipeline](#display-pipeline) for further explanation.
 
 The address shift, `addr_shift`, determines how the raw pixel address is split between vram address and pixel index. Because the maximum address shift is 5, the `SHIFTW` parameter is set to 3.
 
@@ -104,7 +105,7 @@ The bitmap display pipeline has three stages:
 2. [vram](vram.md) - returns pixel data
 3. [clut](clut.md) - looks up pixel colour
 
-This process takes several clock cycles. If we don't account for latency, the pixel would be displayed in the wrong position (too far to the right). VRAM and CLUT use brams with additional output registers, hence taking two cycles from address generation to receiving data.
+This process takes several clock cycles. If we don't account for latency, the pixel would be displayed in the wrong position (too far to the right). The vram and clut modules use bram with additional output registers, hence taking two cycles from address generation to receiving data.
 
 Our display controller begins each line with the horizontal blanking internal. This gives us time to prepare the pipeline for the the first pixel, even if it's at x=0.
 

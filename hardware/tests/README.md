@@ -15,7 +15,7 @@ Ensure you've [installed simulators and cocotb](#install-simulators) and sourced
 
 ```shell
 cd isle/hardware/tests
-source hw-tests-venv/bin/activate
+source .venv/bin/activate
 ```
 
 Run tests using `make` within your chosen directory. For example, to test the TMDS encoder:
@@ -25,7 +25,7 @@ cd gfx
 make tmds_encoder
 ```
 
-Use `WAVES=1` to generate [FST](https://blog.timhutt.co.uk/fst_spec/) waveform files.
+Use `WAVES=1` (case sensitive) to generate [FST](https://blog.timhutt.co.uk/fst_spec/) waveform files.
 
 For example, the following creates `sim_build/clut/clut.fst`:
 
@@ -92,14 +92,14 @@ Isle requires cocotb 2.0+. I recommend installing cocotb inside a venv using the
 
 ```shell
 cd isle/hardware/tests
-python3 -m venv hw-tests-venv
+python3 -m venv .venv
 
-source hw-tests-venv/bin/activate
+source .venv/bin/activate
 pip3 install -r requirements.txt
 ```
 
 Troubleshooting:
 
-* The latest version of Python isn't necessarily supported (cocotb 2.0 doesn't support Python 14).
+* The latest version of Python isn't necessarily supported by cocotb - check [supported python versions](https://docs.cocotb.org/en/stable/platform_support.html#supported-python-versions) (cocotb.org)
 * If you're having issues running cocotb on macOS, try using brew Python instead of the system one.
 * I don't recommend using the version of cocotb from _OSS CAD Suite_ because it's not a stable release.

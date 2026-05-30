@@ -4,12 +4,24 @@
 
 """Test helpers for Isle cocotb hardware tests."""
 
+from dataclasses import dataclass
+
 import cocotb
 from cocotb.triggers import RisingEdge
 
+@dataclass(frozen=True)
+class Coords:
+    """Isle packed coordinates."""
+    x: int
+    y: int
+
+    def pack(self, width: int = 16) -> int:
+        """Pack coords {y, x} matching Isle hardware."""
+        return (self.y << width) | self.x
+
 
 def assert_coord(dut, x, y):
-    """Assert coordinate is correct"""
+    """Assert coordinate is correct."""
     coord_matches = (
         dut.disp_x.value == x and
         dut.disp_y.value == y
@@ -23,7 +35,7 @@ def assert_coord(dut, x, y):
 
 
 def assert_pixel(dut, r, g, b, verbose=True):
-    """Assert pixel colour is correct"""
+    """Assert pixel colour is correct."""
     if verbose:
         log_pixel(dut)
 

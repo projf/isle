@@ -6,6 +6,7 @@
 *.ip_user_files
 *.mcs
 *.prm
+*.rpt
 *.runs
 *.sim
 *.srcs
@@ -33,6 +34,10 @@ __pycache__
 .pytest_cache
 *.vcd
 cocotb-venv
+
+# Surfer
+*.surf.ron
+*.ron
 
 # Mac
 .DS_Store
