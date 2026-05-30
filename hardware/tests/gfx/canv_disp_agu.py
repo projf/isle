@@ -168,8 +168,10 @@ async def canv_disp_agu_addr(dut, params):
                 )
 
                 line_s = (params.win_end.x - params.win_start.x) // scale_x
-                expected_addr_pix = ((dy - params.win_start.y) // scale_y) * line_s \
+                expected_addr_pix = (
+                    ((dy - params.win_start.y) // scale_y) * line_s
                     + ((dx + ADDR_LAT - params.win_start.x) // scale_x)
+                )
 
                 expected_addr = params.addr_base + (expected_addr_pix >> params.addr_shift)
 
