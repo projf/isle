@@ -37,5 +37,5 @@ synth_design -top "top_${design_name}" -part ${fpga_part} -include_dirs "${lib_d
 opt_design
 place_design
 route_design
-report_timing_summary
+report_timing_summary -file "${design_name}_timing_summary.rpt"
 write_bitstream -force "${design_name}.bit"

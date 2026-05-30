@@ -42,24 +42,33 @@ module textmode #(
     // separate y and x from text window signals
     reg signed [CORDW-1:0] win_start_y, win_start_x;
     reg signed [CORDW-1:0] win_end_y, win_end_x;
-    reg [CORDW-1:0] scale_y, scale_y0, scale_x, scale_x0;
+    reg [CORDW-1:0] scale_y0, scale_x0;
     always @(*) begin
         {win_start_y, win_start_x} = win_start;
         {win_end_y, win_end_x} = win_end;
         {scale_y0, scale_x0} = scale;
-        scale_x = (scale_x0 == 0) ? 1 : scale_x0;  // if scale is 0, set to 1
-        scale_y = (scale_y0 == 0) ? 1 : scale_y0;
+    end
+
+    // register signals to improve timing with hwreg
+    reg [CORDW-1:0] scale_x_minus, scale_y_minus;
+    reg signed [CORDW-1:0] paint_start_x, paint_end_x;
+    reg signed [CORDW-1:0] win_end_x_minus, win_end_y_minus;
+    reg signed [CORDW-1:0] draw_start_x_minus;   // draw start depends on window and latency
+    always @(posedge clk_pix) begin
+        scale_x_minus <= (scale_x0 == 0) ? 0 : scale_x0 - 1;
+        scale_y_minus <= (scale_y0 == 0) ? 0 : scale_y0 - 1;
+        paint_start_x <= win_start_x - CLUT_LAT - 1;  // -1 for registering
+        paint_end_x <= win_end_x - CLUT_LAT - 1;
+        win_end_x_minus <= win_end_x - 1;
+        win_end_y_minus <= win_end_y - 1;
+        draw_start_x_minus <= win_start_x - PIX_LAT - CLUT_LAT - 1;  // -1 for state trans to DRAW
     end
 
     // paint area defined by window
     wire win_y = (dy >= win_start_y) && (dy < win_end_y);
     always @(posedge clk_pix) begin
-        paint <= (dx >= win_start_x - CLUT_LAT - 1)  // -1 for registering
-              && (dx < win_end_x - CLUT_LAT - 1) && win_y;
+        paint <= (dx >= paint_start_x) && (dx < paint_end_x) && win_y;
     end
-
-    // draw start depends on window and latency
-    wire signed [CORDW-1:0] draw_start_x = win_start_x - PIX_LAT - CLUT_LAT;
 
     // bit widths
     localparam GLYPH_HEIGHT_W = $clog2(GLYPH_HEIGHT);
@@ -87,8 +96,8 @@ module textmode #(
 
     // glyph end signals
     /* verilator lint_off WIDTHEXPAND */
-    wire glyph_x_end = (gx == GLYPH_WIDTH-1  && cnt_x == scale_x-1);
-    wire glyph_y_end = (gy == GLYPH_HEIGHT-1 && cnt_y == scale_y-1);
+    wire glyph_x_end = (gx == GLYPH_WIDTH-1  && cnt_x == scale_x_minus);
+    wire glyph_y_end = (gy == GLYPH_HEIGHT-1 && cnt_y == scale_y_minus);
     /* verilator lint_on WIDTHEXPAND */
 
     // state machine
@@ -116,21 +125,21 @@ module textmode #(
                 cnt_y <= 0;
             end
             AWAIT: begin
-                if (dx == draw_start_x - 1) state <= DRAW;  // -1 for transition to DRAW
+                if (dx == draw_start_x_minus) state <= DRAW;
                 colr_fg <= tram_data[WORD-CIDXW-1:WORD-2*CIDXW];
                 colr_bg <= tram_data[WORD-1:WORD-CIDXW];
                 pix_line_reg <= pix_line;
                 ucp <= tram_data[UCPW-1:0];
             end
             DRAW: begin
-                if (tx == text_hres || dx >= win_end_x-1) begin
-                    if (ty == text_vres || dy >= win_end_y-1) state <= IDLE;
+                if (tx == text_hres || dx >= win_end_x_minus) begin
+                    if (ty == text_vres || dy >= win_end_y_minus) state <= IDLE;
                     else if (glyph_y_end) state <= CHR_LINE;
                     else state <= SCR_LINE;
                 end
 
                 // step through horizontal pixels
-                if (cnt_x == scale_x-1) begin
+                if (cnt_x == scale_x_minus) begin
                     cnt_x <= 0;
                     /* verilator lint_off WIDTHEXPAND */
                     gx <= (gx == GLYPH_WIDTH-1) ? 0 : gx + 1;
@@ -171,7 +180,7 @@ module textmode #(
                 cnt_x <= 0;
 
                 // step through lines (vertical pixels)
-                if (cnt_y == scale_y-1) begin
+                if (cnt_y == scale_y_minus) begin
                     cnt_y <= 0;
                     /* verilator lint_off WIDTHEXPAND */
                     gy <= (gy == GLYPH_HEIGHT-1) ? 0 : gy + 1;
