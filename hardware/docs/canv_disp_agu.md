@@ -97,6 +97,8 @@ scale:  0x00020002
 
 [Text mode](textmode.md) windows work in the same way.
 
+The registered signals `scale_x_minus` and `scale_y_minus` are the scaling factors with 1 subtracted to improve the timing slack of the scale counters. For a scale factor of 1x, these _minus signals have a value of 0.
+
 ## Display Pipeline
 
 The bitmap display pipeline has three stages:
