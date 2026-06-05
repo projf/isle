@@ -70,7 +70,7 @@ Taking the line example from the overview (above):
 
 To express negative values in hex, use two's complement: -1 is 0xFFF, and -16 is 0xFF0. For example, instruction `0x8FFC` sets `xt` to -4, which shifts coordinates left 4 pixels.
 
-Earthrises uses coordinates to determine which address in [VRAM](../hardware/mem/docs/vram.md) to write to.
+Earthrises uses coordinates to determine which address in [vram](../hardware/docs/vram.md) to write to.
 
 A few things of note:
 
