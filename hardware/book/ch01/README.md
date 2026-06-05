@@ -1,4 +1,4 @@
-# Isle Chapter 1 - Display
+# Isle Chapter 1 - Display Controller
 
 These Verilog designs accompany [Display Controller](http://projectf.io/isle/display-controller.html), chapter 1 of _Building Isle_.
 

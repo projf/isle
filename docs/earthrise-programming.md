@@ -45,9 +45,7 @@ draw line ca  # draw line between (x0, y0) and (x1, y1) in line colour A
 
 Earthrise uses **coordinate registers** to define shapes.
 
-Coordinate registers are signed 12-bit values, allowing a range from -2048 to +2047. There are four coordinate register pairs, `(x0, y0)` to `(x3, y3)`, and one translation register pair `(xt, yt)`.
-
-Coordinate registers are signed and 12 bits long, covering -2048 to +2047. There are four pairs of coordinate registers `(x0, y0)` to `(x3, y3)` for defining shapes and one pair of translation registers. For example, when you tell Earthrise to draw a line, it starts at `(x0, y0)` and ends at `(x1, y1)`.
+Coordinate registers are signed and 12 bits long, covering -2048 to +2047. There are four pairs of coordinate registers `(x0, y0)` to `(x3, y3)` for defining shapes, and one pair of translation registers. For example, when you tell Earthrise to draw a line, it starts at `(x0, y0)` and ends at `(x1, y1)`.
 
 The load immediate opcode for each register:
 
@@ -98,7 +96,7 @@ The load immediate opcode for each register:
 * **0xC2** - fill colour A (fca)
 * **0xC3** - fill colour B (fca)
 
-Earthrise uses the colour registers to determine what value to write to vram. The colour to display is looked up in the [CLUT](../hardware/mem/docs/clut.md).
+Earthrise uses the colour registers to determine what value to write to vram. The colour to display is looked up in the [clut](../hardware/docs/clut.md).
 
 By default, colour registers are set to 1 (one); this avoids users accidentally drawing in colour 0 on a background of 0.
 

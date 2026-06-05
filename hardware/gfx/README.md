@@ -1,17 +1,17 @@
 # Isle Graphics Hardware
 
-| Module                                 | Reference                          | Book Chapter    | Description                              |
-| -------------------------------------- | ---------------------------------- | --------------- | ---------------------------------------- |
-| [canv_disp_agu](canv_disp_agu.v)       | [doc](../docs/canv_disp_agu.md)    | Bitmap Graphics | Canvas display address generation        |
-| [canv_draw_agu](canv_draw_agu.v)       | [doc](../docs/canv_draw_agu.md)    | 2D Drawing      | Canvas draw address generation           |
-| [circle](circle.v)                     | [doc](../docs/circle.md)           | 2D Drawing      | Draw circle                              |
-| [display_sync_gen](display_sync_gen.v) | [doc](../docs/display_sync_gen.md) | Display         | Display sync signals and coordinates     |
-| [earthrise](earthrise.v)               | [doc](../docs/earthrise.md)        | 2D Drawing      | Earthrise drawing engine                 |
-| [fline](fline.v)                       | [doc](../docs/fline.md)            | 2D Drawing      | Draw fast (horizontal) line              |
-| [font_glyph](font_glyph.v)             | [doc](../docs/font_glyph.md)       | Text Mode       | Load font glyph pixels from ROM          |
-| [line](line.v)                         | [doc](../docs/line.md)             | 2D Drawing      | Draw line                                |
-| [textmode](textmode.v)                 | [doc](../docs/textmode.md)         | Text Mode       | Unicode text mode display                |
-| [tmds_encoder](tmds_encoder.v)         | [doc](../docs/tmds_encoder.md)     | Display         | TMDS Encoder (DVI)                       |
+| Module                                 | Reference                          | Book Chapter       | Description                              |
+| -------------------------------------- | ---------------------------------- | ------------------ | ---------------------------------------- |
+| [canv_disp_agu](canv_disp_agu.v)       | [doc](../docs/canv_disp_agu.md)    | Bitmap Graphics    | Canvas display address generation        |
+| [canv_draw_agu](canv_draw_agu.v)       | [doc](../docs/canv_draw_agu.md)    | 2D Drawing         | Canvas draw address generation           |
+| [circle](circle.v)                     | [doc](../docs/circle.md)           | 2D Drawing         | Draw circle                              |
+| [display_sync_gen](display_sync_gen.v) | [doc](../docs/display_sync_gen.md) | Display Controller | Display sync signals and coordinates     |
+| [earthrise](earthrise.v)               | [doc](../docs/earthrise.md)        | 2D Drawing         | Earthrise drawing engine                 |
+| [fline](fline.v)                       | [doc](../docs/fline.md)            | 2D Drawing         | Draw fast (horizontal) line              |
+| [font_glyph](font_glyph.v)             | [doc](../docs/font_glyph.md)       | Text Mode          | Load font glyph pixels from ROM          |
+| [line](line.v)                         | [doc](../docs/line.md)             | 2D Drawing         | Draw line                                |
+| [textmode](textmode.v)                 | [doc](../docs/textmode.md)         | Text Mode          | Unicode text mode display                |
+| [tmds_encoder](tmds_encoder.v)         | [doc](../docs/tmds_encoder.md)     | Display Controller | TMDS Encoder (DVI)                       |
 
 See [Verilog Tests](../tests/README.md) for advice on setting up the test environment and running tests.
 
