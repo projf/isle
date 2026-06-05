@@ -100,7 +100,7 @@ module canv_disp_agu #(
     end
 
     // stage 2 - calculate memory address and pixel index
-    wire [PIX_IDW-1:0] pix_id_mask = (1 << addr_shift) - 1;  // pixel index mask
+    wire [PIX_IDW-1:0] pix_id_mask = (1 << addr_shift_p1) - 1;  // pixel index mask
     always @(posedge clk_pix) begin
         /* verilator lint_off WIDTHEXPAND */ /* verilator lint_off WIDTHTRUNC */
         addr <= addr_base_p1 + (addr_pix >> addr_shift_p1);
