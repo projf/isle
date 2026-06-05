@@ -6,18 +6,14 @@
 `timescale 1ns / 1ps
 
 module ch02 #(
-    parameter BPC=5,              // bits per colour channel
-    parameter BG_COLR='h0886,     // background colour (RGB555)
-    parameter CANV_BPP=4,         // canvas bits per pixel (4=16 colours)
-    parameter CANV_SCALE=16'd1,   // canvas scaling factor
-    parameter CORDW=16,           // signed coordinate width (bits)
-    parameter DISPLAY_MODE=0,     // display mode (see display_modes.vh)
-    parameter FILE_BMAP="",       // initial bitmap file for framebuffer
-    parameter FILE_PAL="",        // initial palette for CLUT
-    parameter WIN_WIDTH=16'd0,    // canvas window width (pixel)
-    parameter WIN_HEIGHT=16'd0,   // canvas window height (lines)
-    parameter WIN_STARTX=16'd0,   // canvas window horizontal position (pixels)
-    parameter WIN_STARTY=16'd0    // canvas window vertical position (lines)
+    parameter BPC=5,             // bits per colour channel
+    parameter BG_COLR='h0886,    // background colour (RGB555)
+    parameter CANV_BPP=4,        // canvas bits per pixel (4=16 colours)
+    parameter CANV_SCALE=16'd1,  // canvas scaling factor
+    parameter CORDW=16,          // signed coordinate width (bits)
+    parameter DISPLAY_MODE=0,    // display mode (see display_modes.vh)
+    parameter FILE_BMAP="",      // initial bitmap file for framebuffer
+    parameter FILE_PAL=""        // initial palette for CLUT
     ) (
     input  wire clk,                        // system clock
     input  wire rst,                        // reset
@@ -31,6 +27,8 @@ module ch02 #(
     output reg  [BPC-1:0] disp_g,           // green display channel
     output reg  [BPC-1:0] disp_b            // blue display channel
     );
+
+    `include "display_modes.vh"
 
     // vram - 16K x 32-bit (64 KiB) with bit write
     //   NB. Due to bit write, minimum depth is 64 KiB with 18 Kb bram
@@ -114,8 +112,8 @@ module ch02 #(
         .dy(dy),
         .addr_base({VRAM_ADDRW{1'b0}}),  // fixed base address for now
         .addr_shift(canv_addr_shift),
-        .win_start({WIN_STARTY, WIN_STARTX}),
-        .win_end({WIN_HEIGHT + WIN_STARTY, WIN_WIDTH + WIN_STARTX}),
+        .win_start(WIN_START_INIT),
+        .win_end(WIN_END_INIT),
         .scale({CANV_SCALE, CANV_SCALE}),
         .addr(canv_addr),
         .pix_id(canv_pix_id),

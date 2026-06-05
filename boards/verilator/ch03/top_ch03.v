@@ -33,10 +33,6 @@ module top_ch03 #(
     localparam CANV_WIDTH   = 16'd336;  // width (pixels)
     localparam CANV_HEIGHT  = 16'd192;  // height (lines)
     localparam CANV_SCALE   = 16'd2;    // scaling factor
-    localparam WIN_WIDTH    = 16'd672;  // window width (pixel)
-    localparam WIN_HEIGHT   = 16'd384;  // window height (lines)
-    localparam WIN_STARTX   = 16'd0;    // window horizontal position (pixels)
-    localparam WIN_STARTY   = 16'd0;    // window vertical position (lines)
 
     // colour channel width adjustment for board display
     //   NB. this logic must be updated if you change BPC or BPC_Board
@@ -74,11 +70,7 @@ module top_ch03 #(
         .CANV_BPP(CANV_BPP),
         .CANV_WIDTH(CANV_WIDTH),
         .CANV_HEIGHT(CANV_HEIGHT),
-        .CANV_SCALE(CANV_SCALE),
-        .WIN_WIDTH(WIN_WIDTH),
-        .WIN_HEIGHT(WIN_HEIGHT),
-        .WIN_STARTX(WIN_STARTX),
-        .WIN_STARTY(WIN_STARTY)
+        .CANV_SCALE(CANV_SCALE)
     ) ch03_inst (
         .clk_sys(clk),  // common system and pixel clock in simulation
         .clk_pix(clk),

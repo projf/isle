@@ -16,11 +16,7 @@ module ch03 #(
     parameter DISPLAY_MODE=0,     // display mode (see display_modes.vh)
     parameter FILE_BMAP="",       // initial bitmap file for vram
     parameter FILE_ER_LIST="",    // initial command list for Earthrise
-    parameter FILE_PAL="",        // initial palette for CLUT
-    parameter WIN_WIDTH=16'd0,    // canvas window width (pixel)
-    parameter WIN_HEIGHT=16'd0,   // canvas window height (lines)
-    parameter WIN_STARTX=16'd0,   // canvas window horizontal position (pixels)
-    parameter WIN_STARTY=16'd0    // canvas window vertical position (lines)
+    parameter FILE_PAL=""         // initial palette for CLUT
     ) (
     input  wire clk_sys,                    // system clock
     input  wire clk_pix,                    // pixel clock (used by display)
@@ -37,6 +33,8 @@ module ch03 #(
     output reg  [BPC-1:0] disp_g,           // green display channel
     output reg  [BPC-1:0] disp_b            // blue display channel
     );
+
+    `include "display_modes.vh"
 
     // slow Earthrise draw rate by this factor
     localparam ER_DRAW_RATE = 1;  // 1 for full speed
@@ -233,8 +231,8 @@ module ch03 #(
         .dy(dy),
         .addr_base({VRAM_ADDRW{1'b0}}),  // fixed base address for now
         .addr_shift(canv_addr_shift),
-        .win_start({WIN_STARTY, WIN_STARTX}),
-        .win_end({WIN_HEIGHT + WIN_STARTY, WIN_WIDTH + WIN_STARTX}),
+        .win_start(WIN_START_INIT),
+        .win_end(WIN_END_INIT),
         .scale({CANV_SCALE, CANV_SCALE}),
         .addr(canv_addr),
         .pix_id(canv_pix_id),

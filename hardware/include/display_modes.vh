@@ -163,22 +163,13 @@ localparam WIN_END_INIT =
     (DISPLAY_MODE == 5) ? 32'h04380780 :
     32'h0;
 
-localparam TEXT_SCALE_INIT =
-    (DISPLAY_MODE == 0) ? 32'h00010001 :
-    (DISPLAY_MODE == 1) ? 32'h00020002 :
-    (DISPLAY_MODE == 2) ? 32'h00020002 :
-    (DISPLAY_MODE == 3) ? 32'h00010001 :
-    (DISPLAY_MODE == 4) ? 32'h00020002 :
-    (DISPLAY_MODE == 5) ? 32'h00030003 :
-    32'h0;
-
-localparam CANV_SCALE_INIT =
-    (DISPLAY_MODE == 0) ? 32'h00020002 :
-    (DISPLAY_MODE == 1) ? 32'h00040004 :
-    (DISPLAY_MODE == 2) ? 32'h00040004 :
-    (DISPLAY_MODE == 3) ? 32'h00020002 :
-    (DISPLAY_MODE == 4) ? 32'h00040004 :
-    (DISPLAY_MODE == 5) ? 32'h00060006 :
-    32'h0;
+localparam [CORDW-1:0] DISPLAY_SCALE =
+    (DISPLAY_MODE == 0) ? 16'd1 :
+    (DISPLAY_MODE == 1) ? 16'd2 :
+    (DISPLAY_MODE == 2) ? 16'd2 :
+    (DISPLAY_MODE == 3) ? 16'd1 :
+    (DISPLAY_MODE == 4) ? 16'd2 :
+    (DISPLAY_MODE == 5) ? 16'd3 :
+    16'h0;
 
 /* verilator lint_on UNUSEDPARAM */

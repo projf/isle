@@ -33,10 +33,6 @@ module top_ch03 #(
     localparam CANV_WIDTH   = 16'd336;   // width (pixels)
     localparam CANV_HEIGHT  = 16'd192;   // height (lines)
     localparam CANV_SCALE   = 16'd4;     // scaling factor
-    localparam WIN_WIDTH    = 16'd1344;  // window width (pixel)
-    localparam WIN_HEIGHT   = 16'd768;   // window height (lines)
-    localparam WIN_STARTX   = 16'd11;    // window horizontal position (pixels)
-    localparam WIN_STARTY   = 16'd0;     // window vertical position (lines)
 
     // system clock - 20 MHz
     // 100 MHz -> 20 MHz
@@ -114,11 +110,7 @@ module top_ch03 #(
         .CANV_BPP(CANV_BPP),
         .CANV_WIDTH(CANV_WIDTH),
         .CANV_HEIGHT(CANV_HEIGHT),
-        .CANV_SCALE(CANV_SCALE),
-        .WIN_WIDTH(WIN_WIDTH),
-        .WIN_HEIGHT(WIN_HEIGHT),
-        .WIN_STARTX(WIN_STARTX),
-        .WIN_STARTY(WIN_STARTY)
+        .CANV_SCALE(CANV_SCALE)
     ) ch03_inst (
         .clk_sys(clk_sys),
         .clk_pix(clk_pix),
