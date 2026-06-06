@@ -23,7 +23,7 @@ VRAM_LAT = 3
 ADDR_LAT = CLUT_LAT + VRAM_LAT
 
 @dataclass(frozen=True)
-class CanvasParams:
+class CanvasParams:  # pylint: disable=too-many-instance-attributes
     """Hold canvas parameters."""
     addr_base: int
     addr_shift: int
@@ -49,11 +49,11 @@ SCALE_0X0Y = CanvasParams (
 SCALE_1X1Y = CanvasParams (
     addr_base = 0xC03,
     addr_shift = 5,  # 2 colour
-    canv_dims = Coords(x=12, y=6),
+    canv_dims = Coords(x=32, y=6),
     disp_start = Coords(x=-7, y=-2),
-    disp_end = Coords(x=15, y=7),
+    disp_end = Coords(x=48, y=7),
     win_start = Coords(x=2, y=1),
-    win_end = Coords(x=16, y=8),
+    win_end = Coords(x=40, y=8),
     scale = Coords(x=1, y=1),
 )
 
@@ -71,7 +71,7 @@ SCALE_2X2Y = CanvasParams (
 SCALE_4X4Y = CanvasParams (
     addr_base = 0x2000,
     addr_shift = 3,  # 16 colour
-    canv_dims = Coords(x=6, y=4),
+    canv_dims = Coords(x=16, y=4),
     disp_start = Coords(x=-7, y=-2),
     disp_end = Coords(x=23, y=14),
     win_start = Coords(x=0, y=0),
@@ -82,7 +82,7 @@ SCALE_4X4Y = CanvasParams (
 SCALE_3X5Y = CanvasParams (
     addr_base = 0x1FFF,
     addr_shift = 2,  # 256 colour
-    canv_dims = Coords(x=14, y=7),
+    canv_dims = Coords(x=12, y=7),
     disp_start = Coords(x=-7, y=-2),
     disp_end = Coords(x=15, y=7),
     win_start = Coords(x=2, y=1),
@@ -103,12 +103,29 @@ FULL_DISP = CanvasParams (
 )
 
 
+def expected_addr(p, dx, dy, scale_x, scale_y):
+    """Expected address for pixel in paint area."""
+    # window or canvas line, whichever is shorter
+    line_s = min((p.win_end.x - p.win_start.x) // scale_x, p.canv_dims.x)
+    addr_pix = (
+        ((dy - p.win_start.y) // scale_y) * line_s
+        + ((dx + ADDR_LAT - p.win_start.x) // scale_x)
+    )
+    addr = p.addr_base + (addr_pix >> p.addr_shift)
+    pix_id_mask = (1 << p.addr_shift) - 1
+    pix_id = addr_pix & pix_id_mask
+    return addr, pix_id
+
+
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-@cocotb.parametrize(p=[SCALE_1X1Y])
-# @cocotb.parametrize(p=[SCALE_0X0Y, SCALE_1X1Y, SCALE_2X2Y, SCALE_4X4Y, SCALE_3X5Y])
+@cocotb.parametrize(p=[SCALE_0X0Y, SCALE_1X1Y, SCALE_2X2Y, SCALE_4X4Y, SCALE_3X5Y])
 async def canv_disp_agu_paint(dut, p):
     """Test canvas display AGU paint signal."""
     cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, unit="ns").start())
+
+    assert (p.canv_dims.x * 2**(5-p.addr_shift)) % 32 == 0, (
+        "bad test data: canvas width must be an integer number of words."
+    )
 
     # reset
     dut.rst_pix.value = 0
@@ -125,6 +142,9 @@ async def canv_disp_agu_paint(dut, p):
     dut.canv_scale.value = p.scale.pack()
     dut.win_start.value = p.win_start.pack()
     dut.win_end.value = p.win_end.pack()
+
+    scale_x = p.scale.x or 1
+    scale_y = p.scale.y or 1
 
     for frame in range(2):  # test two frames
         for dy in range(p.disp_start.y, p.disp_end.y+1):
@@ -138,11 +158,15 @@ async def canv_disp_agu_paint(dut, p):
                 await ReadOnly()
                 actual_paint = dut.paint.value
 
-                in_window = (
+                in_window_paint = (
                     p.win_start.y <= dy < p.win_end.y
                     and p.win_start.x <= dx+CLUT_LAT < p.win_end.x
                 )
-                exp_paint = Logic(1) if in_window else Logic(0)
+                in_canv = (
+                    p.win_start.y <= dy < p.win_start.y + (p.canv_dims.y * scale_y)
+                    and p.win_start.x <= dx+CLUT_LAT < p.win_start.x + (p.canv_dims.x * scale_x)
+                )
+                exp_paint = Logic(1) if (in_window_paint and in_canv) else Logic(0)
 
                 if actual_paint.is_resolvable:
                     assert actual_paint == exp_paint, (
@@ -154,11 +178,14 @@ async def canv_disp_agu_paint(dut, p):
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-@cocotb.parametrize(p=[SCALE_1X1Y])
-# @cocotb.parametrize(p=[SCALE_0X0Y, SCALE_1X1Y, SCALE_2X2Y, SCALE_4X4Y, SCALE_3X5Y])
+@cocotb.parametrize(p=[SCALE_0X0Y, SCALE_1X1Y, SCALE_2X2Y, SCALE_4X4Y, SCALE_3X5Y])
 async def canv_disp_agu_addr(dut, p):
     """Test canvas display AGU pixel address."""
     cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, unit="ns").start())
+
+    assert (p.canv_dims.x * 2**(5-p.addr_shift)) % 32 == 0, (
+        "bad test data: canvas width must be an integer number of words."
+    )
 
     # reset
     dut.rst_pix.value = 0
@@ -175,6 +202,9 @@ async def canv_disp_agu_addr(dut, p):
     dut.canv_scale.value = p.scale.pack()
     dut.win_start.value = p.win_start.pack()
     dut.win_end.value = p.win_end.pack()
+
+    scale_x = p.scale.x or 1
+    scale_y = p.scale.y or 1
 
     for frame in range(2):  # test two frames
         for dy in range(p.disp_start.y, p.disp_end.y+1):
@@ -189,26 +219,18 @@ async def canv_disp_agu_addr(dut, p):
                 addr = dut.addr.value
                 pix_id = dut.pix_id.value
 
-                scale_x = p.scale.x if p.scale.x > 0 else 1
-                scale_y = p.scale.y if p.scale.y > 0 else 1
-
-                vram_read = (
+                in_window = (
                     p.win_start.y <= dy < p.win_end.y
                     and p.win_start.x <= dx+ADDR_LAT < p.win_end.x
                 )
-
-                line_s = (p.win_end.x - p.win_start.x) // scale_x
-                exp_addr_pix = (
-                    ((dy - p.win_start.y) // scale_y) * line_s
-                    + ((dx + ADDR_LAT - p.win_start.x) // scale_x)
+                in_canv = (
+                    p.win_start.y <= dy < p.win_start.y + (p.canv_dims.y * scale_y)
+                    and p.win_start.x <= dx+ADDR_LAT < p.win_start.x + (p.canv_dims.x * scale_x)
                 )
 
-                exp_addr = p.addr_base + (exp_addr_pix >> p.addr_shift)
+                exp_addr, exp_pix_id = expected_addr(p, dx, dy, scale_x, scale_y)
 
-                pix_id_mask = (1 << p.addr_shift) - 1
-                exp_pix_id = exp_addr_pix & pix_id_mask
-
-                if vram_read and addr.is_resolvable and pix_id.is_resolvable:
+                if in_window and in_canv and addr.is_resolvable and pix_id.is_resolvable:
                     assert int(addr) == exp_addr, (
                         f"addr: '{int(addr)}' is not expected '{exp_addr}' "
                         f"at ({dx}, {dy}) in frame={frame}!"
