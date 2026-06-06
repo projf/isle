@@ -17,12 +17,9 @@ module ch06 #(
     parameter FONT_COUNT=128,     // number of glyphs in font ROM
     parameter GLYPH_HEIGHT=16,    // font glyph height (pixels)
     parameter GLYPH_WIDTH=8,      // font half-width glyph width (pixels)
-    parameter TEXT_SCALE=32'h0,   // text mode scale hYYYYXXXX
     parameter TIMER_DIV=20000,    // millisecond divider
     parameter UART_CNT_INC=6036,  // 16 x baud counter increment
-    parameter UART_CNT_W=16,      // 16 x baud counter width (bits)
-    parameter WIN_END=32'h0,      // text window end coords 'hYYYYXXXX
-    parameter WIN_START=32'h0     // text window start coords 'hYYYYXXXX
+    parameter UART_CNT_W=16       // 16 x baud counter width (bits)
     ) (
     input  wire clk_sys,                    // system clock
     input  wire clk_pix,                    // pixel clock (used by display)
@@ -239,9 +236,9 @@ module ch06 #(
         .scroll_offs(scroll_offs),
         .text_hres(text_hres),
         .text_vres(text_vres),
-        .win_start(WIN_START),
-        .win_end(WIN_END),
-        .scale(TEXT_SCALE),
+        .win_start(WIN_START_CORD),
+        .win_end(WIN_END_CORD),
+        .scale(DISPLAY_SCALE),
         .tram_data(tram_dout_disp),
         .tram_addr(tram_addr_disp),
         .pix(text_pix),

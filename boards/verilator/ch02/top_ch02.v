@@ -25,25 +25,17 @@ module top_ch02 #(
 
     localparam RES = "../../../res";  // resource path
 
-    // 672x384 display with 336x192 4-bit canvas (crocus test)
+    // 336x192 4-bit canvas (crocus)
     localparam FILE_BMAP  = {RES, "/bitmaps/crocus/crocus-336x192.mem"};
     localparam FILE_PAL   = {RES, "/bitmaps/crocus/crocus-336x192_palette.mem"};
-    localparam CANV_BPP   = 5'd4;     // bits per pixel (1,2,4,8,[16])
-    localparam CANV_SCALE = 16'd2;    // scaling factor
-    localparam WIN_WIDTH  = 16'd672;  // window width (pixel)
-    localparam WIN_HEIGHT = 16'd384;  // window height (lines)
-    localparam WIN_STARTX = 16'd0;    // window horizontal position (pixels)
-    localparam WIN_STARTY = 16'd0;    // window vertical position (lines)
+    localparam CANV_BPP   = 5'd4;  // bits per pixel (1,2,4,8,[15])
+    localparam CANV_LORES = 1'b1;  // 1: low resolution canvas
 
-    // 672x384 display with 672x384 2-bit canvas (latency test)
+    // 672x384 2-bit canvas (latency test)
     // localparam FILE_BMAP  = {RES, "/bitmaps/latency/latency-672x384.mem"};
     // localparam FILE_PAL   = {RES, "/bitmaps/latency/latency-672x384_palette.mem"};
-    // localparam CANV_BPP   = 5'd2;     // bits per pixel (1,2,4,8,[16])
-    // localparam CANV_SCALE = 16'd1;    // scaling factor
-    // localparam WIN_WIDTH  = 16'd672;  // window width (pixel)
-    // localparam WIN_HEIGHT = 16'd384;  // window height (lines)
-    // localparam WIN_STARTX = 16'd0;    // window horizontal position (pixels)
-    // localparam WIN_STARTY = 16'd0;    // window vertical position (lines)
+    // localparam CANV_BPP   = 5'd2;  // bits per pixel (1,2,4,8,[15])
+    // localparam CANV_LORES = 1'b0;  // 0: high resolution canvas
 
     // colour channel width adjustment for board display
     //   NB. this logic must be updated if you change BPC or BPC_Board
@@ -64,12 +56,8 @@ module top_ch02 #(
         .BG_COLR(BG_COLR),
         .FILE_BMAP(FILE_BMAP),
         .FILE_PAL(FILE_PAL),
-        .CANV_SCALE(CANV_SCALE),
         .CANV_BPP(CANV_BPP),
-        .WIN_WIDTH(WIN_WIDTH),
-        .WIN_HEIGHT(WIN_HEIGHT),
-        .WIN_STARTX(WIN_STARTX),
-        .WIN_STARTY(WIN_STARTY)
+        .CANV_LORES(CANV_LORES)
     ) ch02_inst (
         .clk(clk),
         .rst(rst),

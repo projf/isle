@@ -145,7 +145,7 @@ localparam VA_END = VRES - 16'sd1;
 // Default Bitmap and Text Mode Display Parameters
 //
 
-localparam WIN_START_INIT =
+localparam WIN_START_CORD =
     (DISPLAY_MODE == 0) ? 32'h003C0000 :
     (DISPLAY_MODE == 1) ? 32'h00000000 :
     (DISPLAY_MODE == 2) ? 32'h0000000B :
@@ -154,7 +154,7 @@ localparam WIN_START_INIT =
     (DISPLAY_MODE == 5) ? 32'h00000000 :
     32'h0;
 
-localparam WIN_END_INIT =
+localparam WIN_END_CORD =
     (DISPLAY_MODE == 0) ? 32'h01A40280 :
     (DISPLAY_MODE == 1) ? 32'h03000400 :
     (DISPLAY_MODE == 2) ? 32'h0300054B :
@@ -163,22 +163,13 @@ localparam WIN_END_INIT =
     (DISPLAY_MODE == 5) ? 32'h04380780 :
     32'h0;
 
-localparam TEXT_SCALE_INIT =
+localparam DISPLAY_SCALE =
     (DISPLAY_MODE == 0) ? 32'h00010001 :
     (DISPLAY_MODE == 1) ? 32'h00020002 :
     (DISPLAY_MODE == 2) ? 32'h00020002 :
     (DISPLAY_MODE == 3) ? 32'h00010001 :
     (DISPLAY_MODE == 4) ? 32'h00020002 :
     (DISPLAY_MODE == 5) ? 32'h00030003 :
-    32'h0;
-
-localparam CANV_SCALE_INIT =
-    (DISPLAY_MODE == 0) ? 32'h00020002 :
-    (DISPLAY_MODE == 1) ? 32'h00040004 :
-    (DISPLAY_MODE == 2) ? 32'h00040004 :
-    (DISPLAY_MODE == 3) ? 32'h00020002 :
-    (DISPLAY_MODE == 4) ? 32'h00040004 :
-    (DISPLAY_MODE == 5) ? 32'h00060006 :
     32'h0;
 
 /* verilator lint_on UNUSEDPARAM */

@@ -6,19 +6,16 @@
 `timescale 1ns / 1ps
 
 module ch04 #(
-    parameter BPC=5,             // bits per colour channel
-    parameter BG_COLR='h0886,    // background colour (RGB555)
-    parameter CORDW=16,          // signed coordinate width (bits)
-    parameter DISPLAY_MODE=0,    // display mode (see display_modes.vh)
-    parameter FILE_FONT="",      // font glyph ROM file
-    parameter FILE_PAL="",       // initial palette for CLUT
-    parameter FILE_TXT="",       // initial text file for tram
-    parameter FONT_COUNT=128,    // number of glyphs in font ROM
-    parameter GLYPH_HEIGHT=16,   // font glyph height (pixels)
-    parameter GLYPH_WIDTH=8,     // font half-width glyph width (pixels)
-    parameter TEXT_SCALE=32'h0,  // text mode scale hYYYYXXXX
-    parameter WIN_END=32'h0,     // text window end coords 'hYYYYXXXX
-    parameter WIN_START=32'h0    // text window start coords 'hYYYYXXXX
+    parameter BPC=5,            // bits per colour channel
+    parameter BG_COLR='h0886,   // background colour (RGB555)
+    parameter CORDW=16,         // signed coordinate width (bits)
+    parameter DISPLAY_MODE=0,   // display mode (see display_modes.vh)
+    parameter FILE_FONT="",     // font glyph ROM file
+    parameter FILE_PAL="",      // initial palette for CLUT
+    parameter FILE_TXT="",      // initial text file for tram
+    parameter FONT_COUNT=128,   // number of glyphs in font ROM
+    parameter GLYPH_HEIGHT=16,  // font glyph height (pixels)
+    parameter GLYPH_WIDTH=8     // font half-width glyph width (pixels)
     ) (
     input  wire clk_sys,                    // system clock
     input  wire clk_pix,                    // pixel clock (used by display)
@@ -36,6 +33,8 @@ module ch04 #(
     output reg  [BPC-1:0] disp_g,           // green display channel
     output reg  [BPC-1:0] disp_b            // blue display channel
     );
+
+    `include "display_modes.vh"
 
     // text mode
     localparam TEXT_CIDXW =  4;  // 16 colours available in textmode
@@ -127,9 +126,9 @@ module ch04 #(
         .scroll_offs(scroll_offs),
         .text_hres(text_hres),
         .text_vres(text_vres),
-        .win_start(WIN_START),
-        .win_end(WIN_END),
-        .scale(TEXT_SCALE),
+        .win_start(WIN_START_CORD),
+        .win_end(WIN_END_CORD),
+        .scale(DISPLAY_SCALE),
         .tram_data(tram_dout_disp),
         .tram_addr(tram_addr_disp),
         .pix(text_pix),
