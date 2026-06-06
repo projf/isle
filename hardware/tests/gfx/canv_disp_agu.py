@@ -137,7 +137,7 @@ async def canv_disp_agu_paint(dut, p):
 
                 if actual_paint.is_resolvable:
                     assert actual_paint == exp_paint, (
-                        f"paint: '{actual_paint}' is not expected '{exp_paint}'"
+                        f"paint: '{actual_paint}' is not expected '{exp_paint}' "
                         f"at ({dx}, {dy}) in frame={frame}!"
                     )
 
@@ -199,11 +199,11 @@ async def canv_disp_agu_addr(dut, p):
 
                 if vram_read and addr.is_resolvable and pix_id.is_resolvable:
                     assert int(addr) == exp_addr, (
-                        f"addr: '{int(addr)}' is not expected '{exp_addr}'"
+                        f"addr: '{int(addr)}' is not expected '{exp_addr}' "
                         f"at ({dx}, {dy}) in frame={frame}!"
                     )
                     assert int(pix_id) == exp_pix_id, (
-                        f"pix_id: '{int(pix_id)}' is not expected '{exp_pix_id}'"
+                        f"pix_id: '{int(pix_id)}' is not expected '{exp_pix_id}' "
                         f"at ({dx}, {dy}) in frame={frame}!"
                     )
 

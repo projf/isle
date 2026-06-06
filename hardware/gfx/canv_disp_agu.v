@@ -33,8 +33,8 @@ module canv_disp_agu #(
     output reg  paint                      // canvas painting enable (pre-clut)
     );
 
-    localparam PAINT_LAT = CLUT_LAT + 1;  // +1 for paint reg
     localparam ADDR_LAT = VRAM_LAT + CLUT_LAT + 2;  // +1 for in_window reg; +1 for AGU stage 2
+    localparam PAINT_OFFS = VRAM_LAT;  // paint latency offset from ADDR_LAT
 
     // separate y and x from canvas/window signals
     /* verilator lint_off UNUSEDSIGNAL */
@@ -52,13 +52,10 @@ module canv_disp_agu #(
 
     // register signals to improve timing with hwreg
     reg [CORDW-1:0] scale_x_minus, scale_y_minus;
-    reg signed [CORDW-1:0] paint_x0, paint_x1;
     reg signed [CORDW-1:0] win_x0_lat, win_x1_lat;
     always @(posedge clk_pix) begin
         scale_x_minus <= (scale_x == 0) ? 0 : scale_x - 1;
         scale_y_minus <= (scale_y == 0) ? 0 : scale_y - 1;
-        paint_x0 <= win_x0 - PAINT_LAT;
-        paint_x1 <= win_x1 - PAINT_LAT;
         win_x0_lat <= win_x0 - ADDR_LAT;
         win_x1_lat <= win_x1 - ADDR_LAT;
     end
@@ -66,9 +63,10 @@ module canv_disp_agu #(
     // register latency corrected window and paint areas
     reg in_window;
     wire win_y = (dy >= win_y0) && (dy < win_y1);
+    reg [PAINT_OFFS-1:0] paint_sr = 0;
     always @(posedge clk_pix) begin
-        paint <= (dx >= paint_x0) && (dx < paint_x1) && win_y;  // output signal
         in_window <= (dx >= win_x0_lat) && (dx < win_x1_lat) && win_y;  // used in AGU stage 1
+        {paint, paint_sr} <= {paint_sr, in_window};
     end
 
     // pipelined signals
