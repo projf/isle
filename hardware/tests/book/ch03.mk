@@ -30,8 +30,7 @@ COMPILE_ARGS += -P${DUT}.DISPLAY_MODE=3
 COMPILE_ARGS += -P${DUT}.FILE_ER_LIST="\"../../../res/drawings/basic-test.mem"\"
 COMPILE_ARGS += -P${DUT}.FILE_PAL="\"../../../res/palettes/aqua-4.mem"\"
 COMPILE_ARGS += -P${DUT}.CANV_BPP=5\'d2
-COMPILE_ARGS += -P${DUT}.CANV_WIDTH=16\'d672
-COMPILE_ARGS += -P${DUT}.CANV_HEIGHT=16\'d384
+COMPILE_ARGS += -P${DUT}.CANV_DIMS=32\'h018002A0
 COMPILE_ARGS += -P${DUT}.CANV_LORES=1\'b0
 
 # each test needs its own build dir and results file
