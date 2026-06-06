@@ -40,12 +40,12 @@ module canv_disp_agu #(
     /* verilator lint_off UNUSEDSIGNAL */
     reg [CORDW-1:0] canv_h, canv_w;
     /* verilator lint_on UNUSEDSIGNAL */
-    reg [CORDW-1:0] scale_y0, scale_x0;
+    reg [CORDW-1:0] scale_y, scale_x;
     reg signed [CORDW-1:0] win_start_y, win_start_x;
     reg signed [CORDW-1:0] win_end_y, win_end_x;
     always @(*) begin
         {canv_h, canv_w} = canv_dims;
-        {scale_y0, scale_x0} = canv_scale;
+        {scale_y, scale_x} = canv_scale;
         {win_start_y, win_start_x} = win_start;
         {win_end_y, win_end_x} = win_end;
     end
@@ -55,8 +55,8 @@ module canv_disp_agu #(
     reg signed [CORDW-1:0] paint_start_x, paint_end_x;
     reg signed [CORDW-1:0] vram_start_x, vram_end_x;
     always @(posedge clk_pix) begin
-        scale_x_minus <= (scale_x0 == 0) ? 0 : scale_x0 - 1;
-        scale_y_minus <= (scale_y0 == 0) ? 0 : scale_y0 - 1;
+        scale_x_minus <= (scale_x == 0) ? 0 : scale_x - 1;
+        scale_y_minus <= (scale_y == 0) ? 0 : scale_y - 1;
         paint_start_x <= win_start_x - PAINT_LAT;
         paint_end_x <= win_end_x - PAINT_LAT;
         vram_start_x <= win_start_x - ADDR_LAT;
