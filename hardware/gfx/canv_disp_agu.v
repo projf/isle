@@ -34,41 +34,41 @@ module canv_disp_agu #(
     );
 
     localparam PAINT_LAT = CLUT_LAT + 1;  // +1 for paint reg
-    localparam ADDR_LAT = VRAM_LAT + CLUT_LAT + 2;  // +1 for vram_read reg; +1 for AGU stage 2
+    localparam ADDR_LAT = VRAM_LAT + CLUT_LAT + 2;  // +1 for in_window reg; +1 for AGU stage 2
 
     // separate y and x from canvas/window signals
     /* verilator lint_off UNUSEDSIGNAL */
     reg [CORDW-1:0] canv_h, canv_w;
     /* verilator lint_on UNUSEDSIGNAL */
     reg [CORDW-1:0] scale_y, scale_x;
-    reg signed [CORDW-1:0] win_start_y, win_start_x;
-    reg signed [CORDW-1:0] win_end_y, win_end_x;
+    reg signed [CORDW-1:0] win_y0, win_x0;
+    reg signed [CORDW-1:0] win_y1, win_x1;
     always @(*) begin
         {canv_h, canv_w} = canv_dims;
         {scale_y, scale_x} = canv_scale;
-        {win_start_y, win_start_x} = win_start;
-        {win_end_y, win_end_x} = win_end;
+        {win_y0, win_x0} = win_start;
+        {win_y1, win_x1} = win_end;
     end
 
     // register signals to improve timing with hwreg
     reg [CORDW-1:0] scale_x_minus, scale_y_minus;
-    reg signed [CORDW-1:0] paint_start_x, paint_end_x;
-    reg signed [CORDW-1:0] vram_start_x, vram_end_x;
+    reg signed [CORDW-1:0] paint_x0, paint_x1;
+    reg signed [CORDW-1:0] win_x0_lat, win_x1_lat;
     always @(posedge clk_pix) begin
         scale_x_minus <= (scale_x == 0) ? 0 : scale_x - 1;
         scale_y_minus <= (scale_y == 0) ? 0 : scale_y - 1;
-        paint_start_x <= win_start_x - PAINT_LAT;
-        paint_end_x <= win_end_x - PAINT_LAT;
-        vram_start_x <= win_start_x - ADDR_LAT;
-        vram_end_x <= win_end_x - ADDR_LAT;
+        paint_x0 <= win_x0 - PAINT_LAT;
+        paint_x1 <= win_x1 - PAINT_LAT;
+        win_x0_lat <= win_x0 - ADDR_LAT;
+        win_x1_lat <= win_x1 - ADDR_LAT;
     end
 
-    // register paint and vram read area as defined by window
-    reg vram_read;
-    wire win_y = (dy >= win_start_y) && (dy < win_end_y);
+    // register latency corrected window and paint areas
+    reg in_window;
+    wire win_y = (dy >= win_y0) && (dy < win_y1);
     always @(posedge clk_pix) begin
-        paint <= (dx >= paint_start_x) && (dx < paint_end_x) && win_y;  // output signal
-        vram_read <= (dx >= vram_start_x) && (dx < vram_end_x) && win_y;  // used in AGU stage 1
+        paint <= (dx >= paint_x0) && (dx < paint_x1) && win_y;  // output signal
+        in_window <= (dx >= win_x0_lat) && (dx < win_x1_lat) && win_y;  // used in AGU stage 1
     end
 
     // pipelined signals
@@ -84,7 +84,7 @@ module canv_disp_agu #(
             cnt_x <= 0;
             addr_pix <= 0;
             addr_pix_ln <= 0;
-        end else if (line_start && (dy > win_start_y)) begin  // after 1st line in paint area
+        end else if (line_start && (dy > win_y0)) begin  // after 1st line in paint area
             cnt_x <= 0;  // reset x counter at line start
             if (cnt_y == scale_y_minus) begin
                 cnt_y <= 0;
@@ -93,7 +93,7 @@ module canv_disp_agu #(
                 cnt_y <= cnt_y + 1;
                 addr_pix <= addr_pix_ln;  // restore addr_pix_ln to repeat line
             end
-        end else if (vram_read) begin  // increment pixel address in vram read area
+        end else if (in_window) begin  // increment pixel address in window area
             if (cnt_x == scale_x_minus) begin
                 addr_pix <= addr_pix + 1;
                 cnt_x <= 0;
