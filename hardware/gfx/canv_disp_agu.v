@@ -16,33 +16,38 @@ module canv_disp_agu #(
     parameter WORD=32,              // machine word size (bits)
     parameter PIX_IDW=$clog2(WORD)  // pixel ID width (bits)
     ) (
-    input  wire clk_pix,                  // pixel clock
-    input  wire rst_pix,                  // reset in pixel clock domain
-    input  wire frame_start,              // frame start flag
-    input  wire line_start,               // line start flag
-    input  wire signed [CORDW-1:0] dx,    // horizontal display position
-    input  wire signed [CORDW-1:0] dy,    // vertical display position
-    input  wire [ADDRW-1:0] addr_base,    // canvas base address (word address)
-    input  wire [SHIFTW-1:0] addr_shift,  // address shift bits
-    input  wire [2*CORDW-1:0] win_start,  // canvas window start coords
-    input  wire [2*CORDW-1:0] win_end,    // canvas window end coords
-    input  wire [2*CORDW-1:0] scale,      // canvas scale
-    output reg  [ADDRW-1:0] addr,         // pixel memory address
-    output reg  [PIX_IDW-1:0] pix_id,     // pixel ID within word
-    output reg  paint                     // canvas painting enable (pre-clut)
+    input  wire clk_pix,                   // pixel clock
+    input  wire rst_pix,                   // reset in pixel clock domain
+    input  wire frame_start,               // frame start flag
+    input  wire line_start,                // line start flag
+    input  wire signed [CORDW-1:0] dx,     // horizontal display position
+    input  wire signed [CORDW-1:0] dy,     // vertical display position
+    input  wire [ADDRW-1:0] addr_base,     // canvas base address (word address)
+    input  wire [SHIFTW-1:0] addr_shift,   // address shift bits
+    input  wire [2*CORDW-1:0] canv_dims,   // canvas dimensions
+    input  wire [2*CORDW-1:0] canv_scale,  // canvas scale
+    input  wire [2*CORDW-1:0] win_start,   // canvas window start coords
+    input  wire [2*CORDW-1:0] win_end,     // canvas window end coords
+    output reg  [ADDRW-1:0] addr,          // pixel memory address
+    output reg  [PIX_IDW-1:0] pix_id,      // pixel ID within word
+    output reg  paint                      // canvas painting enable (pre-clut)
     );
 
     localparam PAINT_LAT = CLUT_LAT + 1;  // +1 for paint reg
     localparam ADDR_LAT = VRAM_LAT + CLUT_LAT + 2;  // +1 for vram_read reg; +1 for AGU stage 2
 
-    // separate y and x from canvas window signals
+    // separate y and x from canvas/window signals
+    /* verilator lint_off UNUSEDSIGNAL */
+    reg [CORDW-1:0] canv_h, canv_w;
+    /* verilator lint_on UNUSEDSIGNAL */
+    reg [CORDW-1:0] scale_y0, scale_x0;
     reg signed [CORDW-1:0] win_start_y, win_start_x;
     reg signed [CORDW-1:0] win_end_y, win_end_x;
-    reg [CORDW-1:0] scale_y0, scale_x0;
     always @(*) begin
+        {canv_h, canv_w} = canv_dims;
+        {scale_y0, scale_x0} = canv_scale;
         {win_start_y, win_start_x} = win_start;
         {win_end_y, win_end_x} = win_end;
-        {scale_y0, scale_x0} = scale;
     end
 
     // register signals to improve timing with hwreg
