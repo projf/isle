@@ -37,9 +37,7 @@ module canv_disp_agu #(
     localparam PAINT_OFFS = VRAM_LAT;  // paint latency offset from ADDR_LAT
 
     // separate y and x from canvas/window signals
-    /* verilator lint_off UNUSEDSIGNAL */
     reg [CORDW-1:0] canv_h, canv_w;
-    /* verilator lint_on UNUSEDSIGNAL */
     reg [CORDW-1:0] scale_y, scale_x;
     reg signed [CORDW-1:0] win_y0, win_x0;
     reg signed [CORDW-1:0] win_y1, win_x1;
@@ -60,13 +58,19 @@ module canv_disp_agu #(
         win_x1_lat <= win_x1 - ADDR_LAT;
     end
 
-    // register latency corrected window and paint areas
+    // canvas paint area is intersection of window and canvas dims
     reg in_window;
+    reg [CORDW-1:0] cnt_cx, cnt_cy;  // canvas counters
+    wire in_canv_h = (cnt_cy < canv_h);
+    wire in_canv_w = (cnt_cx < canv_w);
+    wire canv_paint = in_canv_h & in_canv_w && in_window;
+
+    // register latency corrected window and paint areas
     wire win_y = (dy >= win_y0) && (dy < win_y1);
-    reg [PAINT_OFFS-1:0] paint_sr = 0;
+    reg [PAINT_OFFS-1:0] paint_sr;
     always @(posedge clk_pix) begin
         in_window <= (dx >= win_x0_lat) && (dx < win_x1_lat) && win_y;  // used in AGU stage 1
-        {paint, paint_sr} <= {paint_sr, in_window};
+        {paint, paint_sr} <= {paint_sr, canv_paint};
     end
 
     // pipelined signals
@@ -75,27 +79,32 @@ module canv_disp_agu #(
 
     // stage 1 - main calculation, handling frame and line starts
     reg [ADDRW+PIX_IDW-1:0] addr_pix, addr_pix_ln;  // pixel addresses
-    reg [CORDW-1:0] cnt_x, cnt_y;  // scale counters
+    reg [CORDW-1:0] cnt_sx, cnt_sy;  // window scale counters
     always @(posedge clk_pix) begin
         if (rst_pix || frame_start) begin  // reset address and counters at start of frame
-            cnt_y <= 0;
-            cnt_x <= 0;
+            cnt_sx <= 0;
+            cnt_sy <= 0;
+            cnt_cx <= 0;
+            cnt_cy <= 0;
             addr_pix <= 0;
             addr_pix_ln <= 0;
         end else if (line_start && (dy > win_y0)) begin  // after 1st line in paint area
-            cnt_x <= 0;  // reset x counter at line start
-            if (cnt_y == scale_y_minus) begin
-                cnt_y <= 0;
+            cnt_sx <= 0;  // reset x scale counter at line start
+            cnt_cx <= 0;  // reset x canvas pixel counter at line start
+            if (cnt_sy == scale_y_minus) begin
+                cnt_sy <= 0;
+                cnt_cy <= cnt_cy + 1;  // next canvas row
                 addr_pix_ln <= addr_pix;  // save line address
             end else begin
-                cnt_y <= cnt_y + 1;
+                cnt_sy <= cnt_sy + 1;
                 addr_pix <= addr_pix_ln;  // restore addr_pix_ln to repeat line
             end
-        end else if (in_window) begin  // increment pixel address in window area
-            if (cnt_x == scale_x_minus) begin
+        end else if (canv_paint) begin  // increment pixel address in window area
+            if (cnt_sx == scale_x_minus) begin
+                cnt_sx <= 0;
+                cnt_cx <= cnt_cx + 1;  // next canvas pixel
                 addr_pix <= addr_pix + 1;
-                cnt_x <= 0;
-            end else cnt_x <= cnt_x + 1;
+            end else cnt_sx <= cnt_sx + 1;
         end
         // pass to stage 2
         addr_base_p1 <= addr_base;

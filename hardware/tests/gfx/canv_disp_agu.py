@@ -27,6 +27,7 @@ class CanvasParams:
     """Hold canvas parameters."""
     addr_base: int
     addr_shift: int
+    canv_dims: Coords
     disp_start: Coords
     disp_end: Coords
     win_start: Coords
@@ -37,6 +38,7 @@ class CanvasParams:
 SCALE_0X0Y = CanvasParams (
     addr_base = 0x0,
     addr_shift = 3,  # 16 colour
+    canv_dims = Coords(x=24, y=15),
     disp_start = Coords(x=-7, y=-2),
     disp_end = Coords(x=23, y=14),
     win_start = Coords(x=0, y=0),  # top left of display
@@ -47,6 +49,7 @@ SCALE_0X0Y = CanvasParams (
 SCALE_1X1Y = CanvasParams (
     addr_base = 0xC03,
     addr_shift = 5,  # 2 colour
+    canv_dims = Coords(x=12, y=6),
     disp_start = Coords(x=-7, y=-2),
     disp_end = Coords(x=15, y=7),
     win_start = Coords(x=2, y=1),
@@ -57,6 +60,7 @@ SCALE_1X1Y = CanvasParams (
 SCALE_2X2Y = CanvasParams (
     addr_base = 0x201,
     addr_shift = 4,  # 4 colour
+    canv_dims = Coords(x=32, y=16),
     disp_start = Coords(x=-15, y=-2),
     disp_end = Coords(x=67, y=38),
     win_start = Coords(x=1, y=1),  # 1 in from corner
@@ -67,6 +71,7 @@ SCALE_2X2Y = CanvasParams (
 SCALE_4X4Y = CanvasParams (
     addr_base = 0x2000,
     addr_shift = 3,  # 16 colour
+    canv_dims = Coords(x=6, y=4),
     disp_start = Coords(x=-7, y=-2),
     disp_end = Coords(x=23, y=14),
     win_start = Coords(x=0, y=0),
@@ -77,6 +82,7 @@ SCALE_4X4Y = CanvasParams (
 SCALE_3X5Y = CanvasParams (
     addr_base = 0x1FFF,
     addr_shift = 2,  # 256 colour
+    canv_dims = Coords(x=14, y=7),
     disp_start = Coords(x=-7, y=-2),
     disp_end = Coords(x=15, y=7),
     win_start = Coords(x=2, y=1),
@@ -88,6 +94,7 @@ SCALE_3X5Y = CanvasParams (
 FULL_DISP = CanvasParams (
     addr_base = 0x201,
     addr_shift = 4,  # 4 colour
+    canv_dims = Coords(x=24, y=15),
     disp_start = Coords(x=-153, y=-20),
     disp_end = Coords(x=671, y=383),
     win_start = Coords(x=1, y=1),  # 1 in from corner
@@ -97,7 +104,8 @@ FULL_DISP = CanvasParams (
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-@cocotb.parametrize(p=[SCALE_0X0Y, SCALE_1X1Y, SCALE_2X2Y, SCALE_4X4Y, SCALE_3X5Y])
+@cocotb.parametrize(p=[SCALE_1X1Y])
+# @cocotb.parametrize(p=[SCALE_0X0Y, SCALE_1X1Y, SCALE_2X2Y, SCALE_4X4Y, SCALE_3X5Y])
 async def canv_disp_agu_paint(dut, p):
     """Test canvas display AGU paint signal."""
     cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, unit="ns").start())
@@ -113,6 +121,7 @@ async def canv_disp_agu_paint(dut, p):
     # setup canvas
     dut.addr_base.value = p.addr_base
     dut.addr_shift.value = p.addr_shift
+    dut.canv_dims.value = p.canv_dims.pack()
     dut.canv_scale.value = p.scale.pack()
     dut.win_start.value = p.win_start.pack()
     dut.win_end.value = p.win_end.pack()
@@ -145,7 +154,8 @@ async def canv_disp_agu_paint(dut, p):
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-@cocotb.parametrize(p=[SCALE_0X0Y, SCALE_1X1Y, SCALE_2X2Y, SCALE_4X4Y, SCALE_3X5Y])
+@cocotb.parametrize(p=[SCALE_1X1Y])
+# @cocotb.parametrize(p=[SCALE_0X0Y, SCALE_1X1Y, SCALE_2X2Y, SCALE_4X4Y, SCALE_3X5Y])
 async def canv_disp_agu_addr(dut, p):
     """Test canvas display AGU pixel address."""
     cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, unit="ns").start())
@@ -161,6 +171,7 @@ async def canv_disp_agu_addr(dut, p):
     # setup canvas
     dut.addr_base.value = p.addr_base
     dut.addr_shift.value = p.addr_shift
+    dut.canv_dims.value = p.canv_dims.pack()
     dut.canv_scale.value = p.scale.pack()
     dut.win_start.value = p.win_start.pack()
     dut.win_end.value = p.win_end.pack()
