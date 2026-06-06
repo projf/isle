@@ -105,10 +105,8 @@ FULL_DISP = CanvasParams (
 
 def expected_addr(p, dx, dy, scale_x, scale_y):
     """Expected address for pixel in paint area."""
-    # window or canvas line, whichever is shorter
-    line_s = min((p.win_end.x - p.win_start.x) // scale_x, p.canv_dims.x)
     addr_pix = (
-        ((dy - p.win_start.y) // scale_y) * line_s
+        ((dy - p.win_start.y) // scale_y) * p.canv_dims.x
         + ((dx + ADDR_LAT - p.win_start.x) // scale_x)
     )
     addr = p.addr_base + (addr_pix >> p.addr_shift)

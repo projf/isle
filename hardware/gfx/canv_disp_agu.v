@@ -94,7 +94,10 @@ module canv_disp_agu #(
             if (cnt_sy == scale_y_minus) begin
                 cnt_sy <= 0;
                 cnt_cy <= cnt_cy + 1;  // next canvas row
-                addr_pix_ln <= addr_pix;  // save line address
+                /* verilator lint_off WIDTHEXPAND */
+                addr_pix <= addr_pix_ln + canv_w;
+                addr_pix_ln <= addr_pix_ln + canv_w;
+                /* verilator lint_on WIDTHEXPAND */
             end else begin
                 cnt_sy <= cnt_sy + 1;
                 addr_pix <= addr_pix_ln;  // restore addr_pix_ln to repeat line
