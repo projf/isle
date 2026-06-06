@@ -25,14 +25,14 @@ module top_ch03 #(
 
     localparam RES = "../../../res";  // resource path
 
-    // 672x384 display with 336x192 4-bit canvas
+    // 336x192 4-bit canvas
     localparam FILE_BMAP    = "";
     localparam FILE_PAL     = {RES, "/palettes/go-16.mem"};
     localparam FILE_ER_LIST = {RES, "/drawings/all-shapes.mem"};
-    localparam CANV_BPP     = 5'd4;     // bits per pixel (1,2,4,8,[16])
+    localparam CANV_BPP     = 5'd4;     // bits per pixel (1,2,4,8,[15])
     localparam CANV_WIDTH   = 16'd336;  // width (pixels)
-    localparam CANV_HEIGHT  = 16'd192;  // height (lines)
-    localparam CANV_SCALE   = 16'd2;    // scaling factor
+    localparam CANV_HEIGHT  = 16'd192;  // height (pixels)
+    localparam CANV_LORES   = 1'b1;     // 1: low resolution canvas
 
     // colour channel width adjustment for board display
     //   NB. this logic must be updated if you change BPC or BPC_Board
@@ -70,7 +70,7 @@ module top_ch03 #(
         .CANV_BPP(CANV_BPP),
         .CANV_WIDTH(CANV_WIDTH),
         .CANV_HEIGHT(CANV_HEIGHT),
-        .CANV_SCALE(CANV_SCALE)
+        .CANV_LORES(CANV_LORES)
     ) ch03_inst (
         .clk_sys(clk),  // common system and pixel clock in simulation
         .clk_pix(clk),

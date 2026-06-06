@@ -34,9 +34,6 @@ module top_ch06 #(
     // text mode params
     localparam FILE_PAL   = {RES, "/palettes/go-16.mem"};
     localparam FILE_TXT   = "";
-    localparam TEXT_SCALE = 32'h00010001;  // text scaling factor 'hYYYYXXXX
-    localparam WIN_START  = 32'h00000000;  // text window start coords
-    localparam WIN_END    = 32'h018002A0;  // text window end coords
 
     // font params
     localparam FILE_FONT    = {RES, "/fonts/unifont-rom.mem"};
@@ -72,12 +69,9 @@ module top_ch06 #(
         .FONT_COUNT(FONT_COUNT),
         .GLYPH_HEIGHT(GLYPH_HEIGHT),
         .GLYPH_WIDTH(GLYPH_WIDTH),
-        .TEXT_SCALE(TEXT_SCALE),
         .TIMER_DIV(TIMER_DIV),
         .UART_CNT_INC(UART_CNT_INC),
-        .UART_CNT_W(UART_CNT_W),
-        .WIN_START(WIN_START),
-        .WIN_END(WIN_END)
+        .UART_CNT_W(UART_CNT_W)
     ) ch06_inst (
         .clk_sys(clk),  // common system and pixel clock in simulation
         .clk_pix(clk),

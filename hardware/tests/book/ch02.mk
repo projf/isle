@@ -24,10 +24,7 @@ COMPILE_ARGS += -P${DUT}.DISPLAY_MODE=3
 COMPILE_ARGS += -P${DUT}.FILE_BMAP="\"../../../res/bitmaps/latency/latency-672x384.mem"\"
 COMPILE_ARGS += -P${DUT}.FILE_PAL="\"../../../res/bitmaps/latency/latency-672x384_palette.mem"\"
 COMPILE_ARGS += -P${DUT}.CANV_BPP=2
-COMPILE_ARGS += -P${DUT}.CANV_SCALE=16\'d1
-COMPILE_ARGS += -P${DUT}.WIN_WIDTH=16\'d672
-COMPILE_ARGS += -P${DUT}.WIN_HEIGHT=16\'d384
-COMPILE_ARGS += -P${DUT}.WIN_STARTX=16\'d0
+COMPILE_ARGS += -P${DUT}.CANV_LORES=1\'b0
 
 # each test needs its own build dir and results file
 COCOTB_RESULTS_FILE = results_${DUT}.xml

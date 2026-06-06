@@ -6,14 +6,14 @@
 `timescale 1ns / 1ps
 
 module ch02 #(
-    parameter BPC=5,             // bits per colour channel
-    parameter BG_COLR='h0886,    // background colour (RGB555)
-    parameter CANV_BPP=4,        // canvas bits per pixel (4=16 colours)
-    parameter CANV_SCALE=16'd1,  // canvas scaling factor
-    parameter CORDW=16,          // signed coordinate width (bits)
-    parameter DISPLAY_MODE=0,    // display mode (see display_modes.vh)
-    parameter FILE_BMAP="",      // initial bitmap file for framebuffer
-    parameter FILE_PAL=""        // initial palette for CLUT
+    parameter BPC=5,           // bits per colour channel
+    parameter BG_COLR='h0886,  // background colour (RGB555)
+    parameter CANV_BPP=4,      // canvas bits per pixel (4=16 colours)
+    parameter CANV_LORES=0,    // low resolution canvas flag (double scaling)
+    parameter CORDW=16,        // signed coordinate width (bits)
+    parameter DISPLAY_MODE=0,  // display mode (see display_modes.vh)
+    parameter FILE_BMAP="",    // initial bitmap file for framebuffer
+    parameter FILE_PAL=""      // initial palette for CLUT
     ) (
     input  wire clk,                        // system clock
     input  wire rst,                        // reset
@@ -112,9 +112,9 @@ module ch02 #(
         .dy(dy),
         .addr_base({VRAM_ADDRW{1'b0}}),  // fixed base address for now
         .addr_shift(canv_addr_shift),
-        .win_start(WIN_START_INIT),
-        .win_end(WIN_END_INIT),
-        .scale({CANV_SCALE, CANV_SCALE}),
+        .win_start(WIN_START_CORD),
+        .win_end(WIN_END_CORD),
+        .scale(CANV_LORES ? DISPLAY_SCALE << 1 : DISPLAY_SCALE),
         .addr(canv_addr),
         .pix_id(canv_pix_id),
         .paint(canv_paint)
