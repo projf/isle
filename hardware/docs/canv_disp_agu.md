@@ -37,9 +37,9 @@ The position of the canvas on the display is set by the window start `win_start`
 
 `addr_base` is the base _word_ address of the canvas buffer in vram. You can switch this at the start of a frame for double buffering. Or even mid-way through a frame to combine different buffers to form a display.
 
-The `VRAM_LAT` and `CLUT_LAT` parameters correct for latency in retrieving data from vram and looking the colour up in the CLUT. For Isle they should both be set to 2. See [display pipeline](#display-pipeline) for further explanation.
+The `VRAM_LAT` and `CLUT_LAT` parameters account for latency when retrieving data from [vram](vram.md) and when looking up the colour in the [clut](clut.md). For Isle, they should both be set to 2. See [display pipeline](#display-pipeline) for further explanation.
 
-The address shift, `addr_shift`, determines how the raw pixel address is split between vram address and pixel index. Because the maximum address shift is 5, the `SHIFTW` parameter is set to 3.
+The address shift, `addr_shift`, determines how the raw pixel address is split between vram address and the pixel index. Because the maximum address shift is 5, the `SHIFTW` parameter is set to 3.
 
 Address shift is set based on the bits per pixel:
 
@@ -48,16 +48,16 @@ Address shift is set based on the bits per pixel:
 * 4 bit: `addr_shift = 3`
 * 8 bit: `addr_shift = 2`
 
-For example, 2 bits per pixel mean you have 16 pixels per 32-bit word, and 16 is 2^4.
+For example, 2 bits per pixel means you have 16 pixels per 32-bit word, and 16 is 2^4.
 
-The width of the canvas must be an integer number of words. The number if pixels in a word depends on the colour depth (as controlled by `addr_shift`):
+The width of the canvas must be an integer number of words. The number of pixels in a word depends on the colour depth:
 
-* 1 bit: divisible by 32
-* 2 bit: divisible by 16
-* 4 bit: divisible by 8
-* 8 bit: divisible by 4
+* 1 bit: 32
+* 2 bit: 16
+* 4 bit: 8
+* 8 bit: 4
 
-For example, with a 4-bit (16 colour) canvas, 328 is a valid width (divisible by 8), but it not allowed for 2-bit canvases (328 is not divisible by 16). If you use an invalid canvas width, you'll see bitmap rendering issues.
+For example, with a 4-bit (16 colour) canvas, 328 is a valid width (divisible by 8), but it is invalid for a 2-bit canvas (328 is not divisible by 16). You'll see bitmap rendering issues if you use an invalid canvas width.
 
 ### Output
 
@@ -69,7 +69,7 @@ The three outputs are the latency corrected `addr_pix`, `pix_id`, and `paint` si
 
 Our [vram](vram.md) has a 32-bit data bus, but a pixel is 1-8 bits wide. The `pix_id` signal tells the display where in the data word the pixel is. For example, the third 4-bit pixel in a word would have a pix_id of 2.
 
-The paint signal tells you when canvas pixels should be output for display. The canvas doesn't necessarily cover the whole window and the window doesn't necessarily cover the whole display, so we need to know the right time to paint it.
+The paint signal tells you when canvas pixels should be rendered to the display. The canvas doesn't necessarily cover the whole window, and the window doesn't necessarily cover the whole display, so we need to know when to paint it.
 
 _NB. This module doesn't perform any memory boundary checks._
 
@@ -125,7 +125,7 @@ The bitmap display pipeline has three stages:
 
 This process takes several clock cycles. If we don't account for latency, the pixel would be displayed in the wrong position (too far to the right). The vram and clut modules use bram with additional output registers, hence taking two cycles from address generation to receiving data.
 
-Our display controller begins each line with the horizontal blanking internal. This gives us time to prepare the pipeline for the the first pixel, even if it's at x=0.
+Our display controller begins each line with the horizontal blanking interval. This gives us time to prepare the pipeline for the first pixel, even if it's at x=0.
 
 ### Testing
 
