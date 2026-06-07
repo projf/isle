@@ -6,17 +6,16 @@
 `timescale 1ns / 1ps
 
 module ch03 #(
-    parameter BPC=5,              // bits per colour channel
-    parameter BG_COLR='h0886,     // background colour (RGB555)
-    parameter CORDW=16,           // signed coordinate width (bits)
-    parameter CANV_BPP=4,         // canvas bits per pixel (4=16 colours)
-    parameter CANV_WIDTH=16'd0,   // canvas width (pixels)
-    parameter CANV_HEIGHT=16'd0,  // canvas height (pixels)
-    parameter CANV_LORES=0,       // low resolution canvas flag (double scaling)
-    parameter DISPLAY_MODE=0,     // display mode (see display_modes.vh)
-    parameter FILE_BMAP="",       // initial bitmap file for vram
-    parameter FILE_ER_LIST="",    // initial command list for Earthrise
-    parameter FILE_PAL=""         // initial palette for CLUT
+    parameter BPC=5,            // bits per colour channel
+    parameter BG_COLR='h0886,   // background colour (RGB555)
+    parameter CORDW=16,         // signed coordinate width (bits)
+    parameter CANV_BPP=4,       // canvas bits per pixel (4=16 colours)
+    parameter CANV_DIMS=32'h0,  // canvas dimensions (pixels)
+    parameter CANV_LORES=0,     // low resolution canvas flag (double scaling)
+    parameter DISPLAY_MODE=0,   // display mode (see display_modes.vh)
+    parameter FILE_BMAP="",     // initial bitmap file for vram
+    parameter FILE_ER_LIST="",  // initial command list for Earthrise
+    parameter FILE_PAL=""       // initial palette for CLUT
     ) (
     input  wire clk_sys,                    // system clock
     input  wire clk_pix,                    // pixel clock (used by display)
@@ -158,8 +157,8 @@ module ch03 #(
         .rst(rst_sys),
         .en(er_enable),
         .start(er_start),
-        .canv_w(CANV_WIDTH),
-        .canv_h(CANV_HEIGHT),
+        .canv_w(CANV_DIMS[CORDW-1:0]),
+        .canv_h(CANV_DIMS[2*CORDW-1:CORDW]),
         .canv_bpp(CANV_BPP),
         .cmd_list(erlist_dout_er),
         .pc(er_pc),
@@ -231,9 +230,10 @@ module ch03 #(
         .dy(dy),
         .addr_base({VRAM_ADDRW{1'b0}}),  // fixed base address for now
         .addr_shift(canv_addr_shift),
+        .canv_dims(CANV_DIMS),
+        .canv_scale(CANV_LORES ? DISPLAY_SCALE << 1 : DISPLAY_SCALE),
         .win_start(WIN_START_CORD),
         .win_end(WIN_END_CORD),
-        .scale(CANV_LORES ? DISPLAY_SCALE << 1 : DISPLAY_SCALE),
         .addr(canv_addr),
         .pix_id(canv_pix_id),
         .paint(canv_paint)

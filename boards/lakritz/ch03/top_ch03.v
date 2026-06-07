@@ -18,14 +18,14 @@ module top_ch03 #(
 
     localparam RES = "../../../res";  // resource path
 
-    // 336x192 4-bit canvas
+    // canvas
     localparam FILE_BMAP    = "";
     localparam FILE_PAL     = {RES, "/palettes/go-16.mem"};
     localparam FILE_ER_LIST = {RES, "/drawings/all-shapes.mem"};
-    localparam CANV_BPP     = 5'd4;     // bits per pixel (1,2,4,8,[15])
-    localparam CANV_WIDTH   = 16'd336;  // width (pixels)
-    localparam CANV_HEIGHT  = 16'd192;  // height (pixels)
-    localparam CANV_LORES   = 1'b1;     // 1: low resolution canvas
+    localparam CANV_BPP     = 5'd4;  // bits per pixel (1,2,4,8,[15])
+    localparam CANV_WIDTH   = 16'd336;
+    localparam CANV_HEIGHT  = 16'd192;
+    localparam CANV_LORES   = 1'b1;  // 1: low resolution canvas
 
     // system clock - 20 MHz
     // 48 MHz -> 20 MHz
@@ -98,13 +98,12 @@ module top_ch03 #(
         .CORDW(CORDW),
         .DISPLAY_MODE(DISPLAY_MODE),
         .BG_COLR(BG_COLR),
+        .CANV_BPP(CANV_BPP),
+        .CANV_DIMS({CANV_HEIGHT, CANV_WIDTH}),
+        .CANV_LORES(CANV_LORES),
         .FILE_BMAP(FILE_BMAP),
         .FILE_PAL(FILE_PAL),
-        .FILE_ER_LIST(FILE_ER_LIST),
-        .CANV_BPP(CANV_BPP),
-        .CANV_WIDTH(CANV_WIDTH),
-        .CANV_HEIGHT(CANV_HEIGHT),
-        .CANV_LORES(CANV_LORES)
+        .FILE_ER_LIST(FILE_ER_LIST)
     ) ch03_inst (
         .clk_sys(clk_sys),
         .clk_pix(clk_pix),

@@ -25,17 +25,21 @@ module top_ch02 #(
 
     localparam RES = "../../../res";  // resource path
 
-    // 336x192 4-bit canvas (crocus)
-    localparam FILE_BMAP  = {RES, "/bitmaps/crocus/crocus-336x192.mem"};
-    localparam FILE_PAL   = {RES, "/bitmaps/crocus/crocus-336x192_palette.mem"};
-    localparam CANV_BPP   = 5'd4;  // bits per pixel (1,2,4,8,[15])
-    localparam CANV_LORES = 1'b1;  // 1: low resolution canvas
+    // crocus canvas
+    localparam FILE_BMAP   = {RES, "/bitmaps/crocus/crocus-336x192.mem"};
+    localparam FILE_PAL    = {RES, "/bitmaps/crocus/crocus-336x192_palette.mem"};
+    localparam CANV_BPP    = 5'd4;  // bits per pixel (1,2,4,8,[15])
+    localparam CANV_WIDTH  = 16'd336;
+    localparam CANV_HEIGHT = 16'd192;
+    localparam CANV_LORES  = 1'b1;  // 1: low resolution canvas
 
-    // 672x384 2-bit canvas (latency test)
-    // localparam FILE_BMAP  = {RES, "/bitmaps/latency/latency-672x384.mem"};
-    // localparam FILE_PAL   = {RES, "/bitmaps/latency/latency-672x384_palette.mem"};
-    // localparam CANV_BPP   = 5'd2;  // bits per pixel (1,2,4,8,[15])
-    // localparam CANV_LORES = 1'b0;  // 0: high resolution canvas
+    // latency test canvas
+    // localparam FILE_BMAP   = {RES, "/bitmaps/latency/latency-672x384.mem"};
+    // localparam FILE_PAL    = {RES, "/bitmaps/latency/latency-672x384_palette.mem"};
+    // localparam CANV_BPP    = 5'd2;  // bits per pixel (1,2,4,8,[15])
+    // localparam CANV_WIDTH  = 16'd672;
+    // localparam CANV_HEIGHT = 16'd384;
+    // localparam CANV_LORES  = 1'b0;  // 0: high resolution canvas
 
     // colour channel width adjustment for board display
     //   NB. this logic must be updated if you change BPC or BPC_Board
@@ -48,16 +52,16 @@ module top_ch02 #(
         /* verilator lint_on WIDTHEXPAND */
     end
 
-
     ch02 #(
         .BPC(BPC),
         .CORDW(CORDW),
         .DISPLAY_MODE(DISPLAY_MODE),
         .BG_COLR(BG_COLR),
-        .FILE_BMAP(FILE_BMAP),
-        .FILE_PAL(FILE_PAL),
         .CANV_BPP(CANV_BPP),
-        .CANV_LORES(CANV_LORES)
+        .CANV_DIMS({CANV_HEIGHT, CANV_WIDTH}),
+        .CANV_LORES(CANV_LORES),
+        .FILE_BMAP(FILE_BMAP),
+        .FILE_PAL(FILE_PAL)
     ) ch02_inst (
         .clk(clk),
         .rst(rst),
