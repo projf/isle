@@ -26,13 +26,14 @@ See the [Bitmap Graphics](http://projectf.io/isle/bitmap-graphics.html) blog pos
 * (`dx`, `dy`) - display position
 * `addr_base` - canvas base address (word address)
 * `addr_shift` - address shift bits (for colour depth)
+* `canv_dims` - canvas dimensions
+* `canv_scale` - canvas scale
 * `win_start` - canvas window start coords
 * `win_end` - canvas window end coords
-* `scale` - canvas scale
 
 Several of these input signals come from the [display sync generator](display_sync_gen.md).
 
-The position of the canvas on the display is set by the window start `win_start` and end `win_end` signals, while horizontal and vertical scale are controlled by `scale`. These signals are discussed in more detail below.
+The position of the canvas on the display is set by the window start `win_start` and end `win_end` signals. While canvas horizontal and vertical dimensions and scale are controlled by `canv_dims` and `canv_scale`. These signals are discussed in more detail below.
 
 `addr_base` is the base _word_ address of the canvas buffer in vram. You can switch this at the start of a frame for double buffering. Or even mid-way through a frame to combine different buffers to form a display.
 
@@ -49,6 +50,15 @@ Address shift is set based on the bits per pixel:
 
 For example, 2 bits per pixel mean you have 16 pixels per 32-bit word, and 16 is 2^4.
 
+The width of the canvas must be an integer number of words. The number if pixels in a word depends on the colour depth (as controlled by `addr_shift`):
+
+* 1 bit: divisible by 32
+* 2 bit: divisible by 16
+* 4 bit: divisible by 8
+* 8 bit: divisible by 4
+
+For example, with a 4-bit (16 colour) canvas, 328 is a valid width (divisible by 8), but it not allowed for 2-bit canvases (328 is not divisible by 16). If you use an invalid canvas width, you'll see bitmap rendering issues.
+
 ### Output
 
 * `addr` - pixel memory address
@@ -59,7 +69,7 @@ The three outputs are the latency corrected `addr_pix`, `pix_id`, and `paint` si
 
 Our [vram](vram.md) has a 32-bit data bus, but a pixel is 1-8 bits wide. The `pix_id` signal tells the display where in the data word the pixel is. For example, the third 4-bit pixel in a word would have a pix_id of 2.
 
-The paint signal tells you when canvas pixels should be output for display. The canvas doesn't necessarily cover the whole screen, so we need to know the right time to paint it.
+The paint signal tells you when canvas pixels should be output for display. The canvas doesn't necessarily cover the whole window and the window doesn't necessarily cover the whole display, so we need to know the right time to paint it.
 
 _NB. This module doesn't perform any memory boundary checks._
 
@@ -77,7 +87,7 @@ _NB. This module doesn't perform any memory boundary checks._
 |-------------------------------|
 ```
 
-The `win_start` and `win_end` inputs are a pair of signed 16-bit values, with the y-coordinate in the upper 16 bits. The `scale` input works in a similar way, with the vertical scale in the upper 16 bits and the horizontal scale in the lower 16 bits.
+The `win_start` and `win_end` inputs are a pair of signed 16-bit values, with the y-coordinate in the upper 16 bits. The `canv_dims` and `canv_scale` inputs work in a similar way, with the vertical scale in the upper 16 bits and the horizontal scale in the lower 16 bits.
 
 For example, a 256x192 canvas at 2x scale centred on 640x480 display:
 
@@ -92,8 +102,14 @@ win_end x-coordinate: 64+512 = 576 (0x0240)
 win_end y-coordinate: 48+384 = 432 (0x01B0)
 win_end: 0x01B000240
 
-scale:  0x00020002
+canv_dims x-coordinate: 256 (0x0100)
+canv_dims y-coordinate: 192 (0x00C0)
+canv_dims: 0x00C00100
+
+canv_scale:  0x00020002
 ```
+
+The module correctly handles canvases that are too small or large for the window.
 
 [Text mode](textmode.md) windows work in the same way.
 
