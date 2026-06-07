@@ -90,6 +90,17 @@ SCALE_3X5Y = CanvasParams (
     scale = Coords(x=3, y=5),
 )
 
+LARGE_CANV = CanvasParams (
+    addr_base = 0x201,
+    addr_shift = 4,  # 4 colour
+    canv_dims = Coords(x=96, y=45),
+    disp_start = Coords(x=-15, y=-2),
+    disp_end = Coords(x=67, y=38),
+    win_start = Coords(x=1, y=1),  # 1 in from corner
+    win_end = Coords(x=67, y=38),  # 1 in from corner
+    scale = Coords(x=2, y=2),
+)
+
 # this is very slow, so don't run routinely
 FULL_DISP = CanvasParams (
     addr_base = 0x201,
@@ -116,7 +127,7 @@ def expected_addr(p, dx, dy, scale_x, scale_y):
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-@cocotb.parametrize(p=[SCALE_0X0Y, SCALE_1X1Y, SCALE_2X2Y, SCALE_4X4Y, SCALE_3X5Y])
+@cocotb.parametrize(p=[SCALE_0X0Y, SCALE_1X1Y, SCALE_2X2Y, SCALE_4X4Y, SCALE_3X5Y, LARGE_CANV])
 async def canv_disp_agu_paint(dut, p):
     """Test canvas display AGU paint signal."""
     cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, unit="ns").start())
@@ -176,7 +187,7 @@ async def canv_disp_agu_paint(dut, p):
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-@cocotb.parametrize(p=[SCALE_0X0Y, SCALE_1X1Y, SCALE_2X2Y, SCALE_4X4Y, SCALE_3X5Y])
+@cocotb.parametrize(p=[SCALE_0X0Y, SCALE_1X1Y, SCALE_2X2Y, SCALE_4X4Y, SCALE_3X5Y, LARGE_CANV])
 async def canv_disp_agu_addr(dut, p):
     """Test canvas display AGU pixel address."""
     cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, unit="ns").start())
