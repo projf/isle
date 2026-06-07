@@ -98,13 +98,12 @@ module top_ch03 #(
         .CORDW(CORDW),
         .DISPLAY_MODE(DISPLAY_MODE),
         .BG_COLR(BG_COLR),
+        .CANV_BPP(CANV_BPP),
+        .CANV_DIMS({CANV_HEIGHT, CANV_WIDTH}),
+        .CANV_LORES(CANV_LORES),
         .FILE_BMAP(FILE_BMAP),
         .FILE_PAL(FILE_PAL),
-        .FILE_ER_LIST(FILE_ER_LIST),
-        .CANV_BPP(CANV_BPP),
-        .CANV_WIDTH(CANV_WIDTH),
-        .CANV_HEIGHT(CANV_HEIGHT),
-        .CANV_LORES(CANV_LORES)
+        .FILE_ER_LIST(FILE_ER_LIST)
     ) ch03_inst (
         .clk_sys(clk_sys),
         .clk_pix(clk_pix),

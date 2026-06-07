@@ -25,7 +25,7 @@ module top_ch03 #(
 
     localparam RES = "../../../res";  // resource path
 
-    // 336x192 4-bit canvas
+    // canvas
     localparam FILE_BMAP    = "";
     localparam FILE_PAL     = {RES, "/palettes/go-16.mem"};
     localparam FILE_ER_LIST = {RES, "/drawings/all-shapes.mem"};

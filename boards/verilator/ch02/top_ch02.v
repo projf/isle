@@ -26,11 +26,11 @@ module top_ch02 #(
     localparam RES = "../../../res";  // resource path
 
     // crocus canvas
-    localparam FILE_BMAP   = {RES, "/bitmaps/crocus/crocus-432x288.mem"};
-    localparam FILE_PAL    = {RES, "/bitmaps/crocus/crocus-432x288_palette.mem"};
+    localparam FILE_BMAP   = {RES, "/bitmaps/crocus/crocus-336x192.mem"};
+    localparam FILE_PAL    = {RES, "/bitmaps/crocus/crocus-336x192_palette.mem"};
     localparam CANV_BPP    = 5'd4;  // bits per pixel (1,2,4,8,[15])
-    localparam CANV_WIDTH  = 16'd432;
-    localparam CANV_HEIGHT = 16'd288;
+    localparam CANV_WIDTH  = 16'd336;
+    localparam CANV_HEIGHT = 16'd192;
     localparam CANV_LORES  = 1'b1;  // 1: low resolution canvas
 
     // latency test canvas
@@ -51,7 +51,6 @@ module top_ch02 #(
         sdl_b = (disp_b << 3) | (disp_b >> 2);
         /* verilator lint_on WIDTHEXPAND */
     end
-
 
     ch02 #(
         .BPC(BPC),
