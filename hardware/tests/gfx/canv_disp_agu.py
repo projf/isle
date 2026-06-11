@@ -149,6 +149,8 @@ async def canv_disp_agu_paint(dut, p):
     dut.addr_shift.value = p.addr_shift
     dut.canv_dims.value = p.canv_dims.pack()
     dut.canv_scale.value = p.scale.pack()
+    dut.scroll.value = 0  # no scrolling in this test for now
+    dut.scroll_addr.value = 0
     dut.win_start.value = p.win_start.pack()
     dut.win_end.value = p.win_end.pack()
 
@@ -209,6 +211,8 @@ async def canv_disp_agu_addr(dut, p):
     dut.addr_shift.value = p.addr_shift
     dut.canv_dims.value = p.canv_dims.pack()
     dut.canv_scale.value = p.scale.pack()
+    dut.scroll.value = 0  # no scrolling in this test for now
+    dut.scroll_addr.value = 0
     dut.win_start.value = p.win_start.pack()
     dut.win_end.value = p.win_end.pack()
 

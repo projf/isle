@@ -115,6 +115,8 @@ module ch02 #(
         .addr_shift(canv_addr_shift),
         .canv_dims(CANV_DIMS),
         .canv_scale(CANV_LORES ? DISPLAY_SCALE << 1 : DISPLAY_SCALE),
+        .scroll(0),
+        .scroll_addr(0),
         .win_start(WIN_START_CORD),
         .win_end(WIN_END_CORD),
         .addr(canv_addr),
