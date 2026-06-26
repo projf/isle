@@ -33,6 +33,7 @@ class CanvasParams:  # pylint: disable=too-many-instance-attributes
     win_start: Coords
     win_end: Coords
     scale: Coords
+    scroll: Coords = Coords(x=0, y=0)  # we have separate scroll tests, default to no scroll
 
 
 SCALE_0X0Y = CanvasParams (
@@ -149,13 +150,12 @@ async def canv_disp_agu_paint(dut, p):
     dut.addr_shift.value = p.addr_shift
     dut.canv_dims.value = p.canv_dims.pack()
     dut.canv_scale.value = p.scale.pack()
-    dut.scroll.value = 0  # no scrolling in this test for now
-    dut.scroll_addr.value = 0
     dut.win_start.value = p.win_start.pack()
     dut.win_end.value = p.win_end.pack()
-
     scale_x = p.scale.x or 1
     scale_y = p.scale.y or 1
+    dut.scroll.value = p.scroll.pack()
+    dut.scroll_addr.value = p.scroll.y * p.canv_dims.x
 
     for frame in range(2):  # test two frames
         for dy in range(p.disp_start.y, p.disp_end.y+1):
@@ -211,13 +211,12 @@ async def canv_disp_agu_addr(dut, p):
     dut.addr_shift.value = p.addr_shift
     dut.canv_dims.value = p.canv_dims.pack()
     dut.canv_scale.value = p.scale.pack()
-    dut.scroll.value = 0  # no scrolling in this test for now
-    dut.scroll_addr.value = 0
     dut.win_start.value = p.win_start.pack()
     dut.win_end.value = p.win_end.pack()
-
     scale_x = p.scale.x or 1
     scale_y = p.scale.y or 1
+    dut.scroll.value = p.scroll.pack()
+    dut.scroll_addr.value = p.scroll.y * p.canv_dims.x
 
     for frame in range(2):  # test two frames
         for dy in range(p.disp_start.y, p.disp_end.y+1):
