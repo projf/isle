@@ -57,6 +57,8 @@ module canv_disp_agu #(
     reg [CORDW-1:0] scale_x_minus, scale_y_minus;
     reg signed [CORDW-1:0] win_x0_lat, win_x1_lat;
     reg [CORDW-1:0] canv_w_minus, canv_h_minus;
+    reg [PIX_ADDRW-1:0] row_stride;
+    reg [PIX_ADDRW-1:0] wrap_start;
     always @(posedge clk_pix) begin
         scale_x_minus <= (scale_x == 0) ? 0 : scale_x - 1;
         scale_y_minus <= (scale_y == 0) ? 0 : scale_y - 1;
@@ -64,6 +66,8 @@ module canv_disp_agu #(
         win_x1_lat <= win_x1 - ADDR_LAT;
         canv_w_minus <= canv_w - 1;
         canv_h_minus <= canv_h - 1;
+        row_stride <= {{PIX_ADDRW-CORDW{1'b0}}, canv_w};
+        wrap_start <= {{PIX_ADDRW-CORDW{1'b0}}, scroll_x};
     end
 
     // canvas paint area is intersection of window and canvas dims
@@ -99,8 +103,8 @@ module canv_disp_agu #(
             cnt_cy <= 0;
             cnt_bx <= scroll_x;
             cnt_by <= scroll_y;
-            pixel_addr <= scroll_addr + {{PIX_ADDRW-CORDW{1'b0}}, scroll_x};
-            pixel_addr_ln <= scroll_addr + {{PIX_ADDRW-CORDW{1'b0}}, scroll_x};
+            pixel_addr <= scroll_addr + wrap_start;
+            pixel_addr_ln <= scroll_addr + wrap_start;
             pixel_addr_buf <= scroll_addr;
         end else if (line_start && (dy > win_y0)) begin  // after 1st line in paint area
             cnt_sx <= 0;  // reset horizontal scale counter
@@ -111,14 +115,14 @@ module canv_disp_agu #(
                 cnt_cy <= cnt_cy + 1;  // next canvas row
                 if (cnt_by == canv_h_minus) begin  // vertical buffer wrap
                     cnt_by <= 0;
-                    pixel_addr <= {{PIX_ADDRW-CORDW{1'b0}}, scroll_x};
-                    pixel_addr_ln <= {{PIX_ADDRW-CORDW{1'b0}}, scroll_x};
+                    pixel_addr <= wrap_start;
+                    pixel_addr_ln <= wrap_start;
                     pixel_addr_buf <= 0;  // start of buffer
                 end else begin
                     cnt_by <= cnt_by + 1;
-                    pixel_addr <= pixel_addr_ln + {{PIX_ADDRW-CORDW{1'b0}}, canv_w};
-                    pixel_addr_ln <= pixel_addr_ln + {{PIX_ADDRW-CORDW{1'b0}}, canv_w};
-                    pixel_addr_buf <= pixel_addr_buf + {{PIX_ADDRW-CORDW{1'b0}}, canv_w};
+                    pixel_addr <= pixel_addr_ln + row_stride;
+                    pixel_addr_ln <= pixel_addr_ln + row_stride;
+                    pixel_addr_buf <= pixel_addr_buf + row_stride;
                 end
             end else begin
                 cnt_sy <= cnt_sy + 1;
