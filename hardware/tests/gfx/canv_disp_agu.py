@@ -4,6 +4,7 @@
 
 """canv_disp_agu Test Bench (cocotb)"""
 
+import dataclasses
 from dataclasses import dataclass
 
 import cocotb
@@ -34,6 +35,10 @@ class CanvasParams:  # pylint: disable=too-many-instance-attributes
     win_end: Coords
     scale: Coords
     scroll: Coords = Coords(x=0, y=0)  # we have separate scroll tests, default to no scroll
+
+def scrolled(base, scroll):
+    """Create scrolled version of canvas params."""
+    return dataclasses.replace(base, scroll=scroll)
 
 
 SCALE_0X0Y = CanvasParams (
@@ -113,6 +118,11 @@ FULL_DISP = CanvasParams (
     win_end = Coords(x=671, y=383),  # 1 in from corner
     scale = Coords(x=2, y=2),
 )
+
+SCROLL_X = scrolled(SCALE_1X1Y, Coords(x=2,  y=0))
+SCROLL_Y = scrolled(SCALE_1X1Y, Coords(x=0,  y=3))
+SCROLL_XY = scrolled(SCALE_1X1Y, Coords(x=17,  y=9))
+SCROLL_XY_SCALE = scrolled(SCALE_3X5Y, Coords(x=5,  y=1))
 
 
 def expected_addr(p, dx, dy, scale_x, scale_y):
