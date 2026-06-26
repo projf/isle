@@ -2,8 +2,6 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// 2 cycle latency
-
 `default_nettype none
 `timescale 1ns / 1ps
 
@@ -74,7 +72,7 @@ module canv_disp_agu #(
     reg [CORDW-1:0] cnt_cx, cnt_cy;  // canvas counters (within display window)
     wire in_canv_h = (cnt_cy < canv_h);
     wire in_canv_w = (cnt_cx < canv_w);
-    wire canv_paint = in_canv_h & in_canv_w && in_window;
+    wire canv_paint = in_canv_h && in_canv_w && in_window;
 
     // canvas buffer handling for scrolling
     reg [CORDW-1:0] cnt_bx, cnt_by;  // canvas counters (within canvas buffer)
