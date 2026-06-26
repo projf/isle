@@ -58,7 +58,6 @@ module canv_disp_agu #(
     reg signed [CORDW-1:0] win_x0_lat, win_x1_lat;
     reg [CORDW-1:0] canv_w_minus, canv_h_minus;
     reg [PIX_ADDRW-1:0] row_stride;
-    reg [PIX_ADDRW-1:0] wrap_start;
     always @(posedge clk_pix) begin
         scale_x_minus <= (scale_x == 0) ? 0 : scale_x - 1;
         scale_y_minus <= (scale_y == 0) ? 0 : scale_y - 1;
@@ -67,8 +66,8 @@ module canv_disp_agu #(
         canv_w_minus <= canv_w - 1;
         canv_h_minus <= canv_h - 1;
         row_stride <= {{PIX_ADDRW-CORDW{1'b0}}, canv_w};
-        wrap_start <= {{PIX_ADDRW-CORDW{1'b0}}, scroll_x};
     end
+    wire [PIX_ADDRW-1:0] wrap_start = {{PIX_ADDRW-CORDW{1'b0}}, scroll_x};
 
     // canvas paint area is intersection of window and canvas dims
     reg in_window;
