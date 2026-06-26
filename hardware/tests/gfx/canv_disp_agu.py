@@ -127,10 +127,14 @@ SCROLL_XY_SCALE = scrolled(SCALE_3X5Y, Coords(x=5,  y=1))
 
 def expected_addr(p, dx, dy, scale_x, scale_y):
     """Expected address for pixel in paint area."""
-    addr_pix = (
-        ((dy - p.win_start.y) // scale_y) * p.canv_dims.x
-        + ((dx + ADDR_LAT - p.win_start.x) // scale_x)
-    )
+    # correct canvas paint position for latency and scale
+    cx = (dx + ADDR_LAT - p.win_start.x) // scale_x
+    cy = (dy - p.win_start.y) // scale_y
+    # calculate buffer position, accounting for wrapping
+    bx = (p.scroll.x + cx) % p.canv_dims.x
+    by = (p.scroll.y + cy) % p.canv_dims.y
+    # calculate pixel address and separate into address and pixel ID
+    addr_pix = by * p.canv_dims.x + bx
     addr = p.addr_base + (addr_pix >> p.addr_shift)
     pix_id_mask = (1 << p.addr_shift) - 1
     pix_id = addr_pix & pix_id_mask
