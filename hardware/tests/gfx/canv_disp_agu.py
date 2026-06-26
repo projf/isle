@@ -21,7 +21,7 @@ PIX_TIME = 100  # 10 MHz
 # latencies (must match canv_disp_agu.mk)
 CLUT_LAT = 1
 VRAM_LAT = 3
-ADDR_LAT = CLUT_LAT + VRAM_LAT
+DISP_LAT = CLUT_LAT + VRAM_LAT
 
 @dataclass(frozen=True)
 class CanvasParams:  # pylint: disable=too-many-instance-attributes
@@ -123,7 +123,7 @@ FULL_DISP = CanvasParams (
 def expected_addr(p, dx, dy, scale_x, scale_y):
     """Expected address for pixel in paint area."""
     # correct canvas paint position for latency and scale
-    cx = (dx + ADDR_LAT - p.win_start.x) // scale_x
+    cx = (dx + DISP_LAT - p.win_start.x) // scale_x
     cy = (dy - p.win_start.y) // scale_y
     # calculate buffer position, accounting for wrapping
     bx = (p.scroll.x + cx) % p.canv_dims.x
@@ -156,7 +156,7 @@ async def run_addr_test(dut, p):
     dut.rst_pix.value = 0
     await RisingEdge(dut.clk_pix)
     dut.rst_pix.value = 1
-    for _ in range(ADDR_LAT + 1):  # hold reset to cover pipeline
+    for _ in range(DISP_LAT + 1):  # hold reset to cover pipeline
         await RisingEdge(dut.clk_pix)
     dut.rst_pix.value = 0
 
@@ -187,11 +187,11 @@ async def run_addr_test(dut, p):
 
                 in_window = (
                     p.win_start.y <= dy < p.win_end.y
-                    and p.win_start.x <= dx+ADDR_LAT < p.win_end.x
+                    and p.win_start.x <= dx+DISP_LAT < p.win_end.x
                 )
                 in_canv = (
                     p.win_start.y <= dy < p.win_start.y + (p.canv_dims.y * scale_y)
-                    and p.win_start.x <= dx+ADDR_LAT < p.win_start.x + (p.canv_dims.x * scale_x)
+                    and p.win_start.x <= dx+DISP_LAT < p.win_start.x + (p.canv_dims.x * scale_x)
                 )
 
                 exp_addr, exp_pix_id = expected_addr(p, dx, dy, scale_x, scale_y)
@@ -248,7 +248,7 @@ async def canv_disp_agu_paint(dut, p):
     dut.rst_pix.value = 0
     await RisingEdge(dut.clk_pix)
     dut.rst_pix.value = 1
-    for _ in range(ADDR_LAT + 1):  # hold reset to cover pipeline
+    for _ in range(DISP_LAT + 1):  # hold reset to cover pipeline
         await RisingEdge(dut.clk_pix)
     dut.rst_pix.value = 0
 
