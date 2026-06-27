@@ -6,14 +6,14 @@
 `timescale 1ns / 1ps
 
 module canv_disp_agu #(
-    parameter ADDRW=14,                // vram address width (bits)
-    parameter CLUT_LAT=2,              // clut display read latency (cycles; min=1)
-    parameter CORDW=16,                // signed coordinate width (bits)
-    parameter SHIFTW=3,                // address shift width (bits)
-    parameter VRAM_LAT=2,              // vram display read latency (cycles; min=1)
-    parameter WORD=32,                 // machine word size (bits)
-    parameter PIX_IDW=$clog2(WORD),    // pixel ID width (bits)
-    parameter PIX_ADDRW=ADDRW+PIX_IDW  // pixel address width
+    parameter ADDRW=14,                 // vram address width (bits)
+    parameter CLUT_LAT=2,               // clut display read latency (cycles; min=1)
+    parameter CORDW=16,                 // signed coordinate width (bits)
+    parameter SHIFTW=3,                 // address shift width (bits)
+    parameter VRAM_LAT=2,               // vram display read latency (cycles; min=1)
+    parameter WORD=32,                  // machine word size (bits)
+    parameter PIX_IDXW=$clog2(WORD),    // pixel index width (bits)
+    parameter PIX_ADDRW=ADDRW+PIX_IDXW  // pixel address width
     ) (
     input  wire clk_pix,                      // pixel clock
     input  wire rst_pix,                      // reset in pixel clock domain
@@ -30,7 +30,7 @@ module canv_disp_agu #(
     input  wire [2*CORDW-1:0] win_start,      // canvas window start coords
     input  wire [2*CORDW-1:0] win_end,        // canvas window end coords
     output reg  [ADDRW-1:0] vram_addr,        // vram memory address
-    output reg  [PIX_IDW-1:0] pix_id,         // pixel ID within word
+    output reg  [PIX_IDXW-1:0] pix_idx,        // pixel index within word
     output reg  paint                         // canvas painting enable (pre-clut)
     );
 
@@ -144,11 +144,11 @@ module canv_disp_agu #(
     end
 
     // stage 2 - calculate memory address and pixel index
-    wire [PIX_IDW-1:0] pix_id_mask = (1 << addr_shift_p1) - 1;  // pixel index mask
+    wire [PIX_IDXW-1:0] pix_idx_mask = (1 << addr_shift_p1) - 1;  // pixel index mask
     always @(posedge clk_pix) begin
         /* verilator lint_off WIDTHEXPAND */ /* verilator lint_off WIDTHTRUNC */
         vram_addr <= addr_base_p1 + (pix_addr >> addr_shift_p1);
         /* verilator lint_on WIDTHTRUNC */ /* verilator lint_on WIDTHEXPAND */
-        pix_id <= pix_addr[PIX_IDW-1:0] & pix_id_mask;
+        pix_idx <= pix_addr[PIX_IDXW-1:0] & pix_idx_mask;
     end
 endmodule

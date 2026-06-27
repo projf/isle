@@ -129,12 +129,12 @@ def expected_addr(p, dx, dy, scale_x, scale_y):
     # calculate buffer position, accounting for wrapping
     bx = (p.scroll.x + cx) % p.canv_dims.x
     by = (p.scroll.y + cy) % p.canv_dims.y
-    # calculate pixel address and separate into address and pixel ID
+    # calculate pixel address and separate into address and pixel index
     addr_pix = by * p.canv_dims.x + bx
     addr = p.addr_base + (addr_pix >> p.addr_shift)
-    pix_id_mask = (1 << p.addr_shift) - 1
-    pix_id = addr_pix & pix_id_mask
-    return addr, pix_id
+    pix_idx_mask = (1 << p.addr_shift) - 1
+    pix_idx = addr_pix & pix_idx_mask
+    return addr, pix_idx
 
 async def setup_dut(dut, p):
     """Setup DUT with clock, reset, and initial values."""
@@ -191,7 +191,7 @@ async def run_addr_test(dut, p):
 
                 await ReadOnly()
                 vram_addr = dut.vram_addr.value
-                pix_id = dut.pix_id.value
+                pix_idx = dut.pix_idx.value
 
                 in_window = (
                     p.win_start.y <= dy < p.win_end.y
@@ -202,15 +202,15 @@ async def run_addr_test(dut, p):
                     and p.win_start.x <= dx+DISP_LAT < p.win_start.x + (p.canv_dims.x * scale_x)
                 )
 
-                exp_addr, exp_pix_id = expected_addr(p, dx, dy, scale_x, scale_y)
+                exp_addr, exp_pix_idx = expected_addr(p, dx, dy, scale_x, scale_y)
 
                 if in_window and in_canv:
                     assert vram_addr.is_resolvable and int(vram_addr) == exp_addr, (
                         f"vram_addr: '{vram_addr}' is not expected '{exp_addr}' "
                         f"at ({dx}, {dy}) in frame={frame}!"
                     )
-                    assert pix_id.is_resolvable and int(pix_id) == exp_pix_id, (
-                        f"pix_id: '{pix_id}' is not expected '{exp_pix_id}' "
+                    assert pix_idx.is_resolvable and int(pix_idx) == exp_pix_idx, (
+                        f"pix_idx: '{pix_idx}' is not expected '{exp_pix_idx}' "
                         f"at ({dx}, {dy}) in frame={frame}!"
                     )
 

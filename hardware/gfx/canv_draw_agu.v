@@ -2,17 +2,15 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// 3 cycle latency - pipelined draw address calculation
-
 `default_nettype none
 `timescale 1ns / 1ps
 
 module canv_draw_agu #(
-    parameter ADDRW=14,             // address width (bits)
-    parameter CORDW=16,             // signed coordinate width (bits)
-    parameter SHIFTW=3,             // address shift width (bits)
-    parameter WORD=32,              // machine word size (bits)
-    parameter PIX_IDW=$clog2(WORD)  // pixel ID width (bits)
+    parameter ADDRW=14,              // address width (bits)
+    parameter CORDW=16,              // signed coordinate width (bits)
+    parameter SHIFTW=3,              // address shift width (bits)
+    parameter WORD=32,               // machine word size (bits)
+    parameter PIX_IDXW=$clog2(WORD)  // pixel index width (bits)
     ) (
     input  wire clk,                      // clock
     input  wire en,                       // enable
@@ -23,7 +21,7 @@ module canv_draw_agu #(
     input  wire [ADDRW-1:0] addr_base,    // address of first pixel in canvas
     input  wire [SHIFTW-1:0] addr_shift,  // address shift bits
     output reg  [ADDRW-1:0] addr,         // pixel memory address
-    output reg  [PIX_IDW-1:0] pix_id,     // pixel ID within word
+    output reg  [PIX_IDXW-1:0] pix_idx,   // pixel index within word
     output reg  clip                      // high for pixel coordinate outside canvas
     );
 
@@ -59,7 +57,7 @@ module canv_draw_agu #(
             /* verilator lint_off WIDTHTRUNC */
             /* verilator lint_off WIDTHEXPAND */
             addr <= addr_base_p2 + (pix_addr_p2 >> addr_shift_p2);
-            pix_id <= pix_addr_p2 & ((1 << addr_shift_p2) - 1);
+            pix_idx <= pix_addr_p2 & ((1 << addr_shift_p2) - 1);
             /* verilator lint_on WIDTHEXPAND */
             /* verilator lint_on WIDTHTRUNC */
         end

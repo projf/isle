@@ -64,12 +64,12 @@ For example, with a 4-bit (16 colour) canvas, 328 is a valid width (divisible by
 ### Output
 
 * `vram_addr` - vram memory address (word based)
-* `pix_id` - pixel ID within word
+* `pix_idx` - pixel index within word
 * `paint` - canvas painting enable
 
-The three outputs are the latency corrected `addr_pix`, `pix_id`, and `paint` signals.
+The three outputs are the latency corrected `vram_addr`, `pix_idx`, and `paint` signals.
 
-Our [vram](vram.md) has a 32-bit data bus, but a pixel is 1-8 bits wide. The `pix_id` signal tells the display where in the data word the pixel is. For example, the third 4-bit pixel in a word would have a pix_id of 2.
+Our [vram](vram.md) has a 32-bit data bus, but a pixel is 1-8 bits wide. The `pix_idx` signal tells the display where in the data word the pixel is. For example, the third 4-bit pixel in a word would have a pix_idx of 2.
 
 The paint signal tells you when canvas pixels should be rendered to the display. The canvas doesn't necessarily cover the whole window, and the window doesn't necessarily cover the whole display, so we need to know when to paint it.
 
@@ -102,7 +102,7 @@ win_start: 0x00300040
 
 win_end x-coordinate: 64+512 = 576 (0x0240)
 win_end y-coordinate: 48+384 = 432 (0x01B0)
-win_end: 0x01B000240
+win_end: 0x01B00240
 
 canv_dims x-coordinate: 256 (0x0100)
 canv_dims y-coordinate: 192 (0x00C0)
