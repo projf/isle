@@ -165,7 +165,7 @@ async def setup_dut(dut, p):
     dut.addr_base.value = p.addr_base
     dut.addr_shift.value = p.addr_shift
     dut.canv_dims.value = p.canv_dims.pack()
-    dut.canv_scale.value = p.scale.pack()
+    dut.scale.value = p.scale.pack()
     dut.win_start.value = p.win_start.pack()
     dut.win_end.value = p.win_end.pack()
     dut.scroll.value = p.scroll.pack()

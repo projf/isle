@@ -27,7 +27,7 @@ See the [Bitmap Graphics](http://projectf.io/isle/bitmap-graphics.html) blog pos
 * `addr_base` - canvas base address (word address)
 * `addr_shift` - address shift bits (for colour depth)
 * `canv_dims` - canvas dimensions
-* `canv_scale` - canvas scale
+* `scale` - canvas scale
 * `scroll` - canvas scroll coords (scroll_addr must match)
 * `scroll_addr` - address of canvas scroll line
 * `win_start` - canvas window start coords
@@ -35,7 +35,7 @@ See the [Bitmap Graphics](http://projectf.io/isle/bitmap-graphics.html) blog pos
 
 Several of these input signals come from the [display sync generator](display_sync_gen.md).
 
-The position of the canvas on the display is set by the window start `win_start` and end `win_end` signals. While canvas horizontal and vertical dimensions and scale are controlled by `canv_dims` and `canv_scale`. These signals are discussed in more detail below.
+The position of the canvas on the display is set by the window start `win_start` and end `win_end` signals. While canvas horizontal and vertical dimensions and scale are controlled by `canv_dims` and `scale`. These signals are discussed in more detail below.
 
 `addr_base` is the base _word_ address of the canvas buffer in vram. You can switch this at the start of a frame for double buffering. Or even mid-way through a frame to combine different buffers to form a display.
 
@@ -89,7 +89,7 @@ _NB. This module doesn't perform any memory boundary checks._
 |-------------------------------|
 ```
 
-The `win_start` and `win_end` inputs are a pair of signed 16-bit values, with the y-coordinate in the upper 16 bits. The `canv_dims` and `canv_scale` inputs work in a similar way, with the vertical scale in the upper 16 bits and the horizontal scale in the lower 16 bits.
+The `win_start` and `win_end` inputs are a pair of signed 16-bit values, with the y-coordinate in the upper 16 bits. The `canv_dims` and `scale` inputs work in a similar way, with the vertical scale in the upper 16 bits and the horizontal scale in the lower 16 bits.
 
 For example, a 256x192 canvas at 2x scale centred on 640x480 display:
 
@@ -108,7 +108,7 @@ canv_dims x-coordinate: 256 (0x0100)
 canv_dims y-coordinate: 192 (0x00C0)
 canv_dims: 0x00C00100
 
-canv_scale:  0x00020002
+scale:  0x00020002
 ```
 
 The module correctly handles canvases that are too small or large for the window.

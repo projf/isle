@@ -24,7 +24,7 @@ module canv_disp_agu #(
     input  wire [ADDRW-1:0] addr_base,        // canvas base address (word address)
     input  wire [SHIFTW-1:0] addr_shift,      // address shift bits
     input  wire [2*CORDW-1:0] canv_dims,      // canvas dimensions
-    input  wire [2*CORDW-1:0] canv_scale,     // canvas scale
+    input  wire [2*CORDW-1:0] scale,          // canvas scale
     input  wire [2*CORDW-1:0] scroll,         // canvas scroll (scroll_addr must match)
     input  wire [PIX_ADDRW-1:0] scroll_addr,  // address of canvas scroll line
     input  wire [2*CORDW-1:0] win_start,      // canvas window start coords
@@ -45,7 +45,7 @@ module canv_disp_agu #(
     reg signed [CORDW-1:0] win_y1, win_x1;
     always @(*) begin
         {canv_h, canv_w} = canv_dims;
-        {scale_y, scale_x} = canv_scale;
+        {scale_y, scale_x} = scale;
         {scroll_y, scroll_x} = scroll;
         {win_y0, win_x0} = win_start;
         {win_y1, win_x1} = win_end;
