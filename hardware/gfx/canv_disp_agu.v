@@ -38,7 +38,7 @@ module canv_disp_agu #(
     localparam PAINT_OFFS = VRAM_LAT;  // paint latency offset from ADDR_LAT
 
     // separate y and x from canvas/window signals
-    reg [CORDW-1:0] canv_h, canv_w;
+    reg [CORDW-1:0] canv_h, canv_w;  // height and width
     reg [CORDW-1:0] scale_y, scale_x;
     reg [CORDW-1:0] scroll_y, scroll_x;
     reg signed [CORDW-1:0] win_y0, win_x0;
@@ -70,9 +70,9 @@ module canv_disp_agu #(
     // canvas paint area is intersection of window and canvas dims
     reg in_window;
     reg [CORDW-1:0] cnt_cx, cnt_cy;  // canvas counters (within display window)
-    wire in_canv_h = (cnt_cy < canv_h);
-    wire in_canv_w = (cnt_cx < canv_w);
-    wire canv_paint = in_canv_h && in_canv_w && in_window;
+    wire in_canv_y = (cnt_cy < canv_h);
+    wire in_canv_x = (cnt_cx < canv_w);
+    wire canv_paint = in_canv_y && in_canv_x && in_window;
 
     // canvas buffer handling for scrolling
     reg [CORDW-1:0] cnt_bx, cnt_by;  // canvas counters (within canvas buffer)
