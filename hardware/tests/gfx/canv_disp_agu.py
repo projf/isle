@@ -19,6 +19,7 @@ from tests.helpers import Coords
 PIX_TIME = 100  # 10 MHz
 
 # latencies (must match canv_disp_agu.mk)
+# use different values for `CLUT_LAT` and `VRAM_LAT` to catch bugs
 CLUT_LAT = 1
 VRAM_LAT = 3
 DISP_LAT = CLUT_LAT + VRAM_LAT
@@ -266,10 +267,9 @@ async def canv_disp_agu_paint(dut, p):
                 )
                 exp_paint = Logic(1) if (in_window_paint and in_canv) else Logic(0)
 
-                if actual_paint.is_resolvable:
-                    assert actual_paint == exp_paint, (
-                        f"paint: '{actual_paint}' is not expected '{exp_paint}' "
-                        f"at ({dx}, {dy}) in frame={frame}!"
-                    )
+                assert actual_paint.is_resolvable and actual_paint == exp_paint, (
+                    f"paint: '{actual_paint}' is not expected '{exp_paint}' "
+                    f"at ({dx}, {dy}) in frame={frame}!"
+                )
 
                 await RisingEdge(dut.clk_pix)

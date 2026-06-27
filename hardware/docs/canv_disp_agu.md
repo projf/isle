@@ -28,6 +28,8 @@ See the [Bitmap Graphics](http://projectf.io/isle/bitmap-graphics.html) blog pos
 * `addr_shift` - address shift bits (for colour depth)
 * `canv_dims` - canvas dimensions
 * `canv_scale` - canvas scale
+* `scroll` - canvas scroll coords (scroll_addr must match)
+* `scroll_addr` - address of canvas scroll line
 * `win_start` - canvas window start coords
 * `win_end` - canvas window end coords
 
@@ -37,7 +39,7 @@ The position of the canvas on the display is set by the window start `win_start`
 
 `addr_base` is the base _word_ address of the canvas buffer in vram. You can switch this at the start of a frame for double buffering. Or even mid-way through a frame to combine different buffers to form a display.
 
-The `VRAM_LAT` and `CLUT_LAT` parameters account for latency when retrieving data from [vram](vram.md) and when looking up the colour in the [clut](clut.md). For Isle, they should both be set to 2. See [display pipeline](#display-pipeline) for further explanation.
+The `VRAM_LAT` and `CLUT_LAT` parameters account for latency when retrieving data from [vram](vram.md) and when looking up the colour in the [clut](clut.md). For Isle, they should both be set to 2, matching the latency of the vram and clut hardware. See [display pipeline](#display-pipeline) for further explanation.
 
 The address shift, `addr_shift`, determines how the raw pixel address is split between vram address and the pixel index. Because the maximum address shift is 5, the `SHIFTW` parameter is set to 3.
 
@@ -114,6 +116,10 @@ The module correctly handles canvases that are too small or large for the window
 [Text mode](textmode.md) windows work in the same way.
 
 The registered signals `scale_x_minus` and `scale_y_minus` are the scaling factors with 1 subtracted to improve the timing slack of the scale counters. For a scale factor of 1x, these _minus signals have a value of 0.
+
+## Scrolling
+
+_needs documenting_
 
 ## Display Pipeline
 
