@@ -135,8 +135,8 @@ def expected_addr(p, dx, dy, scale_x, scale_y):
     pix_id = addr_pix & pix_id_mask
     return addr, pix_id
 
-async def run_addr_test(dut, p):
-    """Test canvas display AGU address calculation."""
+async def setup_dut(dut, p):
+    """Setup DUT with clock, reset, and initial values."""
     Clock(dut.clk_pix, PIX_TIME, unit="ns").start()
 
     assert (p.canv_dims.x * 2**(5-p.addr_shift)) % 32 == 0, (
@@ -167,10 +167,17 @@ async def run_addr_test(dut, p):
     dut.canv_scale.value = p.scale.pack()
     dut.win_start.value = p.win_start.pack()
     dut.win_end.value = p.win_end.pack()
-    scale_x = p.scale.x or 1
-    scale_y = p.scale.y or 1
     dut.scroll.value = p.scroll.pack()
     dut.scroll_addr.value = p.scroll.y * p.canv_dims.x
+
+
+async def run_addr_test(dut, p):
+    """Test canvas display AGU address calculation."""
+
+    await setup_dut(dut, p)
+
+    scale_x = p.scale.x or 1  # matches hardware behaviour
+    scale_y = p.scale.y or 1
 
     for frame in range(2):  # test two frames
         for dy in range(p.disp_start.y, p.disp_end.y+1):
@@ -216,7 +223,7 @@ async def canv_disp_agu_addr(dut, p):
     await run_addr_test(dut, p)
 
 
-@cocotb.test(skip=0)  # pylint: disable=no-value-for-parameter
+@cocotb.test()  # pylint: disable=no-value-for-parameter
 @cocotb.parametrize(p=[
     scrolled(SCALE_1X1Y, Coords(x=2,  y=0)),
     scrolled(SCALE_1X1Y, Coords(x=0,  y=3)),
@@ -232,37 +239,10 @@ async def canv_disp_agu_scroll_addr(dut, p):
 @cocotb.parametrize(p=[SCALE_0X0Y, SCALE_1X1Y, SCALE_2X2Y, SCALE_4X4Y, SCALE_3X5Y, LARGE_CANV])
 async def canv_disp_agu_paint(dut, p):
     """Test canvas display AGU paint signal."""
-    Clock(dut.clk_pix, PIX_TIME, unit="ns").start()
+    await setup_dut(dut, p)
 
-    assert (p.canv_dims.x * 2**(5-p.addr_shift)) % 32 == 0, (
-        "bad test data: canvas width must be an integer number of words."
-    )
-
-    # ensure we're at start of frame before reset (to prevent failing tests interfering)
-    dut.dx.value = p.disp_start.x
-    dut.dy.value = p.disp_start.y
-    dut.frame_start.value = 0
-    dut.line_start.value = 0
-
-    # reset
-    dut.rst_pix.value = 0
-    await RisingEdge(dut.clk_pix)
-    dut.rst_pix.value = 1
-    for _ in range(DISP_LAT + 1):  # hold reset to cover pipeline
-        await RisingEdge(dut.clk_pix)
-    dut.rst_pix.value = 0
-
-    # setup canvas
-    dut.addr_base.value = p.addr_base
-    dut.addr_shift.value = p.addr_shift
-    dut.canv_dims.value = p.canv_dims.pack()
-    dut.canv_scale.value = p.scale.pack()
-    dut.win_start.value = p.win_start.pack()
-    dut.win_end.value = p.win_end.pack()
-    scale_x = p.scale.x or 1
+    scale_x = p.scale.x or 1  # matches hardware behaviour
     scale_y = p.scale.y or 1
-    dut.scroll.value = p.scroll.pack()
-    dut.scroll_addr.value = p.scroll.y * p.canv_dims.x
 
     for frame in range(2):  # test two frames
         for dy in range(p.disp_start.y, p.disp_end.y+1):

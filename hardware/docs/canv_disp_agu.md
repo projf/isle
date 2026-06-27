@@ -2,7 +2,7 @@
 
 The canvas display address generation unit [[canv_disp_agu.v](../gfx/canv_disp_agu.v)] calculates the [vram](vram.md) address within a canvas buffer for display output.
 
-The address calculation supports different colour depths, canvas positioning, and scaling. This module has 2 cycles of latency, supports pipelining, and avoids multiplication.
+The address calculation supports different colour depths, canvas positioning, and scaling. This module supports pipelining, and avoids multiplication.
 
 See the [Bitmap Graphics](http://projectf.io/isle/bitmap-graphics.html) blog post for more information on this module.
 
