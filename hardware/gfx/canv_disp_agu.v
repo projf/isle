@@ -29,7 +29,7 @@ module canv_disp_agu #(
     input  wire [PIX_ADDRW-1:0] scroll_addr,  // address of canvas scroll line
     input  wire [2*CORDW-1:0] win_start,      // canvas window start coords
     input  wire [2*CORDW-1:0] win_end,        // canvas window end coords
-    output reg  [ADDRW-1:0] addr,             // pixel memory address
+    output reg  [ADDRW-1:0] vram_addr,        // vram memory address
     output reg  [PIX_IDW-1:0] pix_id,         // pixel ID within word
     output reg  paint                         // canvas painting enable (pre-clut)
     );
@@ -90,7 +90,7 @@ module canv_disp_agu #(
     reg [SHIFTW-1:0] addr_shift_p1;  // address shift bits
 
     // stage 1 - main calculation, handling frame and line starts
-    reg [PIX_ADDRW-1:0] pixel_addr, pixel_addr_ln, pixel_addr_buf;  // pixel addresses
+    reg [PIX_ADDRW-1:0] pix_addr, pix_addr_ln, pix_addr_buf;  // pixel addresses
     reg [CORDW-1:0] cnt_sx, cnt_sy;  // window scale counters
     always @(posedge clk_pix) begin
         if (rst_pix || frame_start) begin  // reset address and counters at start of frame
@@ -100,9 +100,9 @@ module canv_disp_agu #(
             cnt_cy <= 0;
             cnt_bx <= scroll_x;
             cnt_by <= scroll_y;
-            pixel_addr <= scroll_addr + wrap_start;
-            pixel_addr_ln <= scroll_addr + wrap_start;
-            pixel_addr_buf <= scroll_addr;
+            pix_addr <= scroll_addr + wrap_start;
+            pix_addr_ln <= scroll_addr + wrap_start;
+            pix_addr_buf <= scroll_addr;
         end else if (line_start && (dy > win_y0)) begin  // after 1st line in paint area
             cnt_sx <= 0;  // reset horizontal scale counter
             cnt_cx <= 0;  // reset horizontal canvas display window counter
@@ -112,18 +112,18 @@ module canv_disp_agu #(
                 cnt_cy <= cnt_cy + 1;  // next canvas row
                 if (cnt_by == canv_h_minus) begin  // vertical buffer wrap
                     cnt_by <= 0;
-                    pixel_addr <= wrap_start;
-                    pixel_addr_ln <= wrap_start;
-                    pixel_addr_buf <= 0;  // start of buffer
+                    pix_addr <= wrap_start;
+                    pix_addr_ln <= wrap_start;
+                    pix_addr_buf <= 0;  // start of buffer
                 end else begin
                     cnt_by <= cnt_by + 1;
-                    pixel_addr <= pixel_addr_ln + row_stride;
-                    pixel_addr_ln <= pixel_addr_ln + row_stride;
-                    pixel_addr_buf <= pixel_addr_buf + row_stride;
+                    pix_addr <= pix_addr_ln + row_stride;
+                    pix_addr_ln <= pix_addr_ln + row_stride;
+                    pix_addr_buf <= pix_addr_buf + row_stride;
                 end
             end else begin
                 cnt_sy <= cnt_sy + 1;
-                pixel_addr <= pixel_addr_ln;  // restore pixel_addr_ln to repeat line
+                pix_addr <= pix_addr_ln;  // restore pix_addr_ln to repeat line
             end
         end else if (canv_paint) begin  // increment pixel address in window area
             if (cnt_sx == scale_x_minus) begin
@@ -131,10 +131,10 @@ module canv_disp_agu #(
                 cnt_cx <= cnt_cx + 1;  // next canvas pixel
                 if (cnt_bx == canv_w_minus) begin  // horizontal buffer wrap
                     cnt_bx <= 0;
-                    pixel_addr <= pixel_addr_buf;
+                    pix_addr <= pix_addr_buf;
                 end else begin
                     cnt_bx <= cnt_bx + 1;
-                    pixel_addr <= pixel_addr + 1;
+                    pix_addr <= pix_addr + 1;
                 end
             end else cnt_sx <= cnt_sx + 1;
         end
@@ -147,8 +147,8 @@ module canv_disp_agu #(
     wire [PIX_IDW-1:0] pix_id_mask = (1 << addr_shift_p1) - 1;  // pixel index mask
     always @(posedge clk_pix) begin
         /* verilator lint_off WIDTHEXPAND */ /* verilator lint_off WIDTHTRUNC */
-        addr <= addr_base_p1 + (pixel_addr >> addr_shift_p1);
+        vram_addr <= addr_base_p1 + (pix_addr >> addr_shift_p1);
         /* verilator lint_on WIDTHTRUNC */ /* verilator lint_on WIDTHEXPAND */
-        pix_id <= pixel_addr[PIX_IDW-1:0] & pix_id_mask;
+        pix_id <= pix_addr[PIX_IDW-1:0] & pix_id_mask;
     end
 endmodule

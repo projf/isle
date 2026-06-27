@@ -119,7 +119,7 @@ module ch02 #(
         .scroll_addr(0),
         .win_start(WIN_START_CORD),
         .win_end(WIN_END_CORD),
-        .addr(canv_addr),
+        .vram_addr(canv_addr),
         .pix_id(canv_pix_id),
         .paint(canv_paint)
     );

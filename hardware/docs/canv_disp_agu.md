@@ -63,7 +63,7 @@ For example, with a 4-bit (16 colour) canvas, 328 is a valid width (divisible by
 
 ### Output
 
-* `addr` - pixel memory address
+* `vram_addr` - vram memory address (word based)
 * `pix_id` - pixel ID within word
 * `paint` - canvas painting enable
 

@@ -190,7 +190,7 @@ async def run_addr_test(dut, p):
                 dut.line_start.value = int(dx == p.disp_start.x)
 
                 await ReadOnly()
-                addr = dut.addr.value
+                vram_addr = dut.vram_addr.value
                 pix_id = dut.pix_id.value
 
                 in_window = (
@@ -205,8 +205,8 @@ async def run_addr_test(dut, p):
                 exp_addr, exp_pix_id = expected_addr(p, dx, dy, scale_x, scale_y)
 
                 if in_window and in_canv:
-                    assert addr.is_resolvable and int(addr) == exp_addr, (
-                        f"addr: '{addr}' is not expected '{exp_addr}' "
+                    assert vram_addr.is_resolvable and int(vram_addr) == exp_addr, (
+                        f"vram_addr: '{vram_addr}' is not expected '{exp_addr}' "
                         f"at ({dx}, {dy}) in frame={frame}!"
                     )
                     assert pix_id.is_resolvable and int(pix_id) == exp_pix_id, (
