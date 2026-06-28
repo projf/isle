@@ -2,7 +2,7 @@
 
 The canvas display address generation unit [[canv_disp_agu.v](../gfx/canv_disp_agu.v)] calculates the [vram](vram.md) address within a canvas buffer for display output.
 
-The address calculation supports different colour depths, canvas positioning, and scaling. This module has 2 cycles of latency, supports pipelining, and avoids multiplication.
+The address calculation supports different colour depths, canvas positioning, and scaling. This module supports pipelining, and avoids multiplication.
 
 See the [Bitmap Graphics](http://projectf.io/isle/bitmap-graphics.html) blog post for more information on this module.
 
@@ -27,17 +27,19 @@ See the [Bitmap Graphics](http://projectf.io/isle/bitmap-graphics.html) blog pos
 * `addr_base` - canvas base address (word address)
 * `addr_shift` - address shift bits (for colour depth)
 * `canv_dims` - canvas dimensions
-* `canv_scale` - canvas scale
+* `scale` - canvas scale
+* `scroll` - canvas scroll coords (scroll_addr must match)
+* `scroll_addr` - address of canvas scroll line
 * `win_start` - canvas window start coords
 * `win_end` - canvas window end coords
 
 Several of these input signals come from the [display sync generator](display_sync_gen.md).
 
-The position of the canvas on the display is set by the window start `win_start` and end `win_end` signals. While canvas horizontal and vertical dimensions and scale are controlled by `canv_dims` and `canv_scale`. These signals are discussed in more detail below.
+The position of the canvas on the display is set by the window start `win_start` and end `win_end` signals. While canvas horizontal and vertical dimensions and scale are controlled by `canv_dims` and `scale`. These signals are discussed in more detail below.
 
 `addr_base` is the base _word_ address of the canvas buffer in vram. You can switch this at the start of a frame for double buffering. Or even mid-way through a frame to combine different buffers to form a display.
 
-The `VRAM_LAT` and `CLUT_LAT` parameters account for latency when retrieving data from [vram](vram.md) and when looking up the colour in the [clut](clut.md). For Isle, they should both be set to 2. See [display pipeline](#display-pipeline) for further explanation.
+The `VRAM_LAT` and `CLUT_LAT` parameters account for latency when retrieving data from [vram](vram.md) and when looking up the colour in the [clut](clut.md). For Isle, they should both be set to 2, matching the latency of the vram and clut hardware. See [display pipeline](#display-pipeline) for further explanation.
 
 The address shift, `addr_shift`, determines how the raw pixel address is split between vram address and the pixel index. Because the maximum address shift is 5, the `SHIFTW` parameter is set to 3.
 
@@ -61,13 +63,13 @@ For example, with a 4-bit (16 colour) canvas, 328 is a valid width (divisible by
 
 ### Output
 
-* `addr` - pixel memory address
-* `pix_id` - pixel ID within word
+* `vram_addr` - vram memory address (word based)
+* `pix_idx` - pixel index within word
 * `paint` - canvas painting enable
 
-The three outputs are the latency corrected `addr_pix`, `pix_id`, and `paint` signals.
+The three outputs are the latency corrected `vram_addr`, `pix_idx`, and `paint` signals.
 
-Our [vram](vram.md) has a 32-bit data bus, but a pixel is 1-8 bits wide. The `pix_id` signal tells the display where in the data word the pixel is. For example, the third 4-bit pixel in a word would have a pix_id of 2.
+Our [vram](vram.md) has a 32-bit data bus, but a pixel is 1-8 bits wide. The `pix_idx` signal tells the display where in the data word the pixel is. For example, the third 4-bit pixel in a word would have a pix_idx of 2.
 
 The paint signal tells you when canvas pixels should be rendered to the display. The canvas doesn't necessarily cover the whole window, and the window doesn't necessarily cover the whole display, so we need to know when to paint it.
 
@@ -87,7 +89,7 @@ _NB. This module doesn't perform any memory boundary checks._
 |-------------------------------|
 ```
 
-The `win_start` and `win_end` inputs are a pair of signed 16-bit values, with the y-coordinate in the upper 16 bits. The `canv_dims` and `canv_scale` inputs work in a similar way, with the vertical scale in the upper 16 bits and the horizontal scale in the lower 16 bits.
+The `win_start` and `win_end` inputs are a pair of signed 16-bit values, with the y-coordinate in the upper 16 bits. The `canv_dims` and `scale` inputs work in a similar way, with the vertical scale in the upper 16 bits and the horizontal scale in the lower 16 bits.
 
 For example, a 256x192 canvas at 2x scale centred on 640x480 display:
 
@@ -100,13 +102,13 @@ win_start: 0x00300040
 
 win_end x-coordinate: 64+512 = 576 (0x0240)
 win_end y-coordinate: 48+384 = 432 (0x01B0)
-win_end: 0x01B000240
+win_end: 0x01B00240
 
 canv_dims x-coordinate: 256 (0x0100)
 canv_dims y-coordinate: 192 (0x00C0)
 canv_dims: 0x00C00100
 
-canv_scale:  0x00020002
+scale:  0x00020002
 ```
 
 The module correctly handles canvases that are too small or large for the window.
@@ -114,6 +116,18 @@ The module correctly handles canvases that are too small or large for the window
 [Text mode](textmode.md) windows work in the same way.
 
 The registered signals `scale_x_minus` and `scale_y_minus` are the scaling factors with 1 subtracted to improve the timing slack of the scale counters. For a scale factor of 1x, these _minus signals have a value of 0.
+
+## Scrolling
+
+Canvases support scrolling, which is a efficient way to pan an image or background. The canvas bitmap data isn't changed, we just change which part of the canvas we're displaying.
+
+Isle canvases also wrap, so a small amount of vram can create the illusion of a vast image. When the user scrolls the image, we just need to draw one column (for horizontal scrolling) or line (for vertical scrolling) of pixels to memory, rather than rerendering the whole image.
+
+Scrolling requires setting two linked input signals `scroll` and `scroll_addr`.
+
+Scroll is a pair of unsigned 16-bit values, one for the Y scroll position and one for the X. For example, if you want the top-left pixel in the window to be from canvas pixel (Y=5, X=42), `scroll` would be set to `0x0005002A`.
+
+You must also set `scroll_addr` to the _pixel address_ of the (y-coordinate) you're scrolling to. We don't calculate this address inside the module to avoid requiring a hardware multiplier, which would be idle most of the time. If your canvas is 336 pixels across and your y-scroll is 4 then the scroll address is 4*336=1344 (or 0x540 in hex). NB. `scroll_addr` is not a vram address, which varies depending on the colour depth of the pixels.
 
 ## Display Pipeline
 

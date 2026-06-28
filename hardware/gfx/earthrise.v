@@ -8,13 +8,13 @@
 `timescale 1ns / 1ps
 
 module earthrise #(
-    parameter CANV_SHIFTW=3,        // vram address shift width (bits)
-    parameter COLRW=8,              // colour/pattern width (bits)
-    parameter CORDW=16,             // signed coordinate width (bits)
-    parameter ER_ADDRW=10,          // command list address width
-    parameter VRAM_ADDRW=14,        // vram address width (bits)
-    parameter WORD=32,              // machine word size (bits)
-    parameter PIX_IDW=$clog2(WORD)  // pixel ID width (bits)
+    parameter CANV_SHIFTW=3,         // vram address shift width (bits)
+    parameter COLRW=8,               // colour/pattern width (bits)
+    parameter CORDW=16,              // signed coordinate width (bits)
+    parameter ER_ADDRW=10,           // command list address width
+    parameter VRAM_ADDRW=14,         // vram address width (bits)
+    parameter WORD=32,               // machine word size (bits)
+    parameter PIX_IDXW=$clog2(WORD)  // pixel index width (bits)
     ) (
     input  wire clk,                           // clock
     input  wire rst,                           // reset
@@ -54,7 +54,7 @@ module earthrise #(
     reg drawing;  // actively drawing a pixel
     reg signed [ICORDW-1:0] x, y;
     reg [COLRW-1:0] colr;  // drawing colour
-    wire [PIX_IDW-1:0] pix_id;  // pixel ID within word
+    wire [PIX_IDXW-1:0] pix_idx;  // pixel index within word
     wire clip;  // high for coordinate outside canvas
 
     // instruction subfields
@@ -627,7 +627,7 @@ module earthrise #(
         .addr_base(addr_base),
         .addr_shift(addr_shift),
         .addr(vram_addr),
-        .pix_id(pix_id),
+        .pix_idx(pix_idx),
         .clip(clip)
     );
 
@@ -653,10 +653,10 @@ module earthrise #(
     reg [WORD-1:0] vwmask_1, vwmask_2, vwmask_4, vwmask_8;
     always @(*) begin
         /* verilator lint_off WIDTHEXPAND */
-        vwmask_1 = vram_we_sr[0] << pix_id;
-        vwmask_2 = {2{vram_we_sr[0]}} << (2 * pix_id);
-        vwmask_4 = {4{vram_we_sr[0]}} << (4 * pix_id);
-        vwmask_8 = {8{vram_we_sr[0]}} << (8 * pix_id);
+        vwmask_1 = vram_we_sr[0] << pix_idx;
+        vwmask_2 = {2{vram_we_sr[0]}} << (2 * pix_idx);
+        vwmask_4 = {4{vram_we_sr[0]}} << (4 * pix_idx);
+        vwmask_8 = {8{vram_we_sr[0]}} << (8 * pix_idx);
         /* verilator lint_on WIDTHEXPAND */
         if (!clip) begin  // no clip
             case (canv_bpp)
@@ -673,10 +673,10 @@ module earthrise #(
     reg [WORD-1:0] vdin_1, vdin_2, vdin_4, vdin_8;
     always @(*) begin
         /* verilator lint_off WIDTHEXPAND */
-        vdin_1 = colr_p3[0] << pix_id;
-        vdin_2 = colr_p3[1:0] << (2 * pix_id);
-        vdin_4 = colr_p3[3:0] << (4 * pix_id);
-        vdin_8 = colr_p3[7:0] << (8 * pix_id);
+        vdin_1 = colr_p3[0] << pix_idx;
+        vdin_2 = colr_p3[1:0] << (2 * pix_idx);
+        vdin_4 = colr_p3[3:0] << (4 * pix_idx);
+        vdin_8 = colr_p3[7:0] << (8 * pix_idx);
         /* verilator lint_on WIDTHEXPAND */
         case (canv_bpp)
             1: vram_din = vdin_1;

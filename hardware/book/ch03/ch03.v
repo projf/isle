@@ -50,7 +50,7 @@ module ch03 #(
     localparam CIDX_ADDRW = 8;   // colour index address width 2^8 = 256 colours
     localparam COLRW = 3 * BPC;  // colour width across three channels (bits)
     localparam CANV_SHIFTW = 3;  // max shift is 5 bits (2^5 = 32 bits)
-    localparam PIX_IDW=$clog2(WORD);  // pixel ID width (bits)
+    localparam PIX_IDXW=$clog2(WORD);  // pixel index width (bits)
     localparam CLUT_LAT =   2;   // clut display read latency (cycles; min=1)
 
     // display signals
@@ -206,7 +206,7 @@ module ch03 #(
 
     wire [CANV_SHIFTW-1:0] canv_addr_shift;  // address shift based on canvas bits per pixel
     wire [VRAM_ADDRW-1:0] canv_addr;  // pixel memory address
-    wire [$clog2(WORD)-1:0] canv_pix_id;  // pixel ID within word
+    wire [$clog2(WORD)-1:0] canv_pix_idx;  // pixel index within word
     wire canv_paint;
 
     // CANV_BPP is currently a parameter, but will be hardware register later
@@ -231,11 +231,13 @@ module ch03 #(
         .addr_base({VRAM_ADDRW{1'b0}}),  // fixed base address for now
         .addr_shift(canv_addr_shift),
         .canv_dims(CANV_DIMS),
-        .canv_scale(CANV_LORES ? DISPLAY_SCALE << 1 : DISPLAY_SCALE),
+        .scale(CANV_LORES ? DISPLAY_SCALE << 1 : DISPLAY_SCALE),
+        .scroll(0),
+        .scroll_addr(0),
         .win_start(WIN_START_CORD),
         .win_end(WIN_END_CORD),
-        .addr(canv_addr),
-        .pix_id(canv_pix_id),
+        .vram_addr(canv_addr),
+        .pix_idx(canv_pix_idx),
         .paint(canv_paint)
     );
 
@@ -299,24 +301,24 @@ module ch03 #(
 
     assign vram_addr_disp = canv_addr;
 
-    // delay pix_id for vram latency
-    reg [PIX_IDW-1:0] pix_id_pipe [0:VRAM_LAT-1];
+    // delay pix_idx for vram latency
+    reg [PIX_IDXW-1:0] pix_idx_pipe [0:VRAM_LAT-1];
     integer i;
     always @(posedge clk_pix) begin
-        pix_id_pipe[0] <= canv_pix_id;
+        pix_idx_pipe[0] <= canv_pix_idx;
         for (i=1; i<VRAM_LAT; i=i+1)
-            pix_id_pipe[i] <= pix_id_pipe[i-1];
+            pix_idx_pipe[i] <= pix_idx_pipe[i-1];
     end
-    wire [PIX_IDW-1:0] pix_id_disp = pix_id_pipe[VRAM_LAT-1];
+    wire [PIX_IDXW-1:0] pix_idx_disp = pix_idx_pipe[VRAM_LAT-1];
 
-    // select pixel ID from word depending on colour depth
+    // select pixel index from word depending on colour depth
     reg [CIDX_ADDRW-1:0] pcidx_1, pcidx_2, pcidx_4, pcidx_8;
     always @(*) begin
         /* verilator lint_off WIDTHTRUNC */
-        pcidx_1 = (vram_dout_disp >> pix_id_disp)        & 'b1;
-        pcidx_2 = (vram_dout_disp >> (pix_id_disp << 1)) & 'b11;
-        pcidx_4 = (vram_dout_disp >> (pix_id_disp << 2)) & 'b1111;
-        pcidx_8 = (vram_dout_disp >> (pix_id_disp << 3)) & 'b11111111;
+        pcidx_1 = (vram_dout_disp >> pix_idx_disp)        & 'b1;
+        pcidx_2 = (vram_dout_disp >> (pix_idx_disp << 1)) & 'b11;
+        pcidx_4 = (vram_dout_disp >> (pix_idx_disp << 2)) & 'b1111;
+        pcidx_8 = (vram_dout_disp >> (pix_idx_disp << 3)) & 'b11111111;
         /* verilator lint_on WIDTHTRUNC */
         case (CANV_BPP)
             1: clut_addr_disp = pcidx_1;

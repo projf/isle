@@ -2,7 +2,7 @@
 
 The canvas draw address generation unit [[canv_draw_agu.v](../gfx/canv_draw_agu.v)] calculates the [vram](vram.md) address in a canvas buffer for drawing. Drawing addresses are derived from arbitrary coordinates and don't increase sequentially, so the approach used in the [display AGU](canv_disp_agu.md) is not appropriate here.
 
-This module has 3 cycles of latency and supports pipelining. [Earthrise](earthrise.md) uses an instance of this module.
+This module supports pipelining. [Earthrise](earthrise.md) uses an instance of this module.
 
 ## Parameters
 
@@ -37,7 +37,7 @@ For example, 2 bits per pixel mean you have 16 pixels per 32-bit word, and 16 is
 ### Output
 
 * `addr` - address shift bits
-* `pix_id` - pixel ID within word
+* `pix_idx` - pixel index within word
 * `clip` - high for pixel coordinate outside canvas
 
 The `clip` allows you to avoid writes to vram where the pixel resides outside the canvas.
