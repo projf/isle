@@ -119,7 +119,15 @@ The registered signals `scale_x_minus` and `scale_y_minus` are the scaling facto
 
 ## Scrolling
 
-_needs documenting_
+Canvases support scrolling, which is a efficient way to pan an image or background. The canvas bitmap data isn't changed, we just change which part of the canvas we're displaying.
+
+Isle canvases also wrap, so a small amount of vram can create the illusion of a vast image. When the user scrolls the image, we just need to draw one column (for horizontal scrolling) or line (for vertical scrolling) of pixels to memory, rather than rerendering the whole image.
+
+Scrolling requires setting two linked input signals `scroll` and `scroll_addr`.
+
+Scroll is a pair of unsigned 16-bit values, one for the Y scroll position and one for the X. For example, if you want the top-left pixel in the window to be from canvas pixel (Y=5, X=42), `scroll` would be set to `0x0005002A`.
+
+You must also set `scroll_addr` to the _pixel address_ of the (y-coordinate) you're scrolling to. We don't calculate this address inside the module to avoid requiring a hardware multiplier, which would be idle most of the time. If your canvas is 336 pixels across and your y-scroll is 4 then the scroll address is 4*336=1344 (or 0x540 in hex). NB. `scroll_addr` is not a vram address, which varies depending on the colour depth of the pixels.
 
 ## Display Pipeline
 

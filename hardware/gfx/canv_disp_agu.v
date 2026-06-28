@@ -30,7 +30,7 @@ module canv_disp_agu #(
     input  wire [2*CORDW-1:0] win_start,      // canvas window start coords
     input  wire [2*CORDW-1:0] win_end,        // canvas window end coords
     output reg  [ADDRW-1:0] vram_addr,        // vram memory address
-    output reg  [PIX_IDXW-1:0] pix_idx,        // pixel index within word
+    output reg  [PIX_IDXW-1:0] pix_idx,       // pixel index within word
     output reg  paint                         // canvas painting enable (pre-clut)
     );
 
