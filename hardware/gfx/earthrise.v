@@ -16,24 +16,24 @@ module earthrise #(
     parameter WORD=32,               // machine word size (bits)
     parameter PIX_IDXW=$clog2(WORD)  // pixel index width (bits)
     ) (
-    input  wire clk,                           // clock
-    input  wire rst,                           // reset
-    input  wire en,                            // enable
-    input  wire start,                         // start execution
-    input  wire signed [CORDW-1:0] canv_w,     // canvas width
-    input  wire signed [CORDW-1:0] canv_h,     // canvas height
-    input  wire [$clog2(WORD)-1:0] canv_bpp,   // canvas bits per pixel
-    input  wire [WORD-1:0] cmd_list,           // command list data (32-bit)
-    output wire [ER_ADDRW+1:0] pc,             // program counter (byte address)
-    input  wire [VRAM_ADDRW-1:0] addr_base,    // address of first canvas pixel
-    input  wire [CANV_SHIFTW-1:0] addr_shift,  // address shift bits
-    output wire [VRAM_ADDRW-1:0] vram_addr,    // address in vram
-    output reg  [WORD-1:0] vram_din,           // vram data in
-    output reg  [WORD-1:0] vram_wmask,         // vram write mask
-    output reg  busy,                          // execution in progress
-    output wire done,                          // commands complete (high for one tick)
-    output reg  [WORD-1:0] cycle_cnt,          // number of clock cycles to execute command list
-    output reg  instr_invalid                  // invalid instruction
+    input  wire clk,                              // clock
+    input  wire rst,                              // reset
+    input  wire en,                               // enable
+    input  wire start,                            // start execution
+    input  wire signed [CORDW-1:0] canv_w,        // canvas width
+    input  wire signed [CORDW-1:0] canv_h,        // canvas height
+    input  wire [$clog2(WORD)-1:0] canv_bpp,      // canvas bits per pixel
+    input  wire [WORD-1:0] cmd_list,              // command list data (32-bit)
+    output wire [ER_ADDRW+1:0] pc,                // program counter (byte address)
+    input  wire [VRAM_ADDRW-1:0] vram_addr_base,  // base vram word address
+    input  wire [CANV_SHIFTW-1:0] addr_shift,     // address shift bits
+    output wire [VRAM_ADDRW-1:0] vram_addr,       // vram word address
+    output reg  [WORD-1:0] vram_din,              // vram data in
+    output reg  [WORD-1:0] vram_wmask,            // vram write mask
+    output reg  busy,                             // execution in progress
+    output wire done,                             // commands complete (high for one tick)
+    output reg  [WORD-1:0] cycle_cnt,             // number of clock cycles to execute command list
+    output reg  instr_invalid                     // invalid instruction
     );
 
     `ifdef DEBUG
@@ -624,9 +624,9 @@ module earthrise #(
         .h(canv_h),
         .x({{4{x[ICORDW-1]}}, x}),  // widen 12-bit integers (sign extension)
         .y({{4{y[ICORDW-1]}}, y}),
-        .addr_base(addr_base),
+        .vram_addr_base(vram_addr_base),
         .addr_shift(addr_shift),
-        .addr(vram_addr),
+        .vram_addr(vram_addr),
         .pix_idx(pix_idx),
         .clip(clip)
     );

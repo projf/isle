@@ -18,7 +18,7 @@ This module supports pipelining. [Earthrise](earthrise.md) uses an instance of t
 * `clk` - clock
 * `w`, `h` - canvas width and height (in pixels)
 * `x`, `y` - pixel coordinates
-* `addr_base` - address of first pixel in canvas
+* `vram_addr_base` - base word address of canvas in vram
 * `addr_shift` - address shift bits
 
 `addr_base` is the base address of the canvas buffer (first pixel) in vram.
@@ -36,7 +36,7 @@ For example, 2 bits per pixel mean you have 16 pixels per 32-bit word, and 16 is
 
 ### Output
 
-* `addr` - address shift bits
+* `vram_addr` - vram word address
 * `pix_idx` - pixel index within word
 * `clip` - high for pixel coordinate outside canvas
 

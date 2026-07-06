@@ -21,7 +21,7 @@ module canv_disp_agu #(
     input  wire line_start,                   // line start flag
     input  wire signed [CORDW-1:0] dx,        // horizontal display position
     input  wire signed [CORDW-1:0] dy,        // vertical display position
-    input  wire [ADDRW-1:0] addr_base,        // canvas base address (word address)
+    input  wire [ADDRW-1:0] vram_addr_base,   // base vram word address
     input  wire [SHIFTW-1:0] addr_shift,      // address shift bits
     input  wire [2*CORDW-1:0] canv_dims,      // canvas dimensions
     input  wire [2*CORDW-1:0] scale,          // canvas scale
@@ -29,7 +29,7 @@ module canv_disp_agu #(
     input  wire [PIX_ADDRW-1:0] scroll_addr,  // address of canvas scroll line
     input  wire [2*CORDW-1:0] win_start,      // canvas window start coords
     input  wire [2*CORDW-1:0] win_end,        // canvas window end coords
-    output reg  [ADDRW-1:0] vram_addr,        // vram memory address
+    output reg  [ADDRW-1:0] vram_addr,        // vram word address
     output reg  [PIX_IDXW-1:0] pix_idx,       // pixel index within word
     output reg  paint                         // canvas painting enable (pre-clut)
     );
@@ -86,7 +86,7 @@ module canv_disp_agu #(
     end
 
     // pipelined signals
-    reg [ADDRW-1:0] addr_base_p1;  // canvas base address
+    reg [ADDRW-1:0] vram_addr_base_p1;  // canvas base address
     reg [SHIFTW-1:0] addr_shift_p1;  // address shift bits
 
     // stage 1 - main calculation, handling frame and line starts
@@ -139,7 +139,7 @@ module canv_disp_agu #(
             end else cnt_sx <= cnt_sx + 1;
         end
         // pass to stage 2
-        addr_base_p1 <= addr_base;
+        vram_addr_base_p1 <= vram_addr_base;
         addr_shift_p1 <= addr_shift;
     end
 
@@ -147,7 +147,7 @@ module canv_disp_agu #(
     wire [PIX_IDXW-1:0] pix_idx_mask = (1 << addr_shift_p1) - 1;  // pixel index mask
     always @(posedge clk_pix) begin
         /* verilator lint_off WIDTHEXPAND */ /* verilator lint_off WIDTHTRUNC */
-        vram_addr <= addr_base_p1 + (pix_addr >> addr_shift_p1);
+        vram_addr <= vram_addr_base_p1 + (pix_addr >> addr_shift_p1);
         /* verilator lint_on WIDTHTRUNC */ /* verilator lint_on WIDTHEXPAND */
         pix_idx <= pix_addr[PIX_IDXW-1:0] & pix_idx_mask;
     end

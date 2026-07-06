@@ -27,7 +27,7 @@ DISP_LAT = CLUT_LAT + VRAM_LAT
 @dataclass(frozen=True)
 class CanvasParams:  # pylint: disable=too-many-instance-attributes
     """Hold canvas parameters."""
-    addr_base: int
+    vram_addr_base: int
     addr_shift: int
     canv_dims: Coords
     disp_start: Coords
@@ -43,7 +43,7 @@ def scrolled(base, scroll):
 
 
 SCALE_0X0Y = CanvasParams (
-    addr_base = 0x0,
+    vram_addr_base = 0x0,
     addr_shift = 3,  # 16 colour
     canv_dims = Coords(x=24, y=15),
     disp_start = Coords(x=-7, y=-2),
@@ -54,7 +54,7 @@ SCALE_0X0Y = CanvasParams (
 )
 
 SCALE_1X1Y = CanvasParams (
-    addr_base = 0xC03,
+    vram_addr_base = 0xC03,
     addr_shift = 5,  # 2 colour
     canv_dims = Coords(x=32, y=6),
     disp_start = Coords(x=-7, y=-2),
@@ -65,7 +65,7 @@ SCALE_1X1Y = CanvasParams (
 )
 
 SCALE_2X2Y = CanvasParams (
-    addr_base = 0x201,
+    vram_addr_base = 0x201,
     addr_shift = 4,  # 4 colour
     canv_dims = Coords(x=32, y=16),
     disp_start = Coords(x=-15, y=-2),
@@ -76,7 +76,7 @@ SCALE_2X2Y = CanvasParams (
 )
 
 SCALE_4X4Y = CanvasParams (
-    addr_base = 0x2000,
+    vram_addr_base = 0x2000,
     addr_shift = 3,  # 16 colour
     canv_dims = Coords(x=16, y=4),
     disp_start = Coords(x=-7, y=-2),
@@ -87,7 +87,7 @@ SCALE_4X4Y = CanvasParams (
 )
 
 SCALE_3X5Y = CanvasParams (
-    addr_base = 0x1FFF,
+    vram_addr_base = 0x1FFF,
     addr_shift = 2,  # 256 colour
     canv_dims = Coords(x=12, y=7),
     disp_start = Coords(x=-7, y=-2),
@@ -98,7 +98,7 @@ SCALE_3X5Y = CanvasParams (
 )
 
 LARGE_CANV = CanvasParams (
-    addr_base = 0x201,
+    vram_addr_base = 0x201,
     addr_shift = 4,  # 4 colour
     canv_dims = Coords(x=96, y=45),
     disp_start = Coords(x=-15, y=-2),
@@ -110,7 +110,7 @@ LARGE_CANV = CanvasParams (
 
 # this is very slow, so don't run routinely
 FULL_DISP = CanvasParams (
-    addr_base = 0x201,
+    vram_addr_base = 0x201,
     addr_shift = 4,  # 4 colour
     canv_dims = Coords(x=24, y=15),
     disp_start = Coords(x=-153, y=-20),
@@ -131,7 +131,7 @@ def expected_addr(p, dx, dy, scale_x, scale_y):
     by = (p.scroll.y + cy) % p.canv_dims.y
     # calculate pixel address and separate into address and pixel index
     addr_pix = by * p.canv_dims.x + bx
-    addr = p.addr_base + (addr_pix >> p.addr_shift)
+    addr = p.vram_addr_base + (addr_pix >> p.addr_shift)
     pix_idx_mask = (1 << p.addr_shift) - 1
     pix_idx = addr_pix & pix_idx_mask
     return addr, pix_idx
@@ -162,7 +162,7 @@ async def setup_dut(dut, p):
     dut.rst_pix.value = 0
 
     # setup canvas
-    dut.addr_base.value = p.addr_base
+    dut.vram_addr_base.value = p.vram_addr_base
     dut.addr_shift.value = p.addr_shift
     dut.canv_dims.value = p.canv_dims.pack()
     dut.scale.value = p.scale.pack()

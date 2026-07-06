@@ -12,17 +12,17 @@ module canv_draw_agu #(
     parameter WORD=32,               // machine word size (bits)
     parameter PIX_IDXW=$clog2(WORD)  // pixel index width (bits)
     ) (
-    input  wire clk,                      // clock
-    input  wire en,                       // enable
-    input  wire signed [CORDW-1:0] w,     // canvas width
-    input  wire signed [CORDW-1:0] h,     // canvas height
-    input  wire signed [CORDW-1:0] x,     // horizontal pixel coordinate
-    input  wire signed [CORDW-1:0] y,     // vertical pixel coordinate
-    input  wire [ADDRW-1:0] addr_base,    // address of first pixel in canvas
-    input  wire [SHIFTW-1:0] addr_shift,  // address shift bits
-    output reg  [ADDRW-1:0] addr,         // pixel memory address
-    output reg  [PIX_IDXW-1:0] pix_idx,   // pixel index within word
-    output reg  clip                      // high for pixel coordinate outside canvas
+    input  wire clk,                         // clock
+    input  wire en,                          // enable
+    input  wire signed [CORDW-1:0] w,        // canvas width
+    input  wire signed [CORDW-1:0] h,        // canvas height
+    input  wire signed [CORDW-1:0] x,        // horizontal pixel coordinate
+    input  wire signed [CORDW-1:0] y,        // vertical pixel coordinate
+    input  wire [ADDRW-1:0] vram_addr_base,  // base vram word address
+    input  wire [SHIFTW-1:0] addr_shift,     // address shift bits
+    output reg  [ADDRW-1:0] vram_addr,       // vram word address
+    output reg  [PIX_IDXW-1:0] pix_idx,      // pixel index within word
+    output reg  clip                         // high for pixel coordinate outside canvas
     );
 
     localparam PIX_ADDRW = ADDRW + $clog2(WORD);
@@ -32,7 +32,7 @@ module canv_draw_agu #(
     reg clip_p1x, clip_p1y, clip_p2;
     reg [PIX_ADDRW-1:0] pix_mul_p1, pix_addr_p2;
     reg [SHIFTW-1:0] addr_shift_p1, addr_shift_p2;
-    reg [ADDRW-1:0] addr_base_p1, addr_base_p2;
+    reg [ADDRW-1:0] vram_addr_base_p1, vram_addr_base_p2;
 
     always @(posedge clk) begin
         if (en) begin
@@ -42,7 +42,7 @@ module canv_draw_agu #(
             clip_p1y <= (y < 0 || y > h-1);  // vertical clip
             pix_mul_p1 <= w * y;  // unsigned result, but clip flags x<0 or y<0
             addr_shift_p1 <= addr_shift;
-            addr_base_p1 <= addr_base;
+            vram_addr_base_p1 <= vram_addr_base;
 
             // stage 2
             clip_p2 <= clip_p1x || clip_p1y;
@@ -50,13 +50,13 @@ module canv_draw_agu #(
             pix_addr_p2 <= pix_mul_p1 + x_p1;
             /* verilator lint_on WIDTHEXPAND */
             addr_shift_p2 <= addr_shift_p1;
-            addr_base_p2 <= addr_base_p1;
+            vram_addr_base_p2 <= vram_addr_base_p1;
 
             // stage 3
             clip <= clip_p2;
             /* verilator lint_off WIDTHTRUNC */
             /* verilator lint_off WIDTHEXPAND */
-            addr <= addr_base_p2 + (pix_addr_p2 >> addr_shift_p2);
+            vram_addr <= vram_addr_base_p2 + (pix_addr_p2 >> addr_shift_p2);
             pix_idx <= pix_addr_p2 & ((1 << addr_shift_p2) - 1);
             /* verilator lint_on WIDTHEXPAND */
             /* verilator lint_on WIDTHTRUNC */

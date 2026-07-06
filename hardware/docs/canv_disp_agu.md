@@ -24,7 +24,7 @@ See the [Bitmap Graphics](http://projectf.io/isle/bitmap-graphics.html) blog pos
 * `frame_start` - frame start flag
 * `line_start` - line start flag
 * (`dx`, `dy`) - display position
-* `addr_base` - canvas base address (word address)
+* `vram_addr_base` - base word address of canvas in vram
 * `addr_shift` - address shift bits (for colour depth)
 * `canv_dims` - canvas dimensions
 * `scale` - canvas scale
@@ -63,7 +63,7 @@ For example, with a 4-bit (16 colour) canvas, 328 is a valid width (divisible by
 
 ### Output
 
-* `vram_addr` - vram memory address (word based)
+* `vram_addr` - vram word address
 * `pix_idx` - pixel index within word
 * `paint` - canvas painting enable
 

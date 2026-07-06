@@ -111,7 +111,7 @@ module ch02 #(
         .line_start(line_start),
         .dx(dx),
         .dy(dy),
-        .addr_base({VRAM_ADDRW{1'b0}}),  // fixed base address for now
+        .vram_addr_base({VRAM_ADDRW{1'b0}}),  // fixed base address for now
         .addr_shift(canv_addr_shift),
         .canv_dims(CANV_DIMS),
         .scale(CANV_LORES ? DISPLAY_SCALE << 1 : DISPLAY_SCALE),
