@@ -16,24 +16,24 @@ module earthrise #(
     parameter WORD=32,               // machine word size (bits)
     parameter PIX_IDXW=$clog2(WORD)  // pixel index width (bits)
     ) (
-    input  wire clk,                           // clock
-    input  wire rst,                           // reset
-    input  wire en,                            // enable
-    input  wire start,                         // start execution
-    input  wire signed [CORDW-1:0] canv_w,     // canvas width
-    input  wire signed [CORDW-1:0] canv_h,     // canvas height
-    input  wire [$clog2(WORD)-1:0] canv_bpp,   // canvas bits per pixel
-    input  wire [WORD-1:0] cmd_list,           // command list data (32-bit)
-    output wire [ER_ADDRW+1:0] pc,             // program counter (byte address)
-    input  wire [VRAM_ADDRW-1:0] addr_base,    // address of first canvas pixel
-    input  wire [CANV_SHIFTW-1:0] addr_shift,  // address shift bits
-    output wire [VRAM_ADDRW-1:0] vram_addr,    // address in vram
-    output reg  [WORD-1:0] vram_din,           // vram data in
-    output reg  [WORD-1:0] vram_wmask,         // vram write mask
-    output reg  busy,                          // execution in progress
-    output wire done,                          // commands complete (high for one tick)
-    output reg  [WORD-1:0] cycle_cnt,          // number of clock cycles to execute command list
-    output reg  instr_invalid                  // invalid instruction
+    input  wire clk,                              // clock
+    input  wire rst,                              // reset
+    input  wire en,                               // enable
+    input  wire start,                            // start execution
+    input  wire signed [CORDW-1:0] canv_w,        // canvas width
+    input  wire signed [CORDW-1:0] canv_h,        // canvas height
+    input  wire [$clog2(WORD)-1:0] canv_bpp,      // canvas bits per pixel
+    input  wire [WORD-1:0] cmd_list,              // command list data (32-bit)
+    output wire [ER_ADDRW+1:0] pc,                // program counter (byte address)
+    input  wire [VRAM_ADDRW-1:0] vram_addr_base,  // base vram word address
+    input  wire [CANV_SHIFTW-1:0] addr_shift,     // address shift bits
+    output wire [VRAM_ADDRW-1:0] vram_addr,       // vram word address
+    output reg  [WORD-1:0] vram_din,              // vram data in
+    output reg  [WORD-1:0] vram_wmask,            // vram write mask
+    output reg  busy,                             // execution in progress
+    output wire done,                             // commands complete (high for one tick)
+    output reg  [WORD-1:0] cycle_cnt,             // number of clock cycles to execute command list
+    output reg  instr_invalid                     // invalid instruction
     );
 
     `ifdef DEBUG
@@ -124,7 +124,7 @@ module earthrise #(
     reg signed [ICORDW-1:0] circle_x0, circle_y0;
     reg signed [ICORDW-1:0] circle_r0;
     wire signed [ICORDW-1:0] circle_xa, circle_ya;
-    reg signed [ICORDW-1:0] circle_x_offs, circle_y_offs;
+    reg signed [ICORDW-1:0] circle_dx, circle_dy;
 
     // triangle signals
     reg tri_b_edge;   // flag: drawing edge B0 or B1
@@ -346,8 +346,8 @@ module earthrise #(
                 end
                 CIRCLE_CALC: begin
                     if (circle_valid) begin  // register the result before leaving CIRCLE_CALC
-                        circle_x_offs <= circle_xa;
-                        circle_y_offs <= circle_ya;
+                        circle_dx <= circle_xa;
+                        circle_dy <= circle_ya;
                         state <= (imm8[OPT_FILL] == 0) ? CIRCLE_PIX : CIRCLE_FILL_DN;
                     end
                     circle_start <= 0;
@@ -357,25 +357,25 @@ module earthrise #(
                     drawing <= 1;
                     cnt_draw <= cnt_draw + 1;
                     case (cnt_draw)
-                        'd0: begin x <= circle_x0 - circle_x_offs; y <= circle_y0 + circle_y_offs; end
-                        'd1: begin x <= circle_x0 + circle_x_offs; end
-                        'd2: begin y <= circle_y0 - circle_y_offs; end
-                        'd3: begin x <= circle_x0 - circle_x_offs; end
+                        'd0: begin x <= circle_x0 - circle_dx; y <= circle_y0 + circle_dy; end
+                        'd1: begin x <= circle_x0 + circle_dx; end
+                        'd2: begin y <= circle_y0 - circle_dy; end
+                        'd3: begin x <= circle_x0 - circle_dx; end
                     endcase
                 end
                 CIRCLE_FILL_DN: begin
                     state <= FLINE_EXEC;
                     state_return <= CIRCLE_FILL_UP;
                     fline_start <= 1;
-                    fline_y  <= circle_y0 + circle_y_offs;
-                    fline_x0 <= circle_x0 + circle_x_offs;
-                    fline_x1 <= circle_x0 - circle_x_offs;
+                    fline_y  <= circle_y0 + circle_dy;
+                    fline_x0 <= circle_x0 + circle_dx;
+                    fline_x1 <= circle_x0 - circle_dx;
                 end
                 CIRCLE_FILL_UP: begin  // fline_x0,fline_x1 unchanged from CIRCLE_FILL_DN
                     state <= FLINE_EXEC;
                     state_return <= circle_busy ? CIRCLE_CALC : DECODE;
                     fline_start <= 1;
-                    fline_y <= circle_y0 - circle_y_offs;
+                    fline_y <= circle_y0 - circle_dy;
                 end
                 FLINE_EXEC: begin
                     if (!fline_busy) state <= state_return;
@@ -624,9 +624,9 @@ module earthrise #(
         .h(canv_h),
         .x({{4{x[ICORDW-1]}}, x}),  // widen 12-bit integers (sign extension)
         .y({{4{y[ICORDW-1]}}, y}),
-        .addr_base(addr_base),
+        .vram_addr_base(vram_addr_base),
         .addr_shift(addr_shift),
-        .addr(vram_addr),
+        .vram_addr(vram_addr),
         .pix_idx(pix_idx),
         .clip(clip)
     );

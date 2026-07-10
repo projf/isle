@@ -28,12 +28,12 @@ _I'll add more details on the internal operation of Earthrise in future updates.
 * `canv_w`, `canv_h` - canvas width and height (in pixels)
 * `canv_bpp` - canvas bits per pixel (colour depth)
 * `cmd_list` - command list data (2 x 16-bit instructions)
-* `addr_base` - address of first pixel in canvas
+* `vram_addr_base` - base word address of canvas in vram
 * `addr_shift` - address shift bits
 
 The `en` signal is useful for bus arbitration and for slowing down drawing to make the process visible.
 
-`addr_base` is the base address of the canvas buffer (first pixel) in vram.
+`vram_addr_base` is the base _word_ address of the canvas buffer in vram.
 
 The address shift, `addr_shift`, determines how the raw pixel address is split between vram address and pixel index.
 
@@ -49,7 +49,7 @@ For example, 2 bits per pixel mean you have 16 pixels per 32-bit word, and 16 is
 ### Output
 
 * `pc` - Earthrise program counter (byte address)
-* `vram_addr` - address in vram
+* `vram_addr` - vram word address
 * `vram_din` - vram data in
 * `vram_wmask` - vram bit-write mask
 * `busy` - execution in progress

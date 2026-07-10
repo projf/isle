@@ -15,22 +15,22 @@ module font_glyph #(
     parameter UCPW=21,         // Unicode code point width (bits)
     parameter WIDTH=8          // half-width glyph width (pixels)
     ) (
-    input  wire clk,                           // clock
-    input  wire [UCPW-1:0] ucp,                // Unicode code point
-    input  wire [$clog2(HEIGHT)-1:0] line_id,  // glyph line to get
-    output reg  [WIDTH-1:0] pix_line           // glyph pixel line
+    input  wire clk,                            // clock
+    input  wire [UCPW-1:0] ucp,                 // Unicode code point
+    input  wire [$clog2(HEIGHT)-1:0] line_idx,  // glyph line index to fetch
+    output reg  [WIDTH-1:0] pix_line            // glyph pixel line
     );
 
     // Unicode params
-    localparam MISSING_ADDR = 'h11;
-    localparam REPLACE_ADDR = 'h7F;
+    localparam MISSING_IDX = 'h11;
+    localparam REPLACE_IDX = 'h7F;
 
     // ROM params
     localparam ADDRW = $clog2(HEIGHT * FONT_COUNT);
     localparam DEPTH = HEIGHT * FONT_COUNT;
 
     reg [UCPW-1:0] glyph_idx;
-    reg [$clog2(HEIGHT)-1:0] line_id_reg;
+    reg [$clog2(HEIGHT)-1:0] line_idx_reg;
     reg [ADDRW-1:0] rom_addr;
     wire [WIDTH-1:0] rom_data;
 
@@ -39,14 +39,14 @@ module font_glyph #(
         case (1'b1)
             (ucp >= 'h20 && ucp <= 'h7E): glyph_idx <= ucp;  // basic Latin
             (ucp >= 'h2580 && ucp <= 'h259F): glyph_idx <= ucp - 'h2580;  // block elements
-            (ucp == 'hFFFD): glyph_idx <= REPLACE_ADDR;  // replacement char
-            default: glyph_idx <= MISSING_ADDR;  // light shade (for missing glyph AKA tofu)
+            (ucp == 'hFFFD): glyph_idx <= REPLACE_IDX;  // replacement char
+            default: glyph_idx <= MISSING_IDX;  // light shade (for missing glyph AKA tofu)
         endcase
-        line_id_reg <= line_id;  // register line index to match glyph_idx calculation
+        line_idx_reg <= line_idx;  // register line index to match glyph_idx calculation
 
         // stage 2 - calculate ROM address; may infer multiplier if HEIGHT is not power of 2
         /* verilator lint_off WIDTH */
-        rom_addr <= (glyph_idx * HEIGHT) + line_id_reg;
+        rom_addr <= (glyph_idx * HEIGHT) + line_idx_reg;
         /* verilator lint_on WIDTH */
 
         // stage 3 - ROM latency

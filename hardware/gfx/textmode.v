@@ -22,7 +22,7 @@ module textmode #(
     input  wire rst_pix,                       // reset in pixel clock domain
     input  wire frame_start,                   // frame start flag
     input  wire signed [CORDW-1:0] dx, dy,     // display position
-    input  wire [ADDRW-1:0] scroll_offs,       // tram address offset for scroll
+    input  wire [ADDRW-1:0] scroll_offset,     // tram address offset for scroll
     input  wire signed [ADDRW-1:0] text_hres,  // text width (chars)
     input  wire signed [ADDRW-1:0] text_vres,  // text height (chars)
     input  wire [2*CORDW-1:0] win_start,       // text window start coords
@@ -92,7 +92,7 @@ module textmode #(
 
     wire [GLYPH_WIDTH-1:0] pix_line;  // line of glyph pixels from ROM
     reg [GLYPH_WIDTH-1:0] pix_line_reg;  // registered copy of glyph pixels
-    reg [ADDRW-1:0] tram_addr_line;  // addr copy, so we can return to it at line start
+    reg [ADDRW-1:0] tram_line_addr;  // addr copy, so we can return to it at line start
 
     // glyph end signals
     /* verilator lint_off WIDTHEXPAND */
@@ -115,8 +115,8 @@ module textmode #(
         case (state)
             INIT: begin
                 if (dy == win_start_y) state <= AWAIT;
-                tram_addr <= scroll_offs;
-                tram_addr_line <= scroll_offs;
+                tram_addr <= scroll_offset;
+                tram_line_addr <= scroll_offset;
                 tx <= 0;
                 ty <= 0;
                 gx <= 0;
@@ -147,7 +147,7 @@ module textmode #(
                 end else cnt_x <= cnt_x + 1;
 
                 if (gx == 0 && cnt_x == 0)
-                    tram_addr <= (tram_addr == TRAM_DEPTH-1) ? scroll_offs : tram_addr + 1;
+                    tram_addr <= (tram_addr == TRAM_DEPTH-1) ? scroll_offset : tram_addr + 1;
 
                 // register Unicode code point; TRAM_LAT+1 to reg tram_addr
                 if (gx == TRAM_LAT+1 && cnt_x == 0) ucp <= tram_data[UCPW-1:0];
@@ -162,17 +162,17 @@ module textmode #(
             end
             CHR_LINE: begin  // prepare for next line of chars
                 state <= SCR_LINE;
-                tram_addr_line <= tram_addr_line + text_hres;  // address for next line of chars
+                tram_line_addr <= tram_line_addr + text_hres;  // address for next line of chars
                 ty <= ty + 1;  // move down to next line of chars
             end
             SCR_LINE: begin  // new line of pixels
                 state <= AWAIT;
 
                 // set tram address to start of line
-                if (tram_addr_line > TRAM_DEPTH-1) begin // handle wrapping
-                    tram_addr <= tram_addr_line - TRAM_DEPTH;
-                    tram_addr_line <= tram_addr_line - TRAM_DEPTH;
-                end else tram_addr <= tram_addr_line;
+                if (tram_line_addr > TRAM_DEPTH-1) begin // handle wrapping
+                    tram_addr <= tram_line_addr - TRAM_DEPTH;
+                    tram_line_addr <= tram_line_addr - TRAM_DEPTH;
+                end else tram_addr <= tram_line_addr;
 
                 // begin with first char on line; reset horizontal position
                 tx <= 0;
@@ -207,7 +207,7 @@ module textmode #(
     ) font_glyph_instance (
         .clk(clk_pix),
         .ucp(ucp),
-        .line_id(gy),
+        .line_idx(gy),
         .pix_line(pix_line)
     );
 endmodule

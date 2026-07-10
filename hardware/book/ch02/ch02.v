@@ -111,12 +111,12 @@ module ch02 #(
         .line_start(line_start),
         .dx(dx),
         .dy(dy),
-        .addr_base({VRAM_ADDRW{1'b0}}),  // fixed base address for now
+        .vram_addr_base({VRAM_ADDRW{1'b0}}),  // fixed base address for now
         .addr_shift(canv_addr_shift),
         .canv_dims(CANV_DIMS),
         .scale(CANV_LORES ? DISPLAY_SCALE << 1 : DISPLAY_SCALE),
-        .scroll(0),
-        .scroll_addr(0),
+        .scroll_coord(0),
+        .scroll_offset(0),
         .win_start(WIN_START_CORD),
         .win_end(WIN_END_CORD),
         .vram_addr(canv_addr),

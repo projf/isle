@@ -186,7 +186,7 @@ module ch05 #(
     reg signed [TRAM_ADDRW-1:0] text_hres = TRAM_HRES;
     reg signed [TRAM_ADDRW-1:0] text_vres = TRAM_VRES;
 
-    reg [TRAM_ADDRW-1:0] scroll_offs = 0*84;  // scroll text display (use lines of chars)
+    reg [TRAM_ADDRW-1:0] scroll_offset = 0*84;  // scroll text display (use lines of chars)
     wire [TEXT_CIDXW-1:0] text_pix;
     wire text_paint;  // signals when to enable text painting
 
@@ -208,7 +208,7 @@ module ch05 #(
         .frame_start(frame_start),
         .dx(dx),
         .dy(dy),
-        .scroll_offs(scroll_offs),
+        .scroll_offset(scroll_offset),
         .text_hres(text_hres),
         .text_vres(text_vres),
         .win_start(WIN_START_CORD),
