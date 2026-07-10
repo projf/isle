@@ -124,7 +124,7 @@ module earthrise #(
     reg signed [ICORDW-1:0] circle_x0, circle_y0;
     reg signed [ICORDW-1:0] circle_r0;
     wire signed [ICORDW-1:0] circle_xa, circle_ya;
-    reg signed [ICORDW-1:0] circle_x_offs, circle_y_offs;
+    reg signed [ICORDW-1:0] circle_dx, circle_dy;
 
     // triangle signals
     reg tri_b_edge;   // flag: drawing edge B0 or B1
@@ -346,8 +346,8 @@ module earthrise #(
                 end
                 CIRCLE_CALC: begin
                     if (circle_valid) begin  // register the result before leaving CIRCLE_CALC
-                        circle_x_offs <= circle_xa;
-                        circle_y_offs <= circle_ya;
+                        circle_dx <= circle_xa;
+                        circle_dy <= circle_ya;
                         state <= (imm8[OPT_FILL] == 0) ? CIRCLE_PIX : CIRCLE_FILL_DN;
                     end
                     circle_start <= 0;
@@ -357,25 +357,25 @@ module earthrise #(
                     drawing <= 1;
                     cnt_draw <= cnt_draw + 1;
                     case (cnt_draw)
-                        'd0: begin x <= circle_x0 - circle_x_offs; y <= circle_y0 + circle_y_offs; end
-                        'd1: begin x <= circle_x0 + circle_x_offs; end
-                        'd2: begin y <= circle_y0 - circle_y_offs; end
-                        'd3: begin x <= circle_x0 - circle_x_offs; end
+                        'd0: begin x <= circle_x0 - circle_dx; y <= circle_y0 + circle_dy; end
+                        'd1: begin x <= circle_x0 + circle_dx; end
+                        'd2: begin y <= circle_y0 - circle_dy; end
+                        'd3: begin x <= circle_x0 - circle_dx; end
                     endcase
                 end
                 CIRCLE_FILL_DN: begin
                     state <= FLINE_EXEC;
                     state_return <= CIRCLE_FILL_UP;
                     fline_start <= 1;
-                    fline_y  <= circle_y0 + circle_y_offs;
-                    fline_x0 <= circle_x0 + circle_x_offs;
-                    fline_x1 <= circle_x0 - circle_x_offs;
+                    fline_y  <= circle_y0 + circle_dy;
+                    fline_x0 <= circle_x0 + circle_dx;
+                    fline_x1 <= circle_x0 - circle_dx;
                 end
                 CIRCLE_FILL_UP: begin  // fline_x0,fline_x1 unchanged from CIRCLE_FILL_DN
                     state <= FLINE_EXEC;
                     state_return <= circle_busy ? CIRCLE_CALC : DECODE;
                     fline_start <= 1;
-                    fline_y <= circle_y0 - circle_y_offs;
+                    fline_y <= circle_y0 - circle_dy;
                 end
                 FLINE_EXEC: begin
                     if (!fline_busy) state <= state_return;

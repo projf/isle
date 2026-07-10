@@ -28,8 +28,8 @@ See the [Bitmap Graphics](http://projectf.io/isle/bitmap-graphics.html) blog pos
 * `addr_shift` - address shift bits (for colour depth)
 * `canv_dims` - canvas dimensions
 * `scale` - canvas scale
-* `scroll` - canvas scroll coords (scroll_addr must match)
-* `scroll_addr` - address of canvas scroll line
+* `scroll_coord` - canvas scroll coords (must match scroll_offset)
+* `scroll_offset` - pixel offset of canvas scroll line
 * `win_start` - canvas window start coords
 * `win_end` - canvas window end coords
 
@@ -37,7 +37,7 @@ Several of these input signals come from the [display sync generator](display_sy
 
 The position of the canvas on the display is set by the window start `win_start` and end `win_end` signals. While canvas horizontal and vertical dimensions and scale are controlled by `canv_dims` and `scale`. These signals are discussed in more detail below.
 
-`addr_base` is the base _word_ address of the canvas buffer in vram. You can switch this at the start of a frame for double buffering. Or even mid-way through a frame to combine different buffers to form a display.
+`vram_addr_base` is the base _word_ address of the canvas buffer in vram. You can switch this at the start of a frame for double buffering. Or even mid-way through a frame to combine different buffers to form a display.
 
 The `VRAM_LAT` and `CLUT_LAT` parameters account for latency when retrieving data from [vram](vram.md) and when looking up the colour in the [clut](clut.md). For Isle, they should both be set to 2, matching the latency of the vram and clut hardware. See [display pipeline](#display-pipeline) for further explanation.
 
@@ -123,11 +123,11 @@ Canvases support scrolling, which is a efficient way to pan an image or backgrou
 
 Isle canvases also wrap, so a small amount of vram can create the illusion of a vast image. When the user scrolls the image, we just need to draw one column (for horizontal scrolling) or line (for vertical scrolling) of pixels to memory, rather than rerendering the whole image.
 
-Scrolling requires setting two linked input signals `scroll` and `scroll_addr`.
+Scrolling requires setting two linked input signals `scroll_coord` and `scroll_offset`.
 
-Scroll is a pair of unsigned 16-bit values, one for the Y scroll position and one for the X. For example, if you want the top-left pixel in the window to be from canvas pixel (Y=5, X=42), `scroll` would be set to `0x0005002A`.
+The `scroll_coord` input is a pair of unsigned 16-bit values, one for the Y scroll position and one for the X. For example, if you want the top-left pixel in the window to be from canvas pixel (Y=5, X=42), `scroll_coord` would be set to `0x0005002A`.
 
-You must also set `scroll_addr` to the _pixel address_ of the (y-coordinate) you're scrolling to. We don't calculate this address inside the module to avoid requiring a hardware multiplier, which would be idle most of the time. If your canvas is 336 pixels across and your y-scroll is 4 then the scroll address is 4*336=1344 (or 0x540 in hex). NB. `scroll_addr` is not a vram address, which varies depending on the colour depth of the pixels.
+You must also set `scroll_offset` to the _pixel offset_ of the (y-coordinate) you're scrolling to. We don't calculate this address inside the AGU to avoid wasting hardware multiplier that would be idle most of the time. If your canvas is 336 pixels across and your y-scroll is 4 then the scroll address is 4*336=1344 (or 0x540 in hex). NB. `scroll_offset` is not a vram address, which varies depending on the colour depth of the pixels.
 
 ## Display Pipeline
 

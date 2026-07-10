@@ -33,7 +33,7 @@ _I'll add more details on the internal operation of Earthrise in future updates.
 
 The `en` signal is useful for bus arbitration and for slowing down drawing to make the process visible.
 
-`addr_base` is the base address of the canvas buffer (first pixel) in vram.
+`vram_addr_base` is the base _word_ address of the canvas buffer in vram.
 
 The address shift, `addr_shift`, determines how the raw pixel address is split between vram address and pixel index.
 

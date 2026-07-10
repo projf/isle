@@ -35,11 +35,11 @@ class CanvasParams:  # pylint: disable=too-many-instance-attributes
     win_start: Coords
     win_end: Coords
     scale: Coords
-    scroll: Coords = Coords(x=0, y=0)  # we have separate scroll tests, default to no scroll
+    scroll_coord: Coords = Coords(x=0, y=0)  # we have separate scroll tests, default to no scroll
 
-def scrolled(base, scroll):
+def scrolled(base, scroll_coord):
     """Create scrolled version of canvas params."""
-    return dataclasses.replace(base, scroll=scroll)
+    return dataclasses.replace(base, scroll_coord=scroll_coord)
 
 
 SCALE_0X0Y = CanvasParams (
@@ -127,8 +127,8 @@ def expected_addr(p, dx, dy, scale_x, scale_y):
     cx = (dx + DISP_LAT - p.win_start.x) // scale_x
     cy = (dy - p.win_start.y) // scale_y
     # calculate buffer position, accounting for wrapping
-    bx = (p.scroll.x + cx) % p.canv_dims.x
-    by = (p.scroll.y + cy) % p.canv_dims.y
+    bx = (p.scroll_coord.x + cx) % p.canv_dims.x
+    by = (p.scroll_coord.y + cy) % p.canv_dims.y
     # calculate pixel address and separate into address and pixel index
     addr_pix = by * p.canv_dims.x + bx
     addr = p.vram_addr_base + (addr_pix >> p.addr_shift)
@@ -143,8 +143,8 @@ async def setup_dut(dut, p):
     assert (p.canv_dims.x * 2**(5-p.addr_shift)) % 32 == 0, (
         "bad test data: canvas width must be an integer number of words."
     )
-    assert 0 <= p.scroll.x < p.canv_dims.x and 0 <= p.scroll.y < p.canv_dims.y, (
-        f"bad test data: scroll {p.scroll} doesn't fit canvas {p.canv_dims}"
+    assert 0 <= p.scroll_coord.x < p.canv_dims.x and 0 <= p.scroll_coord.y < p.canv_dims.y, (
+        f"bad test data: scroll coord {p.scroll_coord} doesn't fit canvas {p.canv_dims}"
     )
 
     # ensure we're at start of frame before reset (to prevent failing tests interfering)
@@ -168,8 +168,8 @@ async def setup_dut(dut, p):
     dut.scale.value = p.scale.pack()
     dut.win_start.value = p.win_start.pack()
     dut.win_end.value = p.win_end.pack()
-    dut.scroll.value = p.scroll.pack()
-    dut.scroll_addr.value = p.scroll.y * p.canv_dims.x
+    dut.scroll_coord.value = p.scroll_coord.pack()
+    dut.scroll_offset.value = p.scroll_coord.y * p.canv_dims.x
 
 
 async def run_addr_test(dut, p):

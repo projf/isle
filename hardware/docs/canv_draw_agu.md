@@ -21,7 +21,7 @@ This module supports pipelining. [Earthrise](earthrise.md) uses an instance of t
 * `vram_addr_base` - base word address of canvas in vram
 * `addr_shift` - address shift bits
 
-`addr_base` is the base address of the canvas buffer (first pixel) in vram.
+`vram_addr_base` is the base _word_ address of the canvas buffer in vram. You can switch this at the start of a frame for double buffering. See also [display AGU](canv_disp_agu.md).
 
 The address shift, `addr_shift`, determines how the raw pixel address is split between vram address and pixel index.
 

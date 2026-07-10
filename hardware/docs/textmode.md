@@ -44,7 +44,7 @@ See [font glyph](font_glyph.md) for details on font and glyph parameters.
 * `rst_pix` - reset text mode state machine
 * `frame_start` - frame start flag
 * `(dx, dy)` - display position
-* `scroll_offs` - tram address scroll offset
+* `scroll_offset` - tram address scroll offset
 * `text_hres` - text width (chars)
 * `text_vres` - text height (chars)
 * `win_start` - text window start coords
@@ -52,7 +52,7 @@ See [font glyph](font_glyph.md) for details on font and glyph parameters.
 * `scale` - text scale
 * `tram_data` - character data from tram
 
-You can use `scroll_offs` to vertically scroll the text mode display. For example, if text mode is 84 characters wide, add 84 to `scroll_offs` to scroll down one line. The scroll offset is not signed. To scroll up one line, add one less than the height of the text mode; for example, if text mode is 84x24, set `scroll_offs` to 23*84.
+You can use `scroll_offset` to vertically scroll the text mode display. For example, if text mode is 84 characters wide, add 84 to `scroll_offset` to scroll down one line. The scroll offset is not signed. To scroll up one line, add one less than the height of the text mode; for example, if text mode is 84x24, set `scroll_offset` to 23*84.
 
 The `win_start` and `win_end` inputs are a pair of signed 16-bit values, with the y-coordinate in the upper 16 bits. The `scale` input works in a similar way, with the vertical scale in the upper 16 bits and the horizontal scale in the lower 16 bits. When scaling text mode, the text doesn't wrap; adjust `text_hres` and `text_vres` to match the new scale if desired.
 

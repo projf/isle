@@ -30,7 +30,7 @@ module canv_draw_agu #(
     // address and clip pipeline vars
     reg signed [CORDW-1:0] x_p1;
     reg clip_p1x, clip_p1y, clip_p2;
-    reg [PIX_ADDRW-1:0] pix_mul_p1, pix_addr_p2;
+    reg [PIX_ADDRW-1:0] pix_mul_p1, pix_offset_p2;
     reg [SHIFTW-1:0] addr_shift_p1, addr_shift_p2;
     reg [ADDRW-1:0] vram_addr_base_p1, vram_addr_base_p2;
 
@@ -47,7 +47,7 @@ module canv_draw_agu #(
             // stage 2
             clip_p2 <= clip_p1x || clip_p1y;
             /* verilator lint_off WIDTHEXPAND */
-            pix_addr_p2 <= pix_mul_p1 + x_p1;
+            pix_offset_p2 <= pix_mul_p1 + x_p1;
             /* verilator lint_on WIDTHEXPAND */
             addr_shift_p2 <= addr_shift_p1;
             vram_addr_base_p2 <= vram_addr_base_p1;
@@ -56,8 +56,8 @@ module canv_draw_agu #(
             clip <= clip_p2;
             /* verilator lint_off WIDTHTRUNC */
             /* verilator lint_off WIDTHEXPAND */
-            vram_addr <= vram_addr_base_p2 + (pix_addr_p2 >> addr_shift_p2);
-            pix_idx <= pix_addr_p2 & ((1 << addr_shift_p2) - 1);
+            vram_addr <= vram_addr_base_p2 + (pix_offset_p2 >> addr_shift_p2);
+            pix_idx <= pix_offset_p2 & ((1 << addr_shift_p2) - 1);
             /* verilator lint_on WIDTHEXPAND */
             /* verilator lint_on WIDTHTRUNC */
         end

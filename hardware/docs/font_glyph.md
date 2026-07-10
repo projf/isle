@@ -29,7 +29,7 @@ If `HEIGHT` isn't a power of 2, this module may infer a multiplier.
 
 * `clk` - clock
 * `ucp` - Unicode code point
-* `line_id` - glyph line to get
+* `line_idx` - glyph line index to fetch
 
 ### Output
 
