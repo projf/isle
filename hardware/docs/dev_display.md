@@ -1,6 +1,6 @@
 # Display Device
 
-The display device module [[dev_display.v](../gfx/dev_display.v)] composites graphics output from text and bitmap graphics (canvases). The CPU controls the display device through hardware registers.
+The display device module [[dev_display.v](../devs/dev_display.v)] composites graphics output from text and bitmap graphics (canvases). The CPU controls the display device through hardware registers.
 
 Conceptually, this module is simple, but it's one of the more complex in Isle because it handles precise timing and clock domain crossing (CDC).
 
