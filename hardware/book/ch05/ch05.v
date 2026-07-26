@@ -191,29 +191,29 @@ module ch05 #(
     wire text_paint;  // signals when to enable text painting
 
     textmode #(
-        .CORDW(CORDW),
-        .WORD(WORD),
         .ADDRW(TRAM_ADDRW),
         .CIDXW(TEXT_CIDXW),
         .CLUT_LAT(CLUT_LAT),
+        .CORDW(CORDW),
         .FILE_FONT(FILE_FONT),
         .FONT_COUNT(FONT_COUNT),
         .GLYPH_HEIGHT(GLYPH_HEIGHT),
         .GLYPH_WIDTH(GLYPH_WIDTH),
         .TRAM_DEPTH(TRAM_DEPTH),
-        .TRAM_LAT(TRAM_LAT)
+        .TRAM_LAT(TRAM_LAT),
+        .WORD(WORD)
     ) textmode_inst (
         .clk_pix(clk_pix),
         .rst_pix(rst_pix),
         .frame_start(frame_start),
         .dx(dx),
         .dy(dy),
-        .scroll_offset(scroll_offset),
-        .text_hres(text_hres),
-        .text_vres(text_vres),
         .win_start(WIN_START_CORD),
         .win_end(WIN_END_CORD),
         .scale(DISPLAY_SCALE),
+        .text_hres(text_hres),
+        .text_vres(text_vres),
+        .scroll_offset(scroll_offset),
         .tram_data(tram_dout_disp),
         .tram_addr(tram_addr_disp),
         .pix(text_pix),
