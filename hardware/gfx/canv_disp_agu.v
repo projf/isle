@@ -19,16 +19,15 @@ module canv_disp_agu #(
     input  wire rst_pix,                        // reset in pixel clock domain
     input  wire frame_start,                    // frame start flag
     input  wire line_start,                     // line start flag
-    input  wire signed [CORDW-1:0] dx,          // horizontal display position
-    input  wire signed [CORDW-1:0] dy,          // vertical display position
-    input  wire [ADDRW-1:0] vram_addr_base,     // base vram word address
-    input  wire [SHIFTW-1:0] addr_shift,        // address shift bits
-    input  wire [2*CORDW-1:0] canv_dims,        // canvas dimensions
-    input  wire [2*CORDW-1:0] scale,            // canvas scale
-    input  wire [2*CORDW-1:0] scroll_coord,     // canvas scroll coordinate (must match scroll_offset)
-    input  wire [PIX_ADDRW-1:0] scroll_offset,  // pixel offset of canvas scroll line
+    input  wire signed [CORDW-1:0] dx, dy,      // display position
     input  wire [2*CORDW-1:0] win_start,        // canvas window start coords
     input  wire [2*CORDW-1:0] win_end,          // canvas window end coords
+    input  wire [2*CORDW-1:0] scale,            // canvas scale
+    input  wire [2*CORDW-1:0] canv_dims,        // canvas dimensions
+    input  wire [ADDRW-1:0] vram_addr_base,     // base vram word address
+    input  wire [SHIFTW-1:0] addr_shift,        // address shift bits (derived from canvas BPP register)
+    input  wire [2*CORDW-1:0] scroll_coord,     // canvas scroll coordinate (must match scroll_offset)
+    input  wire [PIX_ADDRW-1:0] scroll_offset,  // pixel offset of canvas scroll line
     output reg  [ADDRW-1:0] vram_addr,          // vram word address
     output reg  [PIX_IDXW-1:0] pix_idx,         // pixel index within word
     output reg  paint // canvas painting enable (pre-clut)
