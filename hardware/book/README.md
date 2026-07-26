@@ -8,8 +8,9 @@ As I build each new component, I introduce it in its own chapter with a dedicate
 * Chapter 4 - **Text Mode**: [Design](ch04) - [Blog](http://projectf.io/isle/text-mode.html)
 * Chapter 5 - **RISC-V CPU**: [Design](ch05) - [Blog](http://projectf.io/isle/riscv-cpu.html)
 * Chapter 6 - **Input Output**: [Design](ch06) - [Blog](http://projectf.io/isle/input-output.html)
-* Chapter 7 - Debug Monitor (forthcoming)
-* Chapter 8 - Programmable Graphics (forthcoming)
+* Chapter 7 - Display Device (WIP)
+* Chapter 8 - Debug Monitor (forthcoming)
+* Chapter 9 - Dynamic Devices (forthcoming)
 
 For build instructions see [dev boards](../../boards/). Isle supports Lattice ECP5, Xilinx XC7, and Verilator/SDL simulation on Linux/Mac/Windows.
 
