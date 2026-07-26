@@ -11,9 +11,9 @@ PATH_PROJ = ../../../projects
 # Common Verilog
 ADD_SRC += ${PATH_LIB}/book/ch06/ch06.v
 ADD_SRC += ${PATH_LIB}/book/ch06/gfx_dev.v
-ADD_SRC += ${PATH_LIB}/book/ch06/sys_dev.v
-ADD_SRC += ${PATH_LIB}/book/ch06/uart_dev.v
 ADD_SRC += ${PATH_LIB}/cpu/FemtoRV32.v
+ADD_SRC += ${PATH_LIB}/devs/dev_sys.v
+ADD_SRC += ${PATH_LIB}/devs/dev_uart.v
 ADD_SRC += ${PATH_LIB}/gfx/display_sync_gen.v
 ADD_SRC += ${PATH_LIB}/gfx/font_glyph.v
 ADD_SRC += ${PATH_LIB}/gfx/textmode.v

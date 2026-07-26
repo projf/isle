@@ -228,14 +228,14 @@ module ch03 #(
         .line_start(line_start),
         .dx(dx),
         .dy(dy),
-        .vram_addr_base({VRAM_ADDRW{1'b0}}),  // fixed base address for now
-        .addr_shift(canv_addr_shift),
-        .canv_dims(CANV_DIMS),
-        .scale(CANV_LORES ? DISPLAY_SCALE << 1 : DISPLAY_SCALE),
-        .scroll_coord(0),
-        .scroll_offset(0),
         .win_start(WIN_START_CORD),
         .win_end(WIN_END_CORD),
+        .scale(CANV_LORES ? DISPLAY_SCALE << 1 : DISPLAY_SCALE),
+        .canv_dims(CANV_DIMS),
+        .vram_addr_base({VRAM_ADDRW{1'b0}}),  // fixed base address for now
+        .addr_shift(canv_addr_shift),
+        .scroll_coord(0),
+        .scroll_offset(0),
         .vram_addr(canv_addr),
         .pix_idx(canv_pix_idx),
         .paint(canv_paint)
