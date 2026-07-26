@@ -18,7 +18,7 @@ Once per frame, when diaplay coordinate dy = -3 (three lines before the active d
 
 ## Hardware Register Reference
 
-For hardware, these are defined in [dev_display.v](../gfx/dev_display.v), while for software they're in [dev_display.inc](../../software/include/dev_display.inc).
+For hardware, these are defined in [dev_display.v](../devs/dev_display.v), while for software they're in `dev_display.inc` (currently in `software/book` chapter directories).
 
 NB. Hardware registers must be written as **whole words** from the CPU side. Not as bytes or half words. Use the `sw` RISC-V instruction.
 
