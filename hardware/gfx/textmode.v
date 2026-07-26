@@ -22,12 +22,12 @@ module textmode #(
     input  wire rst_pix,                       // reset in pixel clock domain
     input  wire frame_start,                   // frame start flag
     input  wire signed [CORDW-1:0] dx, dy,     // display position
-    input  wire [ADDRW-1:0] scroll_offset,     // tram address offset for scroll
-    input  wire signed [ADDRW-1:0] text_hres,  // text width (chars)
-    input  wire signed [ADDRW-1:0] text_vres,  // text height (chars)
     input  wire [2*CORDW-1:0] win_start,       // text window start coords
     input  wire [2*CORDW-1:0] win_end,         // text window end coords
     input  wire [2*CORDW-1:0] scale,           // text mode scale
+    input  wire signed [ADDRW-1:0] text_hres,  // text width (chars)
+    input  wire signed [ADDRW-1:0] text_vres,  // text height (chars)
+    input  wire [ADDRW-1:0] scroll_offset,     // tram address offset for scroll
     /* verilator lint_off UNUSEDSIGNAL */
     input  wire [WORD-1:0] tram_data,          // character data - [23:21] unused
     /* verilator lint_on UNUSEDSIGNAL */
@@ -40,32 +40,32 @@ module textmode #(
     localparam PIX_LAT =  1;  // 1 cycle to register `pix`
 
     // separate y and x from text window signals
-    reg signed [CORDW-1:0] win_start_y, win_start_x;
-    reg signed [CORDW-1:0] win_end_y, win_end_x;
-    reg [CORDW-1:0] scale_y0, scale_x0;
+    reg signed [CORDW-1:0] win_y0, win_x0;
+    reg signed [CORDW-1:0] win_y1, win_x1;
+    reg [CORDW-1:0] scale_y, scale_x;
     always @(*) begin
-        {win_start_y, win_start_x} = win_start;
-        {win_end_y, win_end_x} = win_end;
-        {scale_y0, scale_x0} = scale;
+        {scale_y, scale_x} = scale;
+        {win_y0, win_x0} = win_start;
+        {win_y1, win_x1} = win_end;
     end
 
     // register signals to improve timing with hwreg
     reg [CORDW-1:0] scale_x_minus, scale_y_minus;
     reg signed [CORDW-1:0] paint_start_x, paint_end_x;
-    reg signed [CORDW-1:0] win_end_x_minus, win_end_y_minus;
-    reg signed [CORDW-1:0] draw_start_x_minus;   // draw start depends on window and latency
+    reg signed [CORDW-1:0] win_x1_minus, win_y1_minus;
+    reg signed [CORDW-1:0] draw_start_x_lat;   // draw start depends on window and latency
     always @(posedge clk_pix) begin
-        scale_x_minus <= (scale_x0 == 0) ? 0 : scale_x0 - 1;
-        scale_y_minus <= (scale_y0 == 0) ? 0 : scale_y0 - 1;
-        paint_start_x <= win_start_x - CLUT_LAT - 1;  // -1 for registering
-        paint_end_x <= win_end_x - CLUT_LAT - 1;
-        win_end_x_minus <= win_end_x - 1;
-        win_end_y_minus <= win_end_y - 1;
-        draw_start_x_minus <= win_start_x - PIX_LAT - CLUT_LAT - 1;  // -1 for state trans to DRAW
+        scale_x_minus <= (scale_x == 0) ? 0 : scale_x - 1;
+        scale_y_minus <= (scale_y == 0) ? 0 : scale_y - 1;
+        paint_start_x <= win_x0 - CLUT_LAT - 1;  // -1 for registering
+        paint_end_x <= win_x1 - CLUT_LAT - 1;
+        win_x1_minus <= win_x1 - 1;
+        win_y1_minus <= win_y1 - 1;
+        draw_start_x_lat <= win_x0 - PIX_LAT - CLUT_LAT - 1;  // -1 for state trans to DRAW
     end
 
     // paint area defined by window
-    wire win_y = (dy >= win_start_y) && (dy < win_end_y);
+    wire win_y = (dy >= win_y0) && (dy < win_y1);
     always @(posedge clk_pix) begin
         paint <= (dx >= paint_start_x) && (dx < paint_end_x) && win_y;
     end
@@ -114,7 +114,7 @@ module textmode #(
     always @(posedge clk_pix) begin
         case (state)
             INIT: begin
-                if (dy == win_start_y) state <= AWAIT;
+                if (dy == win_y0) state <= AWAIT;
                 tram_addr <= scroll_offset;
                 tram_line_addr <= scroll_offset;
                 tx <= 0;
@@ -125,15 +125,15 @@ module textmode #(
                 cnt_y <= 0;
             end
             AWAIT: begin
-                if (dx == draw_start_x_minus) state <= DRAW;
+                if (dx == draw_start_x_lat) state <= DRAW;
                 colr_fg <= tram_data[WORD-CIDXW-1:WORD-2*CIDXW];
                 colr_bg <= tram_data[WORD-1:WORD-CIDXW];
                 pix_line_reg <= pix_line;
                 ucp <= tram_data[UCPW-1:0];
             end
             DRAW: begin
-                if (tx == text_hres || dx >= win_end_x_minus) begin
-                    if (ty == text_vres || dy >= win_end_y_minus) state <= IDLE;
+                if (tx == text_hres || dx >= win_x1_minus) begin
+                    if (ty == text_vres || dy >= win_y1_minus) state <= IDLE;
                     else if (glyph_y_end) state <= CHR_LINE;
                     else state <= SCR_LINE;
                 end
