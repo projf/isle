@@ -1,6 +1,6 @@
 # Memory Map
 
-Isle has a 24-bit memory map. Keeping addresses short and memorable is helpful when working at a low level and with assembler.
+Isle has a 24-bit memory map. Keeping addresses short and memorable is helpful when working at a low level and with assembler. This memory map will almost certainly change as Isle evolves.
 
 The upper 8M of memory is for system ram, including the stack. The lower 8M is used by other memories and devices. For ease of reading, we write 24-bit Isle addresses as `0xnn_nnnn`, e.g. `0x40_4024` (an address in vram).
 
