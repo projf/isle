@@ -12,10 +12,10 @@ HARDWARE = $(PWD)/../..
 
 VERILOG_SOURCES += $(HARDWARE)/book/${DUT}/${DUT}.v
 VERILOG_SOURCES += $(HARDWARE)/book/${DUT}/gfx_dev.v
-VERILOG_SOURCES += $(HARDWARE)/book/${DUT}/sys_dev.v
-VERILOG_SOURCES += $(HARDWARE)/book/${DUT}/uart_dev.v
 
 VERILOG_SOURCES += $(HARDWARE)/cpu/FemtoRV32.v
+VERILOG_SOURCES += $(HARDWARE)/devs/dev_sys.v
+VERILOG_SOURCES += $(HARDWARE)/devs/dev_uart.v
 VERILOG_SOURCES += $(HARDWARE)/gfx/display_sync_gen.v
 VERILOG_SOURCES += $(HARDWARE)/gfx/font_glyph.v
 VERILOG_SOURCES += $(HARDWARE)/gfx/textmode.v

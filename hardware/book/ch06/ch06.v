@@ -124,10 +124,10 @@ module ch06 #(
 
     // CPU IO busy
     reg  io_rbusy;
-    wire uart_rbusy;
+    wire uart_dev_rbusy;
     always @(*) begin
         case(1'b1)
-            uart_dev_cs: io_rbusy = uart_rbusy;
+            uart_dev_cs: io_rbusy = uart_dev_rbusy;
             default: io_rbusy = 0;
         endcase
     end
@@ -216,29 +216,29 @@ module ch06 #(
     wire text_paint;  // signals when to enable text painting
 
     textmode #(
-        .CORDW(CORDW),
-        .WORD(WORD),
         .ADDRW(TRAM_ADDRW),
         .CIDXW(TEXT_CIDXW),
         .CLUT_LAT(CLUT_LAT),
+        .CORDW(CORDW),
         .FILE_FONT(FILE_FONT),
         .FONT_COUNT(FONT_COUNT),
         .GLYPH_HEIGHT(GLYPH_HEIGHT),
         .GLYPH_WIDTH(GLYPH_WIDTH),
         .TRAM_DEPTH(TRAM_DEPTH),
-        .TRAM_LAT(TRAM_LAT)
+        .TRAM_LAT(TRAM_LAT),
+        .WORD(WORD)
     ) textmode_inst (
         .clk_pix(clk_pix),
         .rst_pix(rst_pix),
         .frame_start(frame_start),
         .dx(dx),
         .dy(dy),
-        .scroll_offset(scroll_offset),
-        .text_hres(text_hres),
-        .text_vres(text_vres),
         .win_start(WIN_START_CORD),
         .win_end(WIN_END_CORD),
         .scale(DISPLAY_SCALE),
+        .text_hres(text_hres),
+        .text_vres(text_vres),
+        .scroll_offset(scroll_offset),
         .tram_data(tram_dout_disp),
         .tram_addr(tram_addr_disp),
         .pix(text_pix),
@@ -274,11 +274,11 @@ module ch06 #(
     // System Device
     //
 
-    sys_dev #(
+    dev_sys #(
         .DEV_ADDRW(DEV_ADDRW),
         .TIMER_DIV(TIMER_DIV),
         .WORD(WORD)
-    ) sys_dev_inst (
+    ) dev_sys_inst (
         .clk(clk_sys),
         .rst(rst_sys),
         .we(|io_wstrb & sys_dev_cs),
@@ -319,14 +319,14 @@ module ch06 #(
     // UART Device
     //
 
-    uart_dev #(
+    dev_uart #(
         .DEV_ADDRW(DEV_ADDRW),
         .UART_CNT_INC(UART_CNT_INC),
         .UART_CNT_W(UART_CNT_W),
         .UART_DATAW(UART_DATAW),
         .UART_FIFO_RX_ADDRW(UART_FIFO_RX_ADDRW),
         .WORD(WORD)
-    ) uart_dev_inst (
+    ) dev_uart_inst (
         .clk(clk_sys),
         .rst(rst_sys),
         .we(|io_wstrb & uart_dev_cs),
@@ -334,7 +334,7 @@ module ch06 #(
         .addr(io_addr[DEV_ADDRW-1:0]),
         .din(io_wdata),
         .dout(uart_dev_dout),
-        .rbusy(uart_rbusy),
+        .rbusy(uart_dev_rbusy),
         .uart_rx(uart_rx),
         .uart_tx(uart_tx)
     );
