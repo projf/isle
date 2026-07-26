@@ -1,16 +1,16 @@
-# Isle Chapter 6 - Input Output
+# Isle Chapter 7 - Display Device
 
-These Verilog designs accompany [Input Output](http://projectf.io/isle/input-output.html), chapter 6 of _Building Isle_. See also: [Chapter 6 Software](../../../software/book/ch06/).
+These Verilog designs accompany [Display Device](http://projectf.io/isle/display-device.html), chapter 7 of _Building Isle_. See also: [Chapter 7 Software](../../../software/book/ch07/).
 
 See [boards](../../../boards/) for build and programming instructions. See [Serial to Isle](../../../docs/serial-to-isle.md) for advice on connecting to Isle UART via USB.
 
 ## Verilog Modules
 
-The chapter 6 design uses the following Verilog modules:
+The chapter 7 design uses the following Verilog modules:
 
-* `book/ch06/ch06.v`
-* `book/ch06/gfx_dev.v`
+* `book/ch07/ch07.v`
 * `cpu/FemtoRV32.v`
+* `devs/dev_display.v`
 * `devs/dev_sys.v`
 * `devs/dev_uart.v`
 * `gfx/display_sync_gen.v`
