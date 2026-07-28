@@ -60,7 +60,7 @@ $(LIB_ISLE): $(LIB_OBJS)
 
 # link
 %.out: %.o $(LIB_ISLE)
-	$(LD) $< $(LIB_ISLE) -o $@ -T $(LDSCRIPT) -m elf32lriscv -nostdlib
+	$(LD) $< $(LIB_ISLE) -o $@ -T $(LDSCRIPT) -m elf32lriscv -nostdlib --no-warn-rwx-segments
 
 # generate raw binary
 %.bin: %.out
