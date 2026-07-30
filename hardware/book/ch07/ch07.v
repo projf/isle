@@ -266,7 +266,8 @@ module ch07 #(
         .dout_disp(vram_dout_disp)
     );
 
-//
+
+    //
     // Text Mode RAM (tram)
     //
 

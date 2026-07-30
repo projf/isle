@@ -1,4 +1,4 @@
-# Isle.Computer - Asm Text Mode Library
+# Isle.Computer - Asm Text Mode Library (Chapter 6)
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
