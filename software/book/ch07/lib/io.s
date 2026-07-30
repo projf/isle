@@ -1,8 +1,9 @@
-# Isle.Computer - Asm IO Library (Chapter 6)
+# Isle.Computer - Asm IO Library (Chapter 7)
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
 .include "include/isle.inc"
+.include "include/dev_uart.inc"
 .include "include/unicode.inc"
 
 .section .text
@@ -36,7 +37,7 @@ read_ln:
     sw  s10,  4(sp)  # visible cursor colour
     #         0(sp)  # local var: ucp
 
-    li t6, UART_DEV
+    li t6, DEV_UART
     li t0, 1
     sw t0, UART_RX_EN(t6)  # enable UART RX
 
@@ -145,7 +146,7 @@ read_ln:
     li a2, 0
     call tm_put  # remove visible cursor
 
-    li t6, UART_DEV
+    li t6, DEV_UART
     sw zero, UART_RX_EN(t6)  # disable UART RX
     sb zero, 0(s2)  # store null terminator
     call tm_newline
@@ -170,7 +171,7 @@ read_ln:
 #   return: data byte from uart
 #
 uart_rx_byte:
-    li   t6, UART_DEV
+    li   t6, DEV_UART
 .L_uart_rx_loop:
     lw   t0, UART_RX_LEN(t6)  # is there data waiting
     beqz t0, .L_uart_rx_loop  # loop if UART data isn't ready

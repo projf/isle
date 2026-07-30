@@ -1,8 +1,9 @@
-# Isle.Computer - Asm Graphics Library (Chapter 6)
+# Isle.Computer - Asm Graphics Library (Chapter 7)
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
 .include "include/isle.inc"
+.include "include/dev_display.inc"
 
 .section .text
 .global frame_waitn
@@ -16,11 +17,11 @@
 #
 frame_waitn:
     beqz a0, 1f  # zero frames?
-    li   t6, GFX_DEV  # hwreg base addr
+    li   t6, DEV_DISPLAY  # hwreg base addr
 0:
-    lw   t0, FRAME_FLAG(t6)  # load frame flag
+    lw   t0, FRAME_FLAG_RO(t6)  # load frame flag
     beqz t0, 0b  # loop if flag not set
-    sw   zero, FRAME_FLAG_CLR(t6)  # clear frame flag (strobe)
+    sw   zero, FRAME_FLAG_SB(t6)  # clear frame flag (strobe)
 
     addi a0, a0, -1  # decrement remaining frame count
     bnez a0, 0b  # loop if frames remain

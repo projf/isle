@@ -1,7 +1,8 @@
-# Isle.Computer - Asm System Library (Chapter 6)
+# Isle.Computer - Asm System Library (Chapter 7)
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
+.include "include/dev_sys.inc"
 .include "include/isle.inc"
 
 .section .text
@@ -16,7 +17,7 @@
 #   return: pseudorandom number
 #
 rand_pseudo:
-    li t6, SYS_DEV
+    li t6, DEV_SYS
 
     # check range is positive: ensure a0 ≤ a1
     bleu a0, a1, 0f  # skip if already in correct order
@@ -52,7 +53,7 @@ rand_pseudo:
 #   return: 1 if reached; 0 otherwise
 #
 timer_reached:
-    li t6, SYS_DEV
+    li t6, DEV_SYS
     lw t0, TIMER_0(t6)
     sltu t1, t0, a0  # check if t0<a0
     xori a0, t1, 1   # invert bit for a0≥t0
@@ -67,7 +68,7 @@ timer_reached:
 #
 timer_wait:
     beqz a0, 1f  # zero milliseconds?
-    li t6, SYS_DEV
+    li t6, DEV_SYS
     lw t1, TIMER_0(t6)  # load base timestamp
     add t1, t1, a0  # set target timestamp
 0:

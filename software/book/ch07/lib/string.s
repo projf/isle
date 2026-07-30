@@ -1,4 +1,4 @@
-# Isle.Computer - Asm String Library (Chapter 6)
+# Isle.Computer - Asm String Library (Chapter 7)
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
