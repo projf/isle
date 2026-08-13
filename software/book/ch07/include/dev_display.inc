@@ -26,8 +26,8 @@
 #
 
 # DISP_VISIBLE - 16-bit value
-# - 1st byte is visibility (bit0=textmode, bit1=canvas0)
-# - 2nd byte transparency (bit8=textmode, bit9=canvas0)
+# - 1st byte: visibility   (bit0=textmode, bit1=canvas0)
+# - 2nd byte: transparency (bit8=textmode, bit9=canvas0)
 
 .equ DISP_VISIBLE,         0x0200  # graphics visibility and transparency options
 .equ DISP_BG_COLR,         0x0204  # background colour RGB555

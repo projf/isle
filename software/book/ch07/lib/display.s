@@ -1,4 +1,4 @@
-# Isle.Computer - Asm Graphics Library (Chapter 7)
+# Isle.Computer - Asm Display Library (Chapter 7)
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 

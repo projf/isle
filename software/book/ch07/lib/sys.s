@@ -19,7 +19,7 @@
 rand_pseudo:
     li t6, DEV_SYS
 
-    # check range is positive: ensure a0 ≤ a1
+    # ensure a0 ≤ a1
     bleu a0, a1, 0f  # skip if already in correct order
     mv t0, a0
     mv a0, a1
