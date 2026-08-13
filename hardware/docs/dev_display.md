@@ -12,7 +12,7 @@ _more details on parameters and I/O signals to follow_
 
 The CPU reads and writes hwreg in the sys clock domain. The display hardware needs to read them in the pix clock domain. Other Isle components solve this problem with dual-port bram; however, the display hardware needs to access many of the hwreg simultaneously. To make this work, the hwreg are implemented as **two arrays** of Verilog registers (flip flops), one in the sys clock domain, and one in the pix clock domain. Once per frame, we stop accepting writes from the CPU, let the sys hwreg settle, then copy all values from the sys to the pix registers. The CPU is blocked from making further writes by the busy-write signal (`wbusy`). A write is safely captured and made when the hwreg are no longer busy.
 
-Once per frame, when diaplay coordinate dy = -3 (three lines before the active display begins), the hardware registers are copied from the sys to pix clock domains. This means that changes only take affect after this point. If you want to scroll this frame, you need to update the scroll registers before dy hits -3.
+Once per frame, when display coordinate `dy = -3` (three lines before the active display begins), the hardware registers are copied from the sys to pix clock domains. This means that changes only take affect after this point. If you want to scroll this frame, you need to update the scroll registers before `dy` hits -3.
 
 `CANV0_SCROLL_COORD` and `CANV0_SCROLL_OFFSET` must be set consistently. It's unlikely, but possible you could update one then have the second update blocked by the hwreg update, so the scrolling glitches. The way to avoid this risk is to update scroll registers long before dy = -3.
 
@@ -28,6 +28,7 @@ NB. Hardware registers must be written as **whole words** from the CPU side. Not
 * `BMAP_DIMS_RO` - bitmap graphics dimensions (pixels)
 * `TEXT_DIMS_RO` - text dimensions (half-width characters)
 * `FRAME_FLAG_RO` - set once per frame (clear with FRAME_FLAG_SB)
+* `FRAME_COUNT_RO` - 32-bit frame counter (takes years to roll over)
 * `TRAM_DEPTH_RO` - depth of tram (half-width characters)
 
 ### Strobe
@@ -67,5 +68,7 @@ NB. Hardware registers must be written as **whole words** from the CPU side. Not
 * `CANV0_SCROLL_OFFSET` - pixel offset of canvas scroll line
 
 When scrolling, the `CANVn_SCROLL_OFFSET` must be set to the y-value of `CANVn_SCROLL_COORD` multiplied by the canvas width from `CANVn_DIMS`. This avoids the need for a hardware multiplier in the canvas display address generator (canv_disp_agu).
+
+These canvas registers are separate from those used for [Earthrise](dev_earthrise.md).
 
 _This is currently a single canvas, but a second canvas will be added in future with prefix CANV1\_._

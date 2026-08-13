@@ -1,4 +1,4 @@
-// Isle.Computer - Chapter 7: Display Device
+// Isle.Computer - Chapter 7: Graphics Devices
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
@@ -10,6 +10,7 @@ module ch07 #(
     parameter CORDW=16,           // signed coordinate width (bits)
     parameter DISPLAY_MODE=0,     // display mode (see display_modes.vh)
     parameter FILE_BMAP="",       // initial bitmap file for vram
+    parameter FILE_ER_LIST="",    // initial command list for Earthrise
     parameter FILE_FONT="",       // font glyph ROM file
     parameter FILE_PAL="",        // initial palette for CLUT
     parameter FILE_SOFT="",       // initial software in system ram
@@ -49,6 +50,9 @@ module ch07 #(
     localparam VRAM_ADDRW = 14;  // vram address width (bits)
     localparam VRAM_LAT   =  2;  // vram display read latency (cycles, min=1)
 
+    // Earthrise
+    localparam ER_ADDRW = 10;     // 2^10 = 1024 x 32-bit = 4 KiB (word addressed)
+
     // text mode
     localparam TEXT_CIDXW =  4;  // 16 colours available in textmode
     localparam TRAM_ADDRW = 11;  // tram address width (bits)
@@ -61,13 +65,14 @@ module ch07 #(
     localparam UART_FIFO_RX_ADDRW = 4;  // RX fifo address width (bits)
 
     // internal system params
-    localparam WORD = 32;  // machine word size (bits)
     localparam BYTE =  8;  // machine byte size (bits)
+    localparam WORD = 32;  // machine word size (bits)
     localparam BYTE_CNT = WORD / BYTE;  // bytes in word (for write enable)
-    localparam CIDX_ADDRW = 8;   // colour index address width 2^8 = 256 colours
+    localparam CANV_SHIFTW = 3;  // max shift is 5 bits (2^5 = 32 bits)
+    localparam CIDX_ADDRW  = 8;  // colour index address width 2^8 = 256 colours
+    localparam CLUT_LAT    = 2;  // clut display read latency (cycles, min=1)
     localparam COLRW = 3 * BPC;  // colour width across three channels (bits)
-    localparam CLUT_LAT =   2;   // clut display read latency (cycles, min=1)
-    localparam DEV_ADDRW = 14;   // device word address width 14 = 64 KiB
+    localparam DEV_ADDRW  = 14;  // device word address width 14 = 64 KiB
 
 
     // CPU signals
@@ -127,9 +132,10 @@ module ch07 #(
 
     // devices (temporarily using fixed slots; can we remove magic number to base addresses?)
     wire dev_cs      = (io_addr[BUSW-1:BUSW-4] == 'b0110);   // 0x6 ('b0110)
-    wire sys_dev_cs  = dev_cs & (io_addr[BUSW-5:BUSW-8] == 'b0000);  // 0xn0
-    wire disp_dev_cs = dev_cs & (io_addr[BUSW-5:BUSW-8] == 'b0001);  // 0xn1
-    wire uart_dev_cs = dev_cs & (io_addr[BUSW-5:BUSW-8] == 'b0010);  // 0xn2
+    wire sys_dev_cs  = dev_cs & (io_addr[BUSW-5:BUSW-8] == 'h0);
+    wire disp_dev_cs = dev_cs & (io_addr[BUSW-5:BUSW-8] == 'h1);
+    wire uart_dev_cs = dev_cs & (io_addr[BUSW-5:BUSW-8] == 'h2);
+    wire er_dev_cs   = dev_cs & (io_addr[BUSW-5:BUSW-8] == 'h3);
 
     // Write I/O busy
     wire disp_dev_wbusy;  // display hwreg can be busy, so CPU might need to wait
@@ -154,7 +160,9 @@ module ch07 #(
     wire [WORD-1:0] sys_dev_dout;
     wire [WORD-1:0] disp_dev_dout;
     wire [WORD-1:0] uart_dev_dout;
+    wire [WORD-1:0] er_dev_dout;
 
+    // doesn't yet capture bus faults within devices
     reg mapped_addr;
     always @(*) begin
         mapped_addr = 1;
@@ -166,6 +174,7 @@ module ch07 #(
             sys_dev_cs:  io_rdata = sys_dev_dout;
             disp_dev_cs: io_rdata = disp_dev_dout;
             uart_dev_cs: io_rdata = uart_dev_dout;
+            er_dev_cs:   io_rdata = er_dev_dout;
             default: begin
                 io_rdata = 0;
                 mapped_addr = 0;  // unmapped address
@@ -239,11 +248,28 @@ module ch07 #(
 
 
     //
-    // Video RAM (vram) - TODO: Add CPU multiplexing
+    // Video RAM (vram) - TODO: Add CPU vram access (multiplex with Earthrise)
     //
 
+    wire [VRAM_ADDRW-1:0] vram_addr_sys;
+    wire [WORD-1:0] vram_wmask_sys;
+    wire vram_re_sys = 0;  // will be used when we add CPU access
+    wire [WORD-1:0] vram_din_sys;
+    /* verilator lint_off UNUSEDSIGNAL */
+    wire [WORD-1:0] vram_dout_sys;  // will be used when we add CPU access
+    /* verilator lint_on UNUSEDSIGNAL */
     wire [VRAM_ADDRW-1:0] vram_addr_disp;  // pixel clock domain
     wire [WORD-1:0] vram_dout_disp;  // pixel clock domain
+
+    // Earthrise vram signals
+    wire [VRAM_ADDRW-1:0] er_vram_addr;
+    wire [WORD-1:0] er_vram_din;
+    wire [WORD-1:0] er_vram_wmask;
+
+    // use Earthrise for system I/O (will multiplex with CPU later)
+    assign vram_addr_sys = er_vram_addr;  // doesn't validate address, but vram depth is power of two
+    assign vram_din_sys = er_vram_din;
+    assign vram_wmask_sys = er_vram_wmask;
 
     // for CPU write to vram
     // wire [WORD-1:0] vram_wmask_sys = {{8{io_wstrb[3]}}, {8{io_wstrb[2]}}, {8{io_wstrb[1]}}, {8{io_wstrb[0]}}};
@@ -255,13 +281,11 @@ module ch07 #(
         ) vram_inst (
         .clk_sys(clk_sys),
         .clk_pix(clk_pix),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .wmask_sys(),
-        .re_sys(),
-        .addr_sys(),
-        .din_sys(),
-        .dout_sys(),
-        /* verilator lint_on PINCONNECTEMPTY */
+        .wmask_sys(vram_wmask_sys),
+        .re_sys(vram_re_sys),
+        .addr_sys(vram_addr_sys),
+        .din_sys(vram_din_sys),
+        .dout_sys(vram_dout_sys),
         .addr_disp(vram_addr_disp),
         .dout_disp(vram_dout_disp)
     );
@@ -349,6 +373,7 @@ module ch07 #(
     dev_display #(
         .BPC(BPC),
         .BYTE_CNT(BYTE_CNT),
+        .CANV_SHIFTW(CANV_SHIFTW),
         .CIDX_ADDRW(CIDX_ADDRW),
         .CLUT_LAT(CLUT_LAT),
         .COLRW(COLRW),
@@ -419,6 +444,37 @@ module ch07 #(
         .uart_rx(uart_rx),
         .uart_tx(uart_tx)
     );
+
+
+    //
+    // Earthrise Device
+    //
+
+    dev_earthrise #(
+        .BYTE(BYTE),
+        .BYTE_CNT(BYTE_CNT),
+        .CANV_SHIFTW(CANV_SHIFTW),
+        .CORDW(CORDW),
+        .DEV_ADDRW(DEV_ADDRW),
+        .ER_ADDRW(ER_ADDRW),
+        .ER_COLRW(CIDX_ADDRW),
+        .FILE_ER_LIST(FILE_ER_LIST),
+        .VRAM_ADDRW(VRAM_ADDRW),
+        .WORD(WORD)
+    ) dev_earthrise_inst (
+        .clk(clk_sys),
+        .rst(rst_sys),
+        .en(1'b1),  // needed for future vram multiplexing
+        .we(io_wstrb & {4{er_dev_cs}}),  // byte write for command list only
+        .re(io_rstrb & er_dev_cs),
+        .addr(io_addr[DEV_ADDRW-1:0]),
+        .din(io_wdata),
+        .dout(er_dev_dout),
+        .vram_addr(er_vram_addr),
+        .vram_din(er_vram_din),
+        .vram_wmask(er_vram_wmask)
+    );
+
 
     // register display signals
     always @(posedge clk_pix) begin

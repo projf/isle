@@ -129,6 +129,9 @@ def asm_line(line):
 def asm_file(file_input):
     """Assemble file."""
     instructions = []  # assembled instructions
+    mnemonics = []  # mnemonics for comments
+    offset = []  # memory offset for comments
+    pc = 0
 
     with open(file_input, 'r', encoding="utf-8") as f:
         for line_num, line in enumerate(f, start=1):
@@ -137,17 +140,24 @@ def asm_file(file_input):
                 instr = asm_line(line)
                 if instr is not None:
                     instructions.append(instr)
+                    mnemonic = line.partition('#')[0]
+                    mnemonic = mnemonic.strip()
+                    mnemonics.append(mnemonic)
+                    offset.append(pc)
+                    pc += 2
             except Exception as e:
                 raise ValueError(f"Error on line {line_num}: {e}") from e
 
     # if odd number of instructions, append stop
     if len(instructions) % 2 == 1:
         instructions.append(0xCE00)
+        mnemonics.append("")
 
     # output 32-bit little endian format
     for i in range(0, len(instructions), 2):
         instr32 = instructions[i+1] << 16 | instructions[i]
-        print(f"{instr32:08X}")
+        mnemonic = f"{mnemonics[i]:<14}; {mnemonics[i+1]}"  # 14 is enough for current instructions
+        print(f"{instr32:08X}  // {offset[i]:04X}: {mnemonic}")
 
 
 if __name__ == "__main__":

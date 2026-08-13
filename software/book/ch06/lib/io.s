@@ -166,6 +166,8 @@ read_ln:
 
 
 # uart_rx_byte - load one byte from uart receiver
+#   NB. Ensure you enable UART RX before calling this (see read_ln for example)
+#
 #   no arguments
 #   return: data byte from uart
 #

@@ -1,0 +1,9 @@
+80A8C300  // 0000: fcb   0       ; xt  168
+00009060  // 0004: yt   96       ; x0    0
+C2011000  // 0008: y0    0       ; fca   1
+D2012040  // 000C: r0   64       ; draw circf ca
+2030C202  // 0010: fca   2       ; r0   48
+C203D201  // 0014: draw circf ca ; fca   3
+D2012020  // 0018: r0   32       ; draw circf ca
+D2032010  // 001C: r0   16       ; draw circf cb
+CE00CE00  // 0020: stop          ; 

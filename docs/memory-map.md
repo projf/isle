@@ -16,7 +16,8 @@ The upper 8M of memory is for system ram, including the stack. The lower 8M is u
     - 0x60 - system
     - 0x61 - display
     - 0x62 - uart
-* 0x7 - sound memory (TBC)
+    - 0x63 - Earthrise
+* 0x7 - *reserved*
 * 0x8 - system memory (16K, but can expand up to 8M, minus stack)
 * 0xF - stack (4K) down from `0xFF_FFF0`
 

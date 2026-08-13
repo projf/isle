@@ -12,7 +12,7 @@ tools/erasm/erasm.py res/drawings/doc-examples.eas
 
 A pre-assembled version of _All Shapes_ is included in the repo: [res/drawings/all-shapes.mem](../../res/drawings/all-shapes.mem).
 
-To test erasm:
+To test erasm (with pytest installed):
 
 ```shell
 cd tools/erasm/

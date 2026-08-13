@@ -1,72 +1,69 @@
-// Isle.Computer - Earthrise All Shapes Example (Compiled)
-// Copyright Will Green and Isle Contributors
-// SPDX-License-Identifier: MIT
-C108C00A
-10000020
-30BF20DF
-00DFD100
-D1022020
-10080014
-30082014
-C00AD100
-C204C108
-CC00C305
-10040004
-30082008
-500C4004
-000CD300
-20101004
-400C3008
-D303500C
-10140018
-305020B8
-50B4406C
-D300D303
-C10BC00C
-107400E0
-304C2020
-0021D400
-20DF104D
-D4023073
-C305C204
-1030013C
-30142120
-D400D401
-10180124
-302C2138
-D402D403
-C004CC00
-000CC10A
-D0001006
-D000000D
-D000000E
-1007000C
-1008D000
-000DD000
-000CD000
-D0001009
-D000100A
-10080012
-0FFFD002
-D0001FFE
-C108C00A
-100300DC
-30032023
-10BCD100
-D10230BC
-10080016
-30082016
-C00AD100
-0080C106
-20401060
-2020D200
-2010D202
-C200D201
-D2012008
-C00CD202
-C204C10B
-012EC305
-20141098
-D200D201
-D203200E
-CE00D202
+C108C00A  // 0000: lca 10        ; lcb  8
+10000020  // 0004: x0  32        ; y0   0
+30BF20DF  // 0008: x1 223        ; y1 191
+00DFD100  // 000C: draw line ca  ; x0 223
+D1022020  // 0010: x1  32        ; draw line cb
+10080014  // 0014: x0 20         ; y0  8
+30082014  // 0018: x1 20         ; y1  8
+C00AD100  // 001C: draw line ca  ; lca 10
+C204C108  // 0020: lcb  8        ; fca  4
+CC00C305  // 0024: fcb  5        ; nop
+10040004  // 0028: x0 4          ; y0 4
+30082008  // 002C: x1 8          ; y1 8
+500C4004  // 0030: x2 4          ; y2 12
+000CD300  // 0034: draw tri ca   ; x0 12
+20101004  // 0038: y0  4         ; x1 16
+400C3008  // 003C: y1  8         ; x2 12
+D303500C  // 0040: y2 12         ; draw trif cb
+10140018  // 0044: x0  24        ; y0  20
+305020B8  // 0048: x1 184        ; y1  80
+50B4406C  // 004C: x2 108        ; y2 180
+D300D303  // 0050: draw trif cb  ; draw tri ca
+C10BC00C  // 0054: lca 0xC       ; lcb 0xB
+107400E0  // 0058: x0 224        ; y0 116
+304C2020  // 005C: x1  32        ; y1  76
+0021D400  // 0060: draw rect ca  ; x0  33
+20DF104D  // 0064: y0  77        ; x1 223
+D4023073  // 0068: y1 115        ; draw rect cb
+C305C204  // 006C: fca 0x4       ; fcb 0x5
+1030013C  // 0070: x0 316        ; y0  48
+30142120  // 0074: x1 288        ; y1  20
+D400D401  // 0078: draw rectf ca ; draw rect ca
+10180124  // 007C: x0 292        ; y0  24
+302C2138  // 0080: x1 312        ; y1  44
+D402D403  // 0084: draw rectf cb ; draw rect cb
+C004CC00  // 0088: nop           ; lca 4
+000CC10A  // 008C: lcb 10        ; x0 12
+D0001006  // 0090: y0  6         ; draw pix ca
+D000000D  // 0094: x0 13         ; draw pix ca
+D000000E  // 0098: x0 14         ; draw pix ca
+1007000C  // 009C: x0 12         ; y0  7
+1008D000  // 00A0: draw pix ca   ; y0  8
+000DD000  // 00A4: draw pix ca   ; x0 13
+000CD000  // 00A8: draw pix ca   ; x0 12
+D0001009  // 00AC: y0  9         ; draw pix ca
+D000100A  // 00B0: y0 10         ; draw pix ca
+10080012  // 00B4: x0 18         ; y0  8
+0FFFD002  // 00B8: draw pix cb   ; x0 -1
+D0001FFE  // 00BC: y0 -2         ; draw pix ca
+C108C00A  // 00C0: lca 0xA       ; lcb 0x8
+100300DC  // 00C4: x0 220        ; y0   3
+30032023  // 00C8: x1  35        ; y1   3
+10BCD100  // 00CC: draw line ca  ; y0 188
+D10230BC  // 00D0: y1 188        ; draw line cb
+10080016  // 00D4: x0 22         ; y0  8
+30082016  // 00D8: x1 22         ; y1  8
+C00AD100  // 00DC: draw line ca  ; lca 0xA
+0080C106  // 00E0: lcb 0x6       ; x0 128
+20401060  // 00E4: y0  96        ; r0  64
+2020D200  // 00E8: draw circ ca  ; r0 32
+2010D202  // 00EC: draw circ cb  ; r0 16
+C200D201  // 00F0: draw circf ca ; fca 0
+D2012008  // 00F4: r0 8          ; draw circf ca
+C00CD202  // 00F8: draw circ cb  ; lca 0xC
+C204C10B  // 00FC: lcb 0xB       ; fca 0x4
+012EC305  // 0100: fcb 0x5       ; x0 302
+20141098  // 0104: y0 152        ; r0  20
+D200D201  // 0108: draw circf ca ; draw circ ca
+D203200E  // 010C: r0 14         ; draw circf cb
+CE00D202  // 0110: draw circ cb  ; stop

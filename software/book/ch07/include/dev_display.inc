@@ -6,18 +6,19 @@
 # read-only registers
 #
 
-.equ DISP_DIMS_RO,      0x0100  # display native dimensions in pixels
-.equ BMAP_DIMS_RO,      0x0104  # display bitmap dimensions in pixels
-.equ TEXT_DIMS_RO,      0x0108  # display textmode dimensions in half-width chars
-.equ FRAME_FLAG_RO,     0x010C  # signals start of new display frame
-.equ TRAM_DEPTH_RO,     0x0110  # tram depth in half-width characters
+.equ DISP_DIMS_RO,   0x0100  # display native dimensions in pixels
+.equ BMAP_DIMS_RO,   0x0104  # display bitmap dimensions in pixels
+.equ TEXT_DIMS_RO,   0x0108  # display textmode dimensions in half-width chars
+.equ FRAME_FLAG_RO,  0x010C  # signals start of new display frame
+.equ FRAME_COUNT_RO, 0x0110  # 32-bit frame counter
+.equ TRAM_DEPTH_RO,  0x0114  # tram depth in half-width characters
 
 
 #
 # strobe registers
 #
 
-.equ FRAME_FLAG_SB,     0x0180  # clear frame flag
+.equ FRAME_FLAG_SB, 0x0180  # clear frame flag
 
 
 #

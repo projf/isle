@@ -20,9 +20,8 @@ module earthrise #(
     input  wire rst,                              // reset
     input  wire en,                               // enable
     input  wire start,                            // start execution
-    input  wire signed [CORDW-1:0] canv_w,        // canvas width
-    input  wire signed [CORDW-1:0] canv_h,        // canvas height
-    input  wire [$clog2(WORD)-1:0] canv_bpp,      // canvas bits per pixel
+    input  wire [PIX_IDXW-1:0] canv_bpp,          // canvas bits per pixel
+    input  wire [WORD-1:0] canv_dims,             // canvas dimensions
     input  wire [WORD-1:0] cmd_list,              // command list data (32-bit)
     output wire [ER_ADDRW+1:0] pc,                // program counter (byte address)
     input  wire [VRAM_ADDRW-1:0] vram_addr_base,  // base vram word address
@@ -49,6 +48,11 @@ module earthrise #(
     localparam FUNW   =  4;  // function width
     localparam IMM12  = 12;  // immediate 12 width (bits)
     localparam IMM8   =  8;  // immediate 8 width (bits)
+
+    // separate out canvas dims
+    reg signed [CORDW-1:0] canv_w;  // canvas width
+    reg signed [CORDW-1:0] canv_h;  // canvas height
+    always @(*) {canv_h, canv_w} = canv_dims;
 
     // drawing position and colour
     reg drawing;  // actively drawing a pixel
@@ -298,8 +302,11 @@ module earthrise #(
                                         circle_x0 <= tvx0;
                                         circle_y0 <= tvy0;
                                         circle_r0 <= r0;
-                                    end else state <= FETCH;
-                                    `debug_er($display("%d - 0x%x: circle   (%d,%d) r=%d", cycle_cnt, pc_debug, tvx0, tvy0, r0));
+                                        `debug_er($display("%d - 0x%x: circle   (%d,%d) r=%d", cycle_cnt, pc_debug, tvx0, tvy0, r0));
+                                    end else begin
+                                        state <= FETCH;
+                                        `debug_er($display("%d - 0x%x: skipping circle - negative radius (%d,%d) r=%d", cycle_cnt, pc_debug, tvx0, tvy0, r0));
+                                    end
                                 end
                                 'h3: begin  // draw triangle (sort vertices first)
                                     if (tri_min == tri_max || tri_degen_x) begin  // degenerate triangle

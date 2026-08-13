@@ -7,6 +7,7 @@
 
 .include "include/isle.inc"
 .include "include/dev_display.inc"
+.include "include/dev_earthrise.inc"
 
 .section .text
 .global _start
@@ -57,6 +58,14 @@ _start:
     lw s1, DISP_DIMS_RO(t6)
     lw s2, BMAP_DIMS_RO(t6)
     lw s3, TEXT_DIMS_RO(t6)
+
+
+    #
+    # start Earthrise
+    #
+    li t6, DEV_EARTHRISE
+    sw zero, ER_START_SB(t6)
+
 
     #
     # print display resolution

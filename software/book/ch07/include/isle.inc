@@ -11,7 +11,8 @@
 .equ TRAM_BASE,    0x500000  # tram base address
 .equ CLUT_BASE,    0x580000  # clut base address
 
-# temporary device addresses 
-.equ DEV_SYS,      0x600000  # system device
-.equ DEV_DISPLAY,  0x610000  # display device
-.equ DEV_UART,     0x620000  # uart device
+# temporary device addresses
+.equ DEV_SYS,       0x600000  # system device
+.equ DEV_DISPLAY,   0x610000  # display device
+.equ DEV_UART,      0x620000  # uart device
+.equ DEV_EARTHRISE, 0x630000  # uart device

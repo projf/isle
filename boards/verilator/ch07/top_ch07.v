@@ -28,19 +28,22 @@ module top_ch07 #(
     localparam RES = "../../../res";  // resource path
 
     // software params
-    localparam FILE_SOFT = {SW, "/book/ch07/resolution.mem"};
+    localparam FILE_SOFT = {SW, "/book/ch07/circles.mem"};
 
     // display params
-    // localparam FILE_PAL = {RES, "/palettes/go-16.mem"};
-    localparam FILE_PAL = {RES, "/bitmaps/crocus/crocus-336x192_palette.mem"};
-    localparam FILE_BMAP = {RES, "/bitmaps/crocus/crocus-336x192.mem"};
-    localparam FILE_TXT  = "";  // {RES, "/textmaps/edge-84x24.mem"};
+    localparam FILE_PAL = {RES, "/palettes/go-16.mem"};
+    localparam FILE_BMAP = "";
+    localparam FILE_TXT  = "";
 
     // font params
     localparam FILE_FONT    = {RES, "/fonts/unifont-rom.mem"};
     localparam FONT_COUNT   = 128;  // glyphs in FILE_FONT
     localparam GLYPH_HEIGHT =  16;  // glyph height (pixels)
     localparam GLYPH_WIDTH  =   8;  // half-width glyph width (pixels)
+
+    // Earthrise params
+    localparam FILE_ER_LIST = {SW, "/book/ch07/drawings/circle-rings.mem"};
+    // localparam FILE_ER_LIST = {RES, "/drawings/all-shapes.mem"};
 
     // clock params - for 20 MHz clock and 115200 baud uart
     localparam TIMER_DIV    = 20000;  // millisecond divider
@@ -63,6 +66,7 @@ module top_ch07 #(
         .CORDW(CORDW),
         .DISPLAY_MODE(DISPLAY_MODE),
         .FILE_BMAP(FILE_BMAP),
+        .FILE_ER_LIST(FILE_ER_LIST),
         .FILE_FONT(FILE_FONT),
         .FILE_PAL(FILE_PAL),
         .FILE_SOFT(FILE_SOFT),
@@ -80,8 +84,10 @@ module top_ch07 #(
         .rst_pix(rst),
         .disp_x(sdl_x),
         .disp_y(sdl_y),
+        /* verilator lint_off PINCONNECTEMPTY */
         .disp_hsync(),
         .disp_vsync(),
+        /* verilator lint_on PINCONNECTEMPTY */
         .disp_de(sdl_de),
         .disp_frame(sdl_frame),
         .disp_r(disp_r),

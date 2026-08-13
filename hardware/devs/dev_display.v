@@ -8,6 +8,7 @@
 module dev_display #(
     parameter BPC=5,             // bits per colour channel
     parameter BYTE_CNT=4,        // bytes in word
+    parameter CANV_SHIFTW=3,     // max shift is 5 bits (2^5 = 32 bits)
     parameter CIDX_ADDRW=8,      // colour index address width (bits)
     parameter CLUT_LAT=2,        // clut display read latency (cycles, min=1)
     parameter COLRW=15,          // colour width across three channels (bits)
@@ -61,7 +62,6 @@ module dev_display #(
 
     // internal system params
     localparam signed [CORDW-1:0] HWREG_COPY_LINE = -3;  // which display line to copy hwreg on
-    localparam CANV_SHIFTW = 3;  // max shift is 5 bits (2^5 = 32 bits)
     localparam PIX_IDXW=$clog2(WORD);  // pixel index width (bits)
     /* verilator lint_off WIDTHTRUNC */
     localparam [CORDW-1:0] TRAM_DEPTH = TRAM_HRES * TRAM_VRES;
@@ -76,11 +76,12 @@ module dev_display #(
     // HWREG_ADDR - must match software
 
     // read-only
-    localparam [DEV_ADDRW-1:0] DISP_DIMS_RO  = 'h0100 >> 2;  // shift as word addressed
-    localparam [DEV_ADDRW-1:0] BMAP_DIMS_RO  = 'h0104 >> 2;
-    localparam [DEV_ADDRW-1:0] TEXT_DIMS_RO  = 'h0108 >> 2;
-    localparam [DEV_ADDRW-1:0] FRAME_FLAG_RO = 'h010C >> 2;
-    localparam [DEV_ADDRW-1:0] TRAM_DEPTH_RO = 'h0110 >> 2;
+    localparam [DEV_ADDRW-1:0] DISP_DIMS_RO   = 'h0100 >> 2;  // shift as word addressed
+    localparam [DEV_ADDRW-1:0] BMAP_DIMS_RO   = 'h0104 >> 2;
+    localparam [DEV_ADDRW-1:0] TEXT_DIMS_RO   = 'h0108 >> 2;
+    localparam [DEV_ADDRW-1:0] FRAME_FLAG_RO  = 'h010C >> 2;
+    localparam [DEV_ADDRW-1:0] FRAME_COUNT_RO = 'h0110 >> 2;
+    localparam [DEV_ADDRW-1:0] TRAM_DEPTH_RO  = 'h0114 >> 2;
 
     // strobe
     localparam [DEV_ADDRW-1:0] FRAME_FLAG_SB = 'h0180 >> 2;
@@ -201,7 +202,7 @@ module dev_display #(
             4: canv0_addr_shift = 3;
             2: canv0_addr_shift = 4;
             1: canv0_addr_shift = 5;
-            default:  canv0_addr_shift = 3;
+            default: canv0_addr_shift = 3;
         endcase
     end
 
@@ -301,17 +302,25 @@ module dev_display #(
     // hardware register logic
     //
 
+    // counters
+    reg [WORD-1:0] frame_count;
+
     // strobe hwreg
     reg frame_flag, frame_flag_clr;
 
     // clear frame flag (strobe) - requires *word* write from CPU to work (sw instruction)
     always @(*) frame_flag_clr = (&we_sys && (addr_sys == FRAME_FLAG_SB));
 
-    // update frame flag
+    // update frame flag and counter
     always @(posedge clk_sys) begin
-        if (frame_start_sys) frame_flag <= 1;
-        else if (frame_flag_clr) frame_flag <= 0;
-        if (rst_sys) frame_flag <= 0;
+        if (frame_start_sys) begin
+            frame_flag <= 1;
+            frame_count <= frame_count + 1;
+        end else if (frame_flag_clr) frame_flag <= 0;
+        if (rst_sys) begin
+            frame_flag <= 0;
+            frame_count <= 0;
+        end
     end
 
     /* verilator lint_off WIDTHTRUNC */
@@ -358,7 +367,7 @@ module dev_display #(
             hwreg_sys[TEXT_SCALE] <= DISPLAY_SCALE;
             hwreg_sys[CANV0_WIN_START] <= WIN_START_CORD;
             hwreg_sys[CANV0_WIN_END] <= WIN_END_CORD;
-            hwreg_sys[CANV0_SCALE] <= DISPLAY_SCALE;
+            hwreg_sys[CANV0_SCALE] <= DISPLAY_SCALE << 1;  // double for 336x192 canvas
             hwreg_sys[CANV0_DIMS] <= CANV_DIMS_INIT;
             hwreg_sys[CANV0_BPP] <= CANV_BPP_INIT;
         end else if ((&we_sys) && hwreg_valid && hwreg_busy_sys) begin  // word write (sw instruction)
@@ -377,11 +386,12 @@ module dev_display #(
     always @(posedge clk_sys) begin
         if (re_sys) begin
             case (addr_sys)
-                DISP_DIMS_RO:  dout_sys <= {VRES, HRES};
-                BMAP_DIMS_RO:  dout_sys <= {BMAP_VRES, BMAP_HRES};
-                TEXT_DIMS_RO:  dout_sys <= {TRAM_VRES, TRAM_HRES};
-                FRAME_FLAG_RO: dout_sys <= {{WORD-1{1'b0}}, frame_flag};
-                TRAM_DEPTH_RO: dout_sys <= {{WORD-CORDW{1'b0}}, TRAM_DEPTH};
+                DISP_DIMS_RO:   dout_sys <= {VRES, HRES};
+                BMAP_DIMS_RO:   dout_sys <= {BMAP_VRES, BMAP_HRES};
+                TEXT_DIMS_RO:   dout_sys <= {TRAM_VRES, TRAM_HRES};
+                FRAME_FLAG_RO:  dout_sys <= {{WORD-1{1'b0}}, frame_flag};
+                FRAME_COUNT_RO: dout_sys <= frame_count;
+                TRAM_DEPTH_RO:  dout_sys <= {{WORD-CORDW{1'b0}}, TRAM_DEPTH};
                 default: dout_sys <= (hwreg_valid) ? hwreg_sys[hwreg_idx] : {WORD{1'b0}};
             endcase
         end

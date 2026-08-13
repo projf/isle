@@ -1,0 +1,35 @@
+# Isle.Computer - Earthrise Circle Rings
+# Copyright Will Green and Isle Contributors
+# SPDX-License-Identifier: MIT
+
+# set fill colour b to background colour
+fcb   0
+
+# translate to centre of 336x192 canvas
+xt  168
+yt   96
+
+# translate affects coords set after, so set x0 and y0 now
+x0    0
+y0    0
+
+# ring 0 - outer
+fca   1
+r0   64
+draw circf ca
+
+# ring 1 - middle
+fca   2
+r0   48
+draw circf ca
+
+# ring 2 - inner
+fca   3
+r0   32
+draw circf ca
+
+# ring 3 - hole
+r0   16
+draw circf cb
+
+stop
