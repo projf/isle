@@ -42,7 +42,7 @@ See [font glyph](font_glyph.md) for details on font and glyph parameters.
 
 * `clk_pix` - pixel clock
 * `rst_pix` - reset text mode state machine
-* `frame_start` - frame start flag
+* `start` - start textmode rendering (before active painting area)
 * `(dx, dy)` - display position
 * `scroll_offset` - tram address scroll offset
 * `text_hres` - text width (chars)

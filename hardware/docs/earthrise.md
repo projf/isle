@@ -25,7 +25,7 @@ _I'll add more details on the internal operation of Earthrise in future updates.
 * `rst` - reset
 * `en` - enable
 * `start` - start execution
-* `canv_w`, `canv_h` - canvas width and height (in pixels)
+* `canv_dims` - canvas dimensions (width in lower 16 bits, height in upper 16 bits)
 * `canv_bpp` - canvas bits per pixel (colour depth)
 * `cmd_list` - command list data (2 x 16-bit instructions)
 * `vram_addr_base` - base word address of canvas in vram
@@ -60,6 +60,8 @@ For example, 2 bits per pixel mean you have 16 pixels per 32-bit word, and 16 is
 See [vram](vram.md) for details on vram write mask.
 
 You can use `cycle_cnt` to learn how many clock cycles Earthrise took to execute your command list. This isn't adjusted for enable (`en`) so, cycle counts will vary if Earthrise is sharing vram with other devices.
+
+When Earthrise has finished executing its command list, `busy` goes low and `done` goes high for one tick. Once `busy` has gone low Earthrise is ready to run more commands, but drawing might not have finished writing to vram. You can always tell if Earthrise is writing to vram by looking at the state of `vram_wmask`. I decided not to have `busy` and `done` account for memory latency, otherwise a series of simple drawing commands would be unnecessarily delayed. The vram interface handles arbitration between writers.
 
 ## Earthrise Command List
 

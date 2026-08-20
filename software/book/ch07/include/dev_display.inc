@@ -48,7 +48,5 @@
 .equ CANV0_VRAM_ADDR_BASE, 0x0238  # base vram word address
 .equ CANV0_BPP,            0x023C  # bits per pixel (1,2,4,8)
 .equ CANV0_SCROLL_COORD,   0x0240  # canvas scroll coordinate (must match CANV0_SCROLL_OFFSET)
-.equ CANV0_SCROLL_OFFSET,  0x0244  # pixel offset of canvas scroll line
-
 
 # todo: need to decide where to start CANV1 - but want it to be a round address

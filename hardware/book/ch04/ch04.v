@@ -120,7 +120,7 @@ module ch04 #(
     ) textmode_inst (
         .clk_pix(clk_pix),
         .rst_pix(rst_pix),
-        .frame_start(frame_start),
+        .start(frame_start),
         .dx(dx),
         .dy(dy),
         .win_start(WIN_START_CORD),

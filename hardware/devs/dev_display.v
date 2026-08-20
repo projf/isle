@@ -61,7 +61,10 @@ module dev_display #(
     `include "display_modes.vh"
 
     // internal system params
+    // copy hwreg into pixel clock domain, then start display of graphics/text
     localparam signed [CORDW-1:0] HWREG_COPY_LINE = -3;  // which display line to copy hwreg on
+    localparam signed [CORDW-1:0] DISPLAY_START_LINE = HWREG_COPY_LINE + 1; // next line
+
     localparam PIX_IDXW=$clog2(WORD);  // pixel index width (bits)
     /* verilator lint_off WIDTHTRUNC */
     localparam [CORDW-1:0] TRAM_DEPTH = TRAM_HRES * TRAM_VRES;
@@ -87,7 +90,7 @@ module dev_display #(
     localparam [DEV_ADDRW-1:0] FRAME_FLAG_SB = 'h0180 >> 2;
 
     // read-write - offset from 0x200
-    localparam RW_HWREG_CNT = 18;  // read-write hwreg count
+    localparam RW_HWREG_CNT = 17;  // read-write hwreg count
     localparam RW_HWREG_W = $clog2(RW_HWREG_CNT);
     localparam RW_HWREG_BASE = 'h0200 >> 2;  // read-write reg base address
 
@@ -110,7 +113,6 @@ module dev_display #(
     localparam [RW_HWREG_W-1:0] CANV0_VRAM_ADDR_BASE = 14;
     localparam [RW_HWREG_W-1:0] CANV0_BPP = 15;
     localparam [RW_HWREG_W-1:0] CANV0_SCROLL_COORD = 16;
-    localparam [RW_HWREG_W-1:0] CANV0_SCROLL_OFFSET = 17;
     // don't forget to update RW_HWREG_CNT if you add registers
 
     // END_HWREG_ADDR
@@ -171,7 +173,7 @@ module dev_display #(
     ) textmode_inst (
         .clk_pix(clk_pix),
         .rst_pix(rst_pix),
-        .frame_start(frame_start),
+        .start(line_start && (dy == DISPLAY_START_LINE)),
         .dx(dx),
         .dy(dy),
         .win_start(hwreg_pix[TEXT_WIN_START]),
@@ -216,7 +218,7 @@ module dev_display #(
     ) canv_disp_agu_inst (
         .clk_pix(clk_pix),
         .rst_pix(rst_pix),
-        .frame_start(frame_start),
+        .start(line_start && (dy == DISPLAY_START_LINE)),
         .line_start(line_start),
         .dx(dx),
         .dy(dy),
@@ -227,7 +229,6 @@ module dev_display #(
         .vram_addr_base(hwreg_pix[CANV0_VRAM_ADDR_BASE][VRAM_ADDRW-1:0]),
         .addr_shift(canv0_addr_shift),
         .scroll_coord(hwreg_pix[CANV0_SCROLL_COORD]),
-        .scroll_offset(hwreg_pix[CANV0_SCROLL_OFFSET][VRAM_ADDRW+PIX_IDXW-1:0]),
         .vram_addr(canv0_addr),
         .pix_idx(canv0_pix_idx),
         .paint(canv0_paint)

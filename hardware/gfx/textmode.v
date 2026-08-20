@@ -20,7 +20,7 @@ module textmode #(
     ) (
     input  wire clk_pix,                       // pixel clock
     input  wire rst_pix,                       // reset in pixel clock domain
-    input  wire frame_start,                   // frame start flag
+    input  wire start,                         // start textmode rendering
     input  wire signed [CORDW-1:0] dx, dy,     // display position
     input  wire [2*CORDW-1:0] win_start,       // text window start coords
     input  wire [2*CORDW-1:0] win_end,         // text window end coords
@@ -188,7 +188,7 @@ module textmode #(
                 end else cnt_y <= cnt_y + 1;
             end
             default: begin  // IDLE
-                if (frame_start) state <= INIT;
+                if (start) state <= INIT;
             end
         endcase
 

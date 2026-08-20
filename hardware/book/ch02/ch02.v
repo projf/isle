@@ -107,7 +107,7 @@ module ch02 #(
     ) canv_disp_agu_inst (
         .clk_pix(clk),
         .rst_pix(rst),
-        .frame_start(frame_start),
+        .start(frame_start),
         .line_start(line_start),
         .dx(dx),
         .dy(dy),
@@ -118,7 +118,6 @@ module ch02 #(
         .vram_addr_base({VRAM_ADDRW{1'b0}}),  // fixed base address for now
         .addr_shift(canv_addr_shift),
         .scroll_coord(0),
-        .scroll_offset(0),
         .vram_addr(canv_addr),
         .pix_idx(canv_pix_idx),
         .paint(canv_paint)

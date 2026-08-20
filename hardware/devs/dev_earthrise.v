@@ -169,19 +169,6 @@ module dev_earthrise #(
         end
     end
 
-
-    // calculate address shift from bits per pixel
-    reg [CANV_SHIFTW-1:0] er_addr_shift;
-    always @(*) begin
-        case(er_bpp)
-            8: er_addr_shift = 2;
-            4: er_addr_shift = 3;
-            2: er_addr_shift = 4;
-            1: er_addr_shift = 5;
-            default: er_addr_shift = 3;
-        endcase
-    end
-
     earthrise #(
         .CORDW(CORDW),
         .WORD(WORD),
@@ -199,7 +186,6 @@ module dev_earthrise #(
         .cmd_list(erlist_dout_er),
         .pc(er_pc),
         .vram_addr_base(er_vram_addr_base),
-        .addr_shift(er_addr_shift),
         .vram_addr(vram_addr),
         .vram_din(vram_din),
         .vram_wmask(vram_wmask),

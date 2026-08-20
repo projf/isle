@@ -64,10 +64,7 @@ NB. Hardware registers must be written as **whole words** from the CPU side. Not
 * `CANV0_VRAM_ADDR_BASE` - base vram word address of canvas
 * `CANV0_BPP` - canvas bits per pixel; controls colour depth: 1, 2, 4, or 8 bit
     - `canv0_addr_shift` signal is derived from this
-* `CANV0_SCROLL_COORD` - canvas scroll coordinate (must match CANV0_SCROLL_OFFSET)
-* `CANV0_SCROLL_OFFSET` - pixel offset of canvas scroll line
-
-When scrolling, the `CANVn_SCROLL_OFFSET` must be set to the y-value of `CANVn_SCROLL_COORD` multiplied by the canvas width from `CANVn_DIMS`. This avoids the need for a hardware multiplier in the canvas display address generator (canv_disp_agu).
+* `CANV0_SCROLL_COORD` - canvas scroll coordinates
 
 These canvas registers are separate from those used for [Earthrise](dev_earthrise.md).
 

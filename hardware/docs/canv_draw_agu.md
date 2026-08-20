@@ -16,10 +16,11 @@ This module supports pipelining. [Earthrise](earthrise.md) uses an instance of t
 ### Input
 
 * `clk` - clock
-* `w`, `h` - canvas width and height (in pixels)
-* `x`, `y` - pixel coordinates
+* `canv_dims` - canvas dimensions (width in lower 16 bits, height in upper 16 bits)
+* `pix_coord` - pixel coordinates (x in lower 16 bits, y in upper 16 bits)
 * `vram_addr_base` - base word address of canvas in vram
 * `addr_shift` - address shift bits
+* `draw_wrap` - controls draw wrapping
 
 `vram_addr_base` is the base _word_ address of the canvas buffer in vram. You can switch this at the start of a frame for double buffering. See also [display AGU](canv_disp_agu.md).
 
@@ -34,10 +35,18 @@ Address shift is set based on the bits per pixel:
 
 For example, 2 bits per pixel mean you have 16 pixels per 32-bit word, and 16 is 2^4.
 
+Setting `draw_wrap` high enables draw wrapping for one width/height outside canvas dimensions. One good use for draw wrapping is when scrolling your canvas.
+
+For these examples, draw wrapping is enabled and your canvas is 200 pixels wide. If your pixel coordinate is `x = -1`, the address will be calculated for `x = 199`. If you set `x=210`, the address will be calculated for `x = 10`. However, if `x=500`, then it'll still clip, even with `draw_wrap` because it's more than one canvas width outside the edge of the canvas. This works in the same way for y coordinates.
+
 ### Output
 
 * `vram_addr` - vram word address
 * `pix_idx` - pixel index within word
-* `clip` - high for pixel coordinate outside canvas
+* `clip` - high for pixel coordinate outside canvas (but see `draw_wrap`, above)
 
-The `clip` allows you to avoid writes to vram where the pixel resides outside the canvas.
+clip` allows you to avoid bad writes vram when coordinates are invalid. You should only trust the values of `vram_addr` and `pix_idx` when clip is low (0).
+
+### Testing
+
+There is a cocotb test bench [[canv_draw_agu.py](../tests/gfx/canv_draw_agu.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).

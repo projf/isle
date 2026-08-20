@@ -25,7 +25,6 @@ module earthrise #(
     input  wire [WORD-1:0] cmd_list,              // command list data (32-bit)
     output wire [ER_ADDRW+1:0] pc,                // program counter (byte address)
     input  wire [VRAM_ADDRW-1:0] vram_addr_base,  // base vram word address
-    input  wire [CANV_SHIFTW-1:0] addr_shift,     // address shift bits
     output wire [VRAM_ADDRW-1:0] vram_addr,       // vram word address
     output reg  [WORD-1:0] vram_din,              // vram data in
     output reg  [WORD-1:0] vram_wmask,            // vram write mask
@@ -49,10 +48,10 @@ module earthrise #(
     localparam IMM12  = 12;  // immediate 12 width (bits)
     localparam IMM8   =  8;  // immediate 8 width (bits)
 
-    // separate out canvas dims
-    reg signed [CORDW-1:0] canv_w;  // canvas width
-    reg signed [CORDW-1:0] canv_h;  // canvas height
-    always @(*) {canv_h, canv_w} = canv_dims;
+    // register canvas signals
+    reg [PIX_IDXW-1:0] canv_bpp_r;
+    reg [WORD-1:0] canv_dims_r;
+    reg [VRAM_ADDRW-1:0] vram_addr_base_r;
 
     // drawing position and colour
     reg drawing;  // actively drawing a pixel
@@ -526,7 +525,7 @@ module earthrise #(
                 end
                 DONE: begin
                     state <= IDLE;
-                    busy <= 0;
+                    busy <= 0;  // TODO: need to extend this for AGU latency
                     pc_reg <= 0;  // reset pc: execution always starts from address 0
                     pc_debug <= 0;
                     `debug_er($display("** DONE ** %d cycles", cycle_cnt));
@@ -538,6 +537,10 @@ module earthrise #(
                         instr_invalid <= 0;
                         busy <= 1;
                         cycle_cnt <= 1;  // cycle counter starts
+                        // register canvas signals
+                        canv_bpp_r <= canv_bpp;
+                        canv_dims_r <= canv_dims;
+                        vram_addr_base_r <= vram_addr_base;
                     end
                 end
             endcase
@@ -616,9 +619,10 @@ module earthrise #(
 
 
     //
-    // draw address generation (3 clock cycles)
+    // draw address generation
     //
 
+    reg [CANV_SHIFTW-1:0] addr_shift;  // to separate vram and pix_idx
     canv_draw_agu #(
         .CORDW(CORDW),
         .WORD(WORD),
@@ -626,20 +630,20 @@ module earthrise #(
         .SHIFTW(CANV_SHIFTW)
     ) canv_draw_agu_inst (
         .clk(clk),
+        .rst(rst),
         .en(en),
-        .w(canv_w),
-        .h(canv_h),
-        .x({{4{x[ICORDW-1]}}, x}),  // widen 12-bit integers (sign extension)
-        .y({{4{y[ICORDW-1]}}, y}),
-        .vram_addr_base(vram_addr_base),
+        .canv_dims(canv_dims_r),
+        .pix_coord({{4{y[ICORDW-1]}}, y, {4{x[ICORDW-1]}}, x}), // sign extend 12-bit integers
+        .vram_addr_base(vram_addr_base_r),
         .addr_shift(addr_shift),
+        .draw_wrap(1'b1),  // TODO: derive from Earthrise draw options
         .vram_addr(vram_addr),
         .pix_idx(pix_idx),
         .clip(clip)
     );
 
     // delay write enable to match address calculation - output in vram_we_sr[0]
-    localparam ADDR_LAT = 3;
+    localparam ADDR_LAT = 4;  // ensure this matches canv_draw_agu
     reg [ADDR_LAT-1:0] vram_we_sr;
     always @(posedge clk) begin
         if (rst) vram_we_sr <= 0;
@@ -647,12 +651,13 @@ module earthrise #(
     end
 
     // delay colour to match address calculation
-    reg [COLRW-1:0] colr_p1, colr_p2, colr_p3;
+    reg [COLRW-1:0] colr_p1, colr_p2, colr_p3, colr_p4;
     always @(posedge clk) begin
         if (en) begin
             colr_p1 <= colr;
             colr_p2 <= colr_p1;
             colr_p3 <= colr_p2;
+            colr_p4 <= colr_p3;
         end
     end
 
@@ -665,27 +670,41 @@ module earthrise #(
         vwmask_4 = {4{vram_we_sr[0]}} << (4 * pix_idx);
         vwmask_8 = {8{vram_we_sr[0]}} << (8 * pix_idx);
         /* verilator lint_on WIDTHEXPAND */
-        if (!clip) begin  // no clip
-            case (canv_bpp)
-                1: vram_wmask = vwmask_1;
-                2: vram_wmask = vwmask_2;
-                4: vram_wmask = vwmask_4;
-                8: vram_wmask = vwmask_8;
-                default: vram_wmask = vwmask_4;
-            endcase
-        end else vram_wmask = 0;  // clipped
+        case (canv_bpp_r)  // TODO: derive vram_wmask from addr_shift
+            1: begin
+                addr_shift = 5;
+                vram_wmask = vwmask_1;
+            end
+            2: begin
+                addr_shift = 4;
+                vram_wmask = vwmask_2;
+            end
+            4: begin
+                addr_shift = 3;
+                vram_wmask = vwmask_4;
+            end
+            8: begin
+                addr_shift = 2;
+                vram_wmask = vwmask_8;
+            end
+            default: begin
+                addr_shift = 3;
+                vram_wmask = vwmask_4;
+            end
+        endcase
+        if (clip) vram_wmask = 0;  // no write if invalid address - TODO: move to valid when that arrives
     end
 
     // vram data in - depends on colour depth of canvas
     reg [WORD-1:0] vdin_1, vdin_2, vdin_4, vdin_8;
     always @(*) begin
         /* verilator lint_off WIDTHEXPAND */
-        vdin_1 = colr_p3[0] << pix_idx;
-        vdin_2 = colr_p3[1:0] << (2 * pix_idx);
-        vdin_4 = colr_p3[3:0] << (4 * pix_idx);
-        vdin_8 = colr_p3[7:0] << (8 * pix_idx);
+        vdin_1 = colr_p4[0] << pix_idx;
+        vdin_2 = colr_p4[1:0] << (2 * pix_idx);
+        vdin_4 = colr_p4[3:0] << (4 * pix_idx);
+        vdin_8 = colr_p4[7:0] << (8 * pix_idx);
         /* verilator lint_on WIDTHEXPAND */
-        case (canv_bpp)
+        case (canv_bpp_r)  // TODO: derive vram_din from addr_shift
             1: vram_din = vdin_1;
             2: vram_din = vdin_2;
             4: vram_din = vdin_4;

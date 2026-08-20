@@ -97,14 +97,12 @@ The load immediate opcode for each register:
 * **0xC1** - line colour B (lcb)
 * **0xC2** - fill colour A (fca)
 * **0xC3** - fill colour B (fca)
+* **0xC4** - line pattern A (lpa) - **future feature**
+* **0xC5** - line pattern B (lpb) - **future feature**
 
 The colour you see on screen is looked up in the [clut](../hardware/docs/clut.md) by the display controller.
 
 During Earthrise hardware initialisation, colour registers are set to 1 (one); this avoids users being confused by invisible drawings: accidentally drawing in colour 0 on a background of 0.
-
-Future Features:
-
-* Pattern registers to draw dotted and dashed lines
 
 ## Drawing
 
@@ -137,13 +135,16 @@ Use up to 8 bits in the instruction to control drawing. Only _filled_ and _colou
     - (0=outline, 1=fill) - line and pixel use fill colour if this option is used, but draw as for outline
 * Bit 1 - **Colour**
     - (0=A, 1=B) - selects line or fill colour as appropriate
-* Bit 2 - **Pattern** (0=solid, 1=pattern) - **future feature**
-    - Details to follow when pattern is implemented
+* Bit 2 - **Pattern** (**future feature**)
+    - (0=A, 1=B) - select line pattern (no impact on fills)
 * Bit 3 - **Edge Style** (0=complete, 1=connect) - **future feature**
     - Connect has missing edges so one shape is responsible for each line
     - Top-left rule for filled triangles/rects with connect set
-    - Does not apply to circles
-* Bit 4 - **Shape option** - extra shape-specific option - **future feature**
+    - Does not apply to pixels, lines, or circles
+* Bit 4 - **Draw Wrap Horizontal** - shape continues beyond horizontal edge of canvas
+* Bit 5 - **Draw Wrap Vertical** - shape continues beyond vertical edge of canvas
+* Bit 6 - _reserved for future use_
+* Bit 7 - **Shape Option** - extra shape-specific option - **future feature**
     - circle - (0=circle, 1=arc/sector) - arc/sector uses angle registers
 
 Earthrise ensures that outline and filled shapes are aligned; an outline triangle will precisely match the edges of a filled triangle with the same coordinates.

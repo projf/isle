@@ -15,18 +15,18 @@ from cocotb.types import Logic
 
 from tests.helpers import Coords
 
-# clock frequencies
-PIX_TIME = 100  # 10 MHz
+PIX_TIME = 100  # 10 MHz pixel clock
 
 # latencies (must match canv_disp_agu.mk)
 # use different values for `CLUT_LAT` and `VRAM_LAT` to catch bugs
 CLUT_LAT = 1
 VRAM_LAT = 3
 DISP_LAT = CLUT_LAT + VRAM_LAT
+SCROLL_LAT = 2  # scroll register latency (must match canv_disp_agu.v)
 
 @dataclass(frozen=True)
 class CanvasParams:  # pylint: disable=too-many-instance-attributes
-    """Hold canvas parameters."""
+    """Hold display canvas parameters."""
     vram_addr_base: int
     addr_shift: int
     canv_dims: Coords
@@ -150,7 +150,7 @@ async def setup_dut(dut, p):
     # ensure we're at start of frame before reset (to prevent failing tests interfering)
     dut.dx.value = p.disp_start.x
     dut.dy.value = p.disp_start.y
-    dut.frame_start.value = 0
+    dut.start.value = 0
     dut.line_start.value = 0
 
     # reset
@@ -169,7 +169,10 @@ async def setup_dut(dut, p):
     dut.win_start.value = p.win_start.pack()
     dut.win_end.value = p.win_end.pack()
     dut.scroll_coord.value = p.scroll_coord.pack()
-    dut.scroll_offset.value = p.scroll_coord.y * p.canv_dims.x
+
+    # let the scroll offset multiplier settle, as it does in hardware
+    for _ in range(SCROLL_LAT):
+        await RisingEdge(dut.clk_pix)
 
 
 async def run_addr_test(dut, p):
@@ -185,7 +188,7 @@ async def run_addr_test(dut, p):
             for dx in range(p.disp_start.x, p.disp_end.x+1):
                 dut.dy.value = dy
                 dut.dx.value = dx
-                dut.frame_start.value = int(
+                dut.start.value = int(
                     dy == p.disp_start.y and dx == p.disp_start.x)
                 dut.line_start.value = int(dx == p.disp_start.x)
 
@@ -250,7 +253,7 @@ async def canv_disp_agu_paint(dut, p):
             for dx in range(p.disp_start.x, p.disp_end.x+1):
                 dut.dy.value = dy
                 dut.dx.value = dx
-                dut.frame_start.value = int(
+                dut.start.value = int(
                     dy == p.disp_start.y and dx == p.disp_start.x)
                 dut.line_start.value = int(dx == p.disp_start.x)
 

@@ -128,10 +128,6 @@ _start:
     call floor_mod
     mv t3, a0  # wrapped y coord
 
-    # update scroll offset to match new scroll y coord
-    mul t4, t3, s7  # get scroll offset (s7 is canvas x-dimension)
-    sw t4, CANV0_SCROLL_OFFSET(s1)
-
     # save updated scroll coordinates
     slli t3, t3, 16  # move y coord into upper 16 bits
     or t0, s5, t3   # combine updated coords back into word

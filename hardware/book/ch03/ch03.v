@@ -113,17 +113,11 @@ module ch03 #(
     //
 
     wire [VRAM_ADDRW-1:0] draw_addr;
-    wire [CANV_SHIFTW-1:0] draw_addr_shift;  // address shift based on canvas bits per pixel
     /* verilator lint_off UNUSEDSIGNAL */  // lower bits unused because of byte addressing
     wire [ER_ADDRW+1:0] er_pc;  // Earthrise program counter (byte addressed)
     /* verilator lint_on UNUSEDSIGNAL */
 
     assign erlist_addr_er = er_pc[ER_ADDRW+1:2];  // command list is word addressed
-
-    // CANV_BPP is currently a parameter, but will be hardware register later
-    /* verilator lint_off WIDTHTRUNC */
-    assign draw_addr_shift = 5 - $clog2(CANV_BPP);
-    /* verilator lint_on WIDTHTRUNC */
 
     /* verilator lint_off UNUSEDSIGNAL */
     wire er_busy, er_done, er_instr_invalid;  // handy for simulation
@@ -162,7 +156,6 @@ module ch03 #(
         .cmd_list(erlist_dout_er),
         .pc(er_pc),
         .vram_addr_base({VRAM_ADDRW{1'b0}}),  // fixed base address for now
-        .addr_shift(draw_addr_shift),
         .vram_addr(draw_addr),
         .vram_din(vram_din_sys),
         .vram_wmask(vram_wmask_sys),
@@ -223,7 +216,7 @@ module ch03 #(
     ) canv_disp_agu_inst (
         .clk_pix(clk_pix),
         .rst_pix(rst_pix),
-        .frame_start(frame_start),
+        .start(frame_start),
         .line_start(line_start),
         .dx(dx),
         .dy(dy),
@@ -234,7 +227,6 @@ module ch03 #(
         .vram_addr_base({VRAM_ADDRW{1'b0}}),  // fixed base address for now
         .addr_shift(canv_addr_shift),
         .scroll_coord(0),
-        .scroll_offset(0),
         .vram_addr(canv_addr),
         .pix_idx(canv_pix_idx),
         .paint(canv_paint)
