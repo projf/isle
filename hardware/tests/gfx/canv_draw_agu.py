@@ -45,11 +45,11 @@ def pix_offset(pix_x, pix_y, canv_w, pix_offsetw):
     return (canv_w * pix_y + pix_x) & mask
 
 
-def expected_clip(pix_x, pix_y, canv_w, canv_h):
-    """Expected clipping."""
-    clip_x = (pix_x < 0 or pix_x >= canv_w)
-    clip_y = (pix_y < 0 or pix_y >= canv_h)
-    return clip_x or clip_y
+def expected_valid_flag(pix_x, pix_y, canv_w, canv_h):
+    """Expected valid address flag."""
+    valid_x = (pix_x >= 0 and pix_x < canv_w)
+    valid_y = (pix_y >= 0 and pix_y < canv_h)
+    return valid_x and valid_y
 
 
 def expected_pix_idx(offset, addr_shift):
@@ -97,14 +97,14 @@ async def canv_draw_agu(dut):
     await ReadOnly()
 
     (pix_x, pix_y) = wrapped(PIX_X, PIX_Y, CANV_W, CANV_H, DRAW_WRAP)
-    exp_clip = Logic(1) if (expected_clip(pix_x, pix_y, CANV_W, CANV_H)) else Logic(0)
-    clip = dut.clip.value
-    assert clip.is_resolvable and clip == exp_clip, (
-        f"clip: '{dut.clip.value}' is not expected '{exp_clip}' "
+    exp_valid_addr = Logic(1) if (expected_valid_flag(pix_x, pix_y, CANV_W, CANV_H)) else Logic(0)
+    valid_addr = dut.valid.value
+    assert valid_addr.is_resolvable and valid_addr == exp_valid_addr, (
+        f"valid_addr: '{dut.valid.value}' is not expected '{exp_valid_addr}' "
         f"at ({PIX_X}, {PIX_Y})!"
     )
 
-    if not exp_clip: #  if we aren't clipped, test address
+    if exp_valid_addr:  # test address if valid
         offset = pix_offset(pix_x, pix_y, CANV_W, pix_offsetw)
 
         exp_vram_addr = expected_vram_addr(offset, ADDR_SHIFT, VRAM_BASE_ADDR, addrw)

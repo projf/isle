@@ -8,13 +8,13 @@
 `timescale 1ns / 1ps
 
 module earthrise #(
-    parameter CANV_SHIFTW=3,         // vram address shift width (bits)
-    parameter COLRW=8,               // colour/pattern width (bits)
-    parameter CORDW=16,              // signed coordinate width (bits)
-    parameter ER_ADDRW=10,           // command list address width
-    parameter VRAM_ADDRW=14,         // vram address width (bits)
-    parameter WORD=32,               // machine word size (bits)
-    parameter PIX_IDXW=$clog2(WORD)  // pixel index width (bits)
+    parameter CANV_SHIFTW=3,          // vram address shift width (bits)
+    parameter COLRW=8,                // colour/pattern width (bits)
+    parameter CORDW=16,               // signed coordinate width (bits)
+    parameter ER_ADDRW=10,            // command list address width
+    parameter VRAM_ADDRW=14,          // vram address width (bits)
+    parameter WORD=32,                // machine word size (bits)
+    localparam PIX_IDXW=$clog2(WORD)  // pixel index width (bits)
     ) (
     input  wire clk,                              // clock
     input  wire rst,                              // reset
@@ -57,8 +57,6 @@ module earthrise #(
     reg drawing;  // actively drawing a pixel
     reg signed [ICORDW-1:0] x, y;
     reg [COLRW-1:0] colr;  // drawing colour
-    wire [PIX_IDXW-1:0] pix_idx;  // pixel index within word
-    wire clip;  // high for coordinate outside canvas
 
     // instruction subfields
     reg [OPCW-1:0]  opc;    // opcode
@@ -622,7 +620,11 @@ module earthrise #(
     // draw address generation
     //
 
-    reg [CANV_SHIFTW-1:0] addr_shift;  // to separate vram and pix_idx
+    wire [PIX_IDXW-1:0] pix_idx;  // pixel index within word
+    wire draw_addr_valid;  // we only want to write to vram for valid addresses
+    reg [CANV_SHIFTW-1:0] addr_shift;  // to separate vram address and pix_idx
+    wire [2*CORDW-1:0] pix_coord = {{(CORDW-ICORDW){y[ICORDW-1]}}, y,  // sign extend from 12 bits
+                                   {(CORDW-ICORDW){x[ICORDW-1]}}, x};
     canv_draw_agu #(
         .CORDW(CORDW),
         .WORD(WORD),
@@ -633,13 +635,13 @@ module earthrise #(
         .rst(rst),
         .en(en),
         .canv_dims(canv_dims_r),
-        .pix_coord({{4{y[ICORDW-1]}}, y, {4{x[ICORDW-1]}}, x}), // sign extend 12-bit integers
+        .pix_coord(pix_coord),
         .vram_addr_base(vram_addr_base_r),
         .addr_shift(addr_shift),
         .draw_wrap(1'b1),  // TODO: derive from Earthrise draw options
         .vram_addr(vram_addr),
         .pix_idx(pix_idx),
-        .clip(clip)
+        .valid(draw_addr_valid)
     );
 
     // delay write enable to match address calculation - output in vram_we_sr[0]
@@ -650,7 +652,7 @@ module earthrise #(
         else if (en) vram_we_sr <= {drawing, vram_we_sr[ADDR_LAT-1:1]};
     end
 
-    // delay colour to match address calculation
+    // delay colour to match address calculation - output in colr_p4
     reg [COLRW-1:0] colr_p1, colr_p2, colr_p3, colr_p4;
     always @(posedge clk) begin
         if (en) begin
@@ -661,55 +663,35 @@ module earthrise #(
         end
     end
 
-    // vram write mask - use latency-corrected write-enable and colour
-    reg [WORD-1:0] vwmask_1, vwmask_2, vwmask_4, vwmask_8;
+    // determine address shift from bits per pixel (BPP)
     always @(*) begin
-        /* verilator lint_off WIDTHEXPAND */
-        vwmask_1 = vram_we_sr[0] << pix_idx;
-        vwmask_2 = {2{vram_we_sr[0]}} << (2 * pix_idx);
-        vwmask_4 = {4{vram_we_sr[0]}} << (4 * pix_idx);
-        vwmask_8 = {8{vram_we_sr[0]}} << (8 * pix_idx);
-        /* verilator lint_on WIDTHEXPAND */
-        case (canv_bpp_r)  // TODO: derive vram_wmask from addr_shift
-            1: begin
-                addr_shift = 5;
-                vram_wmask = vwmask_1;
-            end
-            2: begin
-                addr_shift = 4;
-                vram_wmask = vwmask_2;
-            end
-            4: begin
-                addr_shift = 3;
-                vram_wmask = vwmask_4;
-            end
-            8: begin
-                addr_shift = 2;
-                vram_wmask = vwmask_8;
-            end
-            default: begin
-                addr_shift = 3;
-                vram_wmask = vwmask_4;
-            end
+        case(canv_bpp_r)
+            8: addr_shift = 2;  // 256 colour
+            4: addr_shift = 3;  // 16 colour
+            2: addr_shift = 4;  // 4 colour
+            1: addr_shift = 5;  // 2 colour
+            default: addr_shift = 3;  // 16 colour by default
         endcase
-        if (clip) vram_wmask = 0;  // no write if invalid address - TODO: move to valid when that arrives
     end
 
-    // vram data in - depends on colour depth of canvas
-    reg [WORD-1:0] vdin_1, vdin_2, vdin_4, vdin_8;
+    // pixel placement within vram word
+    wire [PIX_IDXW:0] pix_bits = WORD >> addr_shift;  // bits per pixel (support full word)
+    /* verilator lint_off WIDTHEXPAND */
+    wire [PIX_IDXW-1:0] pix_bit_pos = pix_idx << (PIX_IDXW - addr_shift);  // bit offset in word
+    /* verilator lint_on WIDTHEXPAND */
+    wire [WORD-1:0] pix_mask = (1 << pix_bits) - 1;  // word mask of pixel's bits
+
+    // vram write mask
+    always @(*) begin
+        if (draw_addr_valid && vram_we_sr[0]) begin  // valid address and write enable
+            vram_wmask = pix_mask << pix_bit_pos;  // shift pixel mask into position
+        end else vram_wmask = 0;
+    end
+
+    // vram data in
     always @(*) begin
         /* verilator lint_off WIDTHEXPAND */
-        vdin_1 = colr_p4[0] << pix_idx;
-        vdin_2 = colr_p4[1:0] << (2 * pix_idx);
-        vdin_4 = colr_p4[3:0] << (4 * pix_idx);
-        vdin_8 = colr_p4[7:0] << (8 * pix_idx);
+        vram_din = (colr_p4 & pix_mask) << pix_bit_pos;  // shift masked colour into position
         /* verilator lint_on WIDTHEXPAND */
-        case (canv_bpp_r)  // TODO: derive vram_din from addr_shift
-            1: vram_din = vdin_1;
-            2: vram_din = vdin_2;
-            4: vram_din = vdin_4;
-            8: vram_din = vdin_8;
-            default: vram_din = vdin_4;
-        endcase
     end
 endmodule

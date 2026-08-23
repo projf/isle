@@ -2,7 +2,7 @@
 
 The canvas draw address generation unit [[canv_draw_agu.v](../gfx/canv_draw_agu.v)] calculates the [vram](vram.md) address in a canvas buffer for drawing. Drawing addresses are derived from arbitrary coordinates and don't increase sequentially, so the approach used in the [display AGU](canv_disp_agu.md) is not appropriate here.
 
-This module supports pipelining. [Earthrise](earthrise.md) uses an instance of this module.
+This module has a four-stage pipeline. [Earthrise](earthrise.md) uses an instance of this module.
 
 ## Parameters
 
@@ -16,11 +16,15 @@ This module supports pipelining. [Earthrise](earthrise.md) uses an instance of t
 ### Input
 
 * `clk` - clock
+* `rst` - reset draw address calculation
+* `en` - enable address calculation
 * `canv_dims` - canvas dimensions (width in lower 16 bits, height in upper 16 bits)
 * `pix_coord` - pixel coordinates (x in lower 16 bits, y in upper 16 bits)
 * `vram_addr_base` - base word address of canvas in vram
 * `addr_shift` - address shift bits
 * `draw_wrap` - controls draw wrapping
+
+Using `en` you can halt the address calculation pipeline, which is useful when drawing is sharing a memory port with the CPU or another device.
 
 `vram_addr_base` is the base _word_ address of the canvas buffer in vram. You can switch this at the start of a frame for double buffering. See also [display AGU](canv_disp_agu.md).
 
@@ -43,9 +47,9 @@ For these examples, draw wrapping is enabled and your canvas is 200 pixels wide.
 
 * `vram_addr` - vram word address
 * `pix_idx` - pixel index within word
-* `clip` - high for pixel coordinate outside canvas (but see `draw_wrap`, above)
+* `valid` - high for valid addresses
 
-clip` allows you to avoid bad writes vram when coordinates are invalid. You should only trust the values of `vram_addr` and `pix_idx` when clip is low (0).
+You should only trust the values of `vram_addr` and `pix_idx` when `valid` is high (1). Use this to control when drawing writes to vram; see [Earthrise](earthrise.md) for an example of this. For example, if coordinates land outside the canvas (accounting for `draw_wrap`), valid will be low.
 
 ### Testing
 

@@ -6,14 +6,13 @@
 `timescale 1ns / 1ps
 
 module canv_disp_agu #(
-    parameter ADDRW=14,                 // vram address width (bits)
-    parameter CLUT_LAT=2,               // clut display read latency (cycles; min=1)
-    parameter CORDW=16,                 // signed coordinate width (bits)
-    parameter SHIFTW=3,                 // address shift width (bits)
-    parameter VRAM_LAT=2,               // vram display read latency (cycles; min=1)
-    parameter WORD=32,                  // machine word size (bits)
-    parameter PIX_IDXW=$clog2(WORD),    // pixel index width (bits)
-    parameter PIX_ADDRW=ADDRW+PIX_IDXW  // pixel address width
+    parameter ADDRW=14,               // vram address width (bits)
+    parameter CLUT_LAT=2,             // clut display read latency (cycles; min=1)
+    parameter CORDW=16,               // signed coordinate width (bits)
+    parameter SHIFTW=3,               // address shift width (bits)
+    parameter VRAM_LAT=2,             // vram display read latency (cycles; min=1)
+    parameter WORD=32,                // machine word size (bits)
+    localparam PIX_IDXW=$clog2(WORD)  // pixel index width (bits)
     ) (
     input  wire clk_pix,                        // pixel clock
     input  wire rst_pix,                        // reset in pixel clock domain
@@ -34,6 +33,7 @@ module canv_disp_agu #(
 
     localparam ADDR_LAT = VRAM_LAT + CLUT_LAT + 2;  // +1 for in_window reg; +1 for AGU stage 2
     localparam PAINT_OFFSET = VRAM_LAT;  // paint latency offset from ADDR_LAT
+    localparam PIX_ADDRW = ADDRW + PIX_IDXW;  // pixel address width
 
     // separate y and x from canvas/window signals
     reg [CORDW-1:0] canv_h, canv_w;  // canvas height and width

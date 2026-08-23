@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 // four-stage pipeline; ensure this matches Earthrise
-// you should only trust the values of vram_addr and pix_idx when clip is low
+// you should only trust the values of vram_addr and pix_idx when valid is high
 
 `default_nettype none
 `timescale 1ns / 1ps
@@ -13,8 +13,7 @@ module canv_draw_agu #(
     parameter CORDW=16,               // signed coordinate width (bits)
     parameter SHIFTW=3,               // address shift width (bits)
     parameter WORD=32,                // machine word size (bits)
-    parameter PIX_IDXW=$clog2(WORD),  // pixel index width (bits)
-    parameter PIX_OFFSETW=ADDRW+$clog2(WORD)  // pixel offset width (bits)
+    localparam PIX_IDXW=$clog2(WORD)  // pixel index width (bits)
     ) (
     input  wire clk,                         // clock
     input  wire rst,                         // reset
@@ -26,8 +25,10 @@ module canv_draw_agu #(
     input  wire draw_wrap,                   // wrap drawing addresses
     output reg  [ADDRW-1:0] vram_addr,       // vram word address
     output reg  [PIX_IDXW-1:0] pix_idx,      // pixel index within word
-    output reg  clip                         // high for pixel coordinate outside canvas
+    output reg  valid                        // high when vram address and pixel index are valid
     );
+
+    localparam PIX_OFFSETW = ADDRW+$clog2(WORD);  // pixel offset width (bits)
 
     // separate y and x from canvas/pixels signals
     reg [CORDW-1:0] canv_h, canv_w;  // canvas height and width
@@ -39,7 +40,7 @@ module canv_draw_agu #(
 
     // pipeline registers
     reg signed [CORDW-1:0] pix_x_p1, pix_y_p1, pix_x_p2;
-    reg clip_p2x, clip_p2y, clip_p3;
+    reg valid_p2x, valid_p2y, valid_p3;
     reg [PIX_OFFSETW-1:0] pix_mul_p2, pix_offset_p3;
 
     always @(posedge clk) begin
@@ -59,19 +60,19 @@ module canv_draw_agu #(
 
             // stage 2
             pix_x_p2 <= pix_x_p1;  // use pix_x in the next stage
-            // clipping handles zero width and height
-            clip_p2x <= (pix_x_p1 < 0 || pix_x_p1 >= canv_w);  // horizontal clip
-            clip_p2y <= (pix_y_p1 < 0 || pix_y_p1 >= canv_h);  // vertical clip
+            // valid handles zero width and height
+            valid_p2x <= (pix_x_p1 >= 0 && pix_x_p1 < canv_w);  // horizontal validity
+            valid_p2y <= (pix_y_p1 >= 0 && pix_y_p1 < canv_h);  // vertical validity
             pix_mul_p2 <= canv_w * pix_y_p1;  // unsigned result
 
             // stage 3
-            clip_p3 <= clip_p2x || clip_p2y;
+            valid_p3 <= valid_p2x && valid_p2y;
             /* verilator lint_off WIDTHEXPAND */
             pix_offset_p3 <= pix_mul_p2 + pix_x_p2;
             /* verilator lint_on WIDTHEXPAND */
 
             // stage 4
-            clip <= clip_p3;
+            valid <= valid_p3;
             /* verilator lint_off WIDTHTRUNC */
             /* verilator lint_off WIDTHEXPAND */
             vram_addr <= vram_addr_base + (pix_offset_p3 >> addr_shift);
@@ -79,13 +80,13 @@ module canv_draw_agu #(
             /* verilator lint_on WIDTHEXPAND */
             /* verilator lint_on WIDTHTRUNC */
         end
-        if (rst) begin  // reset clip so we don't use invalid addresses
-            pix_x_p1 <= -1;  // ensure we remain clipped in first cycle after reset
+        if (rst) begin  // reset valid so we don't use invalid addresses
+            pix_x_p1 <= -1;  // ensure valid is correct in first cycle after reset
             pix_y_p1 <= -1;
-            clip_p2x <= 1'b1;
-            clip_p2y <= 1'b1;
-            clip_p3  <= 1'b1;
-            clip     <= 1'b1;
+            valid_p2x <= 0;
+            valid_p2y <= 0;
+            valid_p3 <= 0;
+            valid <= 0;
         end
     end
 endmodule
