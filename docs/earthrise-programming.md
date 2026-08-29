@@ -1,6 +1,6 @@
 # Earthrise Programming
 
-This doc provides an overview and reference for Earthrise graphics programming. Take a look at [Isle Graphics](http://projectf.io/isle/graphics.html) for blog posts on this topic. You'll find reference documentation for the Earthrise hardware (Verilog module) in [graphics hardware](../hardware/gfx).
+This doc provides an overview and reference for Earthrise graphics programming. Take a look at [Isle 2D Drawing](https://projectf.io/isle/2d-drawing.html) for blog posts on this topic. For the hardware module, see [earthrise](../hardware/docs/earthrise.md) (Verilog module reference).
 
 ## Overview
 
@@ -129,7 +129,7 @@ _NB. Execution halts if you specify a degenerate triangle (common vertices)._
 
 ### Drawing Options
 
-Use up to 8 bits in the instruction to control drawing. Only _filled_ and _colour_ are currently supported.
+Use up to 8 bits in the instruction to control drawing.
 
 * Bit 0 - **Filled**
     - (0=outline, 1=fill) - line and pixel use fill colour if this option is used, but draw as for outline
@@ -155,10 +155,10 @@ You need two instructions to draw a shape with outline and fill, but you get to 
 
 **Control instructions** share opcode with colour registers, but use letters A-F for the second nibble.
 
-* nop (**0xCC00**) - no operations; **C**ontinue
-* stop (**0xCE00**) - **CE**ase
+* `nop` (**0xCC00**) - no operation; **C**ontinue
+* `stop` (**0xCE00**) - **CE**ase
 
-Add a STOP instruction at the end of your Earthrise drawing, otherwise Earthrise will keep executing instructions until it gets to the end of its command list.
+Add a `stop` instruction at the end of your Earthrise drawing, otherwise Earthrise will keep executing instructions until it gets to the end of its command list.
 
 Future Features:
 
@@ -321,10 +321,4 @@ In this case, `y2` was the same for both triangles because the diamond shape is 
 
 ### Stopping
 
-I recommend adding a STOP instruction at the end of your Earthrise instructions.
-
-```
-stop
-```
-
-Otherwise, Earthrise keeps executing until it reaches the end of the command list.
+I recommend adding a `stop` instruction at the end of your Earthrise instructions. Otherwise, Earthrise keeps executing until it reaches the end of the command list.

@@ -22,7 +22,8 @@ module canv_draw_agu #(
     input  wire [2*CORDW-1:0] pix_coord,     // pixel coordinate
     input  wire [ADDRW-1:0] vram_addr_base,  // base vram word address (not pipelined)
     input  wire [SHIFTW-1:0] addr_shift,     // address shift bits (not pipelined)
-    input  wire draw_wrap,                   // wrap drawing addresses
+    input  wire wraph,                       // horizontal draw wrap
+    input  wire wrapv,                       // vertical draw wrap
     output reg  [ADDRW-1:0] vram_addr,       // vram word address
     output reg  [PIX_IDXW-1:0] pix_idx,      // pixel index within word
     output reg  valid                        // high when vram address and pixel index are valid
@@ -46,17 +47,16 @@ module canv_draw_agu #(
     always @(posedge clk) begin
         if (en) begin
             // stage 1
-            if (draw_wrap) begin
+            if (wraph) begin
                 if (pix_x < 0) pix_x_p1 <= pix_x + canv_w;
                 else if (pix_x >= canv_w) pix_x_p1 <= pix_x - canv_w;
                 else pix_x_p1 <= pix_x;
+            end else pix_x_p1 <= pix_x;
+            if (wrapv) begin
                 if (pix_y < 0) pix_y_p1 <= pix_y + canv_h;
                 else if (pix_y >= canv_h) pix_y_p1 <= pix_y - canv_h;
                 else pix_y_p1 <= pix_y;
-            end else begin
-                pix_x_p1 <= pix_x;
-                pix_y_p1 <= pix_y;
-            end
+            end else pix_y_p1 <= pix_y;
 
             // stage 2
             pix_x_p2 <= pix_x_p1;  // use pix_x in the next stage

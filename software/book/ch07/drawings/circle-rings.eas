@@ -16,20 +16,20 @@ y0    0
 # ring 0 - outer
 fca   1
 r0   64
-draw circf ca
+draw circf whv
 
 # ring 1 - middle
 fca   2
 r0   48
-draw circf ca
+draw circf whv
 
 # ring 2 - inner
 fca   3
 r0   32
-draw circf ca
+draw circf whv
 
 # ring 3 - hole
 r0   16
-draw circf cb
+draw circf whv cb
 
 stop

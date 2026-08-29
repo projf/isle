@@ -53,10 +53,11 @@ module earthrise #(
     reg [WORD-1:0] canv_dims_r;
     reg [VRAM_ADDRW-1:0] vram_addr_base_r;
 
-    // drawing position and colour
+    // drawing position, colour, and wrap
     reg drawing;  // actively drawing a pixel
     reg signed [ICORDW-1:0] x, y;
     reg [COLRW-1:0] colr;  // drawing colour
+    reg wraph, wrapv;  // draw wrapping
 
     // instruction subfields
     reg [OPCW-1:0]  opc;    // opcode
@@ -65,8 +66,10 @@ module earthrise #(
     reg [COLRW-1:0] imm8;   // 8-bit immediate or options
 
     // option bit selects
-    localparam OPT_FILL = 0;  // filled shape
-    localparam OPT_COLR = 1;  // colour A or B
+    localparam OPT_FILL  = 0;  // filled shape
+    localparam OPT_COLR  = 1;  // colour A or B
+    localparam OPT_WRAPH = 4;  // horizontal draw wrap
+    localparam OPT_WRAPV = 5;  // vertical draw wrap
 
     // PC registers
     reg [ER_ADDRW+2:0] pc_reg;  // PC points to next instruction (extra bit to detect overflow)
@@ -264,7 +267,9 @@ module earthrise #(
                             // handle colour once for all shapes; fill colours work for shapes without filled forms
                             colr <= imm8[OPT_FILL] ? (imm8[OPT_COLR] ? fcb : fca)
                                                    : (imm8[OPT_COLR] ? lcb : lca);
-
+                            // draw wrapping
+                            wraph <= imm8[OPT_WRAPH];
+                            wrapv <= imm8[OPT_WRAPV];
                             // select drawing function
                             case (fun)
                                 'h0: begin  // draw pixel
@@ -638,7 +643,8 @@ module earthrise #(
         .pix_coord(pix_coord),
         .vram_addr_base(vram_addr_base_r),
         .addr_shift(addr_shift),
-        .draw_wrap(1'b1),  // TODO: derive from Earthrise draw options
+        .wraph(wraph),
+        .wrapv(wrapv),
         .vram_addr(vram_addr),
         .pix_idx(pix_idx),
         .valid(draw_addr_valid)

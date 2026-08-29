@@ -26,7 +26,7 @@ See the [Bitmap Graphics](http://projectf.io/isle/bitmap-graphics.html) blog pos
 * (`dx`, `dy`) - display position
 * `vram_addr_base` - base word address of canvas in vram
 * `addr_shift` - address shift bits (for colour depth)
-* `canv_dims` - canvas dimensions (width in lower 16 bits, height in upper 16 bits)
+* `canv_dims` - canvas dimensions (width in lower CORDW bits, height in upper CORDW bits)
 * `scale` - canvas scale
 * `scroll_coord` - canvas scroll coords
 * `win_start` - canvas window start coords
@@ -51,7 +51,7 @@ Address shift is set based on the bits per pixel:
 * 4 bit: `addr_shift = 3`
 * 8 bit: `addr_shift = 2`
 
-For example, 2 bits per pixel means you have 16 pixels per 32-bit word, and 16 is 2^4.
+For example, 2 bits per pixel results in `addr_shift = 4`, giving you 16 pixels per 32-bit word (16 is 2^4).
 
 The width of the canvas must be an integer number of words. The number of pixels in a word depends on the colour depth:
 
@@ -90,7 +90,7 @@ _NB. This module doesn't perform any memory boundary checks._
 |-------------------------------|
 ```
 
-The `win_start` and `win_end` inputs are a pair of signed 16-bit values, with the y-coordinate in the upper 16 bits. The `canv_dims` and `scale` inputs work in a similar way, with the vertical scale in the upper 16 bits and the horizontal scale in the lower 16 bits.
+The `win_start` and `win_end` inputs are a pair of signed values (of width CORDW), with the y-coordinate in the upper CORDW bits. The `canv_dims` and `scale` inputs work in a similar way, with the vertical scale in the upper CORDW bits and the horizontal scale in the lower CORDW bits.
 
 For example, a 256x192 canvas at 2x scale centred on 640x480 display:
 
@@ -124,7 +124,7 @@ Canvases support scrolling, which is a efficient way to pan an image or backgrou
 
 Isle canvases also wrap, so a small amount of vram can create the illusion of a vast image. When the user scrolls the image, we just need to draw one column (for horizontal scrolling) or line (for vertical scrolling) of pixels to memory, rather than rerendering the whole image.
 
-Scrolling is controlled by `scroll_coord`, a a pair of unsigned 16-bit values, one for the Y scroll position and one for the X. For example, if you want the top-left pixel in the window to be from canvas pixel (Y=5, X=42), `scroll_coord` would be set to `0x0005002A`.
+Scrolling is controlled by `scroll_coord`, a a pair of unsigned values, one for the Y scroll position and one for the X. For example, if `CORDW=16` and you want the top-left pixel in the window to be from canvas pixel (Y=5, X=42), `scroll_coord` would be set to `0x0005002A`.
 
 NB. scroll coordinates must fit within the canvas; so, greater or equal to zero, and less than canvas width/height.
 

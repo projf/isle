@@ -63,8 +63,8 @@ def asm_colr(reg, val):
     return instr
 
 
-def asm_draw(shape, colr):
-    """Assemble draw instruction."""
+def asm_draw(shape, *opts):
+    """Assemble draw instruction with options."""
     draw_map = {
         'pix':   [0x0, 0],
         'line':  [0x1, 0],
@@ -78,14 +78,28 @@ def asm_draw(shape, colr):
     if shape not in draw_map:
         raise ValueError(f"Unknown draw shape '{shape}'")
 
+    # bit mask and option group to detect duplicates
+    opt_map = {
+        'ca':  [0x00, 'colour'],
+        'cb':  [0x02, 'colour'],
+        'wh':  [0x10, 'wrap'],
+        'wv':  [0x20, 'wrap'],
+        'whv': [0x30, 'wrap']
+    }
+
     func = draw_map[shape][0]
-    fill = draw_map[shape][1]
-    if colr == 'ca':
-        val8 = 0 | fill
-    elif colr == 'cb':
-        val8 = 2 | fill
-    else:
-        raise ValueError(f"Unknown colour '{colr}'")
+    val8 = draw_map[shape][1]  # fill bit comes from shape mnemonic
+
+    opt_groups = []  # lets us check for duplicates
+
+    for opt in opts:
+        if opt not in opt_map:
+            raise ValueError(f"Unknown draw option '{opt}'")
+        bit_mask, group = opt_map[opt]
+        if group in opt_groups:
+            raise ValueError(f"Duplicate {group} option '{opt}'")
+        opt_groups.append(group)
+        val8 |= bit_mask
 
     instr = (0xD << 12) | (func << 8) | val8
     return instr
@@ -102,6 +116,12 @@ def asm_line(line):
 
     instr = tokens[0]  # case sensitive - we don't use .lower()
 
+    # draw instructions have a variable number of arguments
+    if instr == 'draw':
+        if len(tokens) == 1:
+            raise ValueError("Draw instruction needs a shape")
+        return asm_draw(*tokens[1:])  # pass tokens to draw
+
     if len(tokens) == 1:
         if instr == 'stop':
             return 0xCE00
@@ -116,11 +136,6 @@ def asm_line(line):
         if instr[0] in ('r', 'x', 'y'):  # coordinate
             val = parse_literal(tokens[1])
             return asm_coord(instr, val)
-        raise ValueError(f"Unknown instruction '{instr}'")
-
-    if len(tokens) == 3:
-        if instr == 'draw':
-            return asm_draw(tokens[1], tokens[2])
         raise ValueError(f"Unknown instruction '{instr}'")
 
     raise ValueError(f"Unknown instruction format '{line}'")
