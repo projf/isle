@@ -27,13 +27,13 @@ NB. Hardware registers must be written as **whole words** from the CPU side. Not
 * `DISP_DIMS_RO` - display dimensions (pixels)
 * `BMAP_DIMS_RO` - bitmap graphics dimensions (pixels)
 * `TEXT_DIMS_RO` - text dimensions (half-width characters)
-* `FRAME_FLAG_RO` - set once per frame (clear with FRAME_FLAG_SB)
+* `FRAME_FLAG_RO` - set once per frame (clear with FRAME_FLAG_CLR)
 * `FRAME_COUNT_RO` - 32-bit frame counter (takes years to roll over)
 * `TRAM_DEPTH_RO` - depth of tram (half-width characters)
 
 ### Strobe
 
-* `FRAME_FLAG_SB` - clears frame flag (FRAME_FLAG_RO)
+* `FRAME_FLAG_CLR` - clears the frame flag (FRAME_FLAG_RO)
 
 ### Read-Write
 

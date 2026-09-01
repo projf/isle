@@ -87,7 +87,7 @@ module dev_display #(
     localparam [DEV_ADDRW-1:0] TRAM_DEPTH_RO  = 'h0114 >> 2;
 
     // strobe
-    localparam [DEV_ADDRW-1:0] FRAME_FLAG_SB = 'h0180 >> 2;
+    localparam [DEV_ADDRW-1:0] FRAME_FLAG_CLR = 'h0180 >> 2;
 
     // read-write - offset from 0x200
     localparam RW_HWREG_CNT = 17;  // read-write hwreg count
@@ -310,7 +310,7 @@ module dev_display #(
     reg frame_flag, frame_flag_clr;
 
     // clear frame flag (strobe) - requires *word* write from CPU to work (sw instruction)
-    always @(*) frame_flag_clr = (&we_sys && (addr_sys == FRAME_FLAG_SB));
+    always @(*) frame_flag_clr = (&we_sys && (addr_sys == FRAME_FLAG_CLR));
 
     // update frame flag and counter
     always @(posedge clk_sys) begin

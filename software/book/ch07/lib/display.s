@@ -21,7 +21,7 @@ frame_waitn:
 0:
     lw   t0, FRAME_FLAG_RO(t6)  # load frame flag
     beqz t0, 0b  # loop if flag not set
-    sw   zero, FRAME_FLAG_SB(t6)  # clear frame flag (strobe)
+    sw   zero, FRAME_FLAG_CLR(t6)  # clear frame flag (strobe)
 
     addi a0, a0, -1  # decrement remaining frame count
     bnez a0, 0b  # loop if frames remain

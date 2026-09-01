@@ -18,7 +18,7 @@
 # strobe registers
 #
 
-.equ FRAME_FLAG_SB, 0x0180  # clear frame flag
+.equ FRAME_FLAG_CLR, 0x0180  # clear frame flag (strobe)
 
 
 #
