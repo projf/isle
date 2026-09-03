@@ -132,21 +132,21 @@ module ch07 #(
 
     // devices (temporarily using fixed slots; can we remove magic number to base addresses?)
     wire dev_cs      = (io_addr[BUSW-1:BUSW-4] == 'b0110);   // 0x6 ('b0110)
-    wire sys_dev_cs  = dev_cs & (io_addr[BUSW-5:BUSW-8] == 'h0);
-    wire disp_dev_cs = dev_cs & (io_addr[BUSW-5:BUSW-8] == 'h1);
-    wire uart_dev_cs = dev_cs & (io_addr[BUSW-5:BUSW-8] == 'h2);
-    wire er_dev_cs   = dev_cs & (io_addr[BUSW-5:BUSW-8] == 'h3);
+    wire dev_sys_cs  = dev_cs & (io_addr[BUSW-5:BUSW-8] == 'h0);
+    wire dev_disp_cs = dev_cs & (io_addr[BUSW-5:BUSW-8] == 'h1);
+    wire dev_uart_cs = dev_cs & (io_addr[BUSW-5:BUSW-8] == 'h2);
+    wire dev_er_cs   = dev_cs & (io_addr[BUSW-5:BUSW-8] == 'h3);
 
     // Write I/O busy
-    wire disp_dev_wbusy;  // display hwreg can be busy, so CPU might need to wait
-    wire io_wbusy = disp_dev_wbusy;  // will have other devices later
+    wire dev_disp_wbusy;  // display hwreg can be busy, so CPU might need to wait
+    wire io_wbusy = dev_disp_wbusy;  // will have other devices later
 
     // Read I/O busy
     reg io_rbusy;
-    wire uart_dev_rbusy;
+    wire dev_uart_rbusy;
     always @(*) begin
         case(1'b1)
-            uart_dev_cs: io_rbusy = uart_dev_rbusy;
+            dev_uart_cs: io_rbusy = dev_uart_rbusy;
             default: io_rbusy = 0;
         endcase
     end
@@ -157,10 +157,10 @@ module ch07 #(
     wire [WORD-1:0] stack_dout;
     wire [WORD-1:0] tram_dout_sys;
     wire [COLRW-1:0] clut_dout_sys;
-    wire [WORD-1:0] sys_dev_dout;
-    wire [WORD-1:0] disp_dev_dout;
-    wire [WORD-1:0] uart_dev_dout;
-    wire [WORD-1:0] er_dev_dout;
+    wire [WORD-1:0] dev_sys_dout;
+    wire [WORD-1:0] dev_disp_dout;
+    wire [WORD-1:0] dev_uart_dout;
+    wire [WORD-1:0] dev_er_dout;
 
     // doesn't yet capture bus faults within devices
     reg mapped_addr;
@@ -171,10 +171,10 @@ module ch07 #(
             stack_cs:    io_rdata = stack_dout;
             tram_cs:     io_rdata = tram_dout_sys;
             clut_cs:     io_rdata = {{WORD-COLRW{1'b0}}, clut_dout_sys};
-            sys_dev_cs:  io_rdata = sys_dev_dout;
-            disp_dev_cs: io_rdata = disp_dev_dout;
-            uart_dev_cs: io_rdata = uart_dev_dout;
-            er_dev_cs:   io_rdata = er_dev_dout;
+            dev_sys_cs:  io_rdata = dev_sys_dout;
+            dev_disp_cs: io_rdata = dev_disp_dout;
+            dev_uart_cs: io_rdata = dev_uart_dout;
+            dev_er_cs:   io_rdata = dev_er_dout;
             default: begin
                 io_rdata = 0;
                 mapped_addr = 0;  // unmapped address
@@ -352,11 +352,11 @@ module ch07 #(
     ) dev_sys_inst (
         .clk(clk_sys),
         .rst(rst_sys),
-        .we(|io_wstrb & sys_dev_cs),
-        .re(io_rstrb & sys_dev_cs),
+        .we(|io_wstrb & dev_sys_cs),
+        .re(io_rstrb & dev_sys_cs),
         .addr(io_addr[DEV_ADDRW-1:0]),
         .din(io_wdata),
-        .dout(sys_dev_dout)
+        .dout(dev_sys_dout)
     );
 
 
@@ -397,12 +397,12 @@ module ch07 #(
         .clk_pix(clk_pix),
         .rst_sys(rst_sys),
         .rst_pix(rst_pix),
-        .we_sys(io_wstrb & {BYTE_CNT{disp_dev_cs}}),
-        .re_sys(io_rstrb & disp_dev_cs),
+        .we_sys(io_wstrb & {BYTE_CNT{dev_disp_cs}}),
+        .re_sys(io_rstrb & dev_disp_cs),
         .addr_sys(io_addr[DEV_ADDRW-1:0]),
         .din_sys(io_wdata),
-        .dout_sys(disp_dev_dout),
-        .wbusy(disp_dev_wbusy),
+        .dout_sys(dev_disp_dout),
+        .wbusy(dev_disp_wbusy),
         .clut_addr(clut_addr_disp),
         .clut_dout(clut_dout_disp),
         .tram_addr(tram_addr_disp),
@@ -435,12 +435,12 @@ module ch07 #(
     ) dev_uart_inst (
         .clk(clk_sys),
         .rst(rst_sys),
-        .we(|io_wstrb & uart_dev_cs),
-        .re(io_rstrb & uart_dev_cs),
+        .we(|io_wstrb & dev_uart_cs),
+        .re(io_rstrb & dev_uart_cs),
         .addr(io_addr[DEV_ADDRW-1:0]),
         .din(io_wdata),
-        .dout(uart_dev_dout),
-        .rbusy(uart_dev_rbusy),
+        .dout(dev_uart_dout),
+        .rbusy(dev_uart_rbusy),
         .uart_rx(uart_rx),
         .uart_tx(uart_tx)
     );
@@ -465,11 +465,11 @@ module ch07 #(
         .clk(clk_sys),
         .rst(rst_sys),
         .en(1'b1),  // needed for future vram multiplexing
-        .we(io_wstrb & {4{er_dev_cs}}),  // byte write for command list only
-        .re(io_rstrb & er_dev_cs),
+        .we(io_wstrb & {4{dev_er_cs}}),  // byte write for command list only
+        .re(io_rstrb & dev_er_cs),
         .addr(io_addr[DEV_ADDRW-1:0]),
         .din(io_wdata),
-        .dout(er_dev_dout),
+        .dout(dev_er_dout),
         .vram_addr(er_vram_addr),
         .vram_din(er_vram_din),
         .vram_wmask(er_vram_wmask)

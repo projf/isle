@@ -115,19 +115,19 @@ module ch06 #(
     wire io_rstrb = cpu_rstrb;
 
     // address decoding for chip select signals
-    wire sysram_cs    = (io_addr[BUSW-1:BUSW-2] == 'b10);
-    wire tram_cs      = (io_addr[BUSW-1:BUSW-2] == 'b01);
-    wire clut_cs      = (io_addr[BUSW-1:BUSW-2] == 'b00);
-    wire sys_dev_cs   = (io_addr[BUSW-1:BUSW-4] == 'b1100);  // 0xC
-    wire gfx_dev_cs   = (io_addr[BUSW-1:BUSW-4] == 'b1101);  // 0xD
-    wire uart_dev_cs  = (io_addr[BUSW-1:BUSW-4] == 'b1110);  // 0xE
+    wire sysram_cs     = (io_addr[BUSW-1:BUSW-2] == 'b10);
+    wire tram_cs       = (io_addr[BUSW-1:BUSW-2] == 'b01);
+    wire clut_cs       = (io_addr[BUSW-1:BUSW-2] == 'b00);
+    wire dev_sys_cs    = (io_addr[BUSW-1:BUSW-4] == 'b1100);  // 0xC
+    wire disp_hwreg_cs = (io_addr[BUSW-1:BUSW-4] == 'b1101);  // 0xD
+    wire dev_uart_cs   = (io_addr[BUSW-1:BUSW-4] == 'b1110);  // 0xE
 
     // CPU IO busy
     reg  io_rbusy;
-    wire uart_dev_rbusy;
+    wire dev_uart_rbusy;
     always @(*) begin
         case(1'b1)
-            uart_dev_cs: io_rbusy = uart_dev_rbusy;
+            dev_uart_cs: io_rbusy = dev_uart_rbusy;
             default: io_rbusy = 0;
         endcase
     end
@@ -139,19 +139,19 @@ module ch06 #(
     wire [WORD-1:0] sysram_dout;
     wire [WORD-1:0] tram_dout_sys;
     wire [COLRW-1:0] clut_dout_sys;
-    wire [WORD-1:0] sys_dev_dout;
-    wire [WORD-1:0] gfx_dev_dout;
-    wire [WORD-1:0] uart_dev_dout;
+    wire [WORD-1:0] dev_sys_dout;
+    wire [WORD-1:0] disp_hwreg_dout;
+    wire [WORD-1:0] dev_uart_dout;
 
     always @(*) begin
         case(1'b1)
-            sysram_cs:   io_rdata = sysram_dout;
-            tram_cs:     io_rdata = tram_dout_sys;
-            clut_cs:     io_rdata = {{WORD-COLRW{1'b0}}, clut_dout_sys};
-            sys_dev_cs:  io_rdata = sys_dev_dout;
-            gfx_dev_cs:  io_rdata = gfx_dev_dout;
-            uart_dev_cs: io_rdata = uart_dev_dout;
-            default:     io_rdata = 0;
+            sysram_cs:     io_rdata = sysram_dout;
+            tram_cs:       io_rdata = tram_dout_sys;
+            clut_cs:       io_rdata = {{WORD-COLRW{1'b0}}, clut_dout_sys};
+            dev_sys_cs:    io_rdata = dev_sys_dout;
+            disp_hwreg_cs: io_rdata = disp_hwreg_dout;
+            dev_uart_cs:   io_rdata = dev_uart_dout;
+            default:       io_rdata = 0;
         endcase
     end
     assign cpu_rdata = io_rdata;
@@ -281,31 +281,31 @@ module ch06 #(
     ) dev_sys_inst (
         .clk(clk_sys),
         .rst(rst_sys),
-        .we(|io_wstrb & sys_dev_cs),
-        .re(io_rstrb & sys_dev_cs),
+        .we(|io_wstrb & dev_sys_cs),
+        .re(io_rstrb & dev_sys_cs),
         .addr(io_addr[DEV_ADDRW-1:0]),
         .din(io_wdata),
-        .dout(sys_dev_dout)
+        .dout(dev_sys_dout)
     );
 
 
     //
-    // Graphics Device
+    // Display Hardware Registes
     //
 
-    gfx_dev #(
+    disp_hwreg #(
         .BYTE_CNT(BYTE_CNT),
         .CORDW(CORDW),
         .DEV_ADDRW(DEV_ADDRW),
         .WORD(WORD)
-    ) gfx_dev_inst (
+    ) disp_hwreg_inst (
         .clk_sys(clk_sys),
         .rst_sys(rst_sys),
-        .we_sys(io_wstrb & {BYTE_CNT{gfx_dev_cs}}),
-        .re_sys(io_rstrb & gfx_dev_cs),
+        .we_sys(io_wstrb & {BYTE_CNT{disp_hwreg_cs}}),
+        .re_sys(io_rstrb & disp_hwreg_cs),
         .addr_sys(io_addr[DEV_ADDRW-1:0]),
         .din_sys(io_wdata),
-        .dout_sys(gfx_dev_dout),
+        .dout_sys(disp_hwreg_dout),
         .disp_hres(HRES),
         .disp_vres(VRES),
         .frame_start_sys(frame_start_sys),
@@ -329,12 +329,12 @@ module ch06 #(
     ) dev_uart_inst (
         .clk(clk_sys),
         .rst(rst_sys),
-        .we(|io_wstrb & uart_dev_cs),
-        .re(io_rstrb & uart_dev_cs),
+        .we(|io_wstrb & dev_uart_cs),
+        .re(io_rstrb & dev_uart_cs),
         .addr(io_addr[DEV_ADDRW-1:0]),
         .din(io_wdata),
-        .dout(uart_dev_dout),
-        .rbusy(uart_dev_rbusy),
+        .dout(dev_uart_dout),
+        .rbusy(dev_uart_rbusy),
         .uart_rx(uart_rx),
         .uart_tx(uart_tx)
     );

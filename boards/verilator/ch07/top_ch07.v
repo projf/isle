@@ -29,6 +29,7 @@ module top_ch07 #(
 
     // software params
     localparam FILE_SOFT = {SW, "/book/ch07/circles.mem"};
+    // localparam FILE_SOFT = {SW, "/book/ch07/resolution.mem"};
 
     // display params
     localparam FILE_PAL = {RES, "/palettes/go-16.mem"};

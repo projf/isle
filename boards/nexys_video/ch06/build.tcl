@@ -16,7 +16,7 @@ read_verilog "top_${design_name}.v"
 
 # Common Verilog
 read_verilog "${lib_dir}/book/ch06/ch06.v"
-read_verilog "${lib_dir}/book/ch06/gfx_dev.v"
+read_verilog "${lib_dir}/book/ch06/disp_hwreg.v"
 read_verilog "${lib_dir}/cpu/FemtoRV32.v"
 read_verilog "${lib_dir}/devs/dev_sys.v"
 read_verilog "${lib_dir}/devs/dev_uart.v"

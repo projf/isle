@@ -87,9 +87,6 @@ module dev_earthrise #(
     end
 
     // Earthrise status
-    /* verilator lint_off UNUSEDSIGNAL */
-    wire er_done;  // not currently used, but could be interrupt later
-    /* verilator lint_on UNUSEDSIGNAL */
     wire er_busy, er_instr_invalid;
     wire [WORD-1:0] er_cycle_cnt;
 
@@ -190,7 +187,6 @@ module dev_earthrise #(
         .vram_din(vram_din),
         .vram_wmask(vram_wmask),
         .busy(er_busy),
-        .done(er_done),
         .cycle_cnt(er_cycle_cnt),
         .instr_invalid(er_instr_invalid)
     );

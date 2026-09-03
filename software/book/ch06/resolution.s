@@ -21,7 +21,7 @@ _start:
     li a2, ISLE_COLR  # text colour
     call tm_print
 
-    li t6, GFX_DEV
+    li t6, DISP_HWREG
     lw s1, DISP_DIMS(t6)
     lw s2, TEXT_DIMS(t6)
 

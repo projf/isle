@@ -49,7 +49,7 @@ def scrolled(base, scroll_coord):
 SCALE_0X0Y = CanvasParams (
     vram_addr_base = 0x0,
     addr_shift = 3,  # 16 colour
-    canv_dims = Coords(x=24, y=15),
+    canv_dims = Coords(x=23, y=15),
     disp_start = Coords(x=-7, y=-2),
     disp_end = Coords(x=23, y=14),
     win_start = Coords(x=0, y=0),  # top left of display
@@ -60,7 +60,7 @@ SCALE_0X0Y = CanvasParams (
 SCALE_1X1Y = CanvasParams (
     vram_addr_base = 0xC03,
     addr_shift = 5,  # 2 colour
-    canv_dims = Coords(x=32, y=6),
+    canv_dims = Coords(x=37, y=6),
     disp_start = Coords(x=-7, y=-2),
     disp_end = Coords(x=48, y=7),
     win_start = Coords(x=2, y=1),
@@ -104,7 +104,7 @@ SCALE_3X5Y = CanvasParams (
 LARGE_CANV = CanvasParams (
     vram_addr_base = 0x201,
     addr_shift = 4,  # 4 colour
-    canv_dims = Coords(x=96, y=45),
+    canv_dims = Coords(x=95, y=45),
     disp_start = Coords(x=-15, y=-2),
     disp_end = Coords(x=67, y=38),
     win_start = Coords(x=1, y=1),  # 1 in from corner
@@ -145,11 +145,6 @@ async def setup_dut(dut, p):
     """Setup DUT with clock, reset, and initial values."""
     Clock(dut.clk_pix, PIX_TIME, unit="ns").start()
 
-    pix_per_word = 1 << p.addr_shift
-    assert p.canv_dims.x % pix_per_word == 0, (
-        f"bad test data: canvas width {p.canv_dims.x} must be a multiple of "
-        f"{pix_per_word} pixels per word"
-    )
     assert 0 <= p.scroll_coord.x < p.canv_dims.x and 0 <= p.scroll_coord.y < p.canv_dims.y, (
         f"bad test data: scroll coord {p.scroll_coord} doesn't fit canvas {p.canv_dims}"
     )

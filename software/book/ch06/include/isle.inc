@@ -8,9 +8,9 @@
 # 64 KiB Memory Map
 .equ CLUT_BASE,  0x0000  # colour lookup table base address
 .equ TRAM_BASE,  0x4000  # text mode ram (tram) base address
-.equ SYS_DEV,    0xC000  # system device
-.equ GFX_DEV,    0xD000  # graphics device
-.equ UART_DEV,   0xE000  # uart device
+.equ DEV_SYS,    0xC000  # system device
+.equ DISP_HWREG, 0xD000  # display hardware registers
+.equ DEV_UART,   0xE000  # uart device
 
 # system device
 .equ TIMER_0,     0x0300

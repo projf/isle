@@ -72,6 +72,33 @@ y2 180
 draw trif cb
 draw tri ca
 
+# triangle 3 - degenerate point
+x0 22
+y0 18
+x1 22
+y1 18
+x2 22
+y2 18
+draw trif cb
+
+# triangle 4 - horizontal line
+x0 24
+y0 18
+x1 28
+y1 18
+x2 32
+y2 18
+draw trif ca
+
+# triangle 5 - vertical line
+x0 22
+y0 20
+x1 22
+y1 24
+x2 22
+y2 28
+draw trif cb
+
 
 #
 # rects

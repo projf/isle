@@ -32,7 +32,8 @@ module canv_draw_agu #(
     localparam PIX_OFFSETW = ADDRW+$clog2(WORD);  // pixel offset width (bits)
 
     // separate y and x from canvas/pixels signals
-    reg [CORDW-1:0] canv_h, canv_w;  // canvas height and width
+    // dimensions are declared signed so comparisons with coordinates are signed
+    reg signed [CORDW-1:0] canv_h, canv_w;  // canvas height and width
     reg signed [CORDW-1:0] pix_x, pix_y;  // pixel coordinates
     always @(*) begin
         {canv_h, canv_w} = canv_dims;
@@ -63,22 +64,18 @@ module canv_draw_agu #(
             // valid handles zero width and height
             valid_p2x <= (pix_x_p1 >= 0 && pix_x_p1 < canv_w);  // horizontal validity
             valid_p2y <= (pix_y_p1 >= 0 && pix_y_p1 < canv_h);  // vertical validity
-            pix_mul_p2 <= canv_w * pix_y_p1;  // unsigned result
+            pix_mul_p2 <= canv_w * pix_y_p1;
 
             // stage 3
             valid_p3 <= valid_p2x && valid_p2y;
-            /* verilator lint_off WIDTHEXPAND */
-            pix_offset_p3 <= pix_mul_p2 + pix_x_p2;
-            /* verilator lint_on WIDTHEXPAND */
+            pix_offset_p3 <= pix_mul_p2 + {{PIX_OFFSETW-CORDW{1'b0}}, pix_x_p2};
 
             // stage 4
             valid <= valid_p3;
-            /* verilator lint_off WIDTHTRUNC */
-            /* verilator lint_off WIDTHEXPAND */
+            /* verilator lint_off WIDTHTRUNC */ /* verilator lint_off WIDTHEXPAND */
             vram_addr <= vram_addr_base + (pix_offset_p3 >> addr_shift);
             pix_idx <= pix_offset_p3 & ((1 << addr_shift) - 1);
-            /* verilator lint_on WIDTHEXPAND */
-            /* verilator lint_on WIDTHTRUNC */
+            /* verilator lint_on WIDTHEXPAND */ /* verilator lint_on WIDTHTRUNC */
         end
         if (rst) begin  // reset valid so we don't use invalid addresses
             pix_x_p1 <= -1;  // ensure valid is correct in first cycle after reset

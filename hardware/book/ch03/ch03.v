@@ -120,7 +120,8 @@ module ch03 #(
     assign erlist_addr_er = er_pc[ER_ADDRW+1:2];  // command list is word addressed
 
     /* verilator lint_off UNUSEDSIGNAL */
-    wire er_busy, er_done, er_instr_invalid;  // handy for simulation
+    wire er_busy, er_instr_invalid;  // handy for simulation
+    wire [WORD-1:0] er_cycle_cnt;
     /* verilator lint_on UNUSEDSIGNAL */
 
     // delay counter to make drawing process visible
@@ -160,10 +161,7 @@ module ch03 #(
         .vram_din(vram_din_sys),
         .vram_wmask(vram_wmask_sys),
         .busy(er_busy),
-        .done(er_done),
-        /* verilator lint_off PINCONNECTEMPTY */
-        .cycle_cnt(),
-        /* verilator lint_on PINCONNECTEMPTY */
+        .cycle_cnt(er_cycle_cnt),
         .instr_invalid(er_instr_invalid)
     );
 

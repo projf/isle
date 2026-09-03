@@ -18,17 +18,17 @@ The textmode module depends on three other modules:
 
 ## Parameters
 
-* `CORDW` - signed coordinate width (bits)
-* `WORD` - machine word size (bits)
 * `ADDRW` - tram address width (bits)
 * `CIDXW` - colour index width (bits)
 * `CLUT_LAT` - CLUT latency (cycles)
+* `CORDW` - signed coordinate width (bits)
 * `FILE_FONT` - font glyph ROM file
 * `FONT_COUNT` - number of glyphs in font ROM
 * `GLYPH_HEIGHT` - glyph height (pixels)
 * `GLYPH_WIDTH` - half-width glyph width (pixels; min=8)
 * `TRAM_DEPTH` - tram depth (chars)
 * `TRAM_LAT` - tram latency (cycles; min=1, max=2)
+* `WORD` - machine word size (bits)
 
 For Isle, `CORDW` must be set to **16**, `WORD` must be set to **32**, and `CIDXW` must be set to 4.
 
@@ -44,12 +44,12 @@ See [font glyph](font_glyph.md) for details on font and glyph parameters.
 * `rst_pix` - reset text mode state machine
 * `start` - start textmode rendering (before active painting area)
 * `(dx, dy)` - display position
-* `scroll_offset` - tram address scroll offset
-* `text_hres` - text width (chars)
-* `text_vres` - text height (chars)
 * `win_start` - text window start coords
 * `win_end` - text window end coords
 * `scale` - text scale
+* `text_hres` - text width (chars)
+* `text_vres` - text height (chars)
+* `scroll_offset` - tram address scroll offset
 * `tram_data` - character data from tram
 
 You can use `scroll_offset` to vertically scroll the text mode display. For example, if text mode is 84 characters wide, add 84 to `scroll_offset` to scroll down one line. The scroll offset is not signed. To scroll up one line, add one less than the height of the text mode; for example, if text mode is 84x24, set `scroll_offset` to 23*84.

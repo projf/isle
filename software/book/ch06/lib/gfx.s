@@ -16,7 +16,7 @@
 #
 frame_waitn:
     beqz a0, 1f  # zero frames?
-    li   t6, GFX_DEV  # hwreg base addr
+    li   t6, DISP_HWREG  # hwreg base addr
 0:
     lw   t0, FRAME_FLAG(t6)  # load frame flag
     beqz t0, 0b  # loop if flag not set

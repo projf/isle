@@ -2,7 +2,7 @@
 
 The Earthrise device module [[dev_earthrise.v](../devs/dev_earthrise.v)] provides a CPU interface to the Earthrise drawing engine via its command list (erlist) and hardware registers.
 
-See [earthrise.v](../gfx/earthrise.v) and [Earthrise Programming](../../docs/earthrise-programming.md) for more details of the drawing engine itself. This Earthrise device and this documentation focus on the CPU control interface.
+See [earthrise](earthrise.md) and [Earthrise Programming](../../docs/earthrise-programming.md) for more details of the drawing engine itself. This Earthrise device and this documentation focus on the CPU control interface.
 
 ## Earthrise Command List
 

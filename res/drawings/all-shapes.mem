@@ -19,51 +19,62 @@ D303500C  // 0040: y2 12         ; draw trif cb
 305020B8  // 0048: x1 184        ; y1  80
 50B4406C  // 004C: x2 108        ; y2 180
 D300D303  // 0050: draw trif cb  ; draw tri ca
-C10BC00C  // 0054: lca 0xC       ; lcb 0xB
-107400E0  // 0058: x0 224        ; y0 116
-304C2020  // 005C: x1  32        ; y1  76
-0021D400  // 0060: draw rect ca  ; x0  33
-20DF104D  // 0064: y0  77        ; x1 223
-D4023073  // 0068: y1 115        ; draw rect cb
-C305C204  // 006C: fca 0x4       ; fcb 0x5
-1030013C  // 0070: x0 316        ; y0  48
-30142120  // 0074: x1 288        ; y1  20
-D400D401  // 0078: draw rectf ca ; draw rect ca
-10180124  // 007C: x0 292        ; y0  24
-302C2138  // 0080: x1 312        ; y1  44
-D402D403  // 0084: draw rectf cb ; draw rect cb
-C004CC00  // 0088: nop           ; lca 4
-000CC10A  // 008C: lcb 10        ; x0 12
-D0001006  // 0090: y0  6         ; draw pix ca
-D000000D  // 0094: x0 13         ; draw pix ca
-D000000E  // 0098: x0 14         ; draw pix ca
-1007000C  // 009C: x0 12         ; y0  7
-1008D000  // 00A0: draw pix ca   ; y0  8
-000DD000  // 00A4: draw pix ca   ; x0 13
-000CD000  // 00A8: draw pix ca   ; x0 12
-D0001009  // 00AC: y0  9         ; draw pix ca
-D000100A  // 00B0: y0 10         ; draw pix ca
-10080012  // 00B4: x0 18         ; y0  8
-0FFFD002  // 00B8: draw pix cb   ; x0 -1
-D0001FFE  // 00BC: y0 -2         ; draw pix ca
-C108C00A  // 00C0: lca 0xA       ; lcb 0x8
-100300DC  // 00C4: x0 220        ; y0   3
-30032023  // 00C8: x1  35        ; y1   3
-10BCD100  // 00CC: draw line ca  ; y0 188
-D10230BC  // 00D0: y1 188        ; draw line cb
-10080016  // 00D4: x0 22         ; y0  8
-30082016  // 00D8: x1 22         ; y1  8
-C00AD100  // 00DC: draw line ca  ; lca 0xA
-0080C106  // 00E0: lcb 0x6       ; x0 128
-20401060  // 00E4: y0  96        ; r0  64
-2020D200  // 00E8: draw circ ca  ; r0 32
-2010D202  // 00EC: draw circ cb  ; r0 16
-C200D201  // 00F0: draw circf ca ; fca 0
-D2012008  // 00F4: r0 8          ; draw circf ca
-C00CD202  // 00F8: draw circ cb  ; lca 0xC
-C204C10B  // 00FC: lcb 0xB       ; fca 0x4
-012EC305  // 0100: fcb 0x5       ; x0 302
-20141098  // 0104: y0 152        ; r0  20
-D200D201  // 0108: draw circf ca ; draw circ ca
-D203200E  // 010C: r0 14         ; draw circf cb
-CE00D202  // 0110: draw circ cb  ; stop
+10120016  // 0054: x0 22         ; y0 18
+30122016  // 0058: x1 22         ; y1 18
+50124016  // 005C: x2 22         ; y2 18
+0018D303  // 0060: draw trif cb  ; x0 24
+201C1012  // 0064: y0 18         ; x1 28
+40203012  // 0068: y1 18         ; x2 32
+D3015012  // 006C: y2 18         ; draw trif ca
+10140016  // 0070: x0 22         ; y0 20
+30182016  // 0074: x1 22         ; y1 24
+501C4016  // 0078: x2 22         ; y2 28
+C00CD303  // 007C: draw trif cb  ; lca 0xC
+00E0C10B  // 0080: lcb 0xB       ; x0 224
+20201074  // 0084: y0 116        ; x1  32
+D400304C  // 0088: y1  76        ; draw rect ca
+104D0021  // 008C: x0  33        ; y0  77
+307320DF  // 0090: x1 223        ; y1 115
+C204D402  // 0094: draw rect cb  ; fca 0x4
+013CC305  // 0098: fcb 0x5       ; x0 316
+21201030  // 009C: y0  48        ; x1 288
+D4013014  // 00A0: y1  20        ; draw rectf ca
+0124D400  // 00A4: draw rect ca  ; x0 292
+21381018  // 00A8: y0  24        ; x1 312
+D403302C  // 00AC: y1  44        ; draw rectf cb
+CC00D402  // 00B0: draw rect cb  ; nop
+C10AC004  // 00B4: lca 4         ; lcb 10
+1006000C  // 00B8: x0 12         ; y0  6
+000DD000  // 00BC: draw pix ca   ; x0 13
+000ED000  // 00C0: draw pix ca   ; x0 14
+000CD000  // 00C4: draw pix ca   ; x0 12
+D0001007  // 00C8: y0  7         ; draw pix ca
+D0001008  // 00CC: y0  8         ; draw pix ca
+D000000D  // 00D0: x0 13         ; draw pix ca
+1009000C  // 00D4: x0 12         ; y0  9
+100AD000  // 00D8: draw pix ca   ; y0 10
+0012D000  // 00DC: draw pix ca   ; x0 18
+D0021008  // 00E0: y0  8         ; draw pix cb
+1FFE0FFF  // 00E4: x0 -1         ; y0 -2
+C00AD000  // 00E8: draw pix ca   ; lca 0xA
+00DCC108  // 00EC: lcb 0x8       ; x0 220
+20231003  // 00F0: y0   3        ; x1  35
+D1003003  // 00F4: y1   3        ; draw line ca
+30BC10BC  // 00F8: y0 188        ; y1 188
+0016D102  // 00FC: draw line cb  ; x0 22
+20161008  // 0100: y0  8         ; x1 22
+D1003008  // 0104: y1  8         ; draw line ca
+C106C00A  // 0108: lca 0xA       ; lcb 0x6
+10600080  // 010C: x0 128        ; y0  96
+D2002040  // 0110: r0  64        ; draw circ ca
+D2022020  // 0114: r0 32         ; draw circ cb
+D2012010  // 0118: r0 16         ; draw circf ca
+2008C200  // 011C: fca 0         ; r0 8
+D202D201  // 0120: draw circf ca ; draw circ cb
+C10BC00C  // 0124: lca 0xC       ; lcb 0xB
+C305C204  // 0128: fca 0x4       ; fcb 0x5
+1098012E  // 012C: x0 302        ; y0 152
+D2012014  // 0130: r0  20        ; draw circf ca
+200ED200  // 0134: draw circ ca  ; r0 14
+D202D203  // 0138: draw circf cb ; draw circ cb
+CE00CE00  // 013C: stop          ; 

@@ -9,7 +9,7 @@ See [boards](../../../boards/) for build and programming instructions. See [Seri
 The chapter 6 design uses the following Verilog modules:
 
 * `book/ch06/ch06.v`
-* `book/ch06/gfx_dev.v`
+* `book/ch06/disp_hwreg.v`
 * `cpu/FemtoRV32.v`
 * `devs/dev_sys.v`
 * `devs/dev_uart.v`

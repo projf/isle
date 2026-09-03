@@ -45,7 +45,7 @@ tm_backspace:
 tm_clr:
     sh zero, 0(a0)  # set cursor to (0,0)
 
-    li t6, GFX_DEV
+    li t6, DISP_HWREG
     lw t5, TRAM_DEPTH(t6)  # depth of tram in chars (words)
     slli t5, t5, 2  # convert depth in chars to bytes
     li t6, TRAM_BASE
@@ -69,7 +69,7 @@ tm_clr_line:
     lhu  t0,  0(a0)  # load cursor
     sw   t0,  4(sp)  # save existing cursor so we can restore it after clear
 
-    li t6, GFX_DEV
+    li t6, DISP_HWREG
     lhu s1, TEXT_DIMS(t6)  # load width from lower half of TEXT_DIMS
 
 0:
@@ -99,7 +99,7 @@ tm_cur_decx:
     sw   ra, 12(sp)
     sw   s1,  8(sp)
 
-    li t6, GFX_DEV
+    li t6, DISP_HWREG
     lhu t1, TEXT_DIMS(t6)  # load width from lower half of TEXT_DIMS
 
     lbu s1, 0(a0)    # load x-coord
@@ -122,7 +122,7 @@ tm_cur_decx:
 #   return: cursor address
 #
 tm_cur_decy:
-    li t6, GFX_DEV
+    li t6, DISP_HWREG
     lhu t2, TEXT_DIMS+2(t6)  # load height from upper half of TEXT_DIMS
 
     lbu t5, 1(a0)    # load y-coord
@@ -143,7 +143,7 @@ tm_cur_incx:
     sw   ra, 12(sp)
     sw   s1,  8(sp)
 
-    li t6, GFX_DEV
+    li t6, DISP_HWREG
     lhu t1, TEXT_DIMS(t6)  # load width from lower half of TEXT_DIMS
 
     lbu s1, 0(a0)   # load x-coord
@@ -166,7 +166,7 @@ tm_cur_incx:
 #   return: cursor address
 #
 tm_cur_incy:
-    li t6, GFX_DEV
+    li t6, DISP_HWREG
     lhu t2, TEXT_DIMS+2(t6)  # load height from upper half of TEXT_DIMS
 
     lbu t5, 1(a0)   # load y-coord
@@ -269,7 +269,7 @@ tm_put:
     lbu t4, 0(a0)  # x-coord
     lbu t5, 1(a0)  # y-coord
 
-    li t6, GFX_DEV
+    li t6, DISP_HWREG
     lhu t1, TEXT_DIMS(t6)  # load width from lower half of TEXT_DIMS
     lw t3, TRAM_DEPTH(t6)  # depth of tram in chars (words)
 

@@ -28,7 +28,7 @@ Breaking down a drawing example **0xD301**:
 * The 4-bit function is **0x3** - triangle
 * The 8-bit binary options are **00000001** - a filled triangle in colour A
 
-The triangle's coordinates and colour come from the registers. The general principle for drawing is to set coordinates and colour registers, then issues a drawing instrctions.
+The triangle's coordinates and colour come from the registers. The general principle for drawing is to set coordinates and colour registers, then issues a drawing instructions.
 
 You can generate Earthrise instructions through the Isle system library (currently being worked on) or by using the provided Earthrise assembler [erasm](../tools/erasm/), which converts mnemonics, such as `y1  24` to underlying Earthrise instructions.
 
@@ -120,12 +120,11 @@ A drawing instruction has the **0xD** opcode followed by the function representi
     - does nothing if radius is zero or negative
 * triangle (**0xD3**)
     - draw a triangle with three vertices `(x0, y0)`, `(x1, y1)`, `(x2, y2)`
+    - triangles where all three vertices are the same render as a single point
 * rect (**0xD4**)
     - draw a rect with opposite corners `(x0, y0)` and `(x1, y1)`
 
 Drawing instructions leave the coordinate and colour registers untouched.
-
-_NB. Execution halts if you specify a degenerate triangle (common vertices)._
 
 ### Drawing Options
 
