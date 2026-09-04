@@ -347,7 +347,7 @@ module ch07 #(
     ) dev_sys_inst (
         .clk(clk_sys),
         .rst(rst_sys),
-        .we(|io_wstrb & dev_sys_cs),
+        .we(&io_wstrb & dev_sys_cs),
         .re(io_rstrb & dev_sys_cs),
         .addr(io_addr[DEV_ADDRW-1:0]),
         .din(io_wdata),
@@ -430,7 +430,7 @@ module ch07 #(
     ) dev_uart_inst (
         .clk(clk_sys),
         .rst(rst_sys),
-        .we(|io_wstrb & dev_uart_cs),
+        .we(&io_wstrb & dev_uart_cs),
         .re(io_rstrb & dev_uart_cs),
         .addr(io_addr[DEV_ADDRW-1:0]),
         .din(io_wdata),
