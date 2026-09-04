@@ -22,14 +22,13 @@ module dev_sys #(
     );
 
     // HWREG_ADDR - must match software - word addressing (hence right shift)
-    localparam [DEV_ADDRW-1:0] TIMER_0     = 'h300 >> 2;
+    localparam [DEV_ADDRW-1:0] TIMER_0_RO  = 'h300 >> 2;
     localparam [DEV_ADDRW-1:0] TIMER_0_CLR = 'h310 >> 2;
-    localparam [DEV_ADDRW-1:0] LFSR_32     = 'h320 >> 2;
+    localparam [DEV_ADDRW-1:0] LFSR_32_RO  = 'h320 >> 2;
     // END_HWREG_ADDR
 
     // timer reset signals (strobes)
-    reg timer_0_clr;
-    always @(*) timer_0_clr = (we && (addr == TIMER_0_CLR));
+    wire timer_0_clr = (we && (addr == TIMER_0_CLR));
 
     // timer divider counters
     reg [$clog2(TIMER_DIV)-1:0] cnt_timer_0;
@@ -66,10 +65,11 @@ module dev_sys #(
 
     // HW Reg MMIO
     always @(posedge clk) begin
-        if (re) begin
+        if (rst) dout <= 0;
+        else if (re) begin
             case (addr)
-                TIMER_0: dout <= timer_0;
-                LFSR_32: dout <= lfsr_32;
+                TIMER_0_RO: dout <= timer_0;
+                LFSR_32_RO: dout <= lfsr_32;
                 default: dout <= 0;
             endcase
         end
