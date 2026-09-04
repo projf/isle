@@ -218,7 +218,7 @@ module earthrise #(
                         pc_debug <= pc_reg[ER_ADDRW+1:0];  // save address of current instr for debug
                         opc <= instr[INSTRW-1:INSTRW-OPCW];
                         imm12 <= instr[IMM12-1:0];
-                        fun <= instr[COLRW+FUNW-1:COLRW];
+                        fun <= instr[IMM8+FUNW-1:IMM8];
                         imm8 <= instr[IMM8-1:0];
                         cnt_draw <= 0;  // draw counter
                         cnt_fill <= 0;  // fill counter
