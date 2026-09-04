@@ -52,6 +52,7 @@ module dev_uart #(
     wire rx_fifo_re = re && !rx_fifo_empty && (addr == UART_RX_DAT);
     wire [UART_DATAW-1:0] rx_fifo_din = rx_data;
     wire [UART_DATAW-1:0] rx_fifo_dout;
+    wire rx_fifo_dout_valid;
     wire [UART_FIFO_RX_ADDRW-1:0] rx_fifo_len;
 
     reg uart_rx_rdy;  // flag for RX read ready (takes one cycle)
@@ -67,6 +68,7 @@ module dev_uart #(
         .re(rx_fifo_re),
         .din(rx_fifo_din),
         .dout(rx_fifo_dout),
+        .dout_valid(rx_fifo_dout_valid),
         .len(rx_fifo_len),
         .empty(rx_fifo_empty),
         /* verilator lint_off PINCONNECTEMPTY */
@@ -108,7 +110,7 @@ module dev_uart #(
         if (rst) rx_fifo_en <= 0;  // rx_fifo_en is used with rx_fifo.rst
 
         // read data from fifo the following clock cycle
-        if (uart_rx_rdy) begin
+        if (uart_rx_rdy && rx_fifo_dout_valid) begin
             dout <= {{WORD - UART_DATAW{1'b0}}, rx_fifo_dout};
             uart_rx_rdy <= 0;
         end

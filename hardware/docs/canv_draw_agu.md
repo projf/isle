@@ -61,6 +61,6 @@ For these examples, horizontal draw wrapping is enabled (`wraph` is high) and yo
 
 You should only trust the values of `vram_addr` and `pix_idx` when `valid` is high (1). Use this to control when drawing writes to vram; you can see an example in [Earthrise](earthrise.md). For example, if coordinates land outside the canvas (accounting for draw wrap), valid will be low. `valid` is low for the first three cycles after reset, so it's always safe to control memory writes with `valid`.
 
-### Testing
+## Testing
 
 There is a cocotb test bench [[canv_draw_agu.py](../tests/gfx/canv_draw_agu.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).

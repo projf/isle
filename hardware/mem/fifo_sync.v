@@ -15,6 +15,7 @@ module fifo_sync #(
     input  wire re,                // read enable
     input  wire [DATAW-1:0] din,   // data in
     output reg  [DATAW-1:0] dout,  // data out
+    output reg  dout_valid,        // high when dout is valid
     output wire [ADDRW-1:0] len,   // length; number of items (occupancy)
     output wire empty,             // fifo empty
     output wire full               // fifo full
@@ -24,10 +25,12 @@ module fifo_sync #(
     reg [DATAW-1:0] fifo_mem [0:DEPTH-1];
 
     reg [ADDRW-1:0] wptr, rptr;  // write and read pointers
+    wire [ADDRW-1:0] wptr_next = wptr + 1'b1;  // ensure full works when memory wraps
+    wire [ADDRW-1:0] rptr_next = rptr + 1'b1;
 
     // status
     assign empty = (rptr == wptr);
-    assign full  = ((wptr + 1) == rptr);
+    assign full  = (wptr_next == rptr);
     assign len   = wptr - rptr;
 
     // write
@@ -35,7 +38,7 @@ module fifo_sync #(
         if (rst) wptr <= 0;
         else if (we && !full) begin
             fifo_mem[wptr] <= din;
-            wptr <= wptr + 1;
+            wptr <= wptr_next;
         end
     end
 
@@ -44,7 +47,8 @@ module fifo_sync #(
         if (rst) rptr <= 0;
         else if (re && !empty) begin
             dout <= fifo_mem[rptr];
-            rptr <= rptr + 1;
+            rptr <= rptr_next;
         end
+        dout_valid <= re && !empty;
     end
 endmodule

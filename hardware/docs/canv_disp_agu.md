@@ -140,6 +140,6 @@ This process takes several clock cycles. If we don't account for latency, the pi
 
 Our display controller begins each line with the horizontal blanking interval. This gives us time to prepare the pipeline for the first pixel, even if it's at x=0.
 
-### Testing
+## Testing
 
 There is a cocotb test bench [[canv_disp_agu.py](../tests/gfx/canv_disp_agu.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
