@@ -142,14 +142,9 @@ module ch07 #(
     wire io_wbusy = dev_disp_wbusy;  // will have other devices later
 
     // Read I/O busy
-    reg io_rbusy;
     wire dev_uart_rbusy;
-    always @(*) begin
-        case(1'b1)
-            dev_uart_cs: io_rbusy = dev_uart_rbusy;
-            default: io_rbusy = 0;
-        endcase
-    end
+    wire dev_er_rbusy;
+    wire io_rbusy = dev_uart_rbusy | dev_er_rbusy;  // devices only assert for their own reads
 
     // read data
     reg  [WORD-1:0] io_rdata;
@@ -470,6 +465,7 @@ module ch07 #(
         .addr(io_addr[DEV_ADDRW-1:0]),
         .din(io_wdata),
         .dout(dev_er_dout),
+        .rbusy(dev_er_rbusy),
         .vram_addr(er_vram_addr),
         .vram_din(er_vram_din),
         .vram_wmask(er_vram_wmask)
