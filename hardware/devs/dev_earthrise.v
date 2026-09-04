@@ -93,34 +93,41 @@ module dev_earthrise #(
     wire er_busy, er_instr_invalid;
     wire [WORD-1:0] er_cycle_cnt;
 
+    // reading from erlist takes two cycles
+    reg erlist_rd_wait;
+    always @(posedge clk) begin
+        if (rst) erlist_rd_wait <= 0;
+        else erlist_rd_wait <= re && erlist_cs;  // busy for one cycle only after a read from erlist
+    end
+    assign rbusy = (re && erlist_cs) || erlist_rd_wait;
+
+
     always @(posedge clk) begin
         if (rst) begin  // set reasonable defaults to be nice to software devs
             er_bpp <= ER_BPP_INIT;
             er_canv_dims <= ER_CANV_DIMS_INIT;
             er_vram_addr_base <= 0;
             dout <= 0;
-        end else if (&we) begin
+        end else if (erlist_rd_wait) begin  // erlist read
+            dout <= erlist_dout_sys;
+        end else if (&we) begin  // erlist writes go directly to erlist_inst
             case (addr)
                 ER_BPP:            er_bpp <= din[PIX_IDXW-1:0];
                 ER_CANV_DIMS:      er_canv_dims <= din;
                 ER_VRAM_ADDR_BASE: er_vram_addr_base <= din[VRAM_ADDRW-1:0];
                 default: ;  // NOP - don't update registers
             endcase
-        end else if (re) begin
-            if (erlist_cs) begin
-                dout <= erlist_dout_sys;
-            end else begin
-                case (addr)
-                    ER_BUSY_RO:          dout <= {{WORD-1{1'b0}}, er_busy};
-                    ER_CYCLE_COUNT_RO:   dout <= er_cycle_cnt;
-                    ER_PC_RO:            dout <= {{WORD-ER_ADDRW-2{1'b0}}, er_pc};  // -2 because byte addr
-                    ER_INSTR_INVALID_RO: dout <= {{WORD-1{1'b0}}, er_instr_invalid};
-                    ER_BPP:              dout <= {{WORD-PIX_IDXW{1'b0}}, er_bpp};
-                    ER_CANV_DIMS:        dout <= er_canv_dims;
-                    ER_VRAM_ADDR_BASE:   dout <= {{WORD-VRAM_ADDRW{1'b0}}, er_vram_addr_base};
-                    default:             dout <= 0;
-                endcase
-            end
+        end else if (re && !erlist_cs) begin
+            case (addr)
+                ER_BUSY_RO:          dout <= {{WORD-1{1'b0}}, er_busy};
+                ER_CYCLE_COUNT_RO:   dout <= er_cycle_cnt;
+                ER_PC_RO:            dout <= {{WORD-ER_ADDRW-2{1'b0}}, er_pc};  // -2 because byte addr
+                ER_INSTR_INVALID_RO: dout <= {{WORD-1{1'b0}}, er_instr_invalid};
+                ER_BPP:              dout <= {{WORD-PIX_IDXW{1'b0}}, er_bpp};
+                ER_CANV_DIMS:        dout <= er_canv_dims;
+                ER_VRAM_ADDR_BASE:   dout <= {{WORD-VRAM_ADDRW{1'b0}}, er_vram_addr_base};
+                default:             dout <= 0;
+            endcase
         end
     end
 
