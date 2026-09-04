@@ -688,7 +688,7 @@ module earthrise #(
 
     // vram write mask
     always @(*) begin
-        if (draw_addr_valid && vram_we_sr[0]) begin  // valid address and write enable
+        if (en && draw_addr_valid && vram_we_sr[0]) begin  // valid address and write enable
             vram_wmask = pix_mask << pix_bit_pos;  // shift pixel mask into position
         end else vram_wmask = 0;
     end
