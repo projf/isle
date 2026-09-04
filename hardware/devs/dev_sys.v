@@ -32,7 +32,7 @@ module dev_sys #(
     always @(*) timer_0_clr = (we && (addr == TIMER_0_CLR));
 
     // timer divider counters
-    reg [$clog2(TIMER_DIV-1):0] cnt_timer_0;
+    reg [$clog2(TIMER_DIV)-1:0] cnt_timer_0;
 
     // timer
     reg [WORD-1:0] timer_0;
@@ -66,8 +66,6 @@ module dev_sys #(
 
     // HW Reg MMIO
     always @(posedge clk) begin
-        dout <= 0;  // no data out unless enabled
-
         if (re) begin
             case (addr)
                 TIMER_0: dout <= timer_0;
