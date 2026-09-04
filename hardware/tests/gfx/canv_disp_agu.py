@@ -224,7 +224,7 @@ async def run_addr_test(dut, p):
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 @cocotb.parametrize(p=[SCALE_0X0Y, SCALE_1X1Y, SCALE_2X2Y, SCALE_4X4Y, SCALE_3X5Y, LARGE_CANV])
-async def canv_disp_agu_addr(dut, p):
+async def test_addr_calc(dut, p):
     """Test canvas display AGU address calculation."""
     await run_addr_test(dut, p)
 
@@ -236,14 +236,14 @@ async def canv_disp_agu_addr(dut, p):
     scrolled(SCALE_1X1Y, Coords(x=17, y=5)),
     scrolled(SCALE_3X5Y, Coords(x=5,  y=1))
 ])
-async def canv_disp_agu_scroll_addr(dut, p):
+async def test_scroll_addr_calc(dut, p):
     """Test canvas display AGU scrolled address calculation."""
     await run_addr_test(dut, p)
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 @cocotb.parametrize(p=[SCALE_0X0Y, SCALE_1X1Y, SCALE_2X2Y, SCALE_4X4Y, SCALE_3X5Y, LARGE_CANV])
-async def canv_disp_agu_paint(dut, p):
+async def test_paint(dut, p):
     """Test canvas display AGU paint signal."""
     await setup_dut(dut, p)
 

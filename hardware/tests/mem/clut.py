@@ -28,7 +28,7 @@ test_data_disp = ["xxxxxxxxxxxx", "xxxxxxxxxxxx", 0xA, 0x0, 0x7, 0x9, 0x1]
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-async def sys_port(dut):
+async def test_sys_port(dut):
     """Test CLUT sys port."""
     cocotb.start_soon(Clock(dut.clk_sys, SYS_TIME, unit="ns").start())
     await zero_memory(dut)  # matches hardware behaviour
@@ -62,7 +62,7 @@ async def sys_port(dut):
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-async def disp_port(dut):
+async def test_disp_port(dut):
     """Test CLUT disp port."""
     cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, unit="ns").start())
 

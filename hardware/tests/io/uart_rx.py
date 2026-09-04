@@ -49,7 +49,7 @@ async def send_frame(dut, data_val):
 
 
 @cocotb.test()
-async def receive_data(dut):
+async def test_receive_data(dut):
     """Test receiving UART data."""
     cocotb.start_soon(Clock(dut.clk, SYS_TIME, unit="ns").start())
 

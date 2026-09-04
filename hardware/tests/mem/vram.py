@@ -40,7 +40,7 @@ expt_data_disp = ["xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-async def sys_port_word(dut):
+async def test_sys_port_word(dut):
     """Test vram sys port with word data."""
     cocotb.start_soon(Clock(dut.clk_sys, SYS_TIME, unit="ns").start())
     await zero_vram(dut)  # zeroed memory matches FPGA
@@ -74,7 +74,7 @@ async def sys_port_word(dut):
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-async def sys_port_mask(dut):
+async def test_sys_port_mask(dut):
     """Test vram sys port with masked data."""
     cocotb.start_soon(Clock(dut.clk_sys, SYS_TIME, unit="ns").start())
     await zero_vram(dut)  # zeroed memory matches FPGA
@@ -109,7 +109,7 @@ async def sys_port_mask(dut):
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-async def disp_port(dut):
+async def test_disp_port(dut):
     """Test vram disp port."""
     cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, unit="ns").start())
 

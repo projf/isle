@@ -30,7 +30,7 @@ async def reset_dut(dut):
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-async def tmds_random(dut):
+async def test_tmds_random(dut):
     """Test 1000 random 8-bit pixel values."""
     cocotb.start_soon(Clock(dut.clk_pix, 1, unit="ns").start())
     dut.ctrl_in.value = 0
