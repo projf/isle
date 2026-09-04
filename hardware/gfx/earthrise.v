@@ -2,8 +2,6 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// NB. Assumes CORDW=16, deriving internal integer coordinate width from this parameter.
-
 `default_nettype none
 `timescale 1ns / 1ps
 
