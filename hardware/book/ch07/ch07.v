@@ -460,7 +460,7 @@ module ch07 #(
         .clk(clk_sys),
         .rst(rst_sys),
         .en(1'b1),  // needed for future vram multiplexing
-        .we(io_wstrb & {4{dev_er_cs}}),  // byte write for command list only
+        .we(io_wstrb & {BYTE_CNT{dev_er_cs}}),  // byte write for command list only
         .re(io_rstrb & dev_er_cs),
         .addr(io_addr[DEV_ADDRW-1:0]),
         .din(io_wdata),
