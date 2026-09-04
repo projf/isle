@@ -2,8 +2,6 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// TODO - use rbusy to handle extra cycle of latency on erlist read
-
 `default_nettype none
 `timescale 1ns / 1ps
 
