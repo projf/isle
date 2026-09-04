@@ -39,6 +39,8 @@ module dev_uart #(
     localparam [DEV_ADDRW-1:0] UART_RX_LEN = 'h10C >> 2;
     // END_HWREG_ADDR
 
+    localparam [WORD-1:0] UART_EOF = {WORD{1'b1}};  // -1: must match software
+
     // uart signals
     wire [UART_DATAW-1:0] rx_data;
     wire rx_done;
@@ -55,8 +57,7 @@ module dev_uart #(
     wire rx_fifo_dout_valid;
     wire [UART_FIFO_RX_ADDRW-1:0] rx_fifo_len;
 
-    reg uart_rx_rdy;  // flag for RX read ready (takes one cycle)
-    assign rbusy = uart_rx_rdy;  // we're busy for one cycle, reading from fifo
+    assign rbusy = rx_fifo_re || rx_fifo_dout_valid;  // we're busy until fifo dout is valid
 
     fifo_sync #(
         .ADDRW(UART_FIFO_RX_ADDRW),
@@ -93,26 +94,20 @@ module dev_uart #(
 
     // HW Reg MMIO
     always @(posedge clk) begin
-        dout <= 0;  // no data out unless enabled
-
-        if (re) begin
+        if (rst) begin
+            rx_fifo_en <= 0;  // rx_fifo_en is used with rx_fifo.rst
+            dout <= 0;
+        end else if (rx_fifo_dout_valid) begin  // second stage of fifo read
+            dout <= {{WORD-UART_DATAW{1'b0}}, rx_fifo_dout};
+        end else if (re) begin
             case (addr)
-                UART_RX_DAT: if (!rx_fifo_empty) uart_rx_rdy <= 1;  // if not empty, read next cycle
+                UART_RX_DAT: dout <= UART_EOF;
                 UART_RX_DEP: dout <= 2**UART_FIFO_RX_ADDRW - 1;
                 UART_RX_LEN: dout <= {{WORD - UART_FIFO_RX_ADDRW{1'b0}}, rx_fifo_len};
                 default: dout <= 0;
             endcase
-        end
-        if (we) begin
+        end else if (we) begin
             if (addr == UART_RX_EN) rx_fifo_en <= din[0];  // only considers LSB
-        end
-
-        if (rst) rx_fifo_en <= 0;  // rx_fifo_en is used with rx_fifo.rst
-
-        // read data from fifo the following clock cycle
-        if (uart_rx_rdy && rx_fifo_dout_valid) begin
-            dout <= {{WORD - UART_DATAW{1'b0}}, rx_fifo_dout};
-            uart_rx_rdy <= 0;
         end
     end
 endmodule

@@ -7,3 +7,5 @@
 .equ UART_RX_DAT, 0x0104  # uart rx data via fifo
 .equ UART_RX_DEP, 0x0108  # uart rx fifo depth
 .equ UART_RX_LEN, 0x010C  # uart rx fifo length (items)
+
+.equ UART_EOF, 0xFFFFFFFF  # -1 is EOF for UART reads
