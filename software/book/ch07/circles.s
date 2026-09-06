@@ -2,6 +2,8 @@
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
+# NB. This software is designed for chapter 7 hardware
+
 .include "include/isle.inc"
 .include "include/dev_display.inc"
 .include "include/dev_earthrise.inc"
