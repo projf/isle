@@ -2,8 +2,6 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// NB. Assumes CORDW=16, deriving internal integer coordinate width from this parameter.
-
 `default_nettype none
 `timescale 1ns / 1ps
 
@@ -59,10 +57,10 @@ module earthrise #(
     reg wraph, wrapv;  // draw wrapping
 
     // instruction subfields
-    reg [OPCW-1:0]  opc;    // opcode
-    reg [FUNW-1:0]  fun;    // function
+    reg [OPCW-1:0] opc;     // opcode
+    reg [FUNW-1:0] fun;     // function
     reg [IMM12-1:0] imm12;  // 12-bit immediate
-    reg [COLRW-1:0] imm8;   // 8-bit immediate or options
+    reg [IMM8-1:0] imm8;    // 8-bit immediate or options
 
     // option bit selects
     localparam OPT_FILL  = 0;  // filled shape
@@ -220,7 +218,7 @@ module earthrise #(
                         pc_debug <= pc_reg[ER_ADDRW+1:0];  // save address of current instr for debug
                         opc <= instr[INSTRW-1:INSTRW-OPCW];
                         imm12 <= instr[IMM12-1:0];
-                        fun <= instr[COLRW+FUNW-1:COLRW];
+                        fun <= instr[IMM8+FUNW-1:IMM8];
                         imm8 <= instr[IMM8-1:0];
                         cnt_draw <= 0;  // draw counter
                         cnt_fill <= 0;  // fill counter
@@ -244,7 +242,7 @@ module earthrise #(
                         'h9: yt   <= imm12;
                         'hA: begin
                             pc_start <= imm12[ER_ADDRW+1:0];
-                            `debug_er($display("0x%x: pc_next  %x", pc_debug, imm12[ER_ADDRW-1:0]));
+                            `debug_er($display("0x%x: pc_next  %x", pc_debug, imm12[ER_ADDRW+1:0]));
                         end
                         'hC: begin  // colour and control
                             case (fun)
@@ -682,7 +680,7 @@ module earthrise #(
     end
 
     // pixel placement within vram word
-    wire [PIX_IDXW:0] pix_bits = WORD >> addr_shift;  // bits per pixel (support full word)
+    wire [PIX_IDXW:0] pix_bits = WORD >> addr_shift;  // bits per pixel
     /* verilator lint_off WIDTHEXPAND */
     wire [PIX_IDXW-1:0] pix_bit_pos = pix_idx << (PIX_IDXW - addr_shift);  // bit offset in word
     /* verilator lint_on WIDTHEXPAND */
@@ -690,7 +688,7 @@ module earthrise #(
 
     // vram write mask
     always @(*) begin
-        if (draw_addr_valid && vram_we_sr[0]) begin  // valid address and write enable
+        if (en && draw_addr_valid && vram_we_sr[0]) begin  // valid address and write enable
             vram_wmask = pix_mask << pix_bit_pos;  // shift pixel mask into position
         end else vram_wmask = 0;
     end

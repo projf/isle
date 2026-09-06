@@ -160,7 +160,6 @@ async def check_pixel(dut, p, widths):
 async def setup_dut(dut):
     """Setup DUT with clock."""
     Clock(dut.clk, SYS_TIME, unit="ns").start()
-
     # reset
     dut.rst.value = 0
     dut.en.value = 0
@@ -172,7 +171,7 @@ async def setup_dut(dut):
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-async def canv_draw_agu_random(dut):
+async def test_random_addr_calc(dut):
     """Test many random canv_draw_agu cases."""
     await setup_dut(dut)
     dut.en.value = 1  # always enabled; we'll use a separate test for this
@@ -184,7 +183,7 @@ async def canv_draw_agu_random(dut):
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-async def canv_draw_agu_fixed(dut):
+async def test_fixed_addr_calc(dut):
     """Test canv_draw_agu with single fixed case."""
     await setup_dut(dut)
     dut.en.value = 1  # always enabled; we'll use a separate test for this

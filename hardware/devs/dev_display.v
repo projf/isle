@@ -303,18 +303,12 @@ module dev_display #(
     // hardware register logic
     //
 
-    // counters
+    // frame flag and counter
+    reg frame_flag;
     reg [WORD-1:0] frame_count;
-
-    // strobe hwreg
-    reg frame_flag, frame_flag_clr;
-
-    // clear frame flag (strobe) - requires *word* write from CPU to work (sw instruction)
-    always @(*) frame_flag_clr = (&we_sys && (addr_sys == FRAME_FLAG_CLR));
-
-    // update frame flag and counter
-    always @(posedge clk_sys) begin
-        if (frame_start_sys) begin
+    wire frame_flag_clr = (&we_sys && (addr_sys == FRAME_FLAG_CLR));  // requires *word* write
+    always @(posedge clk_sys) begin  // update frame flag and counter
+        if (frame_start_sys) begin  // set wins over clear
             frame_flag <= 1;
             frame_count <= frame_count + 1;
         end else if (frame_flag_clr) frame_flag <= 0;
@@ -361,6 +355,7 @@ module dev_display #(
     always @(posedge clk_sys) begin
         if (rst_sys) begin  // set reasonable defaults to be nice to software devs
             cpu_hwreg_write_pending <= 0;
+            for (j = 0; j < RW_HWREG_CNT; j = j + 1) hwreg_sys[j] <= 0;  // reset all sys hwreg
             hwreg_sys[DISP_VISIBLE] <= DISP_VISIBLE_INIT;
             hwreg_sys[DISP_BG_COLR] <= DISP_BG_COLR_INIT;
             hwreg_sys[TEXT_WIN_START] <= WIN_START_CORD;
@@ -368,7 +363,7 @@ module dev_display #(
             hwreg_sys[TEXT_SCALE] <= DISPLAY_SCALE;
             hwreg_sys[CANV0_WIN_START] <= WIN_START_CORD;
             hwreg_sys[CANV0_WIN_END] <= WIN_END_CORD;
-            hwreg_sys[CANV0_SCALE] <= DISPLAY_SCALE << 1;  // double for 336x192 canvas
+            hwreg_sys[CANV0_SCALE] <= DISPLAY_SCALE << 1;  // double for default lores (336x192) canvas
             hwreg_sys[CANV0_DIMS] <= CANV_DIMS_INIT;
             hwreg_sys[CANV0_BPP] <= CANV_BPP_INIT;
         end else if ((&we_sys) && hwreg_valid && hwreg_busy_sys) begin  // word write (sw instruction)

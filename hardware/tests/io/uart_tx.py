@@ -60,7 +60,7 @@ async def capture_frame(dut):
 
 
 @cocotb.test()
-async def transmit_data(dut):
+async def test_transmit_data(dut):
     """Test transmitting UART data."""
     cocotb.start_soon(Clock(dut.clk, SYS_TIME, unit="ns").start())
 

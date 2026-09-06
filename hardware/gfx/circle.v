@@ -17,7 +17,7 @@ module circle #(parameter CORDW=16) (  // signed coordinate width
     );
 
     // internal variables
-    reg signed [CORDW+1:0] err, err_tmp;  // error values (4x as wide as coords)
+    reg signed [CORDW+1:0] err, err_tmp;  // error values (4x the range of coordinates)
 
     // calc state machine
     localparam IDLE   = 0;

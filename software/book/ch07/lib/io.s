@@ -175,9 +175,9 @@ read_ln:
 uart_rx_byte:
     li   t6, DEV_UART
 .L_uart_rx_loop:
-    lw   t0, UART_RX_LEN(t6)  # is there data waiting
+    lw   t0, UART_RX_LEN_RO(t6)  # is there data waiting
     beqz t0, .L_uart_rx_loop  # loop if UART data isn't ready
-    lw   a0, UART_RX_DAT(t6)  # load byte from UART (hwreg is word)
+    lw   a0, UART_RX_DAT_RO(t6)  # load byte from UART (hwreg is word)
     ret
 
 

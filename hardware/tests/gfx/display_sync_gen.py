@@ -39,7 +39,7 @@ async def reset_dut(dut):
     await RisingEdge(dut.clk_pix)
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-async def display_de(dut):
+async def test_display_de(dut):
     """Test data enable"""
     cocotb.start_soon(Clock(dut.clk_pix, pix_time, unit="ns").start())
     await reset_dut(dut)
@@ -53,7 +53,7 @@ async def display_de(dut):
         f"y {dut.dy.value.to_signed()} is not 0 at de start!"
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-async def display_line(dut):
+async def test_display_line(dut):
     """Test line timings"""
     cocotb.start_soon(Clock(dut.clk_pix, pix_time, unit="ns").start())
     await reset_dut(dut)
@@ -89,7 +89,7 @@ async def display_line(dut):
         f"line end {dx_prev} is not {line_end}!"
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-async def display_frame(dut):
+async def test_display_frame(dut):
     """Test frame timings"""
     cocotb.start_soon(Clock(dut.clk_pix, pix_time, unit="ns").start())
     await reset_dut(dut)

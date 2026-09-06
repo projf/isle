@@ -142,14 +142,9 @@ module ch07 #(
     wire io_wbusy = dev_disp_wbusy;  // will have other devices later
 
     // Read I/O busy
-    reg io_rbusy;
     wire dev_uart_rbusy;
-    always @(*) begin
-        case(1'b1)
-            dev_uart_cs: io_rbusy = dev_uart_rbusy;
-            default: io_rbusy = 0;
-        endcase
-    end
+    wire dev_er_rbusy;
+    wire io_rbusy = dev_uart_rbusy | dev_er_rbusy;  // devices only assert for their own reads
 
     // read data
     reg  [WORD-1:0] io_rdata;
@@ -352,7 +347,7 @@ module ch07 #(
     ) dev_sys_inst (
         .clk(clk_sys),
         .rst(rst_sys),
-        .we(|io_wstrb & dev_sys_cs),
+        .we(&io_wstrb & dev_sys_cs),
         .re(io_rstrb & dev_sys_cs),
         .addr(io_addr[DEV_ADDRW-1:0]),
         .din(io_wdata),
@@ -435,7 +430,7 @@ module ch07 #(
     ) dev_uart_inst (
         .clk(clk_sys),
         .rst(rst_sys),
-        .we(|io_wstrb & dev_uart_cs),
+        .we(&io_wstrb & dev_uart_cs),
         .re(io_rstrb & dev_uart_cs),
         .addr(io_addr[DEV_ADDRW-1:0]),
         .din(io_wdata),
@@ -465,11 +460,12 @@ module ch07 #(
         .clk(clk_sys),
         .rst(rst_sys),
         .en(1'b1),  // needed for future vram multiplexing
-        .we(io_wstrb & {4{dev_er_cs}}),  // byte write for command list only
+        .we(io_wstrb & {BYTE_CNT{dev_er_cs}}),  // byte write for command list only
         .re(io_rstrb & dev_er_cs),
         .addr(io_addr[DEV_ADDRW-1:0]),
         .din(io_wdata),
         .dout(dev_er_dout),
+        .rbusy(dev_er_rbusy),
         .vram_addr(er_vram_addr),
         .vram_din(er_vram_din),
         .vram_wmask(er_vram_wmask)

@@ -135,7 +135,7 @@ module canv_disp_agu #(
             if (cnt_sy == scale_y_minus) begin
                 cnt_sy <= 0;
                 cnt_cy <= cnt_cy + 1;  // next canvas row
-                if (cnt_by == canv_h_minus) begin  // vertical buffer wrap
+                if (cnt_by >= canv_h_minus) begin  // vertical buffer wrap
                     cnt_by <= 0;
                     pix_offset <= wrap_start_r;
                     pix_offset_ln <= wrap_start_r;
@@ -154,7 +154,7 @@ module canv_disp_agu #(
             if (cnt_sx == scale_x_minus) begin
                 cnt_sx <= 0;
                 cnt_cx <= cnt_cx + 1;  // next canvas pixel
-                if (cnt_bx == canv_w_minus) begin  // horizontal buffer wrap
+                if (cnt_bx >= canv_w_minus) begin  // horizontal buffer wrap
                     cnt_bx <= 0;
                     pix_offset <= pix_offset_buf;
                 end else begin
