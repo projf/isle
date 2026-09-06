@@ -32,15 +32,9 @@ To exit screen, press Ctrl-a, then type ":quit" and press return.
 
 _NB. You won't be able to program the ULX3S while screen is connected to the UART._
 
-### Troubleshooting
+## Troubleshooting
 
-If screen fails with `$TERM too long - sorry.`, you can temporarily override the terminal type:
-
-```
-TERM=xterm screen /dev/foo 115200
-```
-
-## Delete
+### Delete
 
 Isle software supports backspace (0x08) and delete (0x7F), but not all terminals are configured for this. If backspace and delete don't work as expected, check your terminal docs.
 
@@ -52,4 +46,12 @@ bindkey "^?" stuff ^H
 
 # delete mapping (0x7F is 0177 in octal)
 bindkey "\033[3~" stuff \177
+```
+
+### TERM Too Long
+
+If screen fails with `$TERM too long`, you can temporarily override the terminal type:
+
+```
+TERM=xterm screen /dev/foo 115200
 ```
