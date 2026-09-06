@@ -12,7 +12,7 @@ The upper 8M of memory is for system ram, including the stack. The lower 8M is u
 * 0x5 - graphics memories
     - 0x50 - tram (8K)
     - 0x58 - clut (1K = 256 x word addresses, 15-bits used)
-* 0x6 - devices - 16 x 64 KiB device slots (slots are temporarily fixed until chapter 9)
+* 0x6 - devices - 16 x 64 KiB device slots
     - 0x60 - system
     - 0x61 - display
     - 0x62 - uart
