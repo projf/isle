@@ -31,8 +31,8 @@ module dev_earthrise #(
 
     // vram interface
     output wire [VRAM_ADDRW-1:0] vram_addr,  // vram word address
-    output reg  [WORD-1:0] vram_din,         // vram data in
-    output reg  [WORD-1:0] vram_wmask        // vram write mask
+    output wire [WORD-1:0] vram_din,         // vram data in
+    output wire [WORD-1:0] vram_wmask        // vram write mask
     );
 
     localparam ER_DRAW_RATE = 1;  // slow Earthrise draw rate by this factor (1 for full speed)
