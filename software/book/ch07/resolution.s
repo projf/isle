@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: MIT
 
 # NB. This software is designed for chapter 7 hardware
-#     temporary demo based on chapter 6 design.
 
 .include "include/isle.inc"
 .include "include/dev_display.inc"
