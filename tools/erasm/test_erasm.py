@@ -53,7 +53,7 @@ class TestErasm:
         with pytest.raises(ValueError, match="Unknown coordinate register"):
             asm_coord("yx", 0)
 
-    def test_adm_colr(self):
+    def test_asm_colr(self):
         """Test colour register assembly."""
         assert asm_colr("lca", 255) == 0xC0FF
         assert asm_colr("lcb", 0) == 0xC100
@@ -74,8 +74,38 @@ class TestErasm:
         assert asm_draw("rectf", "cb") == 0xD403
         with pytest.raises(ValueError, match="Unknown draw shape"):
             asm_draw("circle", "ca")
-        with pytest.raises(ValueError, match="Unknown colour"):
+        with pytest.raises(ValueError, match="Unknown draw option"):
+            asm_draw("circ", "cx")
+        with pytest.raises(ValueError, match="Unknown draw option"):
             asm_draw("circ", "b")
+
+    def test_asm_draw_duplicate_opt(self):
+        """Test duplicate draw options."""
+        with pytest.raises(ValueError, match="Duplicate colour option"):
+            asm_draw("circ", "ca", "ca")
+        with pytest.raises(ValueError, match="Duplicate colour option"):
+            asm_draw("circ", "cb", "cb")
+
+    def test_asm_draw_default_colr(self):
+        """Test draw instruction assembly with default colour (A)."""
+        assert asm_draw("pix") == 0xD000
+        assert asm_draw("line") == 0xD100
+        assert asm_draw("circ") == 0xD200
+        assert asm_draw("circf") == 0xD201
+        assert asm_draw("tri") == 0xD300
+        assert asm_draw("trif") == 0xD301
+        assert asm_draw("rect") == 0xD400
+        assert asm_draw("rectf") == 0xD401
+        with pytest.raises(ValueError, match="Unknown draw shape"):
+            asm_draw("circle")
+
+    def test_asm_draw_wrap(self):
+        """Test draw instructions with wrapping."""
+        assert asm_draw("line", "wh")  == 0xD110
+        assert asm_draw("line", "wv")  == 0xD120
+        assert asm_draw("line", "whv") == 0xD130
+        with pytest.raises(ValueError, match="Unknown draw option"):
+            asm_draw("line", "wx")
 
     def test_asm_line(self):
         """Test line assembly."""
@@ -92,9 +122,11 @@ class TestErasm:
         assert asm_line("fcb 3") == 0xC303
         assert asm_line("draw pix cb") == 0xD002
         assert asm_line("draw line ca") == 0xD100
+        assert asm_line("draw line") == 0xD100
         assert asm_line("draw circ cb") == 0xD202
         assert asm_line("draw circf cb") == 0xD203
         assert asm_line("draw tri ca") == 0xD300
         assert asm_line("draw trif ca") == 0xD301
+        assert asm_line("draw trif") == 0xD301
         assert asm_line("draw rect cb") == 0xD402
         assert asm_line("draw rectf cb") == 0xD403

@@ -11,11 +11,11 @@ COCOTB_TEST_MODULES = ${DUT}
 HARDWARE = $(PWD)/../..
 
 VERILOG_SOURCES += $(HARDWARE)/book/${DUT}/${DUT}.v
-VERILOG_SOURCES += $(HARDWARE)/book/${DUT}/gfx_dev.v
-VERILOG_SOURCES += $(HARDWARE)/book/${DUT}/sys_dev.v
-VERILOG_SOURCES += $(HARDWARE)/book/${DUT}/uart_dev.v
+VERILOG_SOURCES += $(HARDWARE)/book/${DUT}/disp_hwreg.v
 
 VERILOG_SOURCES += $(HARDWARE)/cpu/FemtoRV32.v
+VERILOG_SOURCES += $(HARDWARE)/devs/dev_sys.v
+VERILOG_SOURCES += $(HARDWARE)/devs/dev_uart.v
 VERILOG_SOURCES += $(HARDWARE)/gfx/display_sync_gen.v
 VERILOG_SOURCES += $(HARDWARE)/gfx/font_glyph.v
 VERILOG_SOURCES += $(HARDWARE)/gfx/textmode.v
@@ -44,6 +44,10 @@ COMPILE_ARGS += -P${DUT}.GLYPH_WIDTH=8
 # each test needs its own build dir and results file
 COCOTB_RESULTS_FILE = results_${DUT}.xml
 SIM_BUILD = sim_build/${DUT}
+
+# rebuild if this makefile (including its params) changes
+THIS_MAKEFILE := $(abspath $(lastword $(MAKEFILE_LIST)))
+CUSTOM_COMPILE_DEPS += $(THIS_MAKEFILE)
 
 # include cocotb's make rules to take care of the simulator setup
 include $(shell cocotb-config --makefiles)/Makefile.sim

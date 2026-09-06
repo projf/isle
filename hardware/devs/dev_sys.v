@@ -1,12 +1,12 @@
-// Isle.Computer - Device: System
+// Isle.Computer - System Device
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
 `default_nettype none
 `timescale 1ns / 1ps
 
-module sys_dev #(
-    parameter DEV_ADDRW=10,     // device address width (bits)
+module dev_sys #(
+    parameter DEV_ADDRW=14,     // device address width (bits)
     parameter TIMER_DIV=20000,  // milliseconds divider
     parameter WORD=32           // machine word size (bits)
     ) (
@@ -21,18 +21,17 @@ module sys_dev #(
     output reg  [WORD-1:0] dout  // data out
     );
 
-    // HW_REG_ADDR - must match software
-    localparam [DEV_ADDRW-1:0] TIMER_0     = 'h300 >> 2;
+    // HWREG_ADDR - must match software - word addressing (hence right shift)
+    localparam [DEV_ADDRW-1:0] TIMER_0_RO  = 'h300 >> 2;
     localparam [DEV_ADDRW-1:0] TIMER_0_CLR = 'h310 >> 2;
-    localparam [DEV_ADDRW-1:0] LFSR_32     = 'h320 >> 2;
-    // END_HW_REG_ADDR
+    localparam [DEV_ADDRW-1:0] LFSR_32_RO  = 'h320 >> 2;
+    // END_HWREG_ADDR
 
     // timer reset signals (strobes)
-    reg timer_0_clr;
-    always @(*) timer_0_clr = (we && (addr == TIMER_0_CLR));
+    wire timer_0_clr = (we && (addr == TIMER_0_CLR));
 
     // timer divider counters
-    reg [$clog2(TIMER_DIV-1):0] cnt_timer_0;
+    reg [$clog2(TIMER_DIV)-1:0] cnt_timer_0;
 
     // timer
     reg [WORD-1:0] timer_0;
@@ -66,12 +65,11 @@ module sys_dev #(
 
     // HW Reg MMIO
     always @(posedge clk) begin
-        dout <= 0;  // no data out unless enabled
-
-        if (re) begin
+        if (rst) dout <= 0;
+        else if (re) begin
             case (addr)
-                TIMER_0: dout <= timer_0;
-                LFSR_32: dout <= lfsr_32;
+                TIMER_0_RO: dout <= timer_0;
+                LFSR_32_RO: dout <= lfsr_32;
                 default: dout <= 0;
             endcase
         end

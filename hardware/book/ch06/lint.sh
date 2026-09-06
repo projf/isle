@@ -17,6 +17,7 @@ HW_DIR="../../${LINT_DIR}"  # hardware source directory
 verilator --lint-only -Wall \
     -I${HW_DIR} \
     -I${HW_DIR}/cpu \
+    -I${HW_DIR}/devs \
     -I${HW_DIR}/gfx \
     -I${HW_DIR}/include \
     -I${HW_DIR}/io \

@@ -6,29 +6,26 @@
 `timescale 1ns / 1ps
 
 module canv_disp_agu #(
-    parameter ADDRW=14,                 // vram address width (bits)
-    parameter CLUT_LAT=2,               // clut display read latency (cycles; min=1)
-    parameter CORDW=16,                 // signed coordinate width (bits)
-    parameter SHIFTW=3,                 // address shift width (bits)
-    parameter VRAM_LAT=2,               // vram display read latency (cycles; min=1)
-    parameter WORD=32,                  // machine word size (bits)
-    parameter PIX_IDXW=$clog2(WORD),    // pixel index width (bits)
-    parameter PIX_ADDRW=ADDRW+PIX_IDXW  // pixel address width
+    parameter ADDRW=14,               // vram address width (bits)
+    parameter CLUT_LAT=2,             // clut display read latency (cycles; min=1)
+    parameter CORDW=16,               // signed coordinate width (bits)
+    parameter SHIFTW=3,               // address shift width (bits)
+    parameter VRAM_LAT=2,             // vram display read latency (cycles; min=1)
+    parameter WORD=32,                // machine word size (bits)
+    localparam PIX_IDXW=$clog2(WORD)  // pixel index width (bits)
     ) (
     input  wire clk_pix,                        // pixel clock
     input  wire rst_pix,                        // reset in pixel clock domain
-    input  wire frame_start,                    // frame start flag
+    input  wire start,                          // start address calculation
     input  wire line_start,                     // line start flag
-    input  wire signed [CORDW-1:0] dx,          // horizontal display position
-    input  wire signed [CORDW-1:0] dy,          // vertical display position
-    input  wire [ADDRW-1:0] vram_addr_base,     // base vram word address
-    input  wire [SHIFTW-1:0] addr_shift,        // address shift bits
-    input  wire [2*CORDW-1:0] canv_dims,        // canvas dimensions
-    input  wire [2*CORDW-1:0] scale,            // canvas scale
-    input  wire [2*CORDW-1:0] scroll_coord,     // canvas scroll coordinate (must match scroll_offset)
-    input  wire [PIX_ADDRW-1:0] scroll_offset,  // pixel offset of canvas scroll line
+    input  wire signed [CORDW-1:0] dx, dy,      // display position
     input  wire [2*CORDW-1:0] win_start,        // canvas window start coords
     input  wire [2*CORDW-1:0] win_end,          // canvas window end coords
+    input  wire [2*CORDW-1:0] scale,            // canvas scale
+    input  wire [2*CORDW-1:0] canv_dims,        // canvas dimensions
+    input  wire [ADDRW-1:0] vram_addr_base,     // base vram word address
+    input  wire [SHIFTW-1:0] addr_shift,        // address shift bits (derived from canvas BPP register)
+    input  wire [2*CORDW-1:0] scroll_coord,     // canvas scroll coordinate
     output reg  [ADDRW-1:0] vram_addr,          // vram word address
     output reg  [PIX_IDXW-1:0] pix_idx,         // pixel index within word
     output reg  paint // canvas painting enable (pre-clut)
@@ -36,9 +33,10 @@ module canv_disp_agu #(
 
     localparam ADDR_LAT = VRAM_LAT + CLUT_LAT + 2;  // +1 for in_window reg; +1 for AGU stage 2
     localparam PAINT_OFFSET = VRAM_LAT;  // paint latency offset from ADDR_LAT
+    localparam PIX_ADDRW = ADDRW + PIX_IDXW;  // pixel address width
 
     // separate y and x from canvas/window signals
-    reg [CORDW-1:0] canv_h, canv_w;  // height and width
+    reg [CORDW-1:0] canv_h, canv_w;  // canvas height and width
     reg [CORDW-1:0] scale_y, scale_x;
     reg [CORDW-1:0] scroll_y, scroll_x;
     reg signed [CORDW-1:0] win_y0, win_x0;
@@ -49,6 +47,29 @@ module canv_disp_agu #(
         {scroll_y, scroll_x} = scroll_coord;
         {win_y0, win_x0} = win_start;
         {win_y1, win_x1} = win_end;
+    end
+
+    // calculate scroll offset with multiplication (2 cycles of latency)
+    // delay scroll registers so they match scroll_offset
+    reg [PIX_ADDRW-1:0] scroll_offset;
+    reg [CORDW-1:0] canv_w_m, scroll_y_m;  // dedicated reg for multiply
+    reg [CORDW-1:0] scroll_x_p1, scroll_x_p2, scroll_y_p2;
+    always @(posedge clk_pix) begin
+        if (rst_pix) begin
+            canv_w_m <= 0;
+            scroll_y_m <= 0;
+            scroll_offset <= 0;
+            scroll_x_p1 <= 0;
+            scroll_x_p2 <= 0;
+            scroll_y_p2 <= 0;
+        end else begin
+            canv_w_m <= canv_w;
+            scroll_y_m <= scroll_y;
+            scroll_offset <= canv_w_m * scroll_y_m;
+            scroll_x_p1 <= scroll_x;
+            scroll_x_p2 <= scroll_x_p1;
+            scroll_y_p2 <= scroll_y_m;  // reuse multiplier y reg
+        end
     end
 
     // register signals to improve timing with hwreg
@@ -65,7 +86,9 @@ module canv_disp_agu #(
         canv_h_minus <= canv_h - 1;
         row_stride <= {{PIX_ADDRW-CORDW{1'b0}}, canv_w};
     end
+    reg [CORDW-1:0] scroll_x_r;  // register scroll_x use during the frame
     wire [PIX_ADDRW-1:0] wrap_start = {{PIX_ADDRW-CORDW{1'b0}}, scroll_x};
+    wire [PIX_ADDRW-1:0] wrap_start_r = {{PIX_ADDRW-CORDW{1'b0}}, scroll_x_r};
 
     // canvas paint area is intersection of window and canvas dims
     reg in_window;
@@ -93,27 +116,29 @@ module canv_disp_agu #(
     reg [PIX_ADDRW-1:0] pix_offset, pix_offset_ln, pix_offset_buf;  // pixel offsets
     reg [CORDW-1:0] cnt_sx, cnt_sy;  // window scale counters
     always @(posedge clk_pix) begin
-        if (rst_pix || frame_start) begin  // reset address and counters at start of frame
+        if (rst_pix || start) begin  // reset address and counters at start
+            scroll_x_r <= scroll_x_p2;  // we need a consistent scroll_x for use during the frame
             cnt_sx <= 0;
             cnt_sy <= 0;
             cnt_cx <= 0;
             cnt_cy <= 0;
-            cnt_bx <= scroll_x;
-            cnt_by <= scroll_y;
-            pix_offset <= scroll_offset + wrap_start;
+            cnt_bx <= scroll_x_p2;
+            cnt_by <= scroll_y_p2;
+            pix_offset <= scroll_offset + wrap_start;  // use live value at frame start
             pix_offset_ln <= scroll_offset + wrap_start;
             pix_offset_buf <= scroll_offset;
         end else if (line_start && (dy > win_y0)) begin  // after 1st line in paint area
+            // ensure we use scroll values registred at start in this block
             cnt_sx <= 0;  // reset horizontal scale counter
             cnt_cx <= 0;  // reset horizontal canvas display window counter
-            cnt_bx <= scroll_x;  // reset horizontal canvas buffer counter
+            cnt_bx <= scroll_x_r;  // reset horizontal canvas buffer counter
             if (cnt_sy == scale_y_minus) begin
                 cnt_sy <= 0;
                 cnt_cy <= cnt_cy + 1;  // next canvas row
-                if (cnt_by == canv_h_minus) begin  // vertical buffer wrap
+                if (cnt_by >= canv_h_minus) begin  // vertical buffer wrap
                     cnt_by <= 0;
-                    pix_offset <= wrap_start;
-                    pix_offset_ln <= wrap_start;
+                    pix_offset <= wrap_start_r;
+                    pix_offset_ln <= wrap_start_r;
                     pix_offset_buf <= 0;  // start of buffer
                 end else begin
                     cnt_by <= cnt_by + 1;
@@ -129,7 +154,7 @@ module canv_disp_agu #(
             if (cnt_sx == scale_x_minus) begin
                 cnt_sx <= 0;
                 cnt_cx <= cnt_cx + 1;  // next canvas pixel
-                if (cnt_bx == canv_w_minus) begin  // horizontal buffer wrap
+                if (cnt_bx >= canv_w_minus) begin  // horizontal buffer wrap
                     cnt_bx <= 0;
                     pix_offset <= pix_offset_buf;
                 end else begin

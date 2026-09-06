@@ -1,11 +1,11 @@
-// Isle.Computer - Device: Graphics
+// Isle.Computer - Display Hardware Registers
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
 `default_nettype none
 `timescale 1ns / 1ps
 
-module gfx_dev #(
+module disp_hwreg #(
     parameter BYTE_CNT=4,    // bytes in word
     parameter CORDW=16,      // signed coordinate width (bits)
     parameter DEV_ADDRW=10,  // device address width (bits)

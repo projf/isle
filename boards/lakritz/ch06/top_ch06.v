@@ -21,8 +21,8 @@ module top_ch06 #(
     localparam SW = "../../../software";  // software binary path
     localparam RES = "../../../res";  // resource path
 
-    // software params
-    localparam FILE_SOFT = {SW, "/book/ch06/resolution.mem"};
+    // software params - change to load different software when Isle starts
+    localparam FILE_SOFT = {SW, "/book/ch06/guess.mem"};
 
     // text mode params
     localparam FILE_PAL   = {RES, "/palettes/go-16.mem"};

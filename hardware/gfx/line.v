@@ -21,7 +21,7 @@ module line #(parameter CORDW=16) (  // signed coordinate width
 
     // line properties
     reg swap;   // swap points to ensure y1 >= y0
-    reg right;  // line direction
+    reg right;  // line moves right (x increasing)
     reg signed [CORDW-1:0] xa, ya;  // start point
     reg signed [CORDW-1:0] xb, yb;  // end point
     reg signed [CORDW-1:0] x_end, y_end;  // register end point
@@ -91,7 +91,7 @@ module line #(parameter CORDW=16) (  // signed coordinate width
             default: begin  // IDLE
                 if (start) begin
                     state <= INIT_0;
-                    right <= (xa < xb);  // draw right to left?
+                    right <= (xa < xb);  // draw left to right?
                     x <= x0;  // init to start coords to avoid spurious pixels
                     y <= y0;
                     xs <= x0;

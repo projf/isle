@@ -78,8 +78,10 @@ module top_ch03 #(
         .er_start(er_start),
         .disp_x(sdl_x),
         .disp_y(sdl_y),
+        /* verilator lint_off PINCONNECTEMPTY */
         .disp_hsync(),
         .disp_vsync(),
+        /* verilator lint_on PINCONNECTEMPTY */
         .disp_de(sdl_de),
         .disp_frame(sdl_frame),
         .disp_r(disp_r),

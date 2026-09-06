@@ -28,7 +28,7 @@ module top_ch06 #(
     localparam SW = "../../../software";  // software binary path
     localparam RES = "../../../res";  // resource path
 
-    // software params
+    // software params - change to load different software when Isle starts
     localparam FILE_SOFT = {SW, "/book/ch06/guess.mem"};
 
     // text mode params
@@ -79,8 +79,10 @@ module top_ch06 #(
         .rst_pix(rst),
         .disp_x(sdl_x),
         .disp_y(sdl_y),
+        /* verilator lint_off PINCONNECTEMPTY */
         .disp_hsync(),
         .disp_vsync(),
+        /* verilator lint_on PINCONNECTEMPTY */
         .disp_de(sdl_de),
         .disp_frame(sdl_frame),
         .disp_r(disp_r),

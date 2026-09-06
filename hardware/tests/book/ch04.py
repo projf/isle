@@ -148,7 +148,7 @@ async def pixel_colour_line_383(dut):
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-async def pixel_colour(dut):
+async def text_pixel_colour(dut):
     """Test display pixel colour"""
     cocotb.start_soon(Clock(dut.clk_sys, SYS_TIME, unit="ns").start())
     await reset_sys_dut(dut)

@@ -9,11 +9,14 @@
 export PYTHONPATH := $(shell pwd)/../..:$(PYTHONPATH)
 
 # test targets
-TESTS = canv_disp_agu tmds_encoder
+TESTS = canv_disp_agu canv_draw_agu tmds_encoder
 DISPLAY_TESTS = display_sync_gen_mode_0 display_sync_gen_mode_1 display_sync_gen_mode_2 display_sync_gen_mode_3 display_sync_gen_mode_4 display_sync_gen_mode_5
 
 canv_disp_agu:
 	-make -f canv_disp_agu.mk
+
+canv_draw_agu:
+	-make -f canv_draw_agu.mk
 
 tmds_encoder:
 	-make -f tmds_encoder.mk

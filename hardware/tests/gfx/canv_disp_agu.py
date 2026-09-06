@@ -4,29 +4,32 @@
 
 """canv_disp_agu Test Bench (cocotb)"""
 
+# To Do
+#  - test updating scroll_coord within a frame
+
 import dataclasses
 from dataclasses import dataclass
 
 import cocotb
-
 from cocotb.clock import Clock
 from cocotb.triggers import ReadOnly, RisingEdge
 from cocotb.types import Logic
 
 from tests.helpers import Coords
 
-# clock frequencies
-PIX_TIME = 100  # 10 MHz
+PIX_TIME = 100  # 10 MHz pixel clock
 
 # latencies (must match canv_disp_agu.mk)
 # use different values for `CLUT_LAT` and `VRAM_LAT` to catch bugs
 CLUT_LAT = 1
 VRAM_LAT = 3
 DISP_LAT = CLUT_LAT + VRAM_LAT
+SCROLL_LAT = 2  # scroll register latency (must match canv_disp_agu.v)
+
 
 @dataclass(frozen=True)
 class CanvasParams:  # pylint: disable=too-many-instance-attributes
-    """Hold canvas parameters."""
+    """Hold display canvas parameters."""
     vram_addr_base: int
     addr_shift: int
     canv_dims: Coords
@@ -37,6 +40,7 @@ class CanvasParams:  # pylint: disable=too-many-instance-attributes
     scale: Coords
     scroll_coord: Coords = Coords(x=0, y=0)  # we have separate scroll tests, default to no scroll
 
+
 def scrolled(base, scroll_coord):
     """Create scrolled version of canvas params."""
     return dataclasses.replace(base, scroll_coord=scroll_coord)
@@ -45,7 +49,7 @@ def scrolled(base, scroll_coord):
 SCALE_0X0Y = CanvasParams (
     vram_addr_base = 0x0,
     addr_shift = 3,  # 16 colour
-    canv_dims = Coords(x=24, y=15),
+    canv_dims = Coords(x=23, y=15),
     disp_start = Coords(x=-7, y=-2),
     disp_end = Coords(x=23, y=14),
     win_start = Coords(x=0, y=0),  # top left of display
@@ -56,7 +60,7 @@ SCALE_0X0Y = CanvasParams (
 SCALE_1X1Y = CanvasParams (
     vram_addr_base = 0xC03,
     addr_shift = 5,  # 2 colour
-    canv_dims = Coords(x=32, y=6),
+    canv_dims = Coords(x=37, y=6),
     disp_start = Coords(x=-7, y=-2),
     disp_end = Coords(x=48, y=7),
     win_start = Coords(x=2, y=1),
@@ -100,7 +104,7 @@ SCALE_3X5Y = CanvasParams (
 LARGE_CANV = CanvasParams (
     vram_addr_base = 0x201,
     addr_shift = 4,  # 4 colour
-    canv_dims = Coords(x=96, y=45),
+    canv_dims = Coords(x=95, y=45),
     disp_start = Coords(x=-15, y=-2),
     disp_end = Coords(x=67, y=38),
     win_start = Coords(x=1, y=1),  # 1 in from corner
@@ -111,7 +115,7 @@ LARGE_CANV = CanvasParams (
 # this is very slow, so don't run routinely
 FULL_DISP = CanvasParams (
     vram_addr_base = 0x201,
-    addr_shift = 4,  # 4 colour
+    addr_shift = 3,  # 16 colour
     canv_dims = Coords(x=24, y=15),
     disp_start = Coords(x=-153, y=-20),
     disp_end = Coords(x=671, y=383),
@@ -136,13 +140,11 @@ def expected_addr(p, dx, dy, scale_x, scale_y):
     pix_idx = addr_pix & pix_idx_mask
     return addr, pix_idx
 
+
 async def setup_dut(dut, p):
     """Setup DUT with clock, reset, and initial values."""
     Clock(dut.clk_pix, PIX_TIME, unit="ns").start()
 
-    assert (p.canv_dims.x * 2**(5-p.addr_shift)) % 32 == 0, (
-        "bad test data: canvas width must be an integer number of words."
-    )
     assert 0 <= p.scroll_coord.x < p.canv_dims.x and 0 <= p.scroll_coord.y < p.canv_dims.y, (
         f"bad test data: scroll coord {p.scroll_coord} doesn't fit canvas {p.canv_dims}"
     )
@@ -150,7 +152,7 @@ async def setup_dut(dut, p):
     # ensure we're at start of frame before reset (to prevent failing tests interfering)
     dut.dx.value = p.disp_start.x
     dut.dy.value = p.disp_start.y
-    dut.frame_start.value = 0
+    dut.start.value = 0
     dut.line_start.value = 0
 
     # reset
@@ -162,19 +164,22 @@ async def setup_dut(dut, p):
     dut.rst_pix.value = 0
 
     # setup canvas
+    cordw = int(dut.CORDW.value)
     dut.vram_addr_base.value = p.vram_addr_base
     dut.addr_shift.value = p.addr_shift
-    dut.canv_dims.value = p.canv_dims.pack()
-    dut.scale.value = p.scale.pack()
-    dut.win_start.value = p.win_start.pack()
-    dut.win_end.value = p.win_end.pack()
-    dut.scroll_coord.value = p.scroll_coord.pack()
-    dut.scroll_offset.value = p.scroll_coord.y * p.canv_dims.x
+    dut.canv_dims.value = p.canv_dims.pack(width=cordw)
+    dut.scale.value = p.scale.pack(width=cordw)
+    dut.win_start.value = p.win_start.pack(width=cordw)
+    dut.win_end.value = p.win_end.pack(width=cordw)
+    dut.scroll_coord.value = p.scroll_coord.pack(width=cordw)
+
+    # let the scroll offset multiplier settle, as it does in hardware
+    for _ in range(SCROLL_LAT):
+        await RisingEdge(dut.clk_pix)
 
 
 async def run_addr_test(dut, p):
     """Test canvas display AGU address calculation."""
-
     await setup_dut(dut, p)
 
     scale_x = p.scale.x or 1  # matches hardware behaviour
@@ -185,7 +190,7 @@ async def run_addr_test(dut, p):
             for dx in range(p.disp_start.x, p.disp_end.x+1):
                 dut.dy.value = dy
                 dut.dx.value = dx
-                dut.frame_start.value = int(
+                dut.start.value = int(
                     dy == p.disp_start.y and dx == p.disp_start.x)
                 dut.line_start.value = int(dx == p.disp_start.x)
 
@@ -219,7 +224,7 @@ async def run_addr_test(dut, p):
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 @cocotb.parametrize(p=[SCALE_0X0Y, SCALE_1X1Y, SCALE_2X2Y, SCALE_4X4Y, SCALE_3X5Y, LARGE_CANV])
-async def canv_disp_agu_addr(dut, p):
+async def test_addr_calc(dut, p):
     """Test canvas display AGU address calculation."""
     await run_addr_test(dut, p)
 
@@ -231,14 +236,14 @@ async def canv_disp_agu_addr(dut, p):
     scrolled(SCALE_1X1Y, Coords(x=17, y=5)),
     scrolled(SCALE_3X5Y, Coords(x=5,  y=1))
 ])
-async def canv_disp_agu_scroll_addr(dut, p):
+async def test_scroll_addr_calc(dut, p):
     """Test canvas display AGU scrolled address calculation."""
     await run_addr_test(dut, p)
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 @cocotb.parametrize(p=[SCALE_0X0Y, SCALE_1X1Y, SCALE_2X2Y, SCALE_4X4Y, SCALE_3X5Y, LARGE_CANV])
-async def canv_disp_agu_paint(dut, p):
+async def test_paint(dut, p):
     """Test canvas display AGU paint signal."""
     await setup_dut(dut, p)
 
@@ -250,7 +255,7 @@ async def canv_disp_agu_paint(dut, p):
             for dx in range(p.disp_start.x, p.disp_end.x+1):
                 dut.dy.value = dy
                 dut.dx.value = dx
-                dut.frame_start.value = int(
+                dut.start.value = int(
                     dy == p.disp_start.y and dx == p.disp_start.x)
                 dut.line_start.value = int(dx == p.disp_start.x)
 

@@ -2,36 +2,31 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// NB. Earthrise busy and done signals don't account for vram write latency.
-
 `default_nettype none
 `timescale 1ns / 1ps
 
 module earthrise #(
-    parameter CANV_SHIFTW=3,         // vram address shift width (bits)
-    parameter COLRW=8,               // colour/pattern width (bits)
-    parameter CORDW=16,              // signed coordinate width (bits)
-    parameter ER_ADDRW=10,           // command list address width
-    parameter VRAM_ADDRW=14,         // vram address width (bits)
-    parameter WORD=32,               // machine word size (bits)
-    parameter PIX_IDXW=$clog2(WORD)  // pixel index width (bits)
+    parameter CANV_SHIFTW=3,          // vram address shift width (bits)
+    parameter COLRW=8,                // colour/pattern width (bits)
+    parameter CORDW=16,               // signed coordinate width (bits)
+    parameter ER_ADDRW=10,            // command list address width
+    parameter VRAM_ADDRW=14,          // vram address width (bits)
+    parameter WORD=32,                // machine word size (bits)
+    localparam PIX_IDXW=$clog2(WORD)  // pixel index width (bits)
     ) (
     input  wire clk,                              // clock
     input  wire rst,                              // reset
     input  wire en,                               // enable
     input  wire start,                            // start execution
-    input  wire signed [CORDW-1:0] canv_w,        // canvas width
-    input  wire signed [CORDW-1:0] canv_h,        // canvas height
-    input  wire [$clog2(WORD)-1:0] canv_bpp,      // canvas bits per pixel
+    input  wire [PIX_IDXW-1:0] canv_bpp,          // canvas bits per pixel
+    input  wire [2*CORDW-1:0] canv_dims,          // canvas dimensions
     input  wire [WORD-1:0] cmd_list,              // command list data (32-bit)
     output wire [ER_ADDRW+1:0] pc,                // program counter (byte address)
     input  wire [VRAM_ADDRW-1:0] vram_addr_base,  // base vram word address
-    input  wire [CANV_SHIFTW-1:0] addr_shift,     // address shift bits
     output wire [VRAM_ADDRW-1:0] vram_addr,       // vram word address
     output reg  [WORD-1:0] vram_din,              // vram data in
     output reg  [WORD-1:0] vram_wmask,            // vram write mask
-    output reg  busy,                             // execution in progress
-    output wire done,                             // commands complete (high for one tick)
+    output wire busy,                             // execution in progress or writing to vram
     output reg  [WORD-1:0] cycle_cnt,             // number of clock cycles to execute command list
     output reg  instr_invalid                     // invalid instruction
     );
@@ -42,7 +37,7 @@ module earthrise #(
         `define debug_er(debug_command)
     `endif
 
-    localparam ICORDW = CORDW - 4;  // use integer coordinates (4 bits reserved for fraction)
+    localparam ICORDW = 12;  // internal integer coordinate width (bits)
 
     localparam INSTRW = 16;  // instruction width (bits)
     localparam OPCW   =  4;  // opcode width (bits)
@@ -50,22 +45,28 @@ module earthrise #(
     localparam IMM12  = 12;  // immediate 12 width (bits)
     localparam IMM8   =  8;  // immediate 8 width (bits)
 
-    // drawing position and colour
+    // register canvas signals
+    reg [PIX_IDXW-1:0] canv_bpp_r;
+    reg [2*CORDW-1:0] canv_dims_r;
+    reg [VRAM_ADDRW-1:0] vram_addr_base_r;
+
+    // drawing position, colour, and wrap
     reg drawing;  // actively drawing a pixel
     reg signed [ICORDW-1:0] x, y;
     reg [COLRW-1:0] colr;  // drawing colour
-    wire [PIX_IDXW-1:0] pix_idx;  // pixel index within word
-    wire clip;  // high for coordinate outside canvas
+    reg wraph, wrapv;  // draw wrapping
 
     // instruction subfields
-    reg [OPCW-1:0]  opc;    // opcode
-    reg [FUNW-1:0]  fun;    // function
+    reg [OPCW-1:0] opc;     // opcode
+    reg [FUNW-1:0] fun;     // function
     reg [IMM12-1:0] imm12;  // 12-bit immediate
-    reg [COLRW-1:0] imm8;   // 8-bit immediate or options
+    reg [IMM8-1:0] imm8;    // 8-bit immediate or options
 
     // option bit selects
-    localparam OPT_FILL = 0;  // filled shape
-    localparam OPT_COLR = 1;  // colour A or B
+    localparam OPT_FILL  = 0;  // filled shape
+    localparam OPT_COLR  = 1;  // colour A or B
+    localparam OPT_WRAPH = 4;  // horizontal draw wrap
+    localparam OPT_WRAPV = 5;  // vertical draw wrap
 
     // PC registers
     reg [ER_ADDRW+2:0] pc_reg;  // PC points to next instruction (extra bit to detect overflow)
@@ -133,14 +134,14 @@ module earthrise #(
     reg tri_b1_skip;  // flag: skip drawing at start of edge B1
 
     // sort triangle vertices by y-coordinate
-    wire [1:0] tri_min = (tvy0 <= tvy1 && tvy0 <= tvy2) ? 0 : (tvy1 <= tvy2) ? 1 : 2;
-    wire [1:0] tri_max = (tvy0 > tvy1 && tvy0 > tvy2) ? 0 : (tvy1 > tvy2) ? 1 : 2;
-    wire [1:0] tri_mid = tri_min ^ tri_max ^ 2'b11;
-    wire tri_degen_x = (tvx0 == tvx1 && tvx0 == tvx2);  // x-coordinates in line
+    // min uses <= and max uses > so they never select the same vertex (tri_mid_y requires this)
+    wire [1:0] tri_min_y = (tvy0 <= tvy1 && tvy0 <= tvy2) ? 0 : (tvy1 <= tvy2) ? 1 : 2;
+    wire [1:0] tri_max_y = (tvy0 > tvy1 && tvy0 > tvy2) ? 0 : (tvy1 > tvy2) ? 1 : 2;
+    wire [1:0] tri_mid_y = tri_min_y ^ tri_max_y ^ 2'b11;
 
     // state machine
     localparam IDLE           =  0;
-    localparam DONE           =  1;
+    localparam FINISH         =  1;
     localparam FETCH          =  2;
     localparam DECODE         =  3;
     localparam EXEC           =  4;  // all instr use this state
@@ -165,6 +166,10 @@ module earthrise #(
     localparam STATEW = 5;  // state width (bits)
     reg [STATEW-1:0] state, state_return;
 
+    wire agu_draining;  // pixels still in AGU pipeline
+    reg busy_exec;  // executing Earthrise commands
+    assign busy = busy_exec || agu_draining;
+
     // select instruction from command list data (upper or lower half from word)
     wire [INSTRW-1:0] instr = pc[1] ? cmd_list[2*INSTRW-1:INSTRW] : cmd_list[INSTRW-1:0];
 
@@ -172,7 +177,7 @@ module earthrise #(
     reg start_pending;
     always @(posedge clk) begin
         if (rst) start_pending <= 0;
-        else if (start) start_pending <= 1;
+        else if (start && !busy_exec) start_pending <= 1;
         else if (state == IDLE && en) start_pending <= 0;
     end
 
@@ -184,7 +189,7 @@ module earthrise #(
             pc_debug <= 0;
             pc_start <= 0;
             drawing <= 0;
-            busy <= 0;
+            busy_exec <= 0;
             cycle_cnt <= 0;
             instr_invalid <= 0;
             line_a_start <= 0;
@@ -206,14 +211,14 @@ module earthrise #(
                 JUMP_WAIT: state <= FETCH;  // wait an extra cycle after changing PC before we can fetch
                 FETCH: state <= DECODE;
                 DECODE: begin
-                    if (pc_reg[ER_ADDRW+2]) state <= DONE;  // stop if overflow bit of PC set
+                    if (pc_reg[ER_ADDRW+2]) state <= FINISH;  // stop if overflow bit of PC set
                     else begin
                         state <= EXEC;
                         pc_reg <= pc_reg + 2;  // next instruction by default (16-bit instr)
                         pc_debug <= pc_reg[ER_ADDRW+1:0];  // save address of current instr for debug
                         opc <= instr[INSTRW-1:INSTRW-OPCW];
                         imm12 <= instr[IMM12-1:0];
-                        fun <= instr[COLRW+FUNW-1:COLRW];
+                        fun <= instr[IMM8+FUNW-1:IMM8];
                         imm8 <= instr[IMM8-1:0];
                         cnt_draw <= 0;  // draw counter
                         cnt_fill <= 0;  // fill counter
@@ -237,7 +242,7 @@ module earthrise #(
                         'h9: yt   <= imm12;
                         'hA: begin
                             pc_start <= imm12[ER_ADDRW+1:0];
-                            `debug_er($display("0x%x: pc_next  %x", pc_debug, imm12[ER_ADDRW-1:0]));
+                            `debug_er($display("0x%x: pc_next  %x", pc_debug, imm12[ER_ADDRW+1:0]));
                         end
                         'hC: begin  // colour and control
                             case (fun)
@@ -251,9 +256,9 @@ module earthrise #(
                                     `debug_er($display("%d - 0x%x: jump     %x", cycle_cnt, pc_debug, pc_start));
                                 end
                                 'hC: state <= FETCH;  // 0xCC - NOP (Continue)
-                                'hE: state <= DONE;   // 0xCE Stop (CEase)
+                                'hE: state <= FINISH;   // 0xCE Stop (CEase)
                                 default: begin  // invalid instruction
-                                    state <= DONE;
+                                    state <= FINISH;
                                     instr_invalid <= 1;
                                     `debug_er($display("%d - 0x%x: Invalid Instruction - no such instruction '0xC%x'.", cycle_cnt, pc_debug, fun));
                                 end
@@ -263,7 +268,9 @@ module earthrise #(
                             // handle colour once for all shapes; fill colours work for shapes without filled forms
                             colr <= imm8[OPT_FILL] ? (imm8[OPT_COLR] ? fcb : fca)
                                                    : (imm8[OPT_COLR] ? lcb : lca);
-
+                            // draw wrapping
+                            wraph <= imm8[OPT_WRAPH];
+                            wrapv <= imm8[OPT_WRAPV];
                             // select drawing function
                             case (fun)
                                 'h0: begin  // draw pixel
@@ -279,7 +286,7 @@ module earthrise #(
                                         fline_start <= 1;
                                         fline_x0 <= tvx0;
                                         fline_x1 <= tvx1;
-                                        fline_y <= tvy0;  // use tvy0 for vertical position
+                                        fline_y  <= tvy0;  // use tvy0 for vertical position
                                         `debug_er($display("%d - 0x%x: fline    (%d,%d)->(%d,%d)", cycle_cnt, pc_debug, tvx0, tvy0, tvx1, tvy1));
                                     end else begin
                                         state <= LINE_EXEC;
@@ -298,21 +305,20 @@ module earthrise #(
                                         circle_x0 <= tvx0;
                                         circle_y0 <= tvy0;
                                         circle_r0 <= r0;
-                                    end else state <= FETCH;
-                                    `debug_er($display("%d - 0x%x: circle   (%d,%d) r=%d", cycle_cnt, pc_debug, tvx0, tvy0, r0));
+                                        `debug_er($display("%d - 0x%x: circle   (%d,%d) r=%d", cycle_cnt, pc_debug, tvx0, tvy0, r0));
+                                    end else begin
+                                        state <= FETCH;
+                                        `debug_er($display("%d - 0x%x: skipping circle - radius not positive (%d,%d) r=%d", cycle_cnt, pc_debug, tvx0, tvy0, r0));
+                                    end
                                 end
-                                'h3: begin  // draw triangle (sort vertices first)
-                                    if (tri_min == tri_max || tri_degen_x) begin  // degenerate triangle
-                                        state <= DONE;
-                                        instr_invalid <= 1;
-                                        `debug_er($display("%d - 0x%x: Invalid Instruction - degenerate triangle.", cycle_cnt, pc_debug));
-                                    end else state <= TRI_INIT_B0;
-                                    tvx0s <= (tri_min == 0) ? tvx0 : (tri_min == 1) ? tvx1 : tvx2;
-                                    tvy0s <= (tri_min == 0) ? tvy0 : (tri_min == 1) ? tvy1 : tvy2;
-                                    tvx1s <= (tri_mid == 0) ? tvx0 : (tri_mid == 1) ? tvx1 : tvx2;
-                                    tvy1s <= (tri_mid == 0) ? tvy0 : (tri_mid == 1) ? tvy1 : tvy2;
-                                    tvx2s <= (tri_max == 0) ? tvx0 : (tri_max == 1) ? tvx1 : tvx2;
-                                    tvy2s <= (tri_max == 0) ? tvy0 : (tri_max == 1) ? tvy1 : tvy2;
+                                'h3: begin  // draw triangle - sort triangle vertices before drawing
+                                    state <= TRI_INIT_B0;
+                                    tvx0s <= (tri_min_y == 0) ? tvx0 : (tri_min_y == 1) ? tvx1 : tvx2;
+                                    tvy0s <= (tri_min_y == 0) ? tvy0 : (tri_min_y == 1) ? tvy1 : tvy2;
+                                    tvx1s <= (tri_mid_y == 0) ? tvx0 : (tri_mid_y == 1) ? tvx1 : tvx2;
+                                    tvy1s <= (tri_mid_y == 0) ? tvy0 : (tri_mid_y == 1) ? tvy1 : tvy2;
+                                    tvx2s <= (tri_max_y == 0) ? tvx0 : (tri_max_y == 1) ? tvx1 : tvx2;
+                                    tvy2s <= (tri_max_y == 0) ? tvy0 : (tri_max_y == 1) ? tvy1 : tvy2;
                                     `debug_er($display("%d - 0x%x: triangle (%d,%d) (%d,%d) (%d,%d)", cycle_cnt, pc_debug, tvx0, tvy0, tvx1, tvy1, tvx2, tvy2));
                                 end
                                 'h4: begin  // draw rect (sort vertices first)
@@ -324,14 +330,14 @@ module earthrise #(
                                     `debug_er($display("%d - 0x%x: rect     (%d,%d)->(%d,%d)", cycle_cnt, pc_debug, tvx0, tvy0, tvx1, tvy1));
                                 end
                                 default: begin
-                                    state <= DONE;
+                                    state <= FINISH;
                                     instr_invalid <= 1;
                                     `debug_er($display("%d - 0x%x: Invalid Instruction - no such draw function '%x'.", cycle_cnt, pc_debug, fun));
                                 end
                             endcase
                         end
                         default: begin
-                            state <= DONE;
+                            state <= FINISH;
                             instr_invalid <= 1;
                             `debug_er($display("%d - 0x%x: Invalid Instruction - no such opcode '%x'.", cycle_cnt, pc_debug, opc));
                         end
@@ -502,7 +508,7 @@ module earthrise #(
                     end
                 end
                 TRI_FILL_INIT: begin
-                    if (imm8[OPT_FILL] == 0 || (line_a_busy | line_b_busy) == 0) begin  // skip if unfilled or both lines are done
+                    if (imm8[OPT_FILL] == 0 || (line_a_busy | line_b_busy) == 0) begin  // skip if unfilled or both lines are complete
                         state <= TRI_NEXT_Y;
                     end else if (tri_b1_skip == 1) begin
                         state <= TRI_NEXT_Y;
@@ -517,28 +523,32 @@ module earthrise #(
                     if (!line_b_busy) state <= tri_b_edge ? DECODE : TRI_INIT_B1;
                     else state <= TRI_LINE_A;
                 end
-                DONE: begin
-                    state <= IDLE;
-                    busy <= 0;
+                FINISH: begin
+                    busy_exec <= 0;
                     pc_reg <= 0;  // reset pc: execution always starts from address 0
                     pc_debug <= 0;
-                    `debug_er($display("** DONE ** %d cycles", cycle_cnt));
+                    if (!agu_draining) begin
+                        state <= IDLE;
+                        `debug_er($display("** DONE ** %d cycles", cycle_cnt));
+                    end
                 end
                 default: begin // IDLE
-                    busy <= 0;
+                    busy_exec <= 0;
                     if (start_pending) begin
                         state <= FETCH;
                         instr_invalid <= 0;
-                        busy <= 1;
+                        busy_exec <= 1;
                         cycle_cnt <= 1;  // cycle counter starts
+                        // register canvas signals
+                        canv_bpp_r <= canv_bpp;
+                        canv_dims_r <= canv_dims;
+                        vram_addr_base_r <= vram_addr_base;
                     end
                 end
             endcase
         end
-        if (busy && state != DONE) cycle_cnt <= cycle_cnt + 1;
+        if (!rst && busy_exec && state != FINISH) cycle_cnt <= cycle_cnt + 1;
     end
-
-    assign done = (state == DONE);
 
     assign line_a_oe = (state == LINE_EXEC || state == RECT_EXEC || state == TRI_LINE_A);
     assign line_b_oe = (state == TRI_LINE_B);
@@ -609,9 +619,14 @@ module earthrise #(
 
 
     //
-    // draw address generation (3 clock cycles)
+    // draw address generation
     //
 
+    wire [PIX_IDXW-1:0] pix_idx;  // pixel index within word
+    wire draw_addr_valid;  // we only want to write to vram for valid addresses
+    reg [CANV_SHIFTW-1:0] addr_shift;  // to separate vram address and pix_idx
+    wire [2*CORDW-1:0] pix_coord = {{(CORDW-ICORDW){y[ICORDW-1]}}, y,  // sign extend from 12 bits
+                                    {(CORDW-ICORDW){x[ICORDW-1]}}, x};
     canv_draw_agu #(
         .CORDW(CORDW),
         .WORD(WORD),
@@ -619,71 +634,69 @@ module earthrise #(
         .SHIFTW(CANV_SHIFTW)
     ) canv_draw_agu_inst (
         .clk(clk),
+        .rst(rst),
         .en(en),
-        .w(canv_w),
-        .h(canv_h),
-        .x({{4{x[ICORDW-1]}}, x}),  // widen 12-bit integers (sign extension)
-        .y({{4{y[ICORDW-1]}}, y}),
-        .vram_addr_base(vram_addr_base),
+        .canv_dims(canv_dims_r),
+        .pix_coord(pix_coord),
+        .vram_addr_base(vram_addr_base_r),
         .addr_shift(addr_shift),
+        .wraph(wraph),
+        .wrapv(wrapv),
         .vram_addr(vram_addr),
         .pix_idx(pix_idx),
-        .clip(clip)
+        .valid(draw_addr_valid)
     );
 
     // delay write enable to match address calculation - output in vram_we_sr[0]
-    localparam ADDR_LAT = 3;
+    localparam ADDR_LAT = 4;  // ensure this matches canv_draw_agu
     reg [ADDR_LAT-1:0] vram_we_sr;
     always @(posedge clk) begin
         if (rst) vram_we_sr <= 0;
         else if (en) vram_we_sr <= {drawing, vram_we_sr[ADDR_LAT-1:1]};
     end
 
-    // delay colour to match address calculation
-    reg [COLRW-1:0] colr_p1, colr_p2, colr_p3;
+    assign agu_draining = |vram_we_sr;  // address generation unit draining
+
+    // delay colour to match address calculation - output in colr_p4
+    reg [COLRW-1:0] colr_p1, colr_p2, colr_p3, colr_p4;
     always @(posedge clk) begin
         if (en) begin
             colr_p1 <= colr;
             colr_p2 <= colr_p1;
             colr_p3 <= colr_p2;
+            colr_p4 <= colr_p3;
         end
     end
 
-    // vram write mask - use latency-corrected write-enable and colour
-    reg [WORD-1:0] vwmask_1, vwmask_2, vwmask_4, vwmask_8;
+    // determine address shift from bits per pixel (BPP)
     always @(*) begin
-        /* verilator lint_off WIDTHEXPAND */
-        vwmask_1 = vram_we_sr[0] << pix_idx;
-        vwmask_2 = {2{vram_we_sr[0]}} << (2 * pix_idx);
-        vwmask_4 = {4{vram_we_sr[0]}} << (4 * pix_idx);
-        vwmask_8 = {8{vram_we_sr[0]}} << (8 * pix_idx);
-        /* verilator lint_on WIDTHEXPAND */
-        if (!clip) begin  // no clip
-            case (canv_bpp)
-                1: vram_wmask = vwmask_1;
-                2: vram_wmask = vwmask_2;
-                4: vram_wmask = vwmask_4;
-                8: vram_wmask = vwmask_8;
-                default: vram_wmask = vwmask_4;
-            endcase
-        end else vram_wmask = 0;  // clipped
+        case(canv_bpp_r)
+            8: addr_shift = 2;  // 256 colour
+            4: addr_shift = 3;  // 16 colour
+            2: addr_shift = 4;  // 4 colour
+            1: addr_shift = 5;  // 2 colour
+            default: addr_shift = 3;  // 16 colour by default
+        endcase
     end
 
-    // vram data in - depends on colour depth of canvas
-    reg [WORD-1:0] vdin_1, vdin_2, vdin_4, vdin_8;
+    // pixel placement within vram word
+    wire [PIX_IDXW:0] pix_bits = WORD >> addr_shift;  // bits per pixel
+    /* verilator lint_off WIDTHEXPAND */
+    wire [PIX_IDXW-1:0] pix_bit_pos = pix_idx << (PIX_IDXW - addr_shift);  // bit offset in word
+    /* verilator lint_on WIDTHEXPAND */
+    wire [WORD-1:0] pix_mask = (1 << pix_bits) - 1;  // word mask of pixel's bits
+
+    // vram write mask
+    always @(*) begin
+        if (en && draw_addr_valid && vram_we_sr[0]) begin  // valid address and write enable
+            vram_wmask = pix_mask << pix_bit_pos;  // shift pixel mask into position
+        end else vram_wmask = 0;
+    end
+
+    // vram data in
     always @(*) begin
         /* verilator lint_off WIDTHEXPAND */
-        vdin_1 = colr_p3[0] << pix_idx;
-        vdin_2 = colr_p3[1:0] << (2 * pix_idx);
-        vdin_4 = colr_p3[3:0] << (4 * pix_idx);
-        vdin_8 = colr_p3[7:0] << (8 * pix_idx);
+        vram_din = (colr_p4 & pix_mask) << pix_bit_pos;  // shift masked colour into position
         /* verilator lint_on WIDTHEXPAND */
-        case (canv_bpp)
-            1: vram_din = vdin_1;
-            2: vram_din = vdin_2;
-            4: vram_din = vdin_4;
-            8: vram_din = vdin_8;
-            default: vram_din = vdin_4;
-        endcase
     end
 endmodule

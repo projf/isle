@@ -1,22 +1,19 @@
-// Isle.Computer - Earthrise Basic Shapes Test (Compiled)
-// Copyright Will Green and Isle Contributors
-// SPDX-License-Identifier: MIT
-C102C001
-C303C203
-10010002
-0002D000
-20091005
-D1023005
-100A0002
-300F2007
-000ED100
-20121002
-D4013006
-0016D402
-20161002
-401E300A
-D301500A
-0010D300
-2003100E
-D202D201
-CE00CE00
+C102C001  // 0000: lca  1        ; lcb  2
+C303C203  // 0004: fca  3        ; fcb  3
+10010002  // 0008: x0  2         ; y0  1
+0002D000  // 000C: draw pix ca   ; x0  2
+20091005  // 0010: y0  5         ; x1  9
+D1023005  // 0014: y1  5         ; draw line cb
+100A0002  // 0018: x0 2          ; y0 10
+300F2007  // 001C: x1 7          ; y1 15
+000ED100  // 0020: draw line ca  ; x0 14
+20121002  // 0024: y0 2          ; x1 18
+D4013006  // 0028: y1 6          ; draw rectf ca
+0016D402  // 002C: draw rect cb  ; x0 22
+20161002  // 0030: y0 2          ; x1 22
+401E300A  // 0034: y1 10         ; x2 30
+D301500A  // 0038: y2 10         ; draw trif ca
+0010D300  // 003C: draw tri ca   ; x0 16
+2003100E  // 0040: y0 14         ; r0 3
+D202D201  // 0044: draw circf ca ; draw circ cb
+CE00CE00  // 0048: stop          ; 

@@ -1,0 +1,10 @@
+# Isle Device Hardware
+
+Devices provide the interface between the CPU and hardware and combine lower-level hardware into useful components.
+
+| Module                           | Reference                       | Book Chapter     | Description                              |
+| -------------------------------- | ------------------------------- | ---------------- | ---------------------------------------- |
+| [dev_display](dev_display.v)     | [doc](../docs/dev_display.md)   | Graphics Devices | Composite and display graphics           |
+| [dev_earthrise](dev_earthrise.v) | [doc](../docs/dev_earthrise.md) | Graphics Devices | Control Earthrise graphics engine        |
+| [dev_sys](dev_sys.v)             | -                               | -                | -                                        |
+| [dev_uart](dev_uart.v)           | -                               | -                | -                                        |

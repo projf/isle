@@ -1,0 +1,27 @@
+# Isle.Computer - Canvas Draw AGU Test Makefile
+# Copyright Will Green and Isle Contributors
+# SPDX-License-Identifier: MIT
+
+SIM ?= icarus
+TOPLEVEL_LANG ?= verilog
+DUT = canv_draw_agu
+
+TOPLEVEL = ${DUT}
+COCOTB_TEST_MODULES = ${DUT}
+HARDWARE = $(PWD)/../..
+
+VERILOG_SOURCES += $(HARDWARE)/gfx/${DUT}.v
+
+# pass Verilog module parameters to simulator
+COMPILE_ARGS += -P${DUT}.ADDRW=14 -P${DUT}.CORDW=16 -P${DUT}.SHIFTW=3 -P${DUT}.WORD=32
+
+# each test needs its own build dir and results file
+COCOTB_RESULTS_FILE = results_${DUT}.xml
+SIM_BUILD = sim_build/${DUT}
+
+# rebuild if this makefile (including its params) changes
+THIS_MAKEFILE := $(abspath $(lastword $(MAKEFILE_LIST)))
+CUSTOM_COMPILE_DEPS += $(THIS_MAKEFILE)
+
+# include cocotb's make rules to take care of the simulator setup
+include $(shell cocotb-config --makefiles)/Makefile.sim

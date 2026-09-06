@@ -2,7 +2,7 @@
 
 The canvas display address generation unit [[canv_disp_agu.v](../gfx/canv_disp_agu.v)] calculates the [vram](vram.md) address within a canvas buffer for display output.
 
-The address calculation supports different colour depths, canvas positioning, and scaling. This module supports pipelining, and avoids multiplication.
+The address calculation supports different colour depths, canvas positioning, and scaling. This module supports pipelining.
 
 See the [Bitmap Graphics](http://projectf.io/isle/bitmap-graphics.html) blog post for more information on this module.
 
@@ -21,19 +21,20 @@ See the [Bitmap Graphics](http://projectf.io/isle/bitmap-graphics.html) blog pos
 
 * `clk_pix` - pixel clock
 * `rst_pix` - reset canvas address calculation
-* `frame_start` - frame start flag
+* `start` - start address calculation (before active painting area)
 * `line_start` - line start flag
 * (`dx`, `dy`) - display position
 * `vram_addr_base` - base word address of canvas in vram
 * `addr_shift` - address shift bits (for colour depth)
-* `canv_dims` - canvas dimensions
+* `canv_dims` - canvas dimensions (width in lower CORDW bits, height in upper CORDW bits)
 * `scale` - canvas scale
-* `scroll_coord` - canvas scroll coords (must match scroll_offset)
-* `scroll_offset` - pixel offset of canvas scroll line
+* `scroll_coord` - canvas scroll coords
 * `win_start` - canvas window start coords
 * `win_end` - canvas window end coords
 
 Several of these input signals come from the [display sync generator](display_sync_gen.md).
+
+Ensure you trigger `start` before the active painting area, when `dy < 0`. You should also allow canvas signals to settle for at least **2 cycles** before triggering `start`, to allow for the scroll multiplication to complete. [dev_display](dev_display.md) handles this by calling start the display line after copying hwreg.
 
 The position of the canvas on the display is set by the window start `win_start` and end `win_end` signals. While canvas horizontal and vertical dimensions and scale are controlled by `canv_dims` and `scale`. These signals are discussed in more detail below.
 
@@ -50,7 +51,7 @@ Address shift is set based on the bits per pixel:
 * 4 bit: `addr_shift = 3`
 * 8 bit: `addr_shift = 2`
 
-For example, 2 bits per pixel means you have 16 pixels per 32-bit word, and 16 is 2^4.
+For example, 2 bits per pixel results in `addr_shift = 4`, giving you 16 pixels per 32-bit word (16 is 2^4).
 
 The width of the canvas must be an integer number of words. The number of pixels in a word depends on the colour depth:
 
@@ -89,7 +90,7 @@ _NB. This module doesn't perform any memory boundary checks._
 |-------------------------------|
 ```
 
-The `win_start` and `win_end` inputs are a pair of signed 16-bit values, with the y-coordinate in the upper 16 bits. The `canv_dims` and `scale` inputs work in a similar way, with the vertical scale in the upper 16 bits and the horizontal scale in the lower 16 bits.
+The `win_start` and `win_end` inputs are a pair of signed values (of width CORDW), with the y-coordinate in the upper CORDW bits. The `canv_dims` and `scale` inputs work in a similar way, with the vertical scale in the upper CORDW bits and the horizontal scale in the lower CORDW bits.
 
 For example, a 256x192 canvas at 2x scale centred on 640x480 display:
 
@@ -123,11 +124,9 @@ Canvases support scrolling, which is a efficient way to pan an image or backgrou
 
 Isle canvases also wrap, so a small amount of vram can create the illusion of a vast image. When the user scrolls the image, we just need to draw one column (for horizontal scrolling) or line (for vertical scrolling) of pixels to memory, rather than rerendering the whole image.
 
-Scrolling requires setting two linked input signals `scroll_coord` and `scroll_offset`.
+Scrolling is controlled by `scroll_coord`, a a pair of unsigned values, one for the Y scroll position and one for the X. For example, if `CORDW=16` and you want the top-left pixel in the window to be from canvas pixel (Y=5, X=42), `scroll_coord` would be set to `0x0005002A`.
 
-The `scroll_coord` input is a pair of unsigned 16-bit values, one for the Y scroll position and one for the X. For example, if you want the top-left pixel in the window to be from canvas pixel (Y=5, X=42), `scroll_coord` would be set to `0x0005002A`.
-
-You must also set `scroll_offset` to the _pixel offset_ of the (y-coordinate) you're scrolling to. We don't calculate this address inside the AGU to avoid wasting hardware multiplier that would be idle most of the time. If your canvas is 336 pixels across and your y-scroll is 4 then the scroll address is 4*336=1344 (or 0x540 in hex). NB. `scroll_offset` is not a vram address, which varies depending on the colour depth of the pixels.
+NB. scroll coordinates must fit within the canvas; so, greater or equal to zero, and less than canvas width/height.
 
 ## Display Pipeline
 
@@ -141,6 +140,6 @@ This process takes several clock cycles. If we don't account for latency, the pi
 
 Our display controller begins each line with the horizontal blanking interval. This gives us time to prepare the pipeline for the first pixel, even if it's at x=0.
 
-### Testing
+## Testing
 
 There is a cocotb test bench [[canv_disp_agu.py](../tests/gfx/canv_disp_agu.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).

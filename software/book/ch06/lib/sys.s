@@ -1,4 +1,4 @@
-# Isle.Computer - Asm System Library
+# Isle.Computer - Asm System Library (Chapter 6)
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
@@ -16,7 +16,7 @@
 #   return: pseudorandom number
 #
 rand_pseudo:
-    li t6, SYS_DEV
+    li t6, DEV_SYS
 
     # check range is positive: ensure a0 ≤ a1
     bleu a0, a1, 0f  # skip if already in correct order
@@ -34,7 +34,7 @@ rand_pseudo:
     remu t1, t1, a2  # threshold = 2^32 % range
 1:
     # sample lfsr and check threshold
-    lw t2, LFSR_32(t6)
+    lw t2, LFSR_32_RO(t6)
     bltu t2, t1, 1b  # reject if bias value (try again)
 
     # create random number in range
@@ -43,7 +43,7 @@ rand_pseudo:
     ret
 2:
     # sample raw lfsr output for full range
-    lw a0, LFSR_32(t6)
+    lw a0, LFSR_32_RO(t6)
     ret
 
 
@@ -52,8 +52,8 @@ rand_pseudo:
 #   return: 1 if reached; 0 otherwise
 #
 timer_reached:
-    li t6, SYS_DEV
-    lw t0, TIMER_0(t6)
+    li t6, DEV_SYS
+    lw t0, TIMER_0_RO(t6)
     sltu t1, t0, a0  # check if t0<a0
     xori a0, t1, 1   # invert bit for a0≥t0
     ret
@@ -67,11 +67,11 @@ timer_reached:
 #
 timer_wait:
     beqz a0, 1f  # zero milliseconds?
-    li t6, SYS_DEV
-    lw t1, TIMER_0(t6)  # load base timestamp
+    li t6, DEV_SYS
+    lw t1, TIMER_0_RO(t6)  # load base timestamp
     add t1, t1, a0  # set target timestamp
 0:
-    lw t0, TIMER_0(t6)  # load current timestamp
+    lw t0, TIMER_0_RO(t6)  # load current timestamp
     blt t0, t1, 0b  # loop if not yet at target timestamp
 1:
     ret

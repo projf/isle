@@ -26,8 +26,8 @@ module top_ch05 #(
     localparam SW = "../../../software";  // software binary path
     localparam RES = "../../../res";  // resource path
 
-    // software params
-    localparam FILE_SOFT = {SW, "/book/ch05/hello.mem"};
+    // software params - change to load different software when Isle starts
+    localparam FILE_SOFT = {SW, "/book/ch05/jump.mem"};
 
     // text mode params
     localparam FILE_PAL   = {RES, "/palettes/go-16.mem"};
@@ -69,8 +69,10 @@ module top_ch05 #(
         .rst_pix(rst),
         .disp_x(sdl_x),
         .disp_y(sdl_y),
+        /* verilator lint_off PINCONNECTEMPTY */
         .disp_hsync(),
         .disp_vsync(),
+        /* verilator lint_on PINCONNECTEMPTY */
         .disp_de(sdl_de),
         .disp_frame(sdl_frame),
         .disp_r(disp_r),

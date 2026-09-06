@@ -4,6 +4,7 @@ Isle high-level docs. There's also loads of information on the [Isle FPGA Comput
 
 * [Colour Palettes](colour-palettes.md) - reference colour charts for included palettes
 * [Earthrise Programming](earthrise-programming.md) - graphics programming with Earthrise
+* [Memory Map](memory-map.md) - Isle's memory map, showing what you can find at each address
 * [Serial to Isle](serial-to-isle.md) - advice on connecting to Isle UART via USB
 
 You'll find reference documentation for Verilog modules in the [hardware](../hardware/) directory.

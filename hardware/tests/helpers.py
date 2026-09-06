@@ -11,13 +11,19 @@ from cocotb.triggers import RisingEdge
 
 @dataclass(frozen=True)
 class Coords:
-    """Isle packed coordinates."""
+    """Isle packed coordinates (handles signed and unsigned)."""
     x: int
     y: int
 
-    def pack(self, width: int = 16) -> int:
+    def pack(self, width: int) -> int:
         """Pack coords {y, x} matching Isle hardware."""
-        return (self.y << width) | self.x
+        lo, hi = -(1 << (width-1)), (1 << width) - 1
+        if not lo <= self.x <= hi:
+            raise ValueError(f"x-coord {self.x} doesn't fit in {width} bits")
+        if not lo <= self.y <= hi:
+            raise ValueError(f"y-coord {self.y} doesn't fit in {width} bits")
+        mask = (1 << width) - 1
+        return ((self.y & mask) << width) | (self.x & mask)
 
 
 def assert_coord(dut, x, y):
