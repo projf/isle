@@ -2,7 +2,7 @@
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
-VFLAGS = -O3
+VFLAGS = -O3 --x-assign fast --x-initial fast --noassert --stats
 CFLAGS = -std=c++17
 VERILOG_DEBUG = -DDEBUG
 SDL_CFLAGS = `sdl2-config --cflags`
@@ -17,4 +17,4 @@ OPT_FLAGS = -O3 -march=native -mtune=native -flto
 		-I.. -CFLAGS "${CFLAGS} ${SDL_CFLAGS} ${OPT_FLAGS}" -LDFLAGS "${SDL_LDFLAGS} ${OPT_FLAGS}"
 
 %.exe: %.mk
-	make -C ./obj_dir -f Vtop_$<
+	make -C ./obj_dir -f Vtop_$< OPT_FAST="$(OPT_FLAGS)"

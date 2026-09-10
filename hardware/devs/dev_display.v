@@ -356,7 +356,7 @@ module dev_display #(
     always @(posedge clk_sys) begin
         if (rst_sys) begin  // set reasonable defaults to be nice to software devs
             cpu_hwreg_write_pending <= 0;
-            for (k = 0; k < RW_HWREG_CNT; k = k + 1) hwreg_sys[j] <= 0;  // reset all sys hwreg
+            for (k = 0; k < RW_HWREG_CNT; k = k + 1) hwreg_sys[k] <= 0;  // reset all sys hwreg
             hwreg_sys[DISP_VISIBLE] <= DISP_VISIBLE_INIT;
             hwreg_sys[DISP_BG_COLR] <= DISP_BG_COLR_INIT;
             hwreg_sys[TEXT_WIN_START] <= WIN_START_CORD;

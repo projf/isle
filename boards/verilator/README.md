@@ -2,7 +2,7 @@
 
 By combining [Verilator](https://www.veripool.org/verilator/) and [SDL](https://www.libsdl.org), you can run Isle on another computer (Linux, Mac, or Windows). Isle also supports physical FPGA [dev boards](../).
 
-Be aware that designs typically run slower in simulation than on an FPGA dev board. For example, the [chapter 3 design](../../hardware/book/ch03/) runs at 43 FPS on an Apple M1 and 32 FPS on Linux with Intel i5-1240P.
+Be aware that designs typically run slower in simulation than on an FPGA dev board. For example, the [chapter 3 design](../../hardware/book/ch03/) runs at 43 FPS on an Apple M1 and 32 FPS on Linux with Intel i5-1240P. To maximise simulation performance on your laptop, consider power source and performance mode. For example, my Linux laptop runs the simulation twice as fast on mains power with performance mode compared to battery power with balanced mode.
 
 On macOS, colour rendering is incorrect on high-gamut displays due to LibSDL v2 colour space handling. The only fix I've found is to temporarily set your monitor to sRGB colour profile. I plan to move to LibSDL v3 at some point, but it's not a high priority right now.
 
