@@ -236,6 +236,7 @@ int run(int argc, char* argv[], const SimConf& config) {
     uint64_t end_ticks = SDL_GetPerformanceCounter();
     double duration = ((double)(end_ticks-start_ticks))/SDL_GetPerformanceFrequency();
     double fps = (double)frame_count/duration;
+    printf("Frames rendered: %llu\n", frame_count);
     printf("Frames per second: %.1f\n", fps);
 
     SDL_RendererInfo info;
