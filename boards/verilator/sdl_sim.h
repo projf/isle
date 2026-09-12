@@ -7,6 +7,7 @@
 #ifndef SDL_SIM_H
 #define SDL_SIM_H
 
+#include <cinttypes>
 #include <queue>
 #include <stdio.h>
 #include <SDL.h>
@@ -25,6 +26,7 @@ struct SimConf {
     bool fullscreen = false;
     bool vsync = true;
     UartConf uart_conf;
+    uint64_t bench_frames = 0;  // >0 disables vsync and exist after N frames
 };
 
 // based on Verilog uart_tx.v
@@ -125,8 +127,8 @@ int run(int argc, char* argv[], const SimConf& config) {
     }
     if (config.fullscreen) SDL_SetWindowFullscreen(sdl_window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 
-    sdl_renderer = SDL_CreateRenderer(sdl_window, -1,
-        SDL_RENDERER_ACCELERATED | (config.vsync ? SDL_RENDERER_PRESENTVSYNC : 0));
+    sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_ACCELERATED |
+        (config.vsync && !config.bench_frames ? SDL_RENDERER_PRESENTVSYNC : 0));
     if (!sdl_renderer) {
         printf("Renderer creation failed: %s\n", SDL_GetError());
         SDL_DestroyWindow(sdl_window);
@@ -175,7 +177,8 @@ int run(int argc, char* argv[], const SimConf& config) {
     top->clk = 0;
     top->eval();
 
-    // record stats at stat for performance calculation
+    // record stats at stat for performance measurement
+    uint64_t cycle_count = 0;
     uint64_t frame_count = 0;
     uint64_t start_ticks = SDL_GetPerformanceCounter();
 
@@ -188,6 +191,7 @@ int run(int argc, char* argv[], const SimConf& config) {
         top->eval();
         top->clk = 0;
         top->eval();
+        cycle_count++;
 
         // UART
         if constexpr (uart_en) {
@@ -212,7 +216,6 @@ int run(int argc, char* argv[], const SimConf& config) {
                      uart_tx->send_str(ev.text.text);
                     } else if (ev.type == SDL_KEYDOWN){
                         SDL_Keycode sym = ev.key.keysym.sym;
-                        SDL_Keymod mod = SDL_GetModState();
 
                         if (sym == SDLK_RETURN) uart_tx->send(0x0D);  // U+000D - Carriage return
                         else if (sym == SDLK_BACKSPACE) uart_tx->send(0x08);  // U+0008 - backspace
@@ -228,6 +231,7 @@ int run(int argc, char* argv[], const SimConf& config) {
             SDL_RenderCopy(sdl_renderer, sdl_texture, NULL, NULL);
             SDL_RenderPresent(sdl_renderer);
             frame_count++;
+            if (config.bench_frames > 0 && frame_count >= config.bench_frames) running = false;  // exit benchmark
             p = screenbuffer;  // return to start of screenbuffer
         }
     }
@@ -236,12 +240,11 @@ int run(int argc, char* argv[], const SimConf& config) {
     uint64_t end_ticks = SDL_GetPerformanceCounter();
     double duration = ((double)(end_ticks-start_ticks))/SDL_GetPerformanceFrequency();
     double fps = (double)frame_count/duration;
-    printf("Frames rendered: %llu\n", frame_count);
-    printf("Frames per second: %.1f\n", fps);
-
     SDL_RendererInfo info;
     SDL_GetRendererInfo(sdl_renderer, &info);
     printf("Used renderer: %s\n", info.name);
+    printf("Frames:  %" PRIu64 " @ %.1f FPS\n", frame_count, fps);
+    printf("MCycles: %.0f @ %.0f ns/cycle\n", cycle_count/1e6,  duration*1e9/cycle_count);
 
     top->final();  // simulation done
     delete top;
