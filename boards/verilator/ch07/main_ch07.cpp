@@ -14,6 +14,7 @@ int main(int argc, char* argv[]) {
     conf.v_res = 384;
     conf.fullscreen = false;
     conf.vsync = true;
+    conf.bench_frames = 0;  // set to 0 unless benchmarking
 
     // uart: 115200 baud @ 20 MHz
     conf.uart_conf.cnt_inc = 6036;

@@ -227,7 +227,6 @@ int run(int argc, char* argv[], const SimConf& config) {
             if (keyb_state[SDL_SCANCODE_ESCAPE] && SDL_GetModState() & KMOD_CTRL) running = false;  // quit if user presses ctrl+esc
 
             SDL_UpdateTexture(sdl_texture, NULL, screenbuffer, H_RES*sizeof(uint32_t));
-            SDL_RenderClear(sdl_renderer);
             SDL_RenderCopy(sdl_renderer, sdl_texture, NULL, NULL);
             SDL_RenderPresent(sdl_renderer);
             frame_count++;
@@ -244,7 +243,7 @@ int run(int argc, char* argv[], const SimConf& config) {
     SDL_GetRendererInfo(sdl_renderer, &info);
     printf("Used renderer: %s\n", info.name);
     printf("Frames:  %" PRIu64 " @ %.1f FPS\n", frame_count, fps);
-    printf("MCycles: %.0f @ %.0f ns/cycle\n", cycle_count/1e6,  duration*1e9/cycle_count);
+    printf("MCycles: %.1f @ %.1f ns/cycle\n", cycle_count/1e6,  duration*1e9/cycle_count);
 
     top->final();  // simulation done
     delete top;
