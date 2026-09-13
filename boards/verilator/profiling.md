@@ -10,7 +10,7 @@ Reference: [Benchmarking & Optimization](https://verilator.org/guide/latest/simu
 
 ## Setup
 
-NB. On laptops I strongly recommend being connected to mains power and choosing performance mode.
+NB. On laptops I strongly recommend being connected to mains power and choosing performance mode for maximum performance.
 
 Allow perf to sample; you can read about these settings in the [sysctl kernel docs](https://www.kernel.org/doc/Documentation/sysctl/kernel.txt).
 
@@ -23,10 +23,12 @@ In the [Verilator.mk](verilator.mk) Makefile, update `OPT_FLAGS`: remove `-flto`
 
 ## Profile
 
-Ensure vsync is disabled in main_*.cpp:
+Set the number of frames you want to benchmark in `main_*.cpp`; 100 is a reasonable choice.
+
+For example, to profile the ch07 design, set the following in `boards/verilator/ch07/main_ch07.cpp`:
 
 ```cpp
-conf.vsync = false;
+conf.bench_frames = 100;
 ```
 
 Compile as normal then run using `perf`:
@@ -37,7 +39,7 @@ make
 perf record --freq 2000 ./obj_dir/ch07
 ```
 
-After 20 seconds, quit Isle simulation with ctrl+esc as normal.
+If you set `conf.bench_frame`, the simulation will automatically exit after that many frames.
 
 On a system with mixed cores (e.g. Intel P and E cores), you might need to use `taskset` to pin the simulation to the performance cores.
 

@@ -4,10 +4,10 @@
 
 VFLAGS = -O3 --x-assign fast --x-initial fast --noassert --stats
 CFLAGS = -std=c++17
-VERILOG_DEBUG = -DDEBUG
 SDL_CFLAGS = `sdl2-config --cflags`
 SDL_LDFLAGS = `sdl2-config --libs`
 OPT_FLAGS = -O3 -march=native -mtune=native -flto
+# VERILOG_DEBUG = -DDEBUG
 
 # synthesis (secondary expansion because VERILOG_LIBS is set after rule)
 .SECONDEXPANSION:
