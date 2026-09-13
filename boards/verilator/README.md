@@ -30,9 +30,7 @@ Each chapter's top module uses an instance of the common chapter design from [ha
 
 ### Verilog Debug Messages
 
-Some Isle components (such as Earthrise) output debug messages using `$display(...)`. These messages are enabled or disabled in: `boards/verilator/verilator.mk`
-
-Simply comment out `VERILOG_DEBUG` if you don't want debug output.
+Some Isle components (such as Earthrise) support debug messages using `$display(...)`. Debug messages are enabled or disabled in `boards/verilator/verilator.mk` using `VERILOG_DEBUG`.
 
 ### Unknown Verilator Lint Message Code
 
