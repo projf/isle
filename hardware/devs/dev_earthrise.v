@@ -71,6 +71,10 @@ module dev_earthrise #(
     wire [ER_ADDRW+1:0] er_pc;  // Earthrise program counter (byte addressed)
     /* verilator lint_on UNUSEDSIGNAL */
 
+    // Earthrise status
+    wire er_busy, er_instr_invalid;
+    wire [WORD-1:0] er_cycle_cnt;
+
     // Earthrise start/reset
     reg er_start_sb, er_reset_sb;
     always @(*) er_start_sb = (&we && (addr== ER_START_SB));
@@ -86,10 +90,6 @@ module dev_earthrise #(
             er_reset <= 1;
         end
     end
-
-    // Earthrise status
-    wire er_busy, er_instr_invalid;
-    wire [WORD-1:0] er_cycle_cnt;
 
     // reading from erlist takes two cycles
     reg erlist_rd_wait;
