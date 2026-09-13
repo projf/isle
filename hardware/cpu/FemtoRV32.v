@@ -1,8 +1,7 @@
 /*******************************************************************/
 // FemtoRV32, a collection of minimalistic RISC-V RV32 cores.
 //
-// This version: Isle Edition of "Intermissum"
-// Instruction set: RV32IM + CSR + MRET
+// This version: Isle Edition - RV32IM + CSR + MRET
 //
 // Bruno Levy, Matthias Koch, 2020-2021
 // Isle edition by Will Green, 2026
@@ -39,6 +38,32 @@ module FemtoRV32 #(
     localparam EXECUTE         = 1 << EXECUTE_bit;
     localparam WAIT_ALU_OR_MEM = 1 << WAIT_ALU_OR_MEM_bit;
     reg [STATES_CNT-1:0] state;
+
+    reg  [31:2] instr;  // Latched instruction. Note that bits 0 and 1 are
+                        //  ignored (not used in RV32I base instr set).
+
+    // declare signals before use
+    wire writeBack;  // register write-back enable
+    wire [31:0] writeBackData;
+
+    reg [31:0] dividend;
+    reg [62:0] divisor;
+    reg [31:0] quotient;
+    reg [31:0] quotient_msk;
+    reg [31:0] divResult;
+    wire div_sign;
+
+    // load
+    wire [31:0] LOAD_data;
+    wire [15:0] LOAD_halfword;
+    wire [7:0] LOAD_byte;
+
+    // CSRs
+    reg  [ADDRW-1:0] mepc;    // The saved program counter.
+    reg  [ADDRW-1:0] mtvec;   // The address of the interrupt handler.
+    reg              mstatus; // Interrupt enable
+    reg              mcause;  // Interrupt cause (and lock)
+    reg  [63:0]      cycles;  // Cycle counter
 
     /***************************************************************************/
     // Instruction decoding.
@@ -185,17 +210,12 @@ module FemtoRV32 #(
     /***************************************************************************/
     // Implementation of DIV/REM instructions, highly inspired by PicoRV32
 
-    reg [31:0] dividend;
-    reg [62:0] divisor;
-    reg [31:0] quotient;
-    reg [31:0] quotient_msk;
-
     wire divstep_do = (divisor <= {31'b0, dividend});
 
     wire [31:0] dividendN = divstep_do ? dividend - divisor[31:0] : dividend;
     wire [31:0] quotientN = divstep_do ? quotient | quotient_msk  : quotient;
 
-    wire div_sign = ~instr[12] &
+    assign div_sign = ~instr[12] &
         (instr[13] ? aluIn1[31] : (aluIn1[31] != aluIn2[31]) & |aluIn2);
 
     always @(posedge clk) begin
@@ -212,7 +232,6 @@ module FemtoRV32 #(
         end
     end
 
-    reg  [31:0] divResult;
     always @(posedge clk) divResult <= instr[13] ? dividendN : quotientN;
 
    /***************************************************************************/
@@ -231,9 +250,7 @@ module FemtoRV32 #(
     // Program counter and branch target computation.
     /***************************************************************************/
 
-    reg [ADDRW-1:0] PC; // The program counter.
-    reg  [31:2] instr;  // Latched instruction. Note that bits 0 and 1 are
-                        //  ignored (not used in RV32I base instr set).
+    reg [ADDRW-1:0] PC;  // program counter
 
     wire [ADDRW-1:0] PCplus4 = PC + 4;
 
@@ -275,13 +292,6 @@ module FemtoRV32 #(
 
     // Decoder for mret opcode
     wire interrupt_return = isSYSTEM & funct3Is[0]; // & (instr[31:20]==12'h302);
-
-    // CSRs:
-    reg  [ADDRW-1:0] mepc;    // The saved program counter.
-    reg  [ADDRW-1:0] mtvec;   // The address of the interrupt handler.
-    reg              mstatus; // Interrupt enable
-    reg              mcause;  // Interrupt cause (and lock)
-    reg  [63:0]      cycles;  // Cycle counter
 
     always @(posedge clk) cycles <= cycles + 1;
 
@@ -326,7 +336,7 @@ module FemtoRV32 #(
     /***************************************************************************/
 
     /* verilator lint_off WIDTH */
-    wire [31:0] writeBackData  =
+    assign writeBackData  =
         (isSYSTEM            ? CSR_read  : 32'b0) |  // SYSTEM
         (isLUI               ? Uimm      : 32'b0) |  // LUI
         (isALU               ? aluOut    : 32'b0) |  // ALUreg, ALUimm
@@ -354,14 +364,14 @@ module FemtoRV32 #(
     wire LOAD_sign =
             !instr[14] & (mem_byteAccess ? LOAD_byte[7] : LOAD_halfword[15]);
 
-    wire [31:0] LOAD_data =
+    assign LOAD_data =
             mem_byteAccess ? {{24{LOAD_sign}},     LOAD_byte} :
         mem_halfwordAccess ? {{16{LOAD_sign}}, LOAD_halfword} : mem_rdata;
 
-    wire [15:0] LOAD_halfword =
+    assign LOAD_halfword =
                 loadstore_addr[1] ? mem_rdata[31:16] : mem_rdata[15:0];
 
-    wire  [7:0] LOAD_byte =
+    assign LOAD_byte =
                 loadstore_addr[0] ? LOAD_halfword[15:8] : LOAD_halfword[7:0];
 
     // STORE
@@ -397,8 +407,8 @@ module FemtoRV32 #(
     // The signals (internal and external) that are determined
     // combinatorially from state and other signals.
 
-    // register write-back enable.
-    wire writeBack = ~(isBranch | isStore ) &
+    // register write-back enable
+    assign writeBack = ~(isBranch | isStore ) &
         (state[EXECUTE_bit] | state[WAIT_ALU_OR_MEM_bit]);
 
     // The memory-read signal.
