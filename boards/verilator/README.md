@@ -2,7 +2,7 @@
 
 By combining [Verilator](https://www.veripool.org/verilator/) and [SDL](https://www.libsdl.org), you can run Isle on another computer (Linux, Mac, or Windows). Isle also supports physical FPGA [dev boards](../).
 
-Be aware that designs typically run slower in simulation than on an FPGA dev board. For example, the [chapter 3 design](../../hardware/book/ch03/) runs at 43 FPS on an Apple M1 and 32 FPS on Linux with Intel i5-1240P. To maximise simulation performance on your laptop, consider power source and performance mode. For example, my Linux laptop runs the simulation twice as fast on mains power with performance mode compared to battery power with balanced mode.
+Be aware that designs typically run slower in simulation than on an FPGA dev board. For example, the [chapter 7 design](../../hardware/book/ch07/) runs at around 18 FPS on both an Apple M1 and on Linux with Intel i5-1240P. To maximise simulation performance, consider power source and performance mode. For example, my Linux laptop runs the simulation twice as fast on mains power with performance mode compared to battery power with balanced mode.
 
 On macOS, colour rendering is incorrect on high-gamut displays due to LibSDL v2 colour space handling. The only fix I've found is to temporarily set your monitor to sRGB colour profile. I plan to move to LibSDL v3 at some point, but it's not a high priority right now.
 
@@ -14,15 +14,15 @@ There is a Verilator top module for each chapter of the _Building Isle_ book, av
 
 [Install dependencies](#install-dependencies) if you haven't already.
 
-Use **make** to build your chosen chapter. For example, to build the chapter 4 design:
+Use **make** to build your chosen chapter. For example, to build the chapter 7 design:
 
 ```shell
-cd isle/boards/verilator/ch04
+cd isle/boards/verilator/ch07
 make
-./obj_dir/ch04
+./obj_dir/ch07
 ```
 
-To enable/disable full screen and vsync, edit the main C++ file for that chapter, e.g. `boards/verilator/main_ch04.cpp`. You can find the C++ function that handles setting up SDL and running the Verilator simulation in [sdl_sim.h](sdl_sim.h). The simulation supports sending keyboard input to Isle via UART, so you can seamlessly type into the simulation window as if you had a keyboard connection to Isle.
+To enable/disable full screen and vsync, edit the main C++ file for that chapter, e.g. `boards/verilator/main_ch07.cpp`. You can find the C++ function that handles setting up SDL and running the Verilator simulation in [sdl_sim.h](sdl_sim.h). The simulation supports sending keyboard input to Isle via UART, so you can seamlessly type into the simulation window as if you had a keyboard connection to Isle.
 
 Many chapters have parameters you can edit in the matching top module. For example, in `top_ch02.v` you can choose the bitmap and palette to load.
 
