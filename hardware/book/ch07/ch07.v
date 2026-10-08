@@ -56,8 +56,8 @@ module ch07 #(
     // text mode
     localparam TEXT_CIDXW =  4;  // 16 colours available in textmode
     localparam TRAM_ADDRW = 11;  // tram address width (bits)
-    localparam TRAM_HRES  = 16'd84;  // tram width (chars) - 84x8 = 672
-    localparam TRAM_VRES  = 16'd24;  // tram height (chars) - 24x16 = 384
+    localparam TEXT_HRES  = 84;  // tram width (chars) - 84x8 = 640
+    localparam TEXT_VRES  = 24;  // tram height (chars) - 24x16 = 384
     localparam TRAM_LAT   =  2;  // tram display read latency (cycles, min=1, max=2)
 
     // uart
@@ -375,9 +375,9 @@ module ch07 #(
         .CORDW(CORDW),
         .DEV_ADDRW(DEV_ADDRW),
         .DISPLAY_MODE(DISPLAY_MODE),
+        .TEXT_HRES(TEXT_HRES),
+        .TEXT_VRES(TEXT_VRES),
         .TRAM_ADDRW(TRAM_ADDRW),
-        .TRAM_HRES(TRAM_HRES),
-        .TRAM_VRES(TRAM_VRES),
         .TRAM_LAT(TRAM_LAT),
         .VRAM_ADDRW(VRAM_ADDRW),
         .VRAM_LAT(VRAM_LAT),

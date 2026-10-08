@@ -9,6 +9,8 @@ module disp_hwreg #(
     parameter BYTE_CNT=4,    // bytes in word
     parameter CORDW=16,      // signed coordinate width (bits)
     parameter DEV_ADDRW=10,  // device address width (bits)
+    parameter TEXT_HRES=80,  // text width (half-width chars)
+    parameter TEXT_VRES=25,  // text height (chars)
     parameter WORD=32        // machine word size (bits)
     ) (
     input  wire clk_sys,  // system clock
@@ -22,9 +24,7 @@ module disp_hwreg #(
     output reg  [WORD-1:0] dout_sys,  // data out
     // external I/O signals
     input  wire signed [CORDW-1:0] disp_hres, disp_vres,  // display dims
-    input  wire frame_start_sys, // frame start in system clock domain
-    input  wire signed [CORDW-1:0] text_hres, text_vres,  // textmode dims
-    input  wire signed [CORDW-1:0] tram_depth
+    input  wire frame_start_sys // frame start in system clock domain
     );
 
     // HW_REG_ADDR - must match software
@@ -53,8 +53,8 @@ module disp_hwreg #(
             case (addr_sys)
                 DISP_DIMS:  dout_sys <= {disp_vres, disp_hres};
                 FRAME_FLAG: dout_sys <= {{WORD-1{1'b0}}, frame_flag};
-                TEXT_DIMS:  dout_sys <= {text_vres, text_hres};
-                TRAM_DEPTH: dout_sys <= {{WORD-CORDW{1'b0}}, tram_depth};
+                TEXT_DIMS:  dout_sys <= {TEXT_VRES[WORD/2-1:0], TEXT_HRES[WORD/2-1:0]};
+                TRAM_DEPTH: dout_sys <= TEXT_VRES * TEXT_HRES;
                 default: dout_sys <= 0;
             endcase
         end

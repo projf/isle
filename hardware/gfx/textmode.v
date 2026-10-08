@@ -14,30 +14,30 @@ module textmode #(
     parameter FONT_COUNT=128,   // number of glyphs in font ROM
     parameter GLYPH_HEIGHT=16,  // glyph height (pixels)
     parameter GLYPH_WIDTH=8,    // half-width glyph width (pixels)
-    parameter TRAM_DEPTH=2016,  // tram depth (chars)
+    parameter TEXT_HRES=80,     // text width (half-width chars)
+    parameter TEXT_VRES=25,     // text height (chars)
     parameter TRAM_LAT=2,       // tram display read latency (cycles; min=1, max 2)
     parameter WORD=32           // machine word size (bits)
     ) (
-    input  wire clk_pix,                       // pixel clock
-    input  wire rst_pix,                       // reset in pixel clock domain
-    input  wire start,                         // start textmode rendering
-    input  wire signed [CORDW-1:0] dx, dy,     // display position
-    input  wire [2*CORDW-1:0] win_start,       // text window start coords
-    input  wire [2*CORDW-1:0] win_end,         // text window end coords
-    input  wire [2*CORDW-1:0] scale,           // text mode scale
-    input  wire signed [ADDRW-1:0] text_hres,  // text width (chars)
-    input  wire signed [ADDRW-1:0] text_vres,  // text height (chars)
-    input  wire [ADDRW-1:0] scroll_offset,     // tram address offset for scroll
+    input  wire clk_pix,                    // pixel clock
+    input  wire rst_pix,                    // reset in pixel clock domain
+    input  wire start,                      // start textmode rendering
+    input  wire signed [CORDW-1:0] dx, dy,  // display position
+    input  wire [2*CORDW-1:0] win_start,    // text window start coords
+    input  wire [2*CORDW-1:0] win_end,      // text window end coords
+    input  wire [2*CORDW-1:0] scale,        // text mode scale
+    input  wire [ADDRW-1:0] scroll_offset,  // tram address offset for scroll
     /* verilator lint_off UNUSEDSIGNAL */
-    input  wire [WORD-1:0] tram_data,          // character data - [23:21] unused
+    input  wire [WORD-1:0] tram_data,       // character data - [23:21] unused
     /* verilator lint_on UNUSEDSIGNAL */
-    output reg  [ADDRW-1:0] tram_addr,         // tram address (word)
-    output reg  [CIDXW-1:0] pix,               // pixel colour index
-    output reg  paint                          // text mode painting enable (pre-clut)
+    output reg  [ADDRW-1:0] tram_addr,      // tram address (word)
+    output reg  [CIDXW-1:0] pix,            // pixel colour index
+    output reg  paint                       // text mode painting enable (pre-clut)
     );
 
-    localparam UCPW    = 21;  // Unicode code point width (bits)
-    localparam PIX_LAT =  1;  // 1 cycle to register `pix`
+    localparam TRAM_DEPTH = TEXT_HRES * TEXT_VRES;  // tram depth (chars)
+    localparam UCPW       = 21;  // Unicode code point width (bits)
+    localparam PIX_LAT    =  1;  // 1 cycle to register `pix`
 
     // separate y and x from text window signals
     reg signed [CORDW-1:0] win_y0, win_x0;
@@ -51,23 +51,14 @@ module textmode #(
 
     // register signals to improve timing with hwreg
     reg [CORDW-1:0] scale_x_minus, scale_y_minus;
-    reg signed [CORDW-1:0] paint_start_x, paint_end_x;
-    reg signed [CORDW-1:0] win_x1_minus, win_y1_minus;
-    reg signed [CORDW-1:0] draw_start_x_lat;   // draw start depends on window and latency
+    reg signed [CORDW-1:0] await_last_x, draw_last_x;
+    reg signed [CORDW-1:0] win_y1_minus;
     always @(posedge clk_pix) begin
         scale_x_minus <= (scale_x == 0) ? 0 : scale_x - 1;
         scale_y_minus <= (scale_y == 0) ? 0 : scale_y - 1;
-        paint_start_x <= win_x0 - CLUT_LAT - 1;  // -1 for registering
-        paint_end_x <= win_x1 - CLUT_LAT - 1;
-        win_x1_minus <= win_x1 - 1;
-        win_y1_minus <= win_y1 - 1;
-        draw_start_x_lat <= win_x0 - PIX_LAT - CLUT_LAT - 1;  // -1 for state trans to DRAW
-    end
-
-    // paint area defined by window
-    wire win_y = (dy >= win_y0) && (dy < win_y1);
-    always @(posedge clk_pix) begin
-        paint <= (dx >= paint_start_x) && (dx < paint_end_x) && win_y;
+        await_last_x  <= win_x0 - PIX_LAT - CLUT_LAT - 1;  // last AWAIT cycle; DRAW begins next cycle
+        draw_last_x   <= win_x1 - PIX_LAT - CLUT_LAT - 1;  // last DRAW cycle within window
+        win_y1_minus  <= win_y1 - 1;
     end
 
     // bit widths
@@ -80,8 +71,8 @@ module textmode #(
     reg [CIDXW-1:0] colr_bg;  // background colour
 
     // position within tram but constrained to text display area
-    reg [ADDRW-1:0] tx;  // 0 to text_hres-1
-    reg [ADDRW-1:0] ty;  // 0 to text_vres-1
+    reg [ADDRW-1:0] tx;  // 0 to TEXT_HRES-1
+    reg [ADDRW-1:0] ty;  // 0 to TEXT_VRES-1
 
     // position within character glyph
     reg [GLYPH_WIDTH_W-1:0]  gx;  // 0 to GLYPH_WIDTH-1
@@ -101,12 +92,12 @@ module textmode #(
     /* verilator lint_on WIDTHEXPAND */
 
     // state machine
-    localparam IDLE       = 0;  // idle awaiting 'frame_start'
-    localparam INIT       = 1;  // frame init
-    localparam AWAIT      = 2;  // await start of rendering
-    localparam DRAW       = 3;  // draw pixels
-    localparam CHR_LINE   = 4;  // for new character line
-    localparam SCR_LINE   = 5;  // for new screen line
+    localparam IDLE     = 0;  // idle awaiting start
+    localparam INIT     = 1;  // frame init
+    localparam AWAIT    = 2;  // await start of rendering (primes pipeline)
+    localparam DRAW     = 3;  // draw pixels
+    localparam CHR_LINE = 4;  // for new character line
+    localparam SCR_LINE = 5;  // for new screen line
 
     localparam STATEW = 3;  // state width (bits)
     reg [STATEW-1:0] state;
@@ -125,15 +116,17 @@ module textmode #(
                 cnt_y <= 0;
             end
             AWAIT: begin
-                if (dx == draw_start_x_lat) state <= DRAW;
+                if (dx == await_last_x) state <= DRAW;
                 colr_fg <= tram_data[WORD-CIDXW-1:WORD-2*CIDXW];
                 colr_bg <= tram_data[WORD-1:WORD-CIDXW];
                 pix_line_reg <= pix_line;
                 ucp <= tram_data[UCPW-1:0];
             end
             DRAW: begin
-                if (tx == text_hres || dx >= win_x1_minus) begin
-                    if (ty == text_vres || dy >= win_y1_minus) state <= IDLE;
+                // last pixel on line: end of text or end of window
+                if ((glyph_x_end && tx == TEXT_HRES-1) || dx >= draw_last_x) begin
+                    // last line: end of text or end of window
+                    if ((glyph_y_end && ty == TEXT_VRES-1) || dy >= win_y1_minus) state <= IDLE;
                     else if (glyph_y_end) state <= CHR_LINE;
                     else state <= SCR_LINE;
                 end
@@ -162,7 +155,7 @@ module textmode #(
             end
             CHR_LINE: begin  // prepare for next line of chars
                 state <= SCR_LINE;
-                tram_line_addr <= tram_line_addr + text_hres;  // address for next line of chars
+                tram_line_addr <= tram_line_addr + TEXT_HRES;  // address for next line of chars
                 ty <= ty + 1;  // move down to next line of chars
             end
             SCR_LINE: begin  // new line of pixels
@@ -187,16 +180,18 @@ module textmode #(
                     /* verilator lint_on WIDTHEXPAND */
                 end else cnt_y <= cnt_y + 1;
             end
-            default: begin  // IDLE
-                if (start) state <= INIT;
-            end
+            default: ;  // IDLE
         endcase
 
+        if (start) state <= INIT;
         if (rst_pix) state <= IDLE;
     end
 
-    // output text pixels - text pixel enable controlled by paint signal
-    always @(posedge clk_pix) pix <= pix_line_reg[gx] ? colr_fg : colr_bg;
+    // output text pixels; paint registered from DRAW so it aligns with pix
+    always @(posedge clk_pix) begin
+        paint <= (state == DRAW);
+        pix   <= pix_line_reg[gx] ? colr_fg : colr_bg;
+    end
 
     font_glyph #(
         .FONT_COUNT(FONT_COUNT),

@@ -43,9 +43,8 @@ module ch05 #(
     // text mode
     localparam TEXT_CIDXW =  4;  // 16 colours available in textmode
     localparam TRAM_ADDRW = 11;  // tram address width (bits)
-    localparam TRAM_HRES  = 84;  // tram width (chars) - 84x8 = 672
-    localparam TRAM_VRES  = 24;  // tram height (chars) - 24x16 = 384
-    localparam [TRAM_ADDRW-1:0] TRAM_DEPTH = TRAM_HRES * TRAM_VRES;
+    localparam TEXT_HRES  = 84;  // tram width (chars) - 84x8 = 640
+    localparam TEXT_VRES  = 24;  // tram height (chars) - 24x16 = 384
     localparam TRAM_LAT   =  2;  // tram read latency (cycles; min=1, max=2)
 
     // internal system params
@@ -182,10 +181,6 @@ module ch05 #(
     // Text Mode
     //
 
-    // fixed tram size for now; CPU will control through hardware registers
-    reg signed [TRAM_ADDRW-1:0] text_hres = TRAM_HRES;
-    reg signed [TRAM_ADDRW-1:0] text_vres = TRAM_VRES;
-
     reg [TRAM_ADDRW-1:0] scroll_offset = 0*84;  // scroll text display (use lines of chars)
     wire [TEXT_CIDXW-1:0] text_pix;
     wire text_paint;  // signals when to enable text painting
@@ -199,7 +194,8 @@ module ch05 #(
         .FONT_COUNT(FONT_COUNT),
         .GLYPH_HEIGHT(GLYPH_HEIGHT),
         .GLYPH_WIDTH(GLYPH_WIDTH),
-        .TRAM_DEPTH(TRAM_DEPTH),
+        .TEXT_HRES(TEXT_HRES),
+        .TEXT_VRES(TEXT_VRES),
         .TRAM_LAT(TRAM_LAT),
         .WORD(WORD)
     ) textmode_inst (
@@ -211,8 +207,6 @@ module ch05 #(
         .win_start(WIN_START_CORD),
         .win_end(WIN_END_CORD),
         .scale(DISPLAY_SCALE),
-        .text_hres(text_hres),
-        .text_vres(text_vres),
         .scroll_offset(scroll_offset),
         .tram_data(tram_dout_disp),
         .tram_addr(tram_addr_disp),
