@@ -158,9 +158,9 @@ module ch07 #(
     wire [WORD-1:0] dev_er_dout;
 
     // doesn't yet capture bus faults within devices
-    reg mapped_addr;
+    reg io_addr_mapped;
     always @(*) begin
-        mapped_addr = 1;
+        io_addr_mapped = 1;
         case(1'b1)
             sysram_cs:   io_rdata = sysram_dout;
             stack_cs:    io_rdata = stack_dout;
@@ -172,7 +172,7 @@ module ch07 #(
             dev_er_cs:   io_rdata = dev_er_dout;
             default: begin
                 io_rdata = 0;
-                mapped_addr = 0;  // unmapped address
+                io_addr_mapped = 0;  // unmapped address
             end
         endcase
     end
@@ -181,7 +181,7 @@ module ch07 #(
     // bus fault if we attempt to access bus with unmapped address
     wire addr_in_map = ~|cpu_addr[WORD-1:BUSW+2];  // 24-bit addr space; upper 8 bits must be zero
     wire bus_access = io_rstrb | (|io_wstrb);
-    wire bus_fault = bus_access & (~mapped_addr | ~addr_in_map);
+    wire bus_fault = bus_access & (~io_addr_mapped | ~addr_in_map);
 
     // permanently stall on bus fault (we don't have interrupts yet)
     reg bus_stall;
