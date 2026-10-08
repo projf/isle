@@ -14,8 +14,8 @@ module textmode #(
     parameter FONT_COUNT=128,   // number of glyphs in font ROM
     parameter GLYPH_HEIGHT=16,  // glyph height (pixels)
     parameter GLYPH_WIDTH=8,    // half-width glyph width (pixels)
-    parameter TEXT_HRES=80,     // text width (half-width chars)
-    parameter TEXT_VRES=25,     // text height (chars)
+    parameter TEXT_HRES=80,     // text mode width (half-width chars)
+    parameter TEXT_VRES=25,     // text mode height (chars)
     parameter TRAM_LAT=2,       // tram display read latency (cycles; min=1, max 2)
     parameter WORD=32           // machine word size (bits)
     ) (
@@ -26,7 +26,7 @@ module textmode #(
     input  wire [2*CORDW-1:0] win_start,    // text window start coords
     input  wire [2*CORDW-1:0] win_end,      // text window end coords
     input  wire [2*CORDW-1:0] scale,        // text mode scale
-    input  wire [ADDRW-1:0] scroll_offset,  // tram address offset for scroll
+    input  wire [ADDRW-1:0] scroll_row,     // first text row to display
     /* verilator lint_off UNUSEDSIGNAL */
     input  wire [WORD-1:0] tram_data,       // character data - [23:21] unused
     /* verilator lint_on UNUSEDSIGNAL */
@@ -106,8 +106,8 @@ module textmode #(
         case (state)
             INIT: begin
                 if (dy == win_y0) state <= AWAIT;
-                tram_addr <= scroll_offset;
-                tram_line_addr <= scroll_offset;
+                tram_addr <= scroll_row * TEXT_HRES;
+                tram_line_addr <= scroll_row * TEXT_HRES;
                 tx <= 0;
                 ty <= 0;
                 gx <= 0;
@@ -139,8 +139,8 @@ module textmode #(
                     /* verilator lint_on WIDTHEXPAND */
                 end else cnt_x <= cnt_x + 1;
 
-                if (gx == 0 && cnt_x == 0)
-                    tram_addr <= (tram_addr == TRAM_DEPTH-1) ? scroll_offset : tram_addr + 1;
+                // rows never cross the end of tram
+                if (gx == 0 && cnt_x == 0) tram_addr <= tram_addr + 1;
 
                 // register Unicode code point; TRAM_LAT+1 to reg tram_addr
                 if (gx == TRAM_LAT+1 && cnt_x == 0) ucp <= tram_data[UCPW-1:0];
@@ -155,17 +155,13 @@ module textmode #(
             end
             CHR_LINE: begin  // prepare for next line of chars
                 state <= SCR_LINE;
-                tram_line_addr <= tram_line_addr + TEXT_HRES;  // address for next line of chars
+                tram_line_addr <= (tram_line_addr >= TRAM_DEPTH - TEXT_HRES) ? 0
+                                : tram_line_addr + TEXT_HRES;
                 ty <= ty + 1;  // move down to next line of chars
             end
             SCR_LINE: begin  // new line of pixels
                 state <= AWAIT;
-
-                // set tram address to start of line
-                if (tram_line_addr > TRAM_DEPTH-1) begin // handle wrapping
-                    tram_addr <= tram_line_addr - TRAM_DEPTH;
-                    tram_line_addr <= tram_line_addr - TRAM_DEPTH;
-                end else tram_addr <= tram_line_addr;
+                tram_addr <= tram_line_addr;  // start of line (already wrapped in CHR_LINE)
 
                 // begin with first char on line; reset horizontal position
                 tx <= 0;

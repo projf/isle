@@ -206,7 +206,7 @@ module ch06 #(
     // Text Mode
     //
 
-    reg [TRAM_ADDRW-1:0] scroll_offset = 0*84;  // scroll text display (use lines of chars)
+    reg [TRAM_ADDRW-1:0] scroll_row = 0;  // scroll text display (0 to TEXT_VRES-1)
     wire [TEXT_CIDXW-1:0] text_pix;
     wire text_paint;  // signals when to enable text painting
 
@@ -232,7 +232,7 @@ module ch06 #(
         .win_start(WIN_START_CORD),
         .win_end(WIN_END_CORD),
         .scale(DISPLAY_SCALE),
-        .scroll_offset(scroll_offset),
+        .scroll_row(scroll_row),
         .tram_data(tram_dout_disp),
         .tram_addr(tram_addr_disp),
         .pix(text_pix),

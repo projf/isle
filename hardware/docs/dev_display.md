@@ -51,7 +51,7 @@ NB. Hardware registers must be written as **whole words** from the CPU side. Not
 * `TEXT_SCALE` - text scale relative to display dimensions
 * `TEXT_PAL` - text palette offset in clut
 * `TEXT_TIDX` - transparent text colour index (DISP_VISIBLE controls if transparency is enabled)
-* `TEXT_SCROLL_OFFSET` - text scrolling offset (half-width characters)
+* `TEXT_SCROLL_ROW` - text scroll row (0 to one less than text mode vertical dimension)
 
 #### Canvas
 

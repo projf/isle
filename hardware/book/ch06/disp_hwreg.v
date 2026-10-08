@@ -9,8 +9,8 @@ module disp_hwreg #(
     parameter BYTE_CNT=4,    // bytes in word
     parameter CORDW=16,      // signed coordinate width (bits)
     parameter DEV_ADDRW=10,  // device address width (bits)
-    parameter TEXT_HRES=80,  // text width (half-width chars)
-    parameter TEXT_VRES=25,  // text height (chars)
+    parameter TEXT_HRES=80,  // text mode width (half-width chars)
+    parameter TEXT_VRES=25,  // text mode height (chars)
     parameter WORD=32        // machine word size (bits)
     ) (
     input  wire clk_sys,  // system clock
