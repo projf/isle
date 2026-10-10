@@ -1,4 +1,4 @@
-// Isle.Computer - Textmode with Internal Glyph ROM
+// Isle.Computer - Text Mode with Internal Glyph ROM
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
@@ -16,7 +16,7 @@ module textmode #(
     parameter GLYPH_WIDTH=8,    // half-width glyph width (pixels)
     parameter TEXT_HRES=80,     // text mode width (half-width chars)
     parameter TEXT_VRES=25,     // text mode height (chars)
-    parameter TRAM_LAT=2,       // tram display read latency (cycles; min=1, max 2)
+    parameter TRAM_LAT=2,       // tram display read latency
     parameter WORD=32           // machine word size (bits)
     ) (
     input  wire clk_pix,                    // pixel clock
@@ -37,7 +37,19 @@ module textmode #(
 
     localparam TRAM_DEPTH = TEXT_HRES * TEXT_VRES;  // tram depth (chars)
     localparam UCPW       = 21;  // Unicode code point width (bits)
-    localparam PIX_LAT    =  1;  // 1 cycle to register `pix`
+
+    // prefetch latency
+    localparam FONT_LAT    = 3;                      // from font_glyph.v
+    localparam UCP_GX      = TRAM_LAT + 1;           // glyph column to register ucp
+    localparam PIX_LINE_GX = UCP_GX + 1 + FONT_LAT;  // glyph column where pix_line is valid
+
+    // pix_line must be valid by last column of glyph
+    initial begin
+        if (PIX_LINE_GX > GLYPH_WIDTH-1)
+            $display("ERROR: textmode - latency too high for GLYPH_WIDTH.");
+    end
+
+    localparam PIX_LAT =  1;  // output: 1 cycle to register `pix`
 
     // separate y and x from text window signals
     reg signed [CORDW-1:0] win_y0, win_x0;
@@ -142,8 +154,8 @@ module textmode #(
                 // rows never cross the end of tram
                 if (gx == 0 && cnt_x == 0) tram_addr <= tram_addr + 1;
 
-                // register Unicode code point; TRAM_LAT+1 to reg tram_addr
-                if (gx == TRAM_LAT+1 && cnt_x == 0) ucp <= tram_data[UCPW-1:0];
+                // register Unicode code point for next glyph
+                if (gx == UCP_GX && cnt_x == 0) ucp <= tram_data[UCPW-1:0];
 
                 // register glyph pixels and colours at end of current glyph
                 if (glyph_x_end) begin
@@ -183,7 +195,7 @@ module textmode #(
         if (rst_pix) state <= IDLE;
     end
 
-    // output text pixels; paint registered from DRAW so it aligns with pix
+    // output stage (PIX_LAT=1); register paint so it aligns with pix
     always @(posedge clk_pix) begin
         paint <= (state == DRAW);
         pix   <= pix_line_reg[gx] ? colr_fg : colr_bg;

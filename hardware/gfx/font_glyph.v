@@ -2,7 +2,7 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// 3 cycle latency
+// 3 cycle latency (ucp -> pix_line) - must match FONT_LAT in textmode.v
 
 `default_nettype none
 `timescale 1ns / 1ps
