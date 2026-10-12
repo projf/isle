@@ -23,7 +23,7 @@ The follow signals are used for line drawing. Isle drawing takes place in the sy
 
 The `start` signal only works when if the module isn't already calculating. If you want to stop the calculation and start afresh you need to reset with `rst` then use `start`.
 
-Output enable `oe` lets you pause the line calculation, which is useful for multiplexing access to memory or for drawing shapes (such as triangles) where multiple lines are involved.
+Output enable `oe` lets you pause the line calculation, which is useful for multiplexing access to memory or for drawing shapes (such as triangles) where multiple lines are involved. `oe` only gates drawing; other steps (like initialisation) will continue to run even when `oe` is disabled.
 
 ### Output
 
