@@ -27,12 +27,12 @@ module canv_disp_agu #(
     input  wire [SHIFTW-1:0] addr_shift,        // address shift bits (derived from canvas BPP register)
     input  wire [2*CORDW-1:0] scroll_coord,     // canvas scroll coordinate
     output reg  [ADDRW-1:0] vram_addr,          // vram word address
-    output reg  [PIX_IDXW-1:0] pix_idx,         // pixel index within word
-    output reg  paint // canvas painting enable (pre-clut)
+    output wire [PIX_IDXW-1:0] pix_idx,         // pixel index within word
+    output wire paint                           // canvas painting enable
     );
 
-    localparam ADDR_LAT = VRAM_LAT + CLUT_LAT + 2;  // +1 for in_window reg; +1 for AGU stage 2
-    localparam PAINT_OFFSET = VRAM_LAT;  // paint latency
+    localparam AGU_LAT = 2;  // two stages
+    localparam ADDR_LAT = AGU_LAT + VRAM_LAT + CLUT_LAT;
     localparam PIX_ADDRW = ADDRW + PIX_IDXW;  // pixel address width
 
     // separate y and x from canvas/window signals
@@ -55,21 +55,12 @@ module canv_disp_agu #(
     reg [CORDW-1:0] canv_w_m, scroll_y_m;  // dedicated reg for multiply
     reg [CORDW-1:0] scroll_x_p1, scroll_x_p2, scroll_y_p2;
     always @(posedge clk_pix) begin
-        if (rst_pix) begin
-            canv_w_m <= 0;
-            scroll_y_m <= 0;
-            scroll_offset <= 0;
-            scroll_x_p1 <= 0;
-            scroll_x_p2 <= 0;
-            scroll_y_p2 <= 0;
-        end else begin
-            canv_w_m <= canv_w;
-            scroll_y_m <= scroll_y;
-            scroll_offset <= canv_w_m * scroll_y_m;
-            scroll_x_p1 <= scroll_x;
-            scroll_x_p2 <= scroll_x_p1;
-            scroll_y_p2 <= scroll_y_m;  // reuse multiplier y reg
-        end
+        canv_w_m <= canv_w;
+        scroll_y_m <= scroll_y;
+        scroll_offset <= canv_w_m * scroll_y_m;
+        scroll_x_p1 <= scroll_x;
+        scroll_x_p2 <= scroll_x_p1;
+        scroll_y_p2 <= scroll_y_m;  // reuse multiplier y reg
     end
 
     // register signals to improve timing with hwreg
@@ -100,12 +91,10 @@ module canv_disp_agu #(
     // canvas buffer handling for scrolling
     reg [CORDW-1:0] cnt_bx, cnt_by;  // canvas counters (within canvas buffer)
 
-    // register latency corrected window and paint areas
+    // register latency corrected window
     wire win_y = (dy >= win_y0) && (dy < win_y1);
-    reg [PAINT_OFFSET-1:0] paint_sr;
     always @(posedge clk_pix) begin
         in_window <= (dx >= win_x0_lat) && (dx < win_x1_lat) && win_y;  // used in AGU stage 1
-        {paint, paint_sr} <= {paint_sr, canv_paint};
     end
 
     // pipelined signals
@@ -124,7 +113,7 @@ module canv_disp_agu #(
             cnt_cy <= 0;
             cnt_bx <= scroll_x_p2;
             cnt_by <= scroll_y_p2;
-            pix_offset <= scroll_offset + wrap_start;  // use live value at frame start
+            pix_offset <= scroll_offset + wrap_start;
             pix_offset_ln <= scroll_offset + wrap_start;
             pix_offset_buf <= scroll_offset;
         end else if (line_start && (dy > win_y0)) begin  // after 1st line in paint area
@@ -168,12 +157,28 @@ module canv_disp_agu #(
         addr_shift_p1 <= addr_shift;
     end
 
+
     // stage 2 - calculate memory address and pixel index
-    wire [PIX_IDXW-1:0] pix_idx_mask = (1 << addr_shift_p1) - 1;  // pixel index mask
+    reg [PIX_IDXW-1:0] pix_idx_p2;
+    reg paint_p2;
+    wire [PIX_IDXW-1:0] pix_idx_mask = (1 << addr_shift_p1) - 1;
     always @(posedge clk_pix) begin
         /* verilator lint_off WIDTHEXPAND */ /* verilator lint_off WIDTHTRUNC */
         vram_addr <= vram_addr_base_p1 + (pix_offset >> addr_shift_p1);
         /* verilator lint_on WIDTHTRUNC */ /* verilator lint_on WIDTHEXPAND */
-        pix_idx <= pix_offset[PIX_IDXW-1:0] & pix_idx_mask;
+        pix_idx_p2 <= pix_offset[PIX_IDXW-1:0] & pix_idx_mask;
+        paint_p2 <= canv_paint;  // from stage 1 registers (via wire)
     end
+
+    // delay pix_idx and paint by VRAM_LAT so they arrive with vram data
+    reg [VRAM_LAT*PIX_IDXW-1:0] pix_idx_sr;
+    reg [VRAM_LAT-1:0] paint_sr;
+    always @(posedge clk_pix) begin
+        /* verilator lint_off WIDTHTRUNC */
+        pix_idx_sr <= {pix_idx_sr, pix_idx_p2};  // top element falls off
+        paint_sr   <= {paint_sr, paint_p2};
+        /* verilator lint_on WIDTHTRUNC */
+    end
+    assign pix_idx = pix_idx_sr[VRAM_LAT*PIX_IDXW-1 -: PIX_IDXW];
+    assign paint   = paint_sr[VRAM_LAT-1];
 endmodule

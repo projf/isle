@@ -237,26 +237,17 @@ module dev_display #(
     //
     // generate colour output - combine text, bitmap, and background colours
     //
-    assign vram_addr = canv0_addr;  // potential to support canv1 in later version
-
-    reg [PIX_IDXW-1:0] pix_idx_pipe [0:VRAM_LAT-1];
-    integer i;
-    always @(posedge clk_pix) begin
-        pix_idx_pipe[0] <= canv0_pix_idx;
-        for (i=1; i<VRAM_LAT; i=i+1)
-            pix_idx_pipe[i] <= pix_idx_pipe[i-1];
-    end
-    wire [PIX_IDXW-1:0] pix_idx_disp = pix_idx_pipe[VRAM_LAT-1];
+    assign vram_addr = canv0_addr;  // potential to support canv1 in future
 
     // select canvas pixel index from word depending on colour depth
     reg [CIDX_ADDRW-1:0] canv0_pix;
     reg [CIDX_ADDRW-1:0] pcidx_1, pcidx_2, pcidx_4, pcidx_8;
     always @(*) begin
         /* verilator lint_off WIDTHTRUNC */
-        pcidx_1 = (vram_dout >> pix_idx_disp)        & 'b1;
-        pcidx_2 = (vram_dout >> (pix_idx_disp << 1)) & 'b11;
-        pcidx_4 = (vram_dout >> (pix_idx_disp << 2)) & 'b1111;
-        pcidx_8 = (vram_dout >> (pix_idx_disp << 3)) & 'b11111111;
+        pcidx_1 = (vram_dout >> canv0_pix_idx)        & 'b1;
+        pcidx_2 = (vram_dout >> (canv0_pix_idx << 1)) & 'b11;
+        pcidx_4 = (vram_dout >> (canv0_pix_idx << 2)) & 'b1111;
+        pcidx_8 = (vram_dout >> (canv0_pix_idx << 3)) & 'b11111111;
         /* verilator lint_on WIDTHTRUNC */
         case (hwreg_pix[CANV0_BPP])
             1: canv0_pix = pcidx_1;
