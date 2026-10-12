@@ -2,13 +2,21 @@
 
 The text mode module [[textmode.v](../gfx/textmode.v)] displays text using character data and colour from a dedicated memory: [tram](tram.md).
 
-Text mode includes a 2 KiB character rom holding 128 characters for basic system functionality before additional storage is available; these characters cover Basic Latin and Block Elements. Text mode is currently limited by Isle's lack of storage; future versions will extend Unicode coverage and add support for full-width glyphs.
+Text mode includes a 2 KiB character rom holding 128 characters for basic system functionality before additional storage is available; these characters cover [Basic Latin](https://en.wikipedia.org/wiki/Basic_Latin_(Unicode_block)) and [Block Elements](https://en.wikipedia.org/wiki/Block_Elements). Text mode is currently limited by Isle's lack of storage; future versions will extend Unicode coverage and add support for full-width glyphs.
 
-Text mode is not pipelined and the logic takes 6 cycles + 2 cycles for [tram](tram.md) access; if you set `GLYPH_WIDTH` to less than 8 pixels you'll have rendering issues. If `GLYPH_HEIGHT` isn't a power of 2, the [font_glyph](font_glyph.md) module may infer a multiplier.
+Text mode fetches the next glyph while the previous one is being rendered. With the default Isle setup, this means the minimum glyph width is 8 pixels; if you set `GLYPH_WIDTH` to less than 8 pixels you'll have rendering issues. If `GLYPH_HEIGHT` isn't a power of 2, the [font_glyph](font_glyph.md) module may infer a multiplier.
+
+Text mode also has one cycle of latency (`PIX_LAT`) to register outputs `pix` and `paint`. The module compensates for `PIX_LAT` and `CLUT_LAT` by starting drawing early.
 
 See the [Text Mode](http://projectf.io/isle/text-mode.html) blog post for more information on this module.
 
-## Modules
+## Hardware Scrolling
+
+Vertically scrolling text mode is a very common operation, so we includes hardware scrolling support. For example, if you're appending a line to the bottom of the screen, hardware scrolling can move everything up one row and you only need change one row of text in tram.
+
+Text rendering starts at `scroll_row` and continues down through tram, wrapping back to row 0 after the last row in memory. The valid range for `scroll_row` is 0 to TEXT_VRES-1.
+
+## Dependencies
 
 The textmode module depends on three other modules:
 
@@ -25,14 +33,17 @@ The textmode module depends on three other modules:
 * `FILE_FONT` - font glyph ROM file
 * `FONT_COUNT` - number of glyphs in font ROM
 * `GLYPH_HEIGHT` - glyph height (pixels)
-* `GLYPH_WIDTH` - half-width glyph width (pixels; min=8)
-* `TRAM_DEPTH` - tram depth (chars)
-* `TRAM_LAT` - tram latency (cycles; min=1, max=2)
+* `GLYPH_WIDTH` - half-width glyph width (pixels)
+* `TEXT_HRES` - text mode width (half-width chars)
+* `TEXT_VRES` - text mode height (chars)
+* `TRAM_LAT` - tram latency (cycles)
 * `WORD` - machine word size (bits)
 
-For Isle, `CORDW` must be set to **16**, `WORD` must be set to **32**, and `CIDXW` must be set to 4.
+For Isle, `WORD` must be set to **32**, and `CIDXW` must be set to 4.
 
-In tram, we pack two colours into a _word_ along with the Unicode code point; there isn't room for 8-bit (256 colours).
+Text mode uses the first `TEXT_HRES × TEXT_VRES` words of tram and `ADDRW` must be wide enough to encompass this.
+
+In tram, we pack Unicode code point and two 4-bit colours into a _word_. The Unicode standard limits the code point to 21 bits. See [tram](tram.md) for how the bits are packed into each word.
 
 See [font glyph](font_glyph.md) for details on font and glyph parameters.
 
@@ -47,14 +58,10 @@ See [font glyph](font_glyph.md) for details on font and glyph parameters.
 * `win_start` - text window start coords
 * `win_end` - text window end coords
 * `scale` - text scale
-* `text_hres` - text width (chars)
-* `text_vres` - text height (chars)
-* `scroll_offset` - tram address scroll offset
+* `scroll_row` - first text row to display
 * `tram_data` - character data from tram
 
-You can use `scroll_offset` to vertically scroll the text mode display. For example, if text mode is 84 characters wide, add 84 to `scroll_offset` to scroll down one line. The scroll offset is not signed. To scroll up one line, add one less than the height of the text mode; for example, if text mode is 84x24, set `scroll_offset` to 23*84.
-
-The `win_start` and `win_end` inputs are a pair of signed 16-bit values, with the y-coordinate in the upper 16 bits. The `scale` input works in a similar way, with the vertical scale in the upper 16 bits and the horizontal scale in the lower 16 bits. When scaling text mode, the text doesn't wrap; adjust `text_hres` and `text_vres` to match the new scale if desired.
+The `win_start` and `win_end` inputs are a pair of signed 16-bit values, with the y-coordinate in the upper 16 bits. The `scale` input works in a similar way, with the vertical scale in the upper 16 bits and the horizontal scale in the lower 16 bits.
 
 See [Canvas Display Address Generation](canv_disp_agu.md) for further discussion of windows and scaling.
 
@@ -64,6 +71,4 @@ See [Canvas Display Address Generation](canv_disp_agu.md) for further discussion
 * `pix` - pixel colour index
 * `paint` - text mode painting enable
 
-The colour `pix` should be painted when `paint` is enabled. The paint area is controlled by the text window coordinates, `win_start` and `win_end`.
-
-The internal tram address is word-based, but the CPU and software don't see this.
+The colour `pix` should be painted when `paint` is enabled. The paint area is the intersection of the text area and window coordinates (`win_start` and `win_end`).

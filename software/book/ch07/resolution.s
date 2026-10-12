@@ -165,16 +165,15 @@ _start:
 .L_scroll_loop:
     li a0, 10
     call frame_waitn
-    li t0, 0xFFFF
-    and t1, s3, t0  # text mode x-resolution (lower 16 bits)
     li t6, DEV_DISPLAY
-    lw t0, TEXT_SCROLL_OFFSET(t6)
-    sub t0, t0, t1
+    lw t0, TEXT_SCROLL_ROW(t6)
+    addi t0, t0, -1
     lw t2, TRAM_DEPTH_RO(t6)
     bgez t0, .L_scroll_cont
-    add t0, t0, t2  # add tram depth if scroll offset is less than zero
+    srli t1, s3, 16  # text mode y-resolution (upper 16 bits)
+    add t0, t0, t1  # add y-resolution if scroll offset is less than zero
 .L_scroll_cont:
-    sw t0, TEXT_SCROLL_OFFSET(t6)
+    sw t0, TEXT_SCROLL_ROW(t6)
     j .L_scroll_loop
 
 

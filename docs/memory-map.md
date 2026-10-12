@@ -5,8 +5,8 @@ Isle has a 24-bit memory map. Keeping addresses short and memorable is helpful w
 The upper 8M of memory is for system ram, including the stack. The lower 8M is used by other memories and devices. For ease of reading, we write 24-bit Isle addresses as `0xnn_nnnn`, e.g. `0x40_4024` (an address in vram).
 
 * 0x0 - boot rom (2K), vector table, interrupt service routines (TBC)
-* 0x1 - system rom (1M) - OS and system libraries (TBC)
-* 0x2 - *reserved*
+* 0x1 - *reserved*
+* 0x2 - system rom (1M) - OS and system libraries (TBC)
 * 0x3 - *reserved*
 * 0x4 - vram - video ram (64K)
 * 0x5 - graphics memories

@@ -37,7 +37,7 @@
 .equ TEXT_SCALE,           0x0210  # display scaling (scale_y, scale_x)
 .equ TEXT_PAL,             0x0214  # textmode palette offset
 .equ TEXT_TIDX,            0x0218  # text transparent colour index
-.equ TEXT_SCROLL_OFFSET,   0x021C  # text scroll offset
+.equ TEXT_SCROLL_ROW,      0x021C  # text scroll row
 
 .equ CANV0_WIN_START,      0x0220  # canvas display window start coordinates (y, x)
 .equ CANV0_WIN_END,        0x0224  # canvas display window end coordinates (y, x)

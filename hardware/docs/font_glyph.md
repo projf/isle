@@ -1,10 +1,10 @@
 # Font Glyph
 
-The font glyph module [[font_glyph.v](../gfx/font_glyph.v)] takes a Unicode code point (UCP) and glyph line number and returns that line of font pixels from its internal ROM. This module is used by the [text mode](textmode.md) module. This module has 3 cycles of latency and supports pipelining.
+The font glyph module [[font_glyph.v](../gfx/font_glyph.v)] takes a Unicode code point (UCP) and glyph line number and returns that line of font pixels from its internal ROM. This module is used by the [text mode](textmode.md) module. This module has 3 cycles of latency and supports pipelining; `FONT_LAT` in [text mode](textmode.md) must match this.
 
 Font glyph is hardcoded to use a specific ROM that includes 128 glyphs across two Unicode blocks: Basic Latin and Block Elements. Isle loads the rom with a [font resource file](../../res/fonts/). The rom file doesn't include _white square_, so the module uses light shade for the missing glyph (AKA tofu).
 
-The internal rom is an instance of [rom sync](rom_sync.md). A future version of font glyph will support a full range Unicode code points once Isle has storage to hold larger font ROMs.
+The internal rom is an instance of [rom sync](rom_sync.md). A future version of font glyph will support the full range of Unicode code points once Isle has storage to hold larger font ROMs.
 
 ## Parameters
 
@@ -34,3 +34,5 @@ If `HEIGHT` isn't a power of 2, this module may infer a multiplier.
 ### Output
 
 * `pix_line` - glyph pixel line
+
+`pix_line` is a combinational from the [rom](rom_sync.md) output, so the caller should register this signal.

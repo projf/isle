@@ -200,9 +200,9 @@ module FemtoRV32 #(
         (funct3Is[7] ? aluIn1 & aluIn2                                 : 32'b0) ;
 
     wire [31:0] aluOut_muldiv =
-     (  funct3Is[0]   ?  multiply[31: 0] : 32'b0) | // 0:MUL
-     ( |funct3Is[3:1] ?  multiply[63:32] : 32'b0) | // 1:MULH, 2:MULHSU, 3:MULHU
-     (  instr[14]     ?  div_sign ? -divResult : divResult : 32'b0) ;
+        (  funct3Is[0]   ?  multiply[31: 0] : 32'b0) | // 0:MUL
+        ( |funct3Is[3:1] ?  multiply[63:32] : 32'b0) | // 1:MULH, 2:MULHSU, 3:MULHU
+        (  instr[14]     ?  div_sign ? -divResult : divResult : 32'b0) ;
                                                  // 4:DIV, 5:DIVU, 6:REM, 7:REMU
 
     wire [31:0] aluOut = isALUreg & funcM ? aluOut_muldiv : aluOut_base;
@@ -316,17 +316,19 @@ module FemtoRV32 #(
     // Write CSRs: 5 bit unsigned immediate or content of RS1
     wire [31:0] CSR_modifier = instr[14] ? {27'd0, instr[19:15]} : rs1;
 
+    /* verilator lint_off UNUSEDSIGNAL */
     wire [31:0] CSR_write = (instr[13:12] == 2'b10) ? CSR_modifier | CSR_read  :
                             (instr[13:12] == 2'b11) ? ~CSR_modifier & CSR_read :
                          /* (instr[13:12] == 2'b01) ? */  CSR_modifier ;
+   /* verilator lint_on UNUSEDSIGNAL */
 
     always @(posedge clk) begin
         if(!rst_n) mstatus <= 0;
         else begin
             // Execute a CSR opcode
             if (isSYSTEM & (instr[14:12] != 0) & state[EXECUTE_bit]) begin
-            if (sel_mstatus) mstatus <= CSR_write[3];
-            if (sel_mtvec  ) mtvec   <= CSR_write[ADDRW-1:0];
+                if (sel_mstatus) mstatus <= CSR_write[3];
+                if (sel_mtvec  ) mtvec   <= CSR_write[ADDRW-1:0];
             end
         end
     end
@@ -336,7 +338,7 @@ module FemtoRV32 #(
     /***************************************************************************/
 
     /* verilator lint_off WIDTH */
-    assign writeBackData  =
+    assign writeBackData =
         (isSYSTEM            ? CSR_read  : 32'b0) |  // SYSTEM
         (isLUI               ? Uimm      : 32'b0) |  // LUI
         (isALU               ? aluOut    : 32'b0) |  // ALUreg, ALUimm
@@ -365,7 +367,7 @@ module FemtoRV32 #(
             !instr[14] & (mem_byteAccess ? LOAD_byte[7] : LOAD_halfword[15]);
 
     assign LOAD_data =
-            mem_byteAccess ? {{24{LOAD_sign}},     LOAD_byte} :
+        mem_byteAccess ? {{24{LOAD_sign}},     LOAD_byte} :
         mem_halfwordAccess ? {{16{LOAD_sign}}, LOAD_halfword} : mem_rdata;
 
     assign LOAD_halfword =
@@ -380,7 +382,7 @@ module FemtoRV32 #(
     assign mem_wdata[15: 8] = loadstore_addr[0] ? rs2[7:0]  : rs2[15: 8];
     assign mem_wdata[23:16] = loadstore_addr[1] ? rs2[7:0]  : rs2[23:16];
     assign mem_wdata[31:24] = loadstore_addr[0] ? rs2[7:0]  :
-                                loadstore_addr[1] ? rs2[15:8] : rs2[31:24];
+                              loadstore_addr[1] ? rs2[15:8] : rs2[31:24];
 
     // The memory write mask:
     //    1111                     if writing a word
@@ -390,14 +392,14 @@ module FemtoRV32 #(
     //                                (depending on loadstore_addr[1:0])
 
     wire [3:0] STORE_wmask =
-                mem_byteAccess ?
-                    (loadstore_addr[1] ?
-                            (loadstore_addr[0] ? 4'b1000 : 4'b0100) :
-                            (loadstore_addr[0] ? 4'b0010 : 4'b0001)
-                    ) :
-                mem_halfwordAccess ?
-                    (loadstore_addr[1] ? 4'b1100 : 4'b0011) :
-                4'b1111;
+        mem_byteAccess ?
+            (loadstore_addr[1] ?
+            (loadstore_addr[0] ? 4'b1000 : 4'b0100) :
+            (loadstore_addr[0] ? 4'b0010 : 4'b0001)
+            ) :
+        mem_halfwordAccess ?
+            (loadstore_addr[1] ? 4'b1100 : 4'b0011) :
+        4'b1111;
 
     /**************************************************************************/
     // And, last but not least, the state machine.
@@ -424,7 +426,7 @@ module FemtoRV32 #(
 
     wire needToWait = isLoad | isStore | isDivide;
 
-     wire [ADDRW-1:0] PC_new =
+    wire [ADDRW-1:0] PC_new =
         isJALR           ? {aluPlus[ADDRW-1:1],1'b0} :
         jumpToPCplusImm  ? PCplusImm :
         interrupt_return ? mepc : PCplus4;

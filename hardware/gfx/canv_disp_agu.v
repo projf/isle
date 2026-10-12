@@ -32,7 +32,7 @@ module canv_disp_agu #(
     );
 
     localparam ADDR_LAT = VRAM_LAT + CLUT_LAT + 2;  // +1 for in_window reg; +1 for AGU stage 2
-    localparam PAINT_OFFSET = VRAM_LAT;  // paint latency offset from ADDR_LAT
+    localparam PAINT_OFFSET = VRAM_LAT;  // paint latency
     localparam PIX_ADDRW = ADDRW + PIX_IDXW;  // pixel address width
 
     // separate y and x from canvas/window signals
@@ -117,7 +117,7 @@ module canv_disp_agu #(
     reg [CORDW-1:0] cnt_sx, cnt_sy;  // window scale counters
     always @(posedge clk_pix) begin
         if (rst_pix || start) begin  // reset address and counters at start
-            scroll_x_r <= scroll_x_p2;  // we need a consistent scroll_x for use during the frame
+            scroll_x_r <= scroll_x_p2;
             cnt_sx <= 0;
             cnt_sy <= 0;
             cnt_cx <= 0;
@@ -128,7 +128,7 @@ module canv_disp_agu #(
             pix_offset_ln <= scroll_offset + wrap_start;
             pix_offset_buf <= scroll_offset;
         end else if (line_start && (dy > win_y0)) begin  // after 1st line in paint area
-            // ensure we use scroll values registred at start in this block
+            // ensure we use scroll values registered at start in this block
             cnt_sx <= 0;  // reset horizontal scale counter
             cnt_cx <= 0;  // reset horizontal canvas display window counter
             cnt_bx <= scroll_x_r;  // reset horizontal canvas buffer counter

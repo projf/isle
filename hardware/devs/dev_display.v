@@ -15,10 +15,10 @@ module dev_display #(
     parameter CORDW=16,          // signed coordinate width (bits)
     parameter DEV_ADDRW=14,      // device address width (bits)
     parameter DISPLAY_MODE=0,    // display mode (see display_modes.vh)
+    parameter TEXT_HRES=80,      // text mode width (half-width chars)
+    parameter TEXT_VRES=25,      // text mode height (chars)
     parameter TRAM_ADDRW=11,     // tram address width (bits)
-    parameter TRAM_HRES=16'd84,  // tram width (chars) - 84x8 = 672
-    parameter TRAM_VRES=16'd24,  // tram height (chars) - 24x16 = 384
-    parameter TRAM_LAT=2,        // tram display read latency (cycles, min=1, max 2)
+    parameter TRAM_LAT=2,        // tram display read latency (cycles)
     parameter VRAM_ADDRW=14,     // vram address width (bits)
     parameter VRAM_LAT=2,        // vram display read latency (cycles, min=1)
     parameter WORD=32,           // machine word size (bits)
@@ -67,7 +67,7 @@ module dev_display #(
 
     localparam PIX_IDXW=$clog2(WORD);  // pixel index width (bits)
     /* verilator lint_off WIDTHTRUNC */
-    localparam [CORDW-1:0] TRAM_DEPTH = TRAM_HRES * TRAM_VRES;
+    localparam [CORDW-1:0] TRAM_DEPTH = TEXT_HRES * TEXT_VRES;
     /* verilator lint_on WIDTHTRUNC */
 
     // initial params - to be nice to software devs
@@ -102,7 +102,7 @@ module dev_display #(
     localparam [RW_HWREG_W-1:0] TEXT_SCALE = 4;
     localparam [RW_HWREG_W-1:0] TEXT_PAL = 5;
     localparam [RW_HWREG_W-1:0] TEXT_TIDX = 6;
-    localparam [RW_HWREG_W-1:0] TEXT_SCROLL_OFFSET = 7;
+    localparam [RW_HWREG_W-1:0] TEXT_SCROLL_ROW = 7;
 
     localparam [RW_HWREG_W-1:0] CANV0_WIN_START = 8;
     localparam [RW_HWREG_W-1:0] CANV0_WIN_END = 9;
@@ -167,7 +167,8 @@ module dev_display #(
         .FONT_COUNT(FONT_COUNT),
         .GLYPH_HEIGHT(GLYPH_HEIGHT),
         .GLYPH_WIDTH(GLYPH_WIDTH),
-        .TRAM_DEPTH(TRAM_DEPTH[TRAM_ADDRW-1:0]),
+        .TEXT_HRES(TEXT_HRES),
+        .TEXT_VRES(TEXT_VRES),
         .TRAM_LAT(TRAM_LAT),
         .WORD(WORD)
     ) textmode_inst (
@@ -179,9 +180,7 @@ module dev_display #(
         .win_start(hwreg_pix[TEXT_WIN_START]),
         .win_end(hwreg_pix[TEXT_WIN_END]),
         .scale(hwreg_pix[TEXT_SCALE]),
-        .text_hres(TRAM_HRES[TRAM_ADDRW-1:0]),
-        .text_vres(TRAM_VRES[TRAM_ADDRW-1:0]),
-        .scroll_offset(hwreg_pix[TEXT_SCROLL_OFFSET][TRAM_ADDRW-1:0]),
+        .scroll_row(hwreg_pix[TEXT_SCROLL_ROW][TRAM_ADDRW-1:0]),
         .tram_data(tram_dout),
         .tram_addr(tram_addr),
         .pix(text_pix),
@@ -385,7 +384,7 @@ module dev_display #(
             case (addr_sys)
                 DISP_DIMS_RO:   dout_sys <= {VRES, HRES};
                 BMAP_DIMS_RO:   dout_sys <= {BMAP_VRES, BMAP_HRES};
-                TEXT_DIMS_RO:   dout_sys <= {TRAM_VRES, TRAM_HRES};
+                TEXT_DIMS_RO:   dout_sys <= {TEXT_VRES[CORDW-1:0], TEXT_HRES[CORDW-1:0]};
                 FRAME_FLAG_RO:  dout_sys <= {{WORD-1{1'b0}}, frame_flag};
                 FRAME_COUNT_RO: dout_sys <= frame_count;
                 TRAM_DEPTH_RO:  dout_sys <= {{WORD-CORDW{1'b0}}, TRAM_DEPTH};
