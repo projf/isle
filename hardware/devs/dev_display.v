@@ -18,7 +18,7 @@ module dev_display #(
     parameter TEXT_HRES=80,      // text mode width (half-width chars)
     parameter TEXT_VRES=25,      // text mode height (chars)
     parameter TRAM_ADDRW=11,     // tram address width (bits)
-    parameter TRAM_LAT=2,        // tram display read latency (cycles, min=1, max 2)
+    parameter TRAM_LAT=2,        // tram display read latency
     parameter VRAM_ADDRW=14,     // vram address width (bits)
     parameter VRAM_LAT=2,        // vram display read latency (cycles, min=1)
     parameter WORD=32,           // machine word size (bits)
@@ -384,7 +384,7 @@ module dev_display #(
             case (addr_sys)
                 DISP_DIMS_RO:   dout_sys <= {VRES, HRES};
                 BMAP_DIMS_RO:   dout_sys <= {BMAP_VRES, BMAP_HRES};
-                TEXT_DIMS_RO:   dout_sys <= {TEXT_VRES[WORD/2-1:0], TEXT_HRES[WORD/2-1:0]};
+                TEXT_DIMS_RO:   dout_sys <= {TEXT_VRES[CORDW-1:0], TEXT_HRES[CORDW-1:0]};
                 FRAME_FLAG_RO:  dout_sys <= {{WORD-1{1'b0}}, frame_flag};
                 FRAME_COUNT_RO: dout_sys <= frame_count;
                 TRAM_DEPTH_RO:  dout_sys <= {{WORD-CORDW{1'b0}}, TRAM_DEPTH};

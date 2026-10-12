@@ -120,11 +120,11 @@ The registered signals `scale_x_minus` and `scale_y_minus` are the scaling facto
 
 ## Scrolling
 
-Canvases support scrolling, which is a efficient way to pan an image or background. The canvas bitmap data isn't changed, we just change which part of the canvas we're displaying.
+Canvases support scrolling, which is an efficient way to pan an image or background. The canvas bitmap data isn't changed, we just change which part of the canvas we're displaying.
 
 Isle canvases also wrap, so a small amount of vram can create the illusion of a vast image. When the user scrolls the image, we just need to draw one column (for horizontal scrolling) or line (for vertical scrolling) of pixels to memory, rather than rerendering the whole image.
 
-Scrolling is controlled by `scroll_coord`, a a pair of unsigned values, one for the Y scroll position and one for the X. For example, if `CORDW=16` and you want the top-left pixel in the window to be from canvas pixel (Y=5, X=42), `scroll_coord` would be set to `0x0005002A`.
+Scrolling is controlled by `scroll_coord`, a pair of unsigned values, one for the Y scroll position and one for the X. For example, if `CORDW=16` and you want the top-left pixel in the window to be from canvas pixel (Y=5, X=42), `scroll_coord` would be set to `0x0005002A`.
 
 NB. scroll coordinates must fit within the canvas; so, greater or equal to zero, and less than canvas width/height.
 
