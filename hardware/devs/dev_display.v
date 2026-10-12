@@ -18,7 +18,7 @@ module dev_display #(
     parameter TEXT_HRES=80,      // text mode width (half-width chars)
     parameter TEXT_VRES=25,      // text mode height (chars)
     parameter TRAM_ADDRW=11,     // tram address width (bits)
-    parameter TRAM_LAT=2,        // tram display read latency (cycles)
+    parameter TRAM_LAT=2,        // tram display read latency (cycles; min=1)
     parameter VRAM_ADDRW=14,     // vram address width (bits)
     parameter VRAM_LAT=2,        // vram display read latency (cycles, min=1)
     parameter WORD=32,           // machine word size (bits)
@@ -237,26 +237,17 @@ module dev_display #(
     //
     // generate colour output - combine text, bitmap, and background colours
     //
-    assign vram_addr = canv0_addr;  // potential to support canv1 in later version
-
-    reg [PIX_IDXW-1:0] pix_idx_pipe [0:VRAM_LAT-1];
-    integer i;
-    always @(posedge clk_pix) begin
-        pix_idx_pipe[0] <= canv0_pix_idx;
-        for (i=1; i<VRAM_LAT; i=i+1)
-            pix_idx_pipe[i] <= pix_idx_pipe[i-1];
-    end
-    wire [PIX_IDXW-1:0] pix_idx_disp = pix_idx_pipe[VRAM_LAT-1];
+    assign vram_addr = canv0_addr;  // potential to support canv1 in future
 
     // select canvas pixel index from word depending on colour depth
     reg [CIDX_ADDRW-1:0] canv0_pix;
     reg [CIDX_ADDRW-1:0] pcidx_1, pcidx_2, pcidx_4, pcidx_8;
     always @(*) begin
         /* verilator lint_off WIDTHTRUNC */
-        pcidx_1 = (vram_dout >> pix_idx_disp)        & 'b1;
-        pcidx_2 = (vram_dout >> (pix_idx_disp << 1)) & 'b11;
-        pcidx_4 = (vram_dout >> (pix_idx_disp << 2)) & 'b1111;
-        pcidx_8 = (vram_dout >> (pix_idx_disp << 3)) & 'b11111111;
+        pcidx_1 = (vram_dout >> canv0_pix_idx)        & 'b1;
+        pcidx_2 = (vram_dout >> (canv0_pix_idx << 1)) & 'b11;
+        pcidx_4 = (vram_dout >> (canv0_pix_idx << 2)) & 'b1111;
+        pcidx_8 = (vram_dout >> (canv0_pix_idx << 3)) & 'b11111111;
         /* verilator lint_on WIDTHTRUNC */
         case (hwreg_pix[CANV0_BPP])
             1: canv0_pix = pcidx_1;
@@ -288,14 +279,16 @@ module dev_display #(
         end
     end
 
-    reg [CLUT_LAT-1:0] bg_visible_pipe;
-    /* verilator lint_off WIDTHEXPAND */
-    always @(posedge clk_pix) bg_visible_pipe <= (bg_visible_pipe << 1) | bg_visible;
-    /* verilator lint_on WIDTHEXPAND */
+    reg [CLUT_LAT-1:0] bg_visible_sr;
+    always @(posedge clk_pix) begin
+        /* verilator lint_off WIDTHTRUNC */
+        bg_visible_sr <= {bg_visible_sr, bg_visible};  // top element falls off
+        /* verilator lint_on WIDTHTRUNC */
+    end
 
     // paint colours (registered in root module)
     wire [COLRW-1:0] bg_colr = hwreg_pix[DISP_BG_COLR][COLRW-1:0];
-    always @(*) {r, g, b} = bg_visible_pipe[CLUT_LAT-1] ? bg_colr : clut_dout;
+    always @(*) {r, g, b} = bg_visible_sr[CLUT_LAT-1] ? bg_colr : clut_dout;
 
 
     //

@@ -71,4 +71,6 @@ See [Canvas Display Address Generation](canv_disp_agu.md) for further discussion
 * `pix` - pixel colour index
 * `paint` - text mode painting enable
 
+`pix` and `paint` are delayed so they arrive at the same times as tram data.
+
 The colour `pix` should be painted when `paint` is enabled. The paint area is the intersection of the text area and window coordinates (`win_start` and `win_end`).

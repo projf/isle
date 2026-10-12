@@ -68,13 +68,11 @@ For example, with a 4-bit (16 colour) canvas, 328 is a valid width (divisible by
 * `pix_idx` - pixel index within word
 * `paint` - canvas painting enable
 
-The three outputs are the latency corrected `vram_addr`, `pix_idx`, and `paint` signals.
+The paint signal tells you when canvas pixels should be rendered to the display. The canvas doesn't necessarily cover the whole window, and the window doesn't necessarily cover the whole display, so we need to know when to paint it. `pix_idx` and `paint` are delayed so they arrive at the same times as vram data.
 
-Our [vram](vram.md) has a 32-bit data bus, but a pixel is 1-8 bits wide. The `pix_idx` signal tells the display where in the data word the pixel is. For example, the third 4-bit pixel in a word would have a pix_idx of 2.
+Our [vram](vram.md) has a 32-bit data bus, but a pixel is 1-8 bits wide. The `pix_idx` signal tells the display where in the data word the pixel is. For example, the third 4-bit pixel in a word would have a pix_idx of 2. Extracting the colour index from the vram word is handled by the calling module, such as [dev_display](dev_display.md).
 
-The paint signal tells you when canvas pixels should be rendered to the display. The canvas doesn't necessarily cover the whole window, and the window doesn't necessarily cover the whole display, so we need to know when to paint it.
-
-_NB. This module doesn't perform any memory boundary checks._
+_NB. This module doesn't perform any memory boundary checks, but vram is self-contained._
 
 ## Window Position and Scale
 

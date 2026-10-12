@@ -58,7 +58,7 @@ module ch07 #(
     localparam TRAM_ADDRW = 11;  // tram address width (bits)
     localparam TEXT_HRES  = 84;  // tram width (chars) - 84x8 = 640
     localparam TEXT_VRES  = 24;  // tram height (chars) - 24x16 = 384
-    localparam TRAM_LAT   =  2;  // tram display read latency (cycles, min=1, max=2)
+    localparam TRAM_LAT   =  2;  // tram display read latency (cycles, min=1)
 
     // uart
     localparam UART_DATAW = 8;  // uart data width (bits)

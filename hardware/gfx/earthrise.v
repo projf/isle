@@ -647,26 +647,30 @@ module earthrise #(
         .valid(draw_addr_valid)
     );
 
-    // delay write enable to match address calculation - output in vram_we_sr[0]
+    // delay write enable to match address calculation
     localparam ADDR_LAT = 4;  // ensure this matches canv_draw_agu
     reg [ADDR_LAT-1:0] vram_we_sr;
     always @(posedge clk) begin
-        if (rst) vram_we_sr <= 0;
-        else if (en) vram_we_sr <= {drawing, vram_we_sr[ADDR_LAT-1:1]};
-    end
-
-    assign agu_draining = |vram_we_sr;  // address generation unit draining
-
-    // delay colour to match address calculation - output in colr_p4
-    reg [COLRW-1:0] colr_p1, colr_p2, colr_p3, colr_p4;
-    always @(posedge clk) begin
-        if (en) begin
-            colr_p1 <= colr;
-            colr_p2 <= colr_p1;
-            colr_p3 <= colr_p2;
-            colr_p4 <= colr_p3;
+        if (rst) vram_we_sr <= 0;  // drives write-enable, so must be reset
+        else if (en) begin
+            /* verilator lint_off WIDTHTRUNC */
+            vram_we_sr <= {vram_we_sr, drawing};  // top element falls off
+            /* verilator lint_on WIDTHTRUNC */
         end
     end
+    wire vram_we = vram_we_sr[ADDR_LAT-1];
+    assign agu_draining = |vram_we_sr;  // address generation unit draining
+
+    // delay colour to match address calculation
+    reg [ADDR_LAT*COLRW-1:0] colr_sr;
+    always @(posedge clk) begin
+        if (en) begin
+            /* verilator lint_off WIDTHTRUNC */
+            colr_sr <= {colr_sr, colr};
+            /* verilator lint_on WIDTHTRUNC */
+        end
+    end
+    wire [COLRW-1:0] vram_colr = colr_sr[ADDR_LAT*COLRW-1 -: COLRW];
 
     // determine address shift from bits per pixel (BPP)
     always @(*) begin
@@ -688,7 +692,7 @@ module earthrise #(
 
     // vram write mask
     always @(*) begin
-        if (en && draw_addr_valid && vram_we_sr[0]) begin  // valid address and write enable
+        if (en && draw_addr_valid && vram_we) begin  // valid address and write enable
             vram_wmask = pix_mask << pix_bit_pos;  // shift pixel mask into position
         end else vram_wmask = 0;
     end
@@ -696,7 +700,7 @@ module earthrise #(
     // vram data in
     always @(*) begin
         /* verilator lint_off WIDTHEXPAND */
-        vram_din = (colr_p4 & pix_mask) << pix_bit_pos;  // shift masked colour into position
+        vram_din = (vram_colr & pix_mask) << pix_bit_pos;  // shift masked colour into position
         /* verilator lint_on WIDTHEXPAND */
     end
 endmodule
