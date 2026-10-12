@@ -39,6 +39,7 @@ _start:
     li s1, DEV_DISPLAY
     li s2, DEV_EARTHRISE
     li s3, ER_CMDLIST_OFFSET
+    li s4, VRAM_BASE
     add s3, s3, s2  # get command list by adding earthrise device address
 
     # print instruction message

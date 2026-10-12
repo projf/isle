@@ -51,7 +51,6 @@ module dev_earthrise #(
     localparam [DEV_ADDRW-1:0] ER_CYCLE_COUNT_RO   = 'h010C >> 2;
     localparam [DEV_ADDRW-1:0] ER_PC_RO            = 'h0110 >> 2;
     localparam [DEV_ADDRW-1:0] ER_INSTR_INVALID_RO = 'h0114 >> 2;
-
     localparam [DEV_ADDRW-1:0] ER_BPP              = 'h0200 >> 2;
     localparam [DEV_ADDRW-1:0] ER_CANV_DIMS        = 'h0204 >> 2;
     localparam [DEV_ADDRW-1:0] ER_VRAM_ADDR_BASE   = 'h0208 >> 2;
@@ -154,9 +153,9 @@ module dev_earthrise #(
         .dout_er(erlist_dout_er)
     );
 
-    assign erlist_addr_er = er_pc[ER_ADDRW+1:2];  // command list is word addressed
+    assign erlist_addr_er = er_pc[ER_ADDRW+1:2];  // word addressed
 
-    // delay counter to make drawing process visible
+    // delay counter to make drawing process visible - should be hwreg
     reg [$clog2(ER_DRAW_RATE):0] cnt_draw_rate;
     reg er_enable;
     always @(posedge clk) begin
@@ -184,7 +183,7 @@ module dev_earthrise #(
     ) earthrise_inst (
         .clk(clk),
         .rst(rst || er_reset),
-        .en(er_enable),
+        .en(er_enable & en),
         .start(er_start),
         .canv_bpp(er_bpp),
         .canv_dims(er_canv_dims),

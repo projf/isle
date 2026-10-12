@@ -51,7 +51,7 @@ module ch07 #(
     localparam VRAM_LAT   =  2;  // vram display read latency (cycles, min=1)
 
     // Earthrise
-    localparam ER_ADDRW = 10;     // 2^10 = 1024 x 32-bit = 4 KiB (word addressed)
+    localparam ER_ADDRW = 10;  // 2^10 = 1024 x 32-bit = 4 KiB (word addressed)
 
     // text mode
     localparam TEXT_CIDXW =  4;  // 16 colours available in textmode
@@ -104,7 +104,7 @@ module ch07 #(
         .mem_rstrb(cpu_rstrb),
         .mem_rbusy(cpu_rbusy),
         .mem_wbusy(cpu_wbusy),
-        .irq(1'b0)  // no interrupts
+        .irq(1'b0)  // no interrupts (yet)
     );
 
 
@@ -121,12 +121,14 @@ module ch07 #(
     // memory region base addresses
     localparam STACK_BASE  = 'hFF_F000 >> 2;  // shift as word addressed
     localparam SYSRAM_BASE = 'h80_0000 >> 2;
+    localparam VRAM_BASE   = 'h40_0000 >> 2;
     localparam TRAM_BASE   = 'h50_0000 >> 2;
     localparam CLUT_BASE   = 'h58_0000 >> 2;
 
     // address decoding for chip select signal - no aliasing because of comparison with BASE addr
     wire stack_cs  = (io_addr[BUSW-1:STACK_ADDRW] == STACK_BASE[BUSW-1:STACK_ADDRW]);
     wire sysram_cs = (io_addr[BUSW-1:SYSRAM_ADDRW] == SYSRAM_BASE[BUSW-1:SYSRAM_ADDRW]);
+    wire vram_cs   = (io_addr[BUSW-1:VRAM_ADDRW] == VRAM_BASE[BUSW-1:VRAM_ADDRW]);
     wire tram_cs   = (io_addr[BUSW-1:TRAM_ADDRW] == TRAM_BASE[BUSW-1:TRAM_ADDRW]);
     wire clut_cs   = (io_addr[BUSW-1:CIDX_ADDRW] == CLUT_BASE[BUSW-1:CIDX_ADDRW]);
 
@@ -150,6 +152,7 @@ module ch07 #(
     reg  [WORD-1:0] io_rdata;
     wire [WORD-1:0] sysram_dout;
     wire [WORD-1:0] stack_dout;
+    wire [WORD-1:0] vram_dout_sys;
     wire [WORD-1:0] tram_dout_sys;
     wire [COLRW-1:0] clut_dout_sys;
     wire [WORD-1:0] dev_sys_dout;
@@ -164,6 +167,7 @@ module ch07 #(
         case(1'b1)
             sysram_cs:   io_rdata = sysram_dout;
             stack_cs:    io_rdata = stack_dout;
+            vram_cs:     io_rdata = vram_dout_sys;
             tram_cs:     io_rdata = tram_dout_sys;
             clut_cs:     io_rdata = {{WORD-COLRW{1'b0}}, clut_dout_sys};
             dev_sys_cs:  io_rdata = dev_sys_dout;
@@ -243,31 +247,27 @@ module ch07 #(
 
 
     //
-    // Video RAM (vram) - TODO: Add CPU vram access (multiplex with Earthrise)
+    // Video RAM (vram)
     //
 
-    wire [VRAM_ADDRW-1:0] vram_addr_sys;
-    wire [WORD-1:0] vram_wmask_sys;
-    wire vram_re_sys = 0;  // will be used when we add CPU access
-    wire [WORD-1:0] vram_din_sys;
-    /* verilator lint_off UNUSEDSIGNAL */
-    wire [WORD-1:0] vram_dout_sys;  // will be used when we add CPU access
-    /* verilator lint_on UNUSEDSIGNAL */
+    // display vram signals
     wire [VRAM_ADDRW-1:0] vram_addr_disp;  // pixel clock domain
     wire [WORD-1:0] vram_dout_disp;  // pixel clock domain
 
+    // CPU vram signals
+    wire cpu_vram_io = vram_cs & (io_rstrb | |io_wstrb);
+    wire [WORD-1:0] cpu_vram_wmask = {{BYTE{io_wstrb[3]}}, {BYTE{io_wstrb[2]}},
+                                      {BYTE{io_wstrb[1]}}, {BYTE{io_wstrb[0]}}};
     // Earthrise vram signals
     wire [VRAM_ADDRW-1:0] er_vram_addr;
     wire [WORD-1:0] er_vram_din;
     wire [WORD-1:0] er_vram_wmask;
+    wire er_en = ~cpu_vram_io;
 
-    // use Earthrise for system I/O (will multiplex with CPU later)
-    assign vram_addr_sys = er_vram_addr;  // doesn't validate address, but vram depth is power of two
-    assign vram_din_sys = er_vram_din;
-    assign vram_wmask_sys = er_vram_wmask;
-
-    // for CPU write to vram
-    // wire [WORD-1:0] vram_wmask_sys = {{8{io_wstrb[3]}}, {8{io_wstrb[2]}}, {8{io_wstrb[1]}}, {8{io_wstrb[0]}}};
+    wire [VRAM_ADDRW-1:0] vram_addr_sys = cpu_vram_io ? io_addr[VRAM_ADDRW-1:0] : er_vram_addr;
+    wire [WORD-1:0] vram_wmask_sys = cpu_vram_io ? cpu_vram_wmask : er_vram_wmask;
+    wire [WORD-1:0] vram_din_sys = cpu_vram_io ? io_wdata : er_vram_din;
+    wire vram_re_sys = io_rstrb & vram_cs;  // only CPU reads for now
 
     vram #(
         .WORD(WORD),
@@ -459,8 +459,8 @@ module ch07 #(
     ) dev_earthrise_inst (
         .clk(clk_sys),
         .rst(rst_sys),
-        .en(1'b1),  // needed for future vram multiplexing
-        .we(io_wstrb & {BYTE_CNT{dev_er_cs}}),  // byte write for command list only
+        .en(er_en),
+        .we(io_wstrb & {BYTE_CNT{dev_er_cs}}),  // byte write for erlist only
         .re(io_rstrb & dev_er_cs),
         .addr(io_addr[DEV_ADDRW-1:0]),
         .din(io_wdata),

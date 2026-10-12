@@ -22,7 +22,7 @@ The follow signals are used for circle drawing. Isle drawing takes place in the 
 
 The `start` signal only works when if the module isn't already calculating. If you want to stop the calculation and start afresh you need to reset with `rst` then use `start`.
 
-Output enable `oe` lets you pause the calculation, so you can use the `xa`, `ya` distances to calculate the circle coordinates in different quadrants.
+Output enable `oe` lets you pause the calculation, so you can use the `xa`, `ya` distances to calculate the circle coordinates in different quadrants. `oe` only gates calculation; other steps (like initialisation) will continue to run even when `oe` is disabled.
 
 ### Output
 
