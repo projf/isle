@@ -53,7 +53,7 @@ module disp_hwreg #(
             case (addr_sys)
                 DISP_DIMS:  dout_sys <= {disp_vres, disp_hres};
                 FRAME_FLAG: dout_sys <= {{WORD-1{1'b0}}, frame_flag};
-                TEXT_DIMS:  dout_sys <= {TEXT_VRES[WORD/2-1:0], TEXT_HRES[WORD/2-1:0]};
+                TEXT_DIMS:  dout_sys <= {TEXT_VRES[CORDW-1:0], TEXT_HRES[CORDW-1:0]};
                 TRAM_DEPTH: dout_sys <= TEXT_VRES * TEXT_HRES;
                 default: dout_sys <= 0;
             endcase
