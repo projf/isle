@@ -16,7 +16,7 @@ module textmode #(
     parameter GLYPH_WIDTH=8,    // half-width glyph width (pixels)
     parameter TEXT_HRES=80,     // text mode width (half-width chars)
     parameter TEXT_VRES=25,     // text mode height (chars)
-    parameter TRAM_LAT=2,       // tram display read latency (cycles)
+    parameter TRAM_LAT=2,       // tram display read latency (cycles; min=1)
     parameter WORD=32           // machine word size (bits)
     ) (
     input  wire clk_pix,                    // pixel clock

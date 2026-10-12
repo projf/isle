@@ -18,7 +18,7 @@ module dev_display #(
     parameter TEXT_HRES=80,      // text mode width (half-width chars)
     parameter TEXT_VRES=25,      // text mode height (chars)
     parameter TRAM_ADDRW=11,     // tram address width (bits)
-    parameter TRAM_LAT=2,        // tram display read latency (cycles)
+    parameter TRAM_LAT=2,        // tram display read latency (cycles; min=1)
     parameter VRAM_ADDRW=14,     // vram address width (bits)
     parameter VRAM_LAT=2,        // vram display read latency (cycles, min=1)
     parameter WORD=32,           // machine word size (bits)
