@@ -4,9 +4,6 @@
 
 """canv_disp_agu Test Bench (cocotb)"""
 
-# To Do
-#  - test updating scroll_coord within a frame
-
 import dataclasses
 from dataclasses import dataclass
 

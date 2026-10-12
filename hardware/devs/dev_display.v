@@ -279,14 +279,16 @@ module dev_display #(
         end
     end
 
-    reg [CLUT_LAT-1:0] bg_visible_pipe;
-    /* verilator lint_off WIDTHEXPAND */
-    always @(posedge clk_pix) bg_visible_pipe <= (bg_visible_pipe << 1) | bg_visible;
-    /* verilator lint_on WIDTHEXPAND */
+    reg [CLUT_LAT-1:0] bg_visible_sr;
+    always @(posedge clk_pix) begin
+        /* verilator lint_off WIDTHTRUNC */
+        bg_visible_sr <= {bg_visible_sr, bg_visible};  // top element falls off
+        /* verilator lint_on WIDTHTRUNC */
+    end
 
     // paint colours (registered in root module)
     wire [COLRW-1:0] bg_colr = hwreg_pix[DISP_BG_COLR][COLRW-1:0];
-    always @(*) {r, g, b} = bg_visible_pipe[CLUT_LAT-1] ? bg_colr : clut_dout;
+    always @(*) {r, g, b} = bg_visible_sr[CLUT_LAT-1] ? bg_colr : clut_dout;
 
 
     //
