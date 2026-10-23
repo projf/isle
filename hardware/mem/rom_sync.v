@@ -1,4 +1,4 @@
-// Isle.Computer - Synchronous ROM
+// Isle.Computer - Synchronous Rom
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 

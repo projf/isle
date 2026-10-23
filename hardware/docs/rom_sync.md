@@ -1,4 +1,4 @@
-# Synchronous ROM
+# Synchronous Rom
 
 The sync rom module [[rom_sync.v](../mem/rom_sync.v)] create a synchronous (clocked) rom, typically in block ram. Isle uses small synchronous roms for vital data that can't be loaded from external memory, such as the core system font.
 
@@ -21,3 +21,8 @@ Because this module creates a rom, you must set `FILE_ROM` to a suitable $readme
 ### Output
 
 * `dout` - data out
+
+## Testing
+
+There is a cocotb test bench [[rom_sync.py](../tests/mem/rom_sync.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
+
