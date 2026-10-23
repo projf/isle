@@ -39,7 +39,7 @@ The clut is dual port, with a system and display port in different clock domains
 * `dout_sys` - system data out
 * `dout_disp` - display data out
 
-## Latencies
+## Latency
 
 * **system port** - 1 cycle read latency
 * **display port** - 2 cycle read latency

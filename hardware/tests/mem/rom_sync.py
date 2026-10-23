@@ -2,16 +2,21 @@
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
-"""Synchronous Rom Test Bench (cocotb)"""
+"""Synchronous Rom Test Bench (cocotb)
+
+Reads every rom address in a random order. The rom is populated with an init
+file that's also read by the test bench. Inputs change and outputs are read on
+the falling edge of the clock.
+"""
 
 import os
 import random
 
 import cocotb
 from cocotb.clock import Clock
-from tests.helpers import read_mem
+from tests.helpers import read_hex_file, read_mem
 
-SYS_TIME = 100  # 10 MHz system clock
+SYS_TIME = 100  # 100 ns is 10 MHz
 
 # read latency (clock cycles) - documented in rom_sync.md
 SYS_LAT = 1
@@ -24,20 +29,9 @@ def start_rom_sync(dut):
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 async def test_rom_read(dut):
-    """Test ROM data read."""
-
+    """Test rom data read."""
     start_rom_sync(dut)
-
-    # setup test data
-    init_file = os.environ["INIT_FILE"]  # makefile adds filename to env
-
-    rom_data = []
-    with open(init_file, 'r', encoding='utf8') as f:
-        for li in f:
-            li = li.strip()
-            if li and not li.startswith("//"):
-                rom_data.append(int(li, base=16))
-
+    rom_data = read_hex_file(os.environ["INIT_FILE"])  # makefile sets INIT_FILE
     addr_list = list(range(len(rom_data)))
     random.shuffle(addr_list)
     expected = [rom_data[addr] for addr in addr_list]

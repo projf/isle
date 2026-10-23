@@ -8,8 +8,8 @@
 module rom_sync #(
     parameter ADDRW=7,     // address width (bits)
     parameter DATAW=8,     // data width (bits)
-    parameter DEPTH=128,   // ROM depth
-    parameter FILE_ROM=""  // set ROM contents
+    parameter DEPTH=128,   // rom depth
+    parameter FILE_ROM=""  // rom contents file ($readmemh format)
     ) (
     input  wire clk,               // clock
     input  wire [ADDRW-1:0] addr,  // address
@@ -22,7 +22,7 @@ module rom_sync #(
         if (FILE_ROM != "") begin
             $display("Create rom_sync with init file '%s'.", FILE_ROM);
             $readmemh(FILE_ROM, rom_mem);
-        end else $display("Warning: Creating empty rom_sync because FILE_ROM isn't set.");
+        end else $display("Warning: Creating rom_sync with undefined contents because FILE_ROM isn't set.");
     end
 
     always @(posedge clk) dout <= rom_mem[addr];

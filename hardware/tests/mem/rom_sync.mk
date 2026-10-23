@@ -1,4 +1,4 @@
-# Isle.Computer - Synchronous ROM Test Makefile
+# Isle.Computer - Synchronous Rom Test Makefile
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
@@ -14,8 +14,9 @@ VERILOG_SOURCES += $(HARDWARE)/mem/${DUT}.v
 INIT_FILE ?= rom_sync_init.mem
 export INIT_FILE
 
-# pass Verilog module parameters to simulator
-COMPILE_ARGS += -P${DUT}.ADDRW=4 -P${DUT}.DATAW=8 -P${DUT}.DEPTH=16 -P${DUT}.FILE_ROM=\"${INIT_FILE}\"
+# pass Verilog module parameters to simulator (make depth smaller than 2**ADDRW)
+COMPILE_ARGS += -P${DUT}.ADDRW=5 -P${DUT}.DATAW=8 -P${DUT}.DEPTH=16
+COMPILE_ARGS += -P${DUT}.FILE_ROM=\"${INIT_FILE}\"
 
 # each test needs its own build dir and results file
 COCOTB_RESULTS_FILE = results_${DUT}.xml

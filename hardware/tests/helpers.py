@@ -78,6 +78,17 @@ def random_mem_model(addrw, dataw):
     return dict(zip(addrs, data))
 
 
+def read_hex_file(file_path):
+    """Read Verilog hex file with one value per line and // comment lines."""
+    hex_data = []
+    with open(file_path, 'r', encoding='utf8') as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith("//"):
+                hex_data.append(int(line, base=16))
+    return hex_data
+
+
 async def read_mem(clk, addr, dout, addr_list, latency):
     """Read addr_list back-to-back and return data in the same order."""
     await FallingEdge(clk)

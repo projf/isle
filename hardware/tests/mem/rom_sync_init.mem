@@ -1,7 +1,9 @@
-// Isle.Computer - Synchronous ROM Test Data
+// Isle.Computer - Synchronous Rom Test Data
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
+// This test data must be one value per line as our Python test parser is
+// simpler than the Verilog spec for $readmemh.
 F1
 E2
 D3
