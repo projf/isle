@@ -53,9 +53,15 @@ The system (sys) port is for reading and writing characters. The system port is 
 
 The separate system and displays ports avoid contention between the graphics engine and display logic and form part of the clock-domain crossing (CDC) architecture that allows the system and display clocks to run independently.
 
-### Latencies
+## Latency
 
 * **system port** - 1 cycle read latency
 * **display port** - 2 cycle read latency
 
-The display port has a higher latency because of the additional output register to improve timing.
+The system port has 1 cycle of latency because the CPU expects to read data the cycle after it makes the request. If timing becomes an issue in the system clock domain, we could add an output register, but we would need to update system bus logic to make the CPU wait.
+
+The display port is driven by the pixel clock, which is usually a higher frequency than the system clock. We add an additional output register on the display port to improve timing in the pixel clock domain. Additional latency has no impact on display performance.
+
+## Testing
+
+There is a cocotb test bench [[tram.py](../tests/mem/tram.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).
