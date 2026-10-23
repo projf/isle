@@ -19,6 +19,9 @@ fifo_sync:
 rom_sync:
 	-make -f rom_sync.mk
 
+tram:
+	-make -f tram.mk
+
 vram:
 	-make -f vram.mk
 
