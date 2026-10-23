@@ -1,4 +1,4 @@
-// Isle.Computer - Textmode RAM (tram)
+// Isle.Computer - Textmode Ram (tram)
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
@@ -6,7 +6,7 @@
 `timescale 1ns / 1ps
 
 module tram #(
-    parameter ADDRW=11,     // address width (bit)
+    parameter ADDRW=11,     // address width (bits)
     parameter BYTE=8,       // machine byte size (bits)
     parameter BYTE_CNT=4,   // bytes in machine word
     parameter FILE_TXT="",  // optional initial text to load
@@ -16,10 +16,10 @@ module tram #(
     input  wire clk_pix,                // pixel clock
     input  wire [BYTE_CNT-1:0] we_sys,  // system write enable
     input  wire re_sys,                 // system read enable
-    input  wire [ADDRW-1:0] addr_sys,   // system address
+    input  wire [ADDRW-1:0] addr_sys,   // system word address
     input  wire [WORD-1:0] din_sys,     // system data in
     output reg  [WORD-1:0] dout_sys,    // system data out
-    input  wire [ADDRW-1:0] addr_disp,  // display address
+    input  wire [ADDRW-1:0] addr_disp,  // display word address
     output reg  [WORD-1:0] dout_disp    // display data out
     );
 

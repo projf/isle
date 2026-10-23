@@ -102,12 +102,12 @@ async def test_wmask(dut):
         0x0000FFFF, 0xFFFF0000,  # 16 bit (half word)
         0xAAAAAAAA, 0x55555555   # alternate bits
     ]
-    assert len(dut.din_sys) == 32, "test_wmask requires 32-bit vram din_sys."
+    assert len(dut.din_sys) == 32, "test_wmask requires 32-bit din_sys."
 
     model = random_mem_model(len(dut.addr_sys), len(dut.din_sys))
 
     addr_list = list(model.keys())[:len(masks)]  # match mask length
-    assert len(addr_list) == len(masks), "ADDRW too small for wmask test"
+    assert len(addr_list) == len(masks), "ADDRW too small for test."
 
     word_mask = (1 << len(dut.din_sys)) - 1
 
