@@ -5,9 +5,11 @@
 """Test helpers for Isle cocotb hardware tests."""
 
 from dataclasses import dataclass
+import random
 
 import cocotb
-from cocotb.triggers import RisingEdge
+from cocotb.triggers import FallingEdge
+
 
 @dataclass(frozen=True)
 class Coords:
@@ -32,7 +34,6 @@ def assert_coord(dut, x, y):
         dut.disp_x.value == x and
         dut.disp_y.value == y
     )
-
     assert coord_matches, (
         f"({dut.disp_x.value.to_signed()},"
         f"{dut.disp_y.value.to_signed()})"
@@ -44,13 +45,11 @@ def assert_pixel(dut, r, g, b, verbose=True):
     """Assert pixel colour is correct."""
     if verbose:
         log_pixel(dut)
-
     rgb_matches = (
         dut.disp_r.value == r and
         dut.disp_g.value == g and
         dut.disp_b.value == b
     )
-
     assert rgb_matches, (
         f"RGB({dut.disp_r.value.to_unsigned()},"
         f"{dut.disp_g.value.to_unsigned()},"
@@ -66,31 +65,28 @@ def log_pixel(dut):
     b = dut.disp_b.value.to_unsigned()
     x = dut.disp_x.value.to_signed()
     y = dut.disp_y.value.to_signed()
-
     cocotb.log.info("RGB(%2d,%2d,%2d) at (%4d,%4d)", r, g, b, x, y)
 
 
-async def zero_memory(dut):
-    """Zero memory to match hardware behaviour for block ram."""
-
-    for i in range(dut.DEPTH.value.to_unsigned()):
-        dut.we_sys.value = 1
-        dut.addr_sys.value = i
-        dut.din_sys.value = 0
-        await RisingEdge(dut.clk_sys)
-
-    dut.we_sys.value = 0
-    await RisingEdge(dut.clk_sys)
+def random_mem_model(addrw, dataw):
+    """Return {addr: data} memory model with distinct non-zero values."""
+    depth = 2**addrw
+    nonzero_range = range(1, 2**dataw)  # range of possible non-zero data
+    count = min(len(nonzero_range), depth)  # must exist and fit in memory
+    addrs = random.sample(range(depth), count)
+    data = random.sample(nonzero_range, count)
+    return dict(zip(addrs, data))
 
 
-async def zero_vram(dut):
-    """Zero vram to match hardware behaviour for block ram."""
-
-    for i in range(dut.DEPTH.value.to_unsigned()):
-        dut.wmask_sys.value = 0xFFFFFFFF
-        dut.addr_sys.value = i
-        dut.din_sys.value = 0
-        await RisingEdge(dut.clk_sys)
-
-    dut.wmask_sys.value = 0x00000000
-    await RisingEdge(dut.clk_sys)
+async def read_mem(clk, addr, dout, addr_list, latency):
+    """Read addr_list back-to-back and return data in the same order."""
+    await FallingEdge(clk)
+    data = []
+    for i in range(len(addr_list) + latency-1):
+        if i < len(addr_list):
+            addr.value = addr_list[i]
+        await FallingEdge(clk)
+        if i >= latency-1:  # initial data arrives after latency cycles
+            val = dout.value
+            data.append(val.to_unsigned() if val.is_resolvable else str(val))
+    return data

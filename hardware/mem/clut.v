@@ -14,10 +14,10 @@ module clut #(
     input  wire clk_pix,                // pixel clock
     input  wire we_sys,                 // system write enable
     input  wire re_sys,                 // system read enable
-    input  wire [ADDRW-1:0] addr_sys,   // system address
+    input  wire [ADDRW-1:0] addr_sys,   // system word address
     input  wire [DATAW-1:0] din_sys,    // system data in
     output reg  [DATAW-1:0] dout_sys,   // system data out
-    input  wire [ADDRW-1:0] addr_disp,  // display address
+    input  wire [ADDRW-1:0] addr_disp,  // display word address
     output reg  [DATAW-1:0] dout_disp   // display data out
     );
 

@@ -36,6 +36,10 @@ make WAVES=1 clut
 
 [Surfer](https://surfer-project.org) (recommended) and [GTKWave](https://gtkwave.github.io/gtkwave/) support FST waveforms.
 
+### Reporting Test Failures
+
+Many Isle tests generate random data. Ensure you include the value of `COCOTB_RANDOM_SEED` (from cocotb output) in your test failure report, otherwise it might be impossible to reproduce your test failure.
+
 ### Simulation Support
 
 FPGAs, such as Xilinx XC7 and Lattice ECP5, reset registers (flip-flops) to zero when configured at power-on. However, simulators such as Icarus Verilog do not. This isn't usually a problem for Isle, but there are a few cases where this breaks simulation. To handle these cases, Isle Verilog modules may include conditional initial values with `BENCH`, for example (from `xd.v`):

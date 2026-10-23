@@ -1,4 +1,4 @@
-// Isle.Computer - Video RAM (vram)
+// Isle.Computer - Video Ram (vram)
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
@@ -6,7 +6,7 @@
 `timescale 1ns / 1ps
 
 module vram #(
-    parameter ADDRW=14,      // address width ≥14 (bits)
+    parameter ADDRW=14,      // address width (bits)
     parameter FILE_BMAP="",  // optional initial bitmap to load
     parameter WORD=32        // machine word size (bits)
     ) (
