@@ -1,8 +1,8 @@
-# Isle.Computer - Sync FIFO Test Bench
+# Isle.Computer - Synchronous Fifo Test Bench
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
-"""Sync FIFO Test Bench (cocotb)"""
+"""Synchronous Fifo Test Bench (cocotb)"""
 
 import cocotb
 from cocotb.clock import Clock

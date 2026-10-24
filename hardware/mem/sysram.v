@@ -1,4 +1,4 @@
-// Isle.Computer - System RAM
+// Isle.Computer - System Ram
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
