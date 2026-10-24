@@ -1,4 +1,4 @@
-// Isle.Computer - Textmode Ram (tram)
+// Isle.Computer - Text Mode Ram (tram)
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 

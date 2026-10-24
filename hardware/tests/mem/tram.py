@@ -36,10 +36,10 @@ def start_tram(dut):
     dut.re_sys.value = 0
 
 
-async def write_tram(dut, model, we_sys):
+async def write_tram(dut, model, byte_mask):
     """Write model {addr: data} to tram via system port."""
     await FallingEdge(dut.clk_sys)
-    dut.we_sys.value = we_sys  # byte writable
+    dut.we_sys.value = byte_mask  # byte writable
     for addr, din in model.items():
         dut.addr_sys.value = addr
         dut.din_sys.value = din
@@ -61,8 +61,8 @@ async def test_sys_port(dut):
     """Test tram system port read and write."""
     start_tram(dut)
     model = random_mem_model(len(dut.addr_sys), len(dut.din_sys))
-    we_sys = 0b1111  # write whole words (4 bytes)
-    await write_tram(dut, model, we_sys)
+    all_bytes = (1 << len(dut.we_sys)) - 1
+    await write_tram(dut, model, all_bytes)
 
     addr_list = list(model.keys())  # addresses in order they were written
     random.shuffle(addr_list)  # shuffle so we read in a different order
@@ -97,12 +97,7 @@ async def test_disp_port(dut):
 async def test_byte_write(dut):
     """Test tram system port byte write mask."""
     start_tram(dut)
-    byte_masks = [  # includes all valid CPU combinations
-        0b0000, 0b1111,  # 0 bytes and 4 bytes (word)
-        0b0001, 0b0010,  # 1 byte (1st and second byte)
-        0b0100, 0b1000,  # 1 byte (3rd and fourth byte)
-        0b0011, 0b1100   # 2 bytes (half words)
-    ]
+    byte_masks = list(range(16))  # test all possible combinations
     assert len(dut.din_sys) == 32, "test_byte_write requires 32-bit din_sys."
 
     model = random_mem_model(len(dut.addr_sys), len(dut.din_sys))

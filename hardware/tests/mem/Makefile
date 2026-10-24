@@ -8,7 +8,7 @@
 export PYTHONPATH := $(shell pwd)/../..:$(PYTHONPATH)
 
 # test targets
-TESTS = clut fifo_sync rom_sync vram
+TESTS = clut fifo_sync rom_sync tram vram
 
 clut:
 	-make -f clut.mk
