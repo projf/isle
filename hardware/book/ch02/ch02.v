@@ -183,24 +183,14 @@ module ch02 #(
 
     assign vram_addr_disp = canv_addr;
 
-    // delay pix_idx for vram latency
-    reg [PIX_IDXW-1:0] pix_idx_pipe [0:VRAM_LAT-1];
-    integer i;
-    always @(posedge clk) begin
-        pix_idx_pipe[0] <= canv_pix_idx;
-        for (i=1; i<VRAM_LAT; i=i+1)
-            pix_idx_pipe[i] <= pix_idx_pipe[i-1];
-    end
-    wire [PIX_IDXW-1:0] pix_idx_disp = pix_idx_pipe[VRAM_LAT-1];
-
     // select pixel index from word depending on colour depth
     reg [CIDX_ADDRW-1:0] pcidx_1, pcidx_2, pcidx_4, pcidx_8;
     always @(*) begin
         /* verilator lint_off WIDTHTRUNC */
-        pcidx_1 = (vram_dout_disp >> pix_idx_disp)        & 'b1;
-        pcidx_2 = (vram_dout_disp >> (pix_idx_disp << 1)) & 'b11;
-        pcidx_4 = (vram_dout_disp >> (pix_idx_disp << 2)) & 'b1111;
-        pcidx_8 = (vram_dout_disp >> (pix_idx_disp << 3)) & 'b11111111;
+        pcidx_1 = (vram_dout_disp >> canv_pix_idx)        & 'b1;
+        pcidx_2 = (vram_dout_disp >> (canv_pix_idx << 1)) & 'b11;
+        pcidx_4 = (vram_dout_disp >> (canv_pix_idx << 2)) & 'b1111;
+        pcidx_8 = (vram_dout_disp >> (canv_pix_idx << 3)) & 'b11111111;
         /* verilator lint_on WIDTHTRUNC */
         case (CANV_BPP)
             1: clut_addr_disp = pcidx_1;
