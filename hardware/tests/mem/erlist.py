@@ -18,7 +18,7 @@ from cocotb.clock import Clock
 from cocotb.triggers import FallingEdge
 from tests.helpers import random_mem_model, read_mem
 
-# clock frequencies
+# clock frequency
 SYS_TIME = 50  # 50 ns is 20 MHz
 
 # read latencies (clock cycles) - documented in erlist.md
@@ -27,7 +27,7 @@ ER_LAT = 2
 
 
 def start_erlist(dut):
-    """Start clock and idle system port."""
+    """Start clock and idle inputs."""
     cocotb.start_soon(Clock(dut.clk, SYS_TIME, unit="ns").start())
     dut.we_sys.value = 0
     dut.re_sys.value = 0

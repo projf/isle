@@ -18,15 +18,15 @@ from cocotb.clock import Clock
 from cocotb.triggers import FallingEdge
 from tests.helpers import random_mem_model, read_mem
 
-# clock frequencies
+# clock frequency
 SYS_TIME = 50  # 50 ns is 20 MHz
 
-# read latencies (clock cycles) - documented in sysram.md
+# read latency (clock cycles) - documented in sysram.md
 SYS_LAT = 1
 
 
-def start_tram(dut):
-    """Start clock and idle system port."""
+def start_sysram(dut):
+    """Start clock and idle inputs."""
     cocotb.start_soon(Clock(dut.clk, SYS_TIME, unit="ns").start())
     dut.we.value = 0
     dut.re.value = 0
@@ -55,7 +55,7 @@ def masked_write(old, din, byte_mask):
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 async def test_sys_port(dut):
     """Test sysram system port read and write."""
-    start_tram(dut)
+    start_sysram(dut)
     model = random_mem_model(len(dut.addr), len(dut.din))
     all_bytes = (1 << len(dut.we)) - 1
     await write_sysram(dut, model, all_bytes)
@@ -75,7 +75,7 @@ async def test_sys_port(dut):
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 async def test_byte_write(dut):
     """Test sysram system port byte write mask."""
-    start_tram(dut)
+    start_sysram(dut)
     byte_masks = list(range(16))  # test all possible combinations
     assert len(dut.din) == 32, "test_byte_write requires 32-bit din."
 

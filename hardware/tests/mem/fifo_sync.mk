@@ -13,7 +13,7 @@ HARDWARE = $(PWD)/../..
 VERILOG_SOURCES += $(HARDWARE)/mem/${DUT}.v
 
 # pass Verilog module parameters to simulator
-COMPILE_ARGS += -P${DUT}.ADDRW=3 -P${DUT}.DATAW=4
+COMPILE_ARGS += -P${DUT}.ADDRW=5 -P${DUT}.DATAW=8
 
 # each test needs its own build dir and results file
 COCOTB_RESULTS_FILE = results_${DUT}.xml

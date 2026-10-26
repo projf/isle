@@ -29,7 +29,7 @@ DISP_LAT = 2
 
 
 def start_clut(dut):
-    """Start clocks and idle system port."""
+    """Start clocks and idle inputs."""
     cocotb.start_soon(Clock(dut.clk_sys, SYS_TIME, unit="ns").start())
     cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, unit="ns").start())
     dut.we_sys.value = 0
