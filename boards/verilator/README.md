@@ -28,6 +28,21 @@ Many chapters have parameters you can edit in the matching top module. For examp
 
 Each chapter's top module uses an instance of the common chapter design from [hardware/book](../../hardware/book/).
 
+### Troubleshooting
+
+On macOS, if you get an error of the form:
+
+```shell
+ld: archive member '//' not a mach-o file in 'Vtop_ch07__ALL.a'
+clang++: error: linker command failed with exit code 1 (use -v to see invocation)
+```
+
+Try using the Apple linker:
+
+```shell
+make AR=/usr/bin/ar
+```
+
 ### Verilog Debug Messages
 
 Some Isle components (such as Earthrise) support debug messages using `$display(...)`. Debug messages are enabled or disabled in `boards/verilator/verilator.mk` using `VERILOG_DEBUG`.

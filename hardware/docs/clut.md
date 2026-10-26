@@ -1,6 +1,6 @@
 # Colour Lookup Table
 
-The colour lookup table module [[clut.v](../mem/clut.v)] maps palette indexes to colours. This approach is commonly referred to as [Indexed Colour](https://en.wikipedia.org/wiki/Indexed_color) (Wikipedia).
+The colour lookup table module [[clut.v](../mem/clut.v)] maps palette indexes to colours. This approach is commonly referred to as [indexed colour](https://en.wikipedia.org/wiki/Indexed_color) (Wikipedia).
 
 For example, in 16 colour mode each pixel colour in [vram](vram.md) is represented by a 4-bit colour index. When we come to display that pixel we read the colour index from vram, say **6**, then use the clut to map that to an RGB colour. Isle uses 15-bit RGB555 colours, such as (31, 31, 00), which is bright yellow.
 
