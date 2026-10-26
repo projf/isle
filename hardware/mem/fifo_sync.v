@@ -49,6 +49,6 @@ module fifo_sync #(
             dout <= fifo_mem[rptr];
             rptr <= rptr_next;
         end
-        dout_valid <= re && !empty;
+        dout_valid <= !rst && re && !empty;
     end
 endmodule
