@@ -9,7 +9,7 @@ module rom_sync #(
     parameter ADDRW=7,     // address width (bits)
     parameter DATAW=8,     // data width (bits)
     parameter DEPTH=128,   // rom depth
-    parameter FILE_ROM=""  // rom contents file ($readmemh format)
+    parameter FILE_ROM=""  // rom contents file
     ) (
     input  wire clk,               // clock
     input  wire [ADDRW-1:0] addr,  // address

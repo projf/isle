@@ -1,8 +1,8 @@
 # Text Mode Ram
 
-The text mode ram (tram) module [[tram.v](../mem/tram.v)] holds text mode characters in block ram (bram). The default Isle tram design is 8 KiB as 2K x 32 bit, which supports up to 80x25 (640x400) or 84x24 (672x384)characters. The tram is byte write. The [text mode](textmode.md) module connects to tram to retrieve character data for display.
+The text mode ram (tram) module [[tram.v](../mem/tram.v)] holds text mode characters in block ram (bram). The default Isle tram design is 8 KiB as 2K x 32 bit, which supports up to 2048 characters. The tram is byte write. The [text mode](textmode.md) module connects to tram to retrieve character data for display.
 
-The tram holds one 32-bit word per character consisting of (LSB to MSB):
+The tram holds one 32-bit word per character consisting of the following bits:
 
 * 21 bits Unicode code point (UCP)
 * 3 bits unused (reserved for future use)
@@ -16,11 +16,11 @@ The tram holds one 32-bit word per character consisting of (LSB to MSB):
 |------|------|------|---------------------|
 ```
 
-The CPU can write the Unicode code point, together with foreground and background colours, in a single word. By writing a byte to the upper 8 bits, the CPU can change the colours of an existing character.
+The CPU can write the Unicode code point, together with foreground and background colours, in a single word. By writing a byte to the upper 8 bits, the CPU can change an existing character's colours.
 
-The system (sys) port is for reading and writing characters. The system port is designed for interfacing with a CPU and is in the system clock domain. The display (disp) port is for reading character data for display output and is in the pixel clock domain.
+The system (sys) port is for reading and writing characters. The system port interfaces with a CPU and is in the system clock domain. The display (disp) port is for reading character data for display output and is in the pixel clock domain.
 
-The separate system and displays ports avoid contention between the CPU and display logic and form part of the clock-domain crossing (CDC) architecture that allows the system and display clocks to run independently.
+The separate system and display ports avoid contention between the CPU and display logic and form part of the clock-domain crossing (CDC) architecture that lets the system and display clocks run independently.
 
 ## Parameters
 

@@ -88,7 +88,7 @@ Install **Icarus Verilog** using the [official instructions](https://steveicarus
 
 Install **Verilator** using the [official instructions](https://verilator.org/guide/latest/install.html) or run `brew install verilator` on macOS.
 
-See [boards/verilator](../boards/verilator/) for advice on using Verilator to run the full Isle simulation.
+See [boards/verilator](../../boards/verilator/) for advice on using Verilator to run the full Isle simulation.
 
 ## Install cocotb
 

@@ -1,4 +1,4 @@
-// Isle.Computer - Synchronous FIFO
+// Isle.Computer - Synchronous Fifo
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
