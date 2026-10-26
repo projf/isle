@@ -28,6 +28,10 @@ The depth (size) of sysram is derived from the address width `ADDRW`. The addres
 
 * `dout` - data out
 
-## Latencies
+## Latency
 
-Reads have a 1 cycle read latency.
+Reads have a 1 cycle latency.
+
+## Testing
+
+There is a cocotb test bench [[sysram.py](../tests/mem/sysram.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).

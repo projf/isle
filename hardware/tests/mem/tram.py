@@ -6,7 +6,7 @@
 
 Tests write random data using the system port, read it back from the system and
 display ports. Input signals change on the falling edge, and output signals are
-checked on the falling edge. Includes test of byte write.
+checked on the falling edge.
 
 This memory does not have a reset, so tests cannot make any assumptions about
 the memory contents. Each test writes to every address it reads.
