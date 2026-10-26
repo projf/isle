@@ -2,8 +2,7 @@
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
-# NB. don't forget to source the cocotb venv
-#     display tests take a while to run
+# NB. display tests take a while to run
 
 # add hardware/tests to Python path
 export PYTHONPATH := $(shell pwd)/../..:$(PYTHONPATH)

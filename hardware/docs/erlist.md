@@ -2,6 +2,8 @@
 
 The Earthrise command list module [[erlist.v](../mem/erlist.v)] holds instructions for the [Earthrise](earthrise.md) 2D drawing engine.
 
+The CPU and Earthrise each have their own port.
+
 ## Parameters
 
 * `ADDRW` - address width (bits)
@@ -31,9 +33,13 @@ The command list is dual port. The system port is read-write for use of the CPU.
 * `dout_sys` - system data out
 * `dout_er` - Earthrise data out
 
-## Latencies
+## Latency
 
 * **system port** - 1 cycle read latency
 * **Earthrise port** - 2 cycle read latency
 
 The Earthrise port has a higher latency because of the output register to improve timing.
+
+## Testing
+
+There is a cocotb test bench [[erlist.py](../tests/mem/erlist.py)] that exercises this module. For advice on running hardware tests, see [Isle Verilog Tests](../tests/README.md).

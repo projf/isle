@@ -2,19 +2,29 @@
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
-# NB. don't forget to source the cocotb venv
-
 # add hardware/tests to Python path
 export PYTHONPATH := $(shell pwd)/../..:$(PYTHONPATH)
 
 # test targets
-TESTS = clut fifo_sync vram
+TESTS = clut erlist fifo_sync rom_sync sysram tram vram
 
 clut:
 	-make -f clut.mk
 
+erlist:
+	-make -f erlist.mk
+
 fifo_sync:
 	-make -f fifo_sync.mk
+
+rom_sync:
+	-make -f rom_sync.mk
+
+sysram:
+	-make -f sysram.mk
+
+tram:
+	-make -f tram.mk
 
 vram:
 	-make -f vram.mk

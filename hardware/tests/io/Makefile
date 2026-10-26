@@ -2,8 +2,6 @@
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
-# NB. don't forget to source the cocotb venv
-
 # add hardware/tests to Python path
 export PYTHONPATH := $(shell pwd)/../..:$(PYTHONPATH)
 

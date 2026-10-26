@@ -21,8 +21,7 @@ COCOTB_RESULTS_FILE = results_${DUT}_mode_${DISPLAY_MODE}.xml
 SIM_BUILD = sim_build/${DUT}_mode_${DISPLAY_MODE}
 
 # rebuild if this makefile (including its params) changes
-THIS_MAKEFILE := $(abspath $(lastword $(MAKEFILE_LIST)))
-CUSTOM_COMPILE_DEPS += $(THIS_MAKEFILE)
+CUSTOM_COMPILE_DEPS += $(DUT).mk
 
 # include cocotb's make rules to take care of the simulator setup
 include $(shell cocotb-config --makefiles)/Makefile.sim

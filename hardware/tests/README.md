@@ -36,6 +36,10 @@ make WAVES=1 clut
 
 [Surfer](https://surfer-project.org) (recommended) and [GTKWave](https://gtkwave.github.io/gtkwave/) support FST waveforms.
 
+### Reporting Test Failures
+
+Many Isle tests generate random data. Ensure you include the value of `COCOTB_RANDOM_SEED` (from cocotb output) in your test failure report, otherwise it might be impossible to reproduce your test failure.
+
 ### Simulation Support
 
 FPGAs, such as Xilinx XC7 and Lattice ECP5, reset registers (flip-flops) to zero when configured at power-on. However, simulators such as Icarus Verilog do not. This isn't usually a problem for Isle, but there are a few cases where this breaks simulation. To handle these cases, Isle Verilog modules may include conditional initial values with `BENCH`, for example (from `xd.v`):
@@ -84,11 +88,11 @@ Install **Icarus Verilog** using the [official instructions](https://steveicarus
 
 Install **Verilator** using the [official instructions](https://verilator.org/guide/latest/install.html) or run `brew install verilator` on macOS.
 
-See [boards/verilator](../boards/verilator/) for advice on using Verilator to run the full Isle simulation.
+See [boards/verilator](../../boards/verilator/) for advice on using Verilator to run the full Isle simulation.
 
 ## Install cocotb
 
-Isle requires cocotb 2.0+. I recommend installing cocotb inside a venv using the hardware test [requirements.txt](requirements.txt):
+Isle requires cocotb 2. I recommend installing cocotb inside a venv using the hardware test [requirements.txt](requirements.txt):
 
 ```shell
 cd isle/hardware/tests

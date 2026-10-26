@@ -7,7 +7,7 @@
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, Timer
-from tests.helpers import assert_coord, assert_pixel, zero_vram
+from tests.helpers import assert_coord, assert_pixel
 
 # clock frequencies
 # NB. system clock needs to be faster, otherwise drawing isn't done in time for tests
@@ -18,6 +18,18 @@ PIX_TIME = 20  # 20 ns is 50 MHz
 DISP_LINE   = 825  # horizontal line including blanking
 DISP_HBLANK = 153  # horizontal blanking
 DISP_VBLANK =  20  # vertical blanking
+
+
+async def zero_vram(dut):
+    """Zero vram to match hardware behaviour for block ram."""
+    for i in range(dut.DEPTH.value.to_unsigned()):
+        dut.wmask_sys.value = 0xFFFFFFFF
+        dut.addr_sys.value = i
+        dut.din_sys.value = 0
+        await RisingEdge(dut.clk_sys)
+
+    dut.wmask_sys.value = 0x00000000
+    await RisingEdge(dut.clk_sys)
 
 
 async def reset_sys_dut(dut):

@@ -1,142 +1,190 @@
-# Isle.Computer - Sync FIFO Test Bench
+# Isle.Computer - Synchronous Fifo Test Bench
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
-"""Sync FIFO Test Bench (cocotb)"""
+"""Synchronous Fifo Test Bench (cocotb)
+Tests write random data and read it back. Input signals change on the falling
+edge, and output signals are checked on the falling edge.
+
+The fifo must be reset prior to use (this is different from other memories).
+"""
+
+import random
 
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import NextTimeStep, ReadOnly, RisingEdge
+from cocotb.triggers import FallingEdge
 
-SYS_TIME = 100  # 10 MHz system clock
-
-
-def gen_test_data(capacity, dataw):
-    """Generate fifo test data based on data width and capacity. Never uses 0 as test data."""
-    return [i & ((1 << dataw) - 1) for i in range(1, capacity+1)]  # all non-zero
+# clock frequency
+SYS_TIME = 100  # 100 ns is 10 MHz
 
 
-async def setup_dut(dut):
-    """Setup DUT with clock and return signal widths."""
-    Clock(dut.clk, SYS_TIME, unit="ns").start()
-    dut.rst.value = 0
+def start_fifo(dut):
+    """Start clock and idle inputs."""
+    cocotb.start_soon(Clock(dut.clk, SYS_TIME, unit="ns").start())
     dut.we.value = 0
     dut.re.value = 0
     dut.din.value = 0
-    # reset
-    await RisingEdge(dut.clk)
+
+
+async def reset_fifo(dut):
+    """Reset fifo."""
+    await FallingEdge(dut.clk)
     dut.rst.value = 1
-    await RisingEdge(dut.clk)
+    await FallingEdge(dut.clk)
     dut.rst.value = 0
-    await RisingEdge(dut.clk)
-    capacity = 2**len(dut.len)-1
-    return capacity, len(dut.din)
 
 
-async def write_data(dut, data):
+def fifo_capacity(dut):
+    """Return capacity (one less than depth)."""
+    return 2**len(dut.len) - 1
+
+
+def random_fifo_data(dut, count):
+    """Generate count random, distinct non-zero values that fit in din."""
+    return random.sample(range(1, 2**len(dut.din)), count)
+
+
+async def write_fifo(dut, data):
     """Write a list of values on consecutive clocks."""
+    await FallingEdge(dut.clk)
+    dut.we.value = 1
     for d in data:
-        dut.we.value = 1
         dut.din.value = d
-        await RisingEdge(dut.clk)  # writes on edge
+        await FallingEdge(dut.clk)
     dut.we.value = 0
-    await RisingEdge(dut.clk)
 
 
-async def read_data(dut, count, expect_valid=True):
+async def read_fifo(dut, count):
     """Read count values from fifo on consecutive clocks."""
-    data_list = []
+    await FallingEdge(dut.clk)
+    reads = []
     dut.re.value = 1
-    for i in range(count):
-        await RisingEdge(dut.clk)
-        await ReadOnly()
-        assert dut.dout_valid.value == int(expect_valid), \
-            f"dout_valid={int(dut.dout_valid.value)} on read {i}; expected {int(expect_valid)}"
-        data_list.append(int(dut.dout.value))
-    await NextTimeStep()  # leave read-only state without another clock edge
-    dut.re.value = 0  # stop reading
-    await RisingEdge(dut.clk)
-    await ReadOnly()
-    assert dut.dout_valid.value == 0, "dout_valid should be 0 one cycle after re goes low"
-    await NextTimeStep()
-    return data_list
+    for _ in range(count):
+        await FallingEdge(dut.clk)
+        if dut.dout_valid.value == 1:
+            reads.append(dut.dout.value.to_unsigned())
+    dut.re.value = 0
+    return reads
+
+
+async def write_read_fifo(dut, data):
+    """Simultaneous write and read fifo on consecutive clocks. Return reads."""
+    await FallingEdge(dut.clk)
+    reads = []
+    dut.we.value = 1
+    dut.re.value = 1
+    for d in data:
+        dut.din.value = d
+        await FallingEdge(dut.clk)
+        if dut.dout_valid.value == 1:
+            reads.append(dut.dout.value.to_unsigned())
+    dut.we.value = 0
+    dut.re.value = 0
+    return reads
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-async def test_start_empty(dut):
-    """Test fifo starts empty."""
-    await setup_dut(dut)
-    assert dut.empty.value == 1, "fifo didn't start empty."
-    assert dut.dout_valid.value == 0, "read didn't start invalid."
+async def test_reset(dut):
+    """Test fifo reset."""
+    start_fifo(dut)
+    await reset_fifo(dut)
+
+    assert dut.empty.value == 1
+    assert dut.full.value == 0
+    assert dut.len.value == 0
+    assert dut.dout_valid.value == 0
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-async def test_full_from_empty(dut):
-    """Test fifo full from empty."""
-    capacity, dataw = await setup_dut(dut)
-    test_data_full = gen_test_data(capacity, dataw)  # test data set is as large as the fifo
-    await write_data(dut, test_data_full)
-    await ReadOnly()
-    assert dut.full.value == 1, f"fifo isn't full; len={int(dut.len.value)}."
+async def test_fill_drain(dut):
+    """Test filling and draining fifo."""
+    start_fifo(dut)
+    await reset_fifo(dut)
+
+    capacity = fifo_capacity(dut)
+    test_data = random_fifo_data(dut, capacity)
+    await write_fifo(dut, test_data)
+
+    assert dut.empty.value == 0
+    assert dut.full.value == 1
+    assert dut.len.value == capacity
+
+    reads = await read_fifo(dut, capacity)
+    assert reads == test_data
+
+    assert dut.empty.value == 1
+    assert dut.full.value == 0
+    assert dut.len.value == 0
+
+    await FallingEdge(dut.clk)  # dout_valid matches dout; lags re by one cycle
+    assert dut.dout_valid.value == 0
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-async def test_data_and_full(dut):
-    """Test fifo data and full after use."""
-    capacity, dataw = await setup_dut(dut)
+async def test_pointer_wrap(dut):
+    """Test pointers wrap correctly."""
+    start_fifo(dut)
+    await reset_fifo(dut)
 
-    # write and read a few values (pointers will be non-zero after)
-    small_count = capacity // 2
-    test_data_small = gen_test_data(small_count, dataw)
-    await write_data(dut, test_data_small)
-    assert await read_data(dut, small_count) == test_data_small, \
-        f"small test read data doesn't match expected {test_data_small}!"
+    capacity = fifo_capacity(dut)
 
-    test_data_full = gen_test_data(capacity, dataw)
-    await write_data(dut, test_data_full)
+    # write and read half the capacity
+    half_capacity = capacity // 2
+    half_test_data = random_fifo_data(dut, half_capacity)
+    await write_fifo(dut, half_test_data)
+    half_reads = await read_fifo(dut, half_capacity)
+    assert half_reads == half_test_data
 
-    assert dut.len.value == capacity, \
-        f"fifo len={int(dut.len.value)} doesn't match expected {capacity}!"
-    assert dut.full.value == 1, f"fifo isn't full; len={int(dut.len.value)}."
-
-    assert await read_data(dut, capacity) == test_data_full, \
-        f"test read data doesn't match expected {test_data_full}!"
-
-
-@cocotb.test()  # pylint: disable=no-value-for-parameter
-async def test_read_simple(dut):
-    """Test read of test data."""
-    capacity, dataw = await setup_dut(dut)
-    test_data_full = gen_test_data(capacity, dataw)
-    await write_data(dut, test_data_full)
-    assert await read_data(dut, capacity) == test_data_full, \
-        f"test read data doesn't match expected {test_data_full}!"
-    await ReadOnly()
-    assert dut.empty.value == 1, "fifo didn't finish empty."
+    # write and read whole capacity so pointers wrap
+    test_data = random_fifo_data(dut, capacity)
+    await write_fifo(dut, test_data)
+    reads = await read_fifo(dut, capacity)
+    assert reads == test_data
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
-async def test_read_when_empty(dut):
-    """Test read when fifo empty."""
-    capacity, dataw = await setup_dut(dut)
-    test_data_full = gen_test_data(capacity, dataw)
-    await write_data(dut, test_data_full)
-    await read_data(dut, capacity)  # read all data back
-    await ReadOnly()
-    assert dut.empty.value == 1 and dut.len.value == 0, \
-        "read when empty changed pointers"
+async def test_read_empty(dut):
+    """Test reading empty fifo."""
+    start_fifo(dut)
+    await reset_fifo(dut)
+
+    count = 3
+    test_data = random_fifo_data(dut, count)
+    await write_fifo(dut, test_data)
+    reads = await read_fifo(dut, count+2)  # try reading another two items
+    assert reads == test_data  # extra reads return nothing
+    assert dut.empty.value == 1
+    assert dut.len.value == 0
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 async def test_write_when_full(dut):
-    """Test write when fifo full."""
-    capacity, dataw = await setup_dut(dut)
-    test_data_full = gen_test_data(capacity, dataw)
-    await write_data(dut, test_data_full)
-    sentinel = 0  # gen_test_data never produces 0
-    await write_data(dut, [sentinel])  # this value should not be written
-    assert dut.len.value == capacity, "fifo len changed on write when full"
-    assert await read_data(dut, capacity) == test_data_full, \
-        "fifo contents changed on write when full"
-    await ReadOnly()
-    assert dut.empty.value == 1, "fifo didn't finish empty"
+    """Test writing to full fifo."""
+    start_fifo(dut)
+    await reset_fifo(dut)
+
+    capacity = fifo_capacity(dut)
+    test_data = random_fifo_data(dut, capacity)
+    await write_fifo(dut, test_data)
+
+    sentinel = 0  # random_fifo_data never produces 0
+    await write_fifo(dut, [sentinel])  # this value should not be written
+    assert dut.len.value == capacity
+    reads = await read_fifo(dut, capacity)
+    assert reads == test_data
+
+
+@cocotb.test()  # pylint: disable=no-value-for-parameter
+async def test_read_while_write(dut):
+    """Test writing and reading simultaneously."""
+    start_fifo(dut)
+    await reset_fifo(dut)
+
+    capacity = fifo_capacity(dut)
+    test_data = random_fifo_data(dut, capacity)
+    reads = await write_read_fifo(dut, test_data)  # first read from empty fifo
+    assert reads == test_data[:-1]  # ...so compare with all but last test item
+    assert dut.len.value == 1  # check last write still in fifo
+    last_read = await read_fifo(dut, 1)
+    assert last_read == test_data[-1:]  # check last read matches last test item

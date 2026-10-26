@@ -1,80 +1,82 @@
-# Isle.Computer - CLUT Test Bench
+# Isle.Computer - Clut Test Bench
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
-"""CLUT Test Bench (cocotb)"""
+"""Clut Test Bench (cocotb)
+
+Tests write random data using the system port, read it back from the system and
+display ports. Input signals change on the falling edge, and output signals are
+checked on the falling edge.
+
+This memory does not have a reset, so tests cannot make any assumptions about
+the memory contents. Each test writes to every address it reads.
+"""
+
+import random
 
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import RisingEdge
-from tests.helpers import zero_memory
+from cocotb.triggers import FallingEdge
+from tests.helpers import random_mem_model, read_mem
 
 # clock frequencies
 SYS_TIME = 50  # 50 ns is 20 MHz
 PIX_TIME = 20  # 20 ns is 50 MHz
 
-# CLUT test data (for writing)
-test_addr_in = [0x2, 0xF, 0x0, 0x5, 0xA]
-test_din = [0xA, 0x0, 0x7, 0x9, 0x1]
+# read latencies (clock cycles) - documented in clut.md
+SYS_LAT = 1
+DISP_LAT = 2
 
-# CLUT expected data for sys port - 1 cycle latency
-# first expected data is from the address used to write the last item (above)
-test_addr_sys = [0x2, 0xF, 0x0, 0x5, 0xA, 0x0]
-test_data_sys = [0x1, 0xA, 0x0, 0x7, 0x9, 0x1]
 
-# CLUT expected data for disp port - 2 cycle latency
-test_addr_disp = [0x2, 0xF, 0x0, 0x5, 0xA, 0x0, 0x0]
-test_data_disp = ["xxxxxxxxxxxx", "xxxxxxxxxxxx", 0xA, 0x0, 0x7, 0x9, 0x1]
+def start_clut(dut):
+    """Start clocks and idle inputs."""
+    cocotb.start_soon(Clock(dut.clk_sys, SYS_TIME, unit="ns").start())
+    cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, unit="ns").start())
+    dut.we_sys.value = 0
+    dut.re_sys.value = 0
+
+
+async def write_clut(dut, model):
+    """Write model {addr: data} to clut via system port."""
+    await FallingEdge(dut.clk_sys)
+    dut.we_sys.value = 1
+    for addr, din in model.items():
+        dut.addr_sys.value = addr
+        dut.din_sys.value = din
+        await FallingEdge(dut.clk_sys)
+    dut.we_sys.value = 0
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 async def test_sys_port(dut):
-    """Test CLUT sys port."""
-    cocotb.start_soon(Clock(dut.clk_sys, SYS_TIME, unit="ns").start())
-    await zero_memory(dut)  # matches hardware behaviour
+    """Test clut system port read and write."""
+    start_clut(dut)
+    model = random_mem_model(len(dut.addr_sys), len(dut.din_sys))
+    await write_clut(dut, model)
 
-    # write data
-    for addr, data in zip(test_addr_in, test_din):
-        dut.we_sys.value = 1
-        dut.addr_sys.value = addr
-        dut.din_sys.value = data
-        await RisingEdge(dut.clk_sys)
+    addr_list = list(model.keys())  # addresses in order they were written
+    random.shuffle(addr_list)  # shuffle so we read in a different order
+    expected = [model[addr] for addr in addr_list]
 
-    dut.we_sys.value = 0
     dut.re_sys.value = 1
-    await RisingEdge(dut.clk_sys)
-
-    # read data back
-    for i, (addr, data_expected) in enumerate(zip(test_addr_sys, test_data_sys)):
-        dut.addr_sys.value = addr
-        await RisingEdge(dut.clk_sys)
-
-        if dut.dout_sys.value.is_resolvable:
-            sys_data = dut.dout_sys.value.to_unsigned()
-        else:
-            sys_data = dut.dout_sys.value
-
-        assert sys_data == data_expected, \
-            f"DUT i={i} {sys_data} doesn't match expected {data_expected}!"
-
+    for _ in range(2):  # check twice to ensure reading didn't change data
+        reads = await read_mem(dut.clk_sys, dut.addr_sys, dut.dout_sys,
+            addr_list, SYS_LAT)
+        assert reads == expected
     dut.re_sys.value = 0
-    await RisingEdge(dut.clk_sys)
 
 
 @cocotb.test()  # pylint: disable=no-value-for-parameter
 async def test_disp_port(dut):
-    """Test CLUT disp port."""
-    cocotb.start_soon(Clock(dut.clk_pix, PIX_TIME, unit="ns").start())
+    """Test clut disp port read (no write on disp port)."""
+    start_clut(dut)
+    model = random_mem_model(len(dut.addr_sys), len(dut.din_sys))
+    await write_clut(dut, model)  # write test data via system port
 
-    # read data written via system port
-    for i, (addr, data_expected) in enumerate(zip(test_addr_disp, test_data_disp)):
-        dut.addr_disp.value = addr
-        await RisingEdge(dut.clk_pix)
+    addr_list = list(model.keys())
+    random.shuffle(addr_list)
+    expected = [model[addr] for addr in addr_list]
 
-        if dut.dout_disp.value.is_resolvable:
-            disp_data = dut.dout_disp.value.to_unsigned()
-        else:
-            disp_data = dut.dout_disp.value
-
-        assert disp_data == data_expected, \
-            f"DUT i={i} {disp_data} doesn't match expected {data_expected}!"
+    reads = await read_mem(dut.clk_pix, dut.addr_disp, dut.dout_disp,
+        addr_list, DISP_LAT)
+    assert reads == expected

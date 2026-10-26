@@ -4,6 +4,8 @@ The sync fifo module [[fifo_sync.v](../mem/fifo_sync.v)] creates a synchronous f
 
 ## Use
 
+See [dev_uart.v](../devs/dev_uart.v) for an example of this module in use.
+
 ### Reading
 
 Reads when `empty` return undefined data.
@@ -18,7 +20,7 @@ To write, ensure the fifo isn't `full`, put your data in `din` and set `we` high
 
 ### Reset
 
-Resetting the FIFO sets both read and write pointers to zero. Reset doesn't clear memory locations; this doesn't affect the operation of the fifo but can be confusing when debugging.
+Resetting the fifo sets both read and write pointers to zero. Reset doesn't clear memory locations; this doesn't affect the operation of the fifo but can be confusing when debugging.
 
 ## Parameters
 
