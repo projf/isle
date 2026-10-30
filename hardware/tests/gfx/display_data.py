@@ -5,59 +5,33 @@
 """Display timing data for display tests."""
 
 DT = [
-    {  # mode 0 = 640x480
-        'PIX_TIME' :    39.68,  # 25.2 MHz
+    {  # mode 0 = 640x400 CVT
+        'PIX_TIME' :    50,  # 20 MHz
         'HRES'       : 640,
-        'VRES'       : 480,
+        'VRES'       : 400,
         'H_POL'      :   0,  # negative polarity
         'H_BLANK'    : 160,
         'H_FRONT'    :  16,
-        'H_SYNC'     :  96,
-        'V_POL'      :   0,  # negative polarity
-        'V_BLANK'    :  45,
-        'V_FRONT'    :  10,
-        'V_SYNC'     :   2
+        'H_SYNC'     :  64,
+        'V_POL'      :   1,  # positive polarity
+        'V_BLANK'    :  17,
+        'V_FRONT'    :   3,
+        'V_SYNC'     :   6
     },
-    {  # mode 2 = 1024x768
-        'PIX_TIME' :    13.38, # 65 MHz
-        'HRES'       :1024,
-        'VRES'       : 768,
-        'H_POL'      :   0,  # negative polarity
+    {  # mode 1 = 1280x800 CVT-RT
+        'PIX_TIME' :    14.08, # 71 MHz
+        'HRES'       :1280,
+        'VRES'       : 800,
+        'H_POL'      :   1,  # positive polarity
         'H_BLANK'    : 320,
         'H_FRONT'    :  24,
         'H_SYNC'     : 136,
-        'V_POL'      :   0, # negative polarity
+        'V_POL'      :   0,  # negative polarity
         'V_BLANK'    :  38,
         'V_FRONT'    :   3,
         'V_SYNC'     :   6
     },
-    {  # mode 2 = 1366x768
-        'PIX_TIME' :    13.89,  # 72 MHz
-        'HRES'       :1366,
-        'VRES'       : 768,
-        'H_POL'      :   1,  # positive polarity
-        'H_BLANK'    : 134,
-        'H_FRONT'    :  14,
-        'H_SYNC'     :  56,
-        'V_POL'      :   1,  # positive polarity
-        'V_BLANK'    :  32,
-        'V_FRONT'    :   1,
-        'V_SYNC'     :   3
-    },
-    {  # mode 3 = 672x384
-        'PIX_TIME' :   50.00,  # 20 MHz
-        'HRES'       : 672,
-        'VRES'       : 384,
-        'H_POL'      :   1,  # positive polarity
-        'H_BLANK'    : 153,
-        'H_FRONT'    :  23,
-        'H_SYNC'     :  20,
-        'V_POL'      :   1,  # positive polarity
-        'V_BLANK'    :  20,
-        'V_FRONT'    :   5,
-        'V_SYNC'     :   5
-    },
-    {  # mode 4 = 1280x720
+    {  # mode 2 = 1280x720 CEA-861
         'PIX_TIME' :    13.47,  # 74.25 MHz
         'HRES'       :1280,
         'VRES'       : 720,
@@ -68,19 +42,6 @@ DT = [
         'V_POL'      :   1,  # positive polarity
         'V_BLANK'    :  30,
         'V_FRONT'    :   5,
-        'V_SYNC'     :   5
-    },
-    {  # mode 5 = 1920x1080
-        'PIX_TIME' :    6.73,  # 148.5 MHz
-        'HRES'       :1920,
-        'VRES'       :1080,
-        'H_POL'      :   1,  # positive polarity
-        'H_BLANK'    : 280,
-        'H_FRONT'    :  88,
-        'H_SYNC'     :  44,
-        'V_POL'      :   1,  # positive polarity
-        'V_BLANK'    :  45,
-        'V_FRONT'    :   4,
         'V_SYNC'     :   5
     }
 ]

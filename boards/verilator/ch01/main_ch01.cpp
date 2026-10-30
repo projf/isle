@@ -10,8 +10,8 @@
 int main(int argc, char* argv[]) {
     SimConf conf;
     conf.window_title = "Isle - Chapter 1";
-    conf.h_res = 672;
-    conf.v_res = 384;
+    conf.h_res = 640;
+    conf.v_res = 400;
     conf.fullscreen = false;
     conf.vsync = true;
     conf.bench_frames = 0;  // set to 0 unless benchmarking

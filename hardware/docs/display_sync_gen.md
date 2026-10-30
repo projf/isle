@@ -2,7 +2,7 @@
 
 The sync signal generation module [[display_sync_gen.v](../gfx/display_sync_gen.v)] generates display sync signals (horizontal and vertical blanking) and coordinates.
 
-The `DISPLAY_MODE` parameter controls the display mode (resolution and refresh rate). The input pixel clock _must_ be correct for the display mode to generate a valid display signal. For example, `DISPLAY_MODE=2` is 1366x768 and requires a 72 MHz pixel clock. See [display_modes.vh](../include/display_modes.vh) for supported display modes, including 1024x768, 1366x768, and 1280x720.
+The `DISPLAY_MODE` parameter controls the display mode (resolution and refresh rate). The input pixel clock _must_ be correct for the display mode to generate a valid display signal. For example, `DISPLAY_MODE=0` is 640x400 and requires a 20 MHz pixel clock. See [display_modes.vh](../include/display_modes.vh) for supported display modes.
 
 Signed 16-bit coordinates are used throughout Isle for flexibility and consistency. Using signed coordinates allows negative coordinates for the blanking interval, with the origin of the display at (0,0) irrespective of the display mode.
 

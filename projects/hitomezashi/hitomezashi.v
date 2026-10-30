@@ -2,7 +2,7 @@
 // Copyright Will Green and Isle Contributors
 // SPDX-License-Identifier: MIT
 
-// NB. This project is hard-coded for DISPLAY_MODE=0 (640x480)
+// NB. This project is hard-coded for DISPLAY_MODE=0 (640x400)
 
 `default_nettype none
 `timescale 1ns / 1ps
@@ -58,12 +58,12 @@ module hitomezashi #(
     // stitch start values: MSB first, so we can write left to right
     /* verilator lint_off ASCRANGE */
     reg [0:39] v_start;  // 40 vertical lines (40x16=640)
-    reg [0:29] h_start;  // 30 horizontal lines (30x16=480)
+    reg [0:24] h_start;  // 30 horizontal lines (25x16=480)
     /* verilator lint_on ASCRANGE */
 
     initial begin  // "random" start values (feel free to change)
         v_start = 40'b01100_00101_00110_10011_10101_10101_01111_01101;
-        h_start = 30'b10111_01001_00001_10100_00111_01010;
+        h_start = 25'b10111_01001_00001_10100_00111;
     end
 
     // paint stitch pattern with 16x16 pixel grid
