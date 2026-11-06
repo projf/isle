@@ -100,7 +100,7 @@ Once you have WSL2 running, you can use the Linux instructions (above). I have s
 
 ## 640x360 Display Timings
 
-Verilator designs use their own 640x260 display timings (`DISPLAY_MODE=0`) with a 20 MHz clock. The pixel and system clock are both 20 MHz in Verilator simulation.
+Verilator designs use their own 640x360 display timings (`DISPLAY_MODE=0`) with a 20 MHz clock. The pixel and system clock are both 20 MHz in Verilator simulation.
 
 ```
 Horizontal Timings

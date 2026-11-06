@@ -39,8 +39,8 @@ module ch04 #(
     // text mode
     localparam TEXT_CIDXW =  4;  // 16 colours available in textmode
     localparam TRAM_ADDRW = 11;  // tram address width (bits)
-    localparam TEXT_HRES  = 84;  // tram width (chars) - 84x8 = 640
-    localparam TEXT_VRES  = 24;  // tram height (chars) - 24x16 = 384
+    localparam TEXT_HRES  = 80;  // tram width (chars) - 80x8 = 640
+    localparam TEXT_VRES  = 22;  // tram height (chars) - 22x16 = 352
     localparam TRAM_LAT   =  2;  // tram read latency (cycles; min=1)
 
     // internal system params

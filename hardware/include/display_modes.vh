@@ -89,8 +89,8 @@ localparam WIN_START_CORD =
     32'h0;
 
 localparam WIN_END_CORD =
-    (DISPLAY_MODE == 0) ? 32'h01600000 :
-    (DISPLAY_MODE == 1) ? 32'h02C00000 :
+    (DISPLAY_MODE == 0) ? 32'h01640280 :
+    (DISPLAY_MODE == 1) ? 32'h02C80500 :
     32'h0;
 
 localparam DISPLAY_SCALE =
