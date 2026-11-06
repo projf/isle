@@ -9,7 +9,7 @@ module top_ch01 #(
     parameter BPC=5,          // system bits per colour channel
     parameter BPC_BOARD=8,    // board bits per colour channel
     parameter CORDW=16,       // signed coordinate width (bits)
-    parameter DISPLAY_MODE=1  // display mode 1: 1280x720 (74.25 MHz)
+    parameter DISPLAY_MODE=1  // display mode 1: 1280x720
     ) (
     input  wire clk_25m,       // 25 MHz board clock
     output wire [3:0] gpdi_dp  // DVI out
