@@ -12,10 +12,10 @@ from tests.helpers import assert_coord, assert_pixel
 # clock frequency
 SYS_TIME = 40  # 40 ns is 25 MHz
 
-# 640x480 (DISPLAY_MODE=0)
-DISP_LINE   = 800  # horizontal line including blanking
-DISP_HBLANK = 160  # horizontal blanking
-DISP_VBLANK =  45  # vertical blanking
+# 640x360 (DISPLAY_MODE=0)
+DISP_LINE   = 888  # horizontal line including blanking
+DISP_HBLANK = 248  # horizontal blanking
+DISP_VBLANK =  15  # vertical blanking
 
 
 async def reset_dut(dut):
