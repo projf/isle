@@ -9,7 +9,7 @@ module top_ch05 #(
     parameter BPC=5,           // system bits per colour channel
     parameter BPC_BOARD=8,     // board bits per colour channel
     parameter CORDW=16,        // signed coordinate width (bits)
-    parameter DISPLAY_MODE=0,  // display mode 0: 640x360 (20 MHz)
+    parameter DISPLAY_MODE=0,  // display mode 0: 640x360
     parameter BG_COLR='h0886   // background colour (RGB555)
     ) (
     input  wire clk,                      // sim clock
@@ -27,7 +27,7 @@ module top_ch05 #(
     localparam RES = "../../../res";  // resource path
 
     // software params - change to load different software when Isle starts
-    localparam FILE_SOFT = {SW, "/book/ch05/hello.mem"};
+    localparam FILE_SOFT = {SW, "/book/ch05/jump.mem"};
 
     // text mode params
     localparam FILE_PAL   = {RES, "/palettes/go-16.mem"};
