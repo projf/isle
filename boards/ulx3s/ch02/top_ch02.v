@@ -9,7 +9,7 @@ module top_ch02 #(
     parameter BPC=5,           // system bits per colour channel
     parameter BPC_BOARD=8,     // board bits per colour channel
     parameter CORDW=16,        // signed coordinate width (bits)
-    parameter DISPLAY_MODE=2,  // display mode 2: 1366x768 (72 MHz)
+    parameter DISPLAY_MODE=1,  // display mode 1: 1280x720
     parameter BG_COLR='h0886   // background colour (RGB555)
     ) (
     input  wire clk_25m,       // 25 MHz board clock
@@ -19,11 +19,11 @@ module top_ch02 #(
     localparam RES = "../../../res";  // resource path
 
     // crocus canvas
-    localparam FILE_BMAP   = {RES, "/bitmaps/crocus/crocus-336x192.mem"};
-    localparam FILE_PAL    = {RES, "/bitmaps/crocus/crocus-336x192_palette.mem"};
+    localparam FILE_BMAP   = {RES, "/bitmaps/crocus/crocus-320x176.mem"};
+    localparam FILE_PAL    = {RES, "/bitmaps/crocus/crocus-320x176_palette.mem"};
     localparam CANV_BPP    = 5'd4;  // bits per pixel (1,2,4,8,[15])
-    localparam CANV_WIDTH  = 16'd336;
-    localparam CANV_HEIGHT = 16'd192;
+    localparam CANV_WIDTH  = 16'd320;
+    localparam CANV_HEIGHT = 16'd176;
     localparam CANV_LORES  = 1'b1;  // 1: low resolution canvas
 
     // latency test canvas
@@ -34,12 +34,12 @@ module top_ch02 #(
     // localparam CANV_HEIGHT = 16'd384;
     // localparam CANV_LORES  = 1'b0;  // 0: high resolution canvas
 
-    // generate common clock - 72 MHz for 1366x768 (DISPLAY_MODE=2)
-    // 25 MHz -> 360/72 MHz
+    // generate common clock - 74 MHz for 1280x720
+    // 25 MHz -> 370/74 MHz
     wire clk, clk_5x, clk_locked;
     clock2_gen #(
         .CLKI_DIV(5),
-        .CLKFB_DIV(72),
+        .CLKFB_DIV(74),
         .CLKOP_DIV(2),
         .CLKOP_CPHASE(1),
         .CLKOS_DIV(10),

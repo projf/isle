@@ -15,7 +15,7 @@ module top_ch01 #(
     output wire [3:0] gpdi_dp  // DVI out
     );
 
-    // generate common clock - 74 MHz for 1280x720 (DISPLAY_MODE=1)
+    // generate common clock - 74 MHz for 1280x720
     // 25 MHz -> 370/74 MHz
     wire clk, clk_5x, clk_locked;
     clock2_gen #(
