@@ -152,7 +152,7 @@ int run(int argc, char* argv[], const SimConf& config) {
     }
 
     // create screenbuffer
-    uint32_t* screenbuffer = new uint32_t[H_RES * V_RES];
+    uint32_t* screenbuffer = new uint32_t[H_RES * V_RES]();  // zero memory
     uint32_t* p = screenbuffer;
 
     // UART
