@@ -50,6 +50,10 @@ module ch07 #(
     localparam VRAM_ADDRW = 14;  // vram address width (bits)
     localparam VRAM_LAT   =  2;  // vram display read latency (cycles, min=1)
 
+    // bitmap
+    localparam BMAP_HRES = 16'h640;  // hires bitmap width (pixels)
+    localparam BMAP_VRES = 16'h352;  // hires bitmap height (pixels)
+
     // Earthrise
     localparam ER_ADDRW = 10;  // 2^10 = 1024 x 32-bit = 4 KiB (word addressed)
 
@@ -367,6 +371,8 @@ module ch07 #(
 
     dev_display #(
         .BPC(BPC),
+        .BMAP_HRES(BMAP_HRES),
+        .BMAP_VRES(BMAP_VRES),
         .BYTE_CNT(BYTE_CNT),
         .CANV_SHIFTW(CANV_SHIFTW),
         .CIDX_ADDRW(CIDX_ADDRW),
