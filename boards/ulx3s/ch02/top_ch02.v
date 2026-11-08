@@ -27,11 +27,11 @@ module top_ch02 #(
     localparam CANV_LORES  = 1'b1;  // 1: low resolution canvas
 
     // latency test canvas
-    // localparam FILE_BMAP   = {RES, "/bitmaps/latency/latency-672x384.mem"};
-    // localparam FILE_PAL    = {RES, "/bitmaps/latency/latency-672x384_palette.mem"};
+    // localparam FILE_BMAP   = {RES, "/bitmaps/latency/latency-640x352.mem"};
+    // localparam FILE_PAL    = {RES, "/bitmaps/latency/latency-640x352_palette.mem"};
     // localparam CANV_BPP    = 5'd2;  // bits per pixel (1,2,4,8,[15])
-    // localparam CANV_WIDTH  = 16'd672;
-    // localparam CANV_HEIGHT = 16'd384;
+    // localparam CANV_WIDTH  = 16'd640;
+    // localparam CANV_HEIGHT = 16'd352;
     // localparam CANV_LORES  = 1'b0;  // 0: high resolution canvas
 
     // generate common clock - 74 MHz for 1280x720
