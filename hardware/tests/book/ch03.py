@@ -14,7 +14,7 @@ from tests.helpers import assert_coord, assert_pixel
 SYS_TIME = 10  # 10 ns is 100 MHz
 PIX_TIME = 20  # 20 ns is 50 MHz
 
-# 640x360 (DISPLAY_MODE=0)
+# 640x360 (DISPLAY_MODE=0) with 640x352 graphics
 DISP_LINE   = 888  # horizontal line including blanking
 DISP_HBLANK = 248  # horizontal blanking
 DISP_VBLANK =  15  # vertical blanking
