@@ -20,11 +20,11 @@ VERILOG_INCLUDE_DIRS += $(HARDWARE)/include
 
 # pass Verilog module parameters to simulator
 COMPILE_ARGS += -DBENCH  # enable initial blocks for simulation
-COMPILE_ARGS += -P${DUT}.DISPLAY_MODE=3
-COMPILE_ARGS += -P${DUT}.FILE_BMAP="\"../../../res/bitmaps/latency/latency-672x384.mem"\"
-COMPILE_ARGS += -P${DUT}.FILE_PAL="\"../../../res/bitmaps/latency/latency-672x384_palette.mem"\"
+COMPILE_ARGS += -P${DUT}.DISPLAY_MODE=0
+COMPILE_ARGS += -P${DUT}.FILE_BMAP="\"../../../res/bitmaps/latency/latency-640x352.mem"\"
+COMPILE_ARGS += -P${DUT}.FILE_PAL="\"../../../res/bitmaps/latency/latency-640x352_palette.mem"\"
 COMPILE_ARGS += -P${DUT}.CANV_BPP=2
-COMPILE_ARGS += -P${DUT}.CANV_DIMS=32\'h018002A0
+COMPILE_ARGS += -P${DUT}.CANV_DIMS=32\'h01600280
 COMPILE_ARGS += -P${DUT}.CANV_LORES=1\'b0
 
 # each test needs its own build dir and results file

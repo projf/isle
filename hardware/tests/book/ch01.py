@@ -57,22 +57,22 @@ async def test_pixel_colour(dut):
     assert_pixel(dut, 31, 31, 31)  # white
     await Timer((DISP_LINE-220)*SYS_TIME, unit='ns')  # wait the rest of the line
 
-    # skip to line 339
-    await Timer(198*DISP_LINE*SYS_TIME + 419*SYS_TIME, unit='ns')
+    # skip to line 255
+    await Timer(114*DISP_LINE*SYS_TIME + 419*SYS_TIME, unit='ns')
 
-    # pixel line 339
-    assert_coord(dut, 419, 339)
+    # pixel line 255
+    assert_coord(dut, 419, 255)
     assert_pixel(dut, 31, 31, 31)  # white
     await Timer(SYS_TIME, unit='ns')
-    assert_coord(dut, 420, 339)
+    assert_coord(dut, 420, 255)
     assert_pixel(dut, 2, 6, 14)  # dark blue
     await Timer((DISP_LINE-420)*SYS_TIME, unit='ns')  # wait the rest of the line
 
     # skip to bottom of display
-    await Timer(139*DISP_LINE*SYS_TIME + 639*SYS_TIME, unit='ns')
+    await Timer(103*DISP_LINE*SYS_TIME + 639*SYS_TIME, unit='ns')
 
-    # pixel line 479
-    assert_coord(dut, 639, 479)
+    # pixel line 359
+    assert_coord(dut, 639, 359)
     assert_pixel(dut, 2, 6, 14)  # dark blue
 
     # wait one more line to complete waveform
