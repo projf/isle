@@ -9,7 +9,7 @@ module top_ch04 #(
     parameter BPC=5,           // system bits per colour channel
     parameter BPC_BOARD=8,     // board bits per colour channel
     parameter CORDW=16,        // signed coordinate width (bits)
-    parameter DISPLAY_MODE=2,  // display mode 2: 1366x768 (72 MHz)
+    parameter DISPLAY_MODE=1,  // display mode 1: 1280x720
     parameter BG_COLR='h0886   // background colour (RGB555)
     ) (
     input  wire clk_100m,       // 100 MHz clock
@@ -52,14 +52,14 @@ module top_ch04 #(
     reg rst_sys;  // sync reset from clock lock
     always @(posedge clk_sys) rst_sys <= !clk_sys_locked;  // await clock lock
 
-    // pixel clock - 72 MHz for 1366x768 (DISPLAY_MODE=2)
-    // 100 MHz -> 360/72 MHz
+    // pixel clock - 74.25 MHz for 1280x720
+    // 100 MHz -> 371.25/74.25 MHz
     wire clk_pix, clk_pix_5x, clk_pix_locked;
     clock2_gen #(
-        .MULT_MASTER(54),
+        .MULT_MASTER(37.125),
         .DIV_MASTER(5),
-        .DIV_5X(3.0),
-        .DIV_1X(15),
+        .DIV_5X(2.0),
+        .DIV_1X(10),
         .IN_PERIOD(10.0)
     ) clock_pix_inst (
        .clk_in(clk_100m),
