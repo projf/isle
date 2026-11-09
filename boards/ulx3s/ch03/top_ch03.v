@@ -9,7 +9,7 @@ module top_ch03 #(
     parameter BPC=5,           // system bits per colour channel
     parameter BPC_BOARD=8,     // board bits per colour channel
     parameter CORDW=16,        // signed coordinate width (bits)
-    parameter DISPLAY_MODE=2,  // display mode 2: 1366x768 (72 MHz)
+    parameter DISPLAY_MODE=1,  // display mode 1: 1280x720
     parameter BG_COLR='h0886   // background colour (RGB555)
     ) (
     input  wire clk_25m,       // 25 MHz board clock
@@ -21,7 +21,7 @@ module top_ch03 #(
     // canvas
     localparam FILE_BMAP    = "";
     localparam FILE_PAL     = {RES, "/palettes/go-16.mem"};
-    localparam FILE_ER_LIST = {RES, "/drawings/all-shapes.mem"};
+    localparam FILE_ER_LIST = {RES, "/drawings/16-squares.mem"};
     localparam CANV_BPP     = 5'd4;  // bits per pixel (1,2,4,8,[15])
     localparam CANV_WIDTH   = 16'd336;
     localparam CANV_HEIGHT  = 16'd192;
@@ -44,12 +44,12 @@ module top_ch03 #(
     reg rst_sys;  // sync reset from clock lock
     always @(posedge clk_sys) rst_sys <= !clk_sys_locked;  // await clock lock
 
-    // pixel clock - 72 MHz for 1366x768 (DISPLAY_MODE=2)
-    // 25 MHz -> 360/72 MHz
+    // pixel clock - 74 MHz for 1280x720 (DISPLAY_MODE=1)
+    // 25 MHz -> 370/74 MHz
     wire clk_pix, clk_pix_5x, clk_pix_locked;
     clock2_gen #(
         .CLKI_DIV(5),
-        .CLKFB_DIV(72),
+        .CLKFB_DIV(74),
         .CLKOP_DIV(2),
         .CLKOP_CPHASE(1),
         .CLKOS_DIV(10),

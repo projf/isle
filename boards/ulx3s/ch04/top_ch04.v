@@ -20,7 +20,7 @@ module top_ch04 #(
 
     // text mode params
     localparam FILE_PAL   = {RES, "/palettes/go-16.mem"};
-    localparam FILE_TXT   = {RES, "/textmaps/rom-84x24.mem"};
+    localparam FILE_TXT   = {RES, "/textmaps/rom-80x22.mem"};
 
     // font params
     localparam FILE_FONT    = {RES, "/fonts/unifont-rom.mem"};

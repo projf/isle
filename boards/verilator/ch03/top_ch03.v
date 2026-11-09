@@ -28,7 +28,7 @@ module top_ch03 #(
     // canvas
     localparam FILE_BMAP    = "";
     localparam FILE_PAL     = {RES, "/palettes/go-16.mem"};
-    localparam FILE_ER_LIST = {RES, "/drawings/all-shapes.mem"};
+    localparam FILE_ER_LIST = {RES, "/drawings/16-squares.mem"};
     localparam CANV_BPP     = 5'd4;  // bits per pixel (1,2,4,8,[15])
     localparam CANV_WIDTH   = 16'd320;
     localparam CANV_HEIGHT  = 16'd176;
