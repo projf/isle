@@ -71,7 +71,7 @@ module top_ch07 #(
         .CLKOP_CPHASE(1),
         .CLKOS_DIV(10),
         .CLKOS_CPHASE(5)
-    ) clock2_gen_inst (
+    ) clock2_pix_inst (
        .clk_in(clk_48m),
        .clk_5x_out(clk_pix_5x),
        .clk_out(clk_pix),
