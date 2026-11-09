@@ -358,7 +358,7 @@ module dev_display #(
             hwreg_sys[TEXT_SCALE] <= DISPLAY_SCALE;
             hwreg_sys[CANV0_WIN_START] <= WIN_START_CORD;
             hwreg_sys[CANV0_WIN_END] <= WIN_END_CORD;
-            hwreg_sys[CANV0_SCALE] <= DISPLAY_SCALE << 1;  // double for default lores (336x192) canvas
+            hwreg_sys[CANV0_SCALE] <= DISPLAY_SCALE << 1;  // double for default lores (320x176) canvas
             hwreg_sys[CANV0_DIMS] <= CANV_DIMS_INIT;
             hwreg_sys[CANV0_BPP] <= CANV_BPP_INIT;
         end else if ((&we_sys) && hwreg_valid && hwreg_busy_sys) begin  // word write (sw instruction)
