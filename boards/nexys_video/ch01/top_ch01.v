@@ -9,7 +9,7 @@ module top_ch01 #(
     parameter BPC=5,          // system bits per colour channel
     parameter BPC_BOARD=8,    // board bits per colour channel
     parameter CORDW=16,       // signed coordinate width (bits)
-    parameter DISPLAY_MODE=4  // display mode 4: 1280x720 (74.25 MHz)
+    parameter DISPLAY_MODE=1  // display mode 1: 1280x720
     ) (
     input  wire clk_100m,       // 100 MHz clock
     output wire hdmi_tx_ch0_p,  // HDMI source channel 0 diff+
@@ -22,7 +22,7 @@ module top_ch01 #(
     output wire hdmi_tx_clk_n   // HDMI source clock diff-
     );
 
-    // generate common clock - 74.25 MHz for 1280x720 (DISPLAY_MODE=4)
+    // generate common clock - 74.25 MHz for 1280x720
     // 100 MHz -> 371.25/74.25 MHz
     wire clk, clk_5x, clk_locked;
     clock2_gen #(

@@ -49,17 +49,17 @@ See [Serial to Isle](../../docs/serial-to-isle.md) for advice on connecting to I
 
 ## Clock Settings
 
-The following table shows clock generation parameters for different [display modes](../../hardware/include/display_modes.vh) using the 48 MHz board clock of the Lakritz. To understand how these values are calculated, see [ECP5 FPGA Clock Generation](http://projectf.io/posts/ecp5-fpga-clock/).
+The following table shows clock generation parameters for the default 1280x720p60 [display mode](../../hardware/include/display_modes.vh) using the 48 MHz board clock of the Lakritz.
 
-| Parameter         | 640x480    | 1024x768*  | 1366x768   | 1280x720*  |
-| ----------------- | ---------: | ---------: | ---------: | ---------: |
-| Isle DISPLAY_MODE | 0          | 1          | 2          | 4          |
-| Pixel Clock (MHz) | 25.2       | 64.8       | 72         | 74.4       |
-| CLKI_DIV          | 8          | 4          | 2          | 4          |
-| CLKFB_DIV         | 21         | 27         | 15         | 31         |
-| CLKOP_DIV         | 4          | 2          | 2          | 2          |
-| CLKOP_CPHASE      | 2          | 1          | 1          | 1          |
-| CLKOS_DIV         | 20         | 10         | 10         | 10         |
-| CLKOS_CPHASE      | 10         | 5          | 5          | 5          |
+| Parameter         | 1280x720*  |
+| ----------------- | ---------: |
+| Isle DISPLAY_MODE | 1          |
+| Pixel Clock (MHz) | 74.4       |
+| CLKI_DIV          | 4          |
+| CLKFB_DIV         | 31         |
+| CLKOP_DIV         | 2          |
+| CLKOP_CPHASE      | 1          |
+| CLKOS_DIV         | 10         |
+| CLKOS_CPHASE      | 5          |
 
-_\*1024x768 should be 65 MHz and 1280x720 should be 74.25 MHz, but these clock frequencies are still within spec ±0.5%._
+_\*1280x720 should be 74.25 MHz, but these clock frequencies are still within spec ±0.5%._

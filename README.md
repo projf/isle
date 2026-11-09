@@ -6,6 +6,8 @@ Learn more and get started with the Project F blog: [Isle FPGA Computer](http://
 
 Follow [@WillFlux@mastodon.social](https://mastodon.social/@WillFlux) or [@willflux.bsky.social](https://willflux.bsky.social) for updates.
 
+**Isle recently switched its default display to 1280x720 with 640x352 graphics. I haven't yet updated the Isle blog to reflect this change.**
+
 ## Building Isle Book
 
 As I build Isle, each major component gets its own chapter with a dedicated Verilog design and software.

@@ -6,28 +6,30 @@
 `timescale 1ns / 1ps
 
 module dev_display #(
-    parameter BPC=5,             // bits per colour channel
-    parameter BYTE_CNT=4,        // bytes in word
-    parameter CANV_SHIFTW=3,     // max shift is 5 bits (2^5 = 32 bits)
-    parameter CIDX_ADDRW=8,      // colour index address width (bits)
-    parameter CLUT_LAT=2,        // clut display read latency (cycles, min=1)
-    parameter COLRW=15,          // colour width across three channels (bits)
-    parameter CORDW=16,          // signed coordinate width (bits)
-    parameter DEV_ADDRW=14,      // device address width (bits)
-    parameter DISPLAY_MODE=0,    // display mode (see display_modes.vh)
-    parameter TEXT_HRES=80,      // text mode width (half-width chars)
-    parameter TEXT_VRES=25,      // text mode height (chars)
-    parameter TRAM_ADDRW=11,     // tram address width (bits)
-    parameter TRAM_LAT=2,        // tram display read latency (cycles; min=1)
-    parameter VRAM_ADDRW=14,     // vram address width (bits)
-    parameter VRAM_LAT=2,        // vram display read latency (cycles, min=1)
-    parameter WORD=32,           // machine word size (bits)
+    parameter BPC=5,              // bits per colour channel
+    parameter BMAP_HRES=16'h640,  // hires bitmap width (pixels)
+    parameter BMAP_VRES=16'h352,  // hires bitmap height (pixels)
+    parameter BYTE_CNT=4,         // bytes in word
+    parameter CANV_SHIFTW=3,      // max shift is 5 bits (2^5 = 32 bits)
+    parameter CIDX_ADDRW=8,       // colour index address width (bits)
+    parameter CLUT_LAT=2,         // clut display read latency (cycles, min=1)
+    parameter COLRW=15,           // colour width across three channels (bits)
+    parameter CORDW=16,           // signed coordinate width (bits)
+    parameter DEV_ADDRW=14,       // device address width (bits)
+    parameter DISPLAY_MODE=0,     // display mode (see display_modes.vh)
+    parameter TEXT_HRES=80,       // text mode width (half-width chars)
+    parameter TEXT_VRES=22,       // text mode height (chars)
+    parameter TRAM_ADDRW=11,      // tram address width (bits)
+    parameter TRAM_LAT=2,         // tram display read latency (cycles; min=1)
+    parameter VRAM_ADDRW=14,      // vram address width (bits)
+    parameter VRAM_LAT=2,         // vram display read latency (cycles, min=1)
+    parameter WORD=32,            // machine word size (bits)
     // text mode
-    parameter FILE_FONT="",      // font glyph ROM file
-    parameter FONT_COUNT=128,    // number of glyphs in font ROM
-    parameter GLYPH_HEIGHT=16,   // font glyph height (pixels)
-    parameter GLYPH_WIDTH=8,     // font half-width glyph width (pixels)
-    parameter TEXT_CIDXW=4       // text mode colour index address width (bits)
+    parameter FILE_FONT="",       // font glyph ROM file
+    parameter FONT_COUNT=128,     // number of glyphs in font ROM
+    parameter GLYPH_HEIGHT=16,    // font glyph height (pixels)
+    parameter GLYPH_WIDTH=8,      // font half-width glyph width (pixels)
+    parameter TEXT_CIDXW=4        // text mode colour index address width (bits)
     ) (
     input  wire clk_sys,  // system clock
     input  wire clk_pix,  // pixel clock
@@ -74,7 +76,7 @@ module dev_display #(
     localparam DISP_VISIBLE_INIT = 'h0303;  // text mode and canvas visibility inc. transparency
     localparam DISP_BG_COLR_INIT = 'h0886;  // display background colour RGB555
     localparam CANV_BPP_INIT = 4;  // canvas colour depth (4 bits = 16 colours)
-    localparam CANV_DIMS_INIT = 'h00C00150;  // canvas dimensions h=192, w=336
+    localparam CANV_DIMS_INIT = 'h00B00140;  // canvas dimensions h=176, w=320
 
     // HWREG_ADDR - must match software
 
@@ -356,7 +358,7 @@ module dev_display #(
             hwreg_sys[TEXT_SCALE] <= DISPLAY_SCALE;
             hwreg_sys[CANV0_WIN_START] <= WIN_START_CORD;
             hwreg_sys[CANV0_WIN_END] <= WIN_END_CORD;
-            hwreg_sys[CANV0_SCALE] <= DISPLAY_SCALE << 1;  // double for default lores (336x192) canvas
+            hwreg_sys[CANV0_SCALE] <= DISPLAY_SCALE << 1;  // double for default lores (320x176) canvas
             hwreg_sys[CANV0_DIMS] <= CANV_DIMS_INIT;
             hwreg_sys[CANV0_BPP] <= CANV_BPP_INIT;
         end else if ((&we_sys) && hwreg_valid && hwreg_busy_sys) begin  // word write (sw instruction)

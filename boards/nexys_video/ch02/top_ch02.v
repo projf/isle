@@ -9,7 +9,7 @@ module top_ch02 #(
     parameter BPC=5,           // system bits per colour channel
     parameter BPC_BOARD=8,     // board bits per colour channel
     parameter CORDW=16,        // signed coordinate width (bits)
-    parameter DISPLAY_MODE=2,  // display mode 2: 1366x768 (72 MHz)
+    parameter DISPLAY_MODE=1,  // display mode 1: 1280x720
     parameter BG_COLR='h0886   // background colour (RGB555)
     ) (
     input  wire clk_100m,       // 100 MHz clock
@@ -26,29 +26,29 @@ module top_ch02 #(
     localparam RES = "../../../res";  // resource path
 
     // crocus canvas
-    localparam FILE_BMAP   = {RES, "/bitmaps/crocus/crocus-336x192.mem"};
-    localparam FILE_PAL    = {RES, "/bitmaps/crocus/crocus-336x192_palette.mem"};
+    localparam FILE_BMAP   = {RES, "/bitmaps/crocus/crocus-320x176.mem"};
+    localparam FILE_PAL    = {RES, "/bitmaps/crocus/crocus-320x176_palette.mem"};
     localparam CANV_BPP    = 5'd4;  // bits per pixel (1,2,4,8,[15])
-    localparam CANV_WIDTH  = 16'd336;
-    localparam CANV_HEIGHT = 16'd192;
+    localparam CANV_WIDTH  = 16'd320;
+    localparam CANV_HEIGHT = 16'd176;
     localparam CANV_LORES  = 1'b1;  // 1: low resolution canvas
 
     // latency test canvas
-    // localparam FILE_BMAP   = {RES, "/bitmaps/latency/latency-672x384.mem"};
-    // localparam FILE_PAL    = {RES, "/bitmaps/latency/latency-672x384_palette.mem"};
+    // localparam FILE_BMAP   = {RES, "/bitmaps/latency/latency-640x352.mem"};
+    // localparam FILE_PAL    = {RES, "/bitmaps/latency/latency-640x352_palette.mem"};
     // localparam CANV_BPP    = 5'd2;  // bits per pixel (1,2,4,8,[15])
-    // localparam CANV_WIDTH  = 16'd672;
-    // localparam CANV_HEIGHT = 16'd384;
+    // localparam CANV_WIDTH  = 16'd640;
+    // localparam CANV_HEIGHT = 16'd352;
     // localparam CANV_LORES  = 1'b0;  // 0: high resolution canvas
 
-    // generate common clock - 72 MHz for 1366x768 (DISPLAY_MODE=2)
-    // 100 MHz -> 360/72 MHz
+    // generate common clock - 74.25 MHz for 1280x720
+    // 100 MHz -> 371.25/74.25 MHz
     wire clk, clk_5x, clk_locked;
     clock2_gen #(
-        .MULT_MASTER(54),
+        .MULT_MASTER(37.125),
         .DIV_MASTER(5),
-        .DIV_5X(3.0),
-        .DIV_1X(15),
+        .DIV_5X(2.0),
+        .DIV_1X(10),
         .IN_PERIOD(10.0)
     ) clock2_gen_inst (
        .clk_in(clk_100m),

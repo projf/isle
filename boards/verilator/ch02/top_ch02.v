@@ -9,7 +9,7 @@ module top_ch02 #(
     parameter BPC=5,           // system bits per colour channel
     parameter BPC_BOARD=8,     // board bits per colour channel
     parameter CORDW=16,        // signed coordinate width (bits)
-    parameter DISPLAY_MODE=3,  // display mode 3: 672x384 (20 MHz)
+    parameter DISPLAY_MODE=0,  // display mode 0: 640x360
     parameter BG_COLR='h0886   // background colour (RGB555)
     ) (
     input  wire clk,                      // sim clock
@@ -26,19 +26,19 @@ module top_ch02 #(
     localparam RES = "../../../res";  // resource path
 
     // crocus canvas
-    localparam FILE_BMAP   = {RES, "/bitmaps/crocus/crocus-336x192.mem"};
-    localparam FILE_PAL    = {RES, "/bitmaps/crocus/crocus-336x192_palette.mem"};
+    localparam FILE_BMAP   = {RES, "/bitmaps/crocus/crocus-320x176.mem"};
+    localparam FILE_PAL    = {RES, "/bitmaps/crocus/crocus-320x176_palette.mem"};
     localparam CANV_BPP    = 5'd4;  // bits per pixel (1,2,4,8,[15])
-    localparam CANV_WIDTH  = 16'd336;
-    localparam CANV_HEIGHT = 16'd192;
+    localparam CANV_WIDTH  = 16'd320;
+    localparam CANV_HEIGHT = 16'd176;
     localparam CANV_LORES  = 1'b1;  // 1: low resolution canvas
 
     // latency test canvas
-    // localparam FILE_BMAP   = {RES, "/bitmaps/latency/latency-672x384.mem"};
-    // localparam FILE_PAL    = {RES, "/bitmaps/latency/latency-672x384_palette.mem"};
+    // localparam FILE_BMAP   = {RES, "/bitmaps/latency/latency-640x352.mem"};
+    // localparam FILE_PAL    = {RES, "/bitmaps/latency/latency-640x352_palette.mem"};
     // localparam CANV_BPP    = 5'd2;  // bits per pixel (1,2,4,8,[15])
-    // localparam CANV_WIDTH  = 16'd672;
-    // localparam CANV_HEIGHT = 16'd384;
+    // localparam CANV_WIDTH  = 16'd640;
+    // localparam CANV_HEIGHT = 16'd352;
     // localparam CANV_LORES  = 1'b0;  // 0: high resolution canvas
 
     // colour channel width adjustment for board display

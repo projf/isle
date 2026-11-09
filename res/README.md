@@ -4,8 +4,8 @@ Resources for use by Isle hardware. Most are in Verilog $readmemh format.
 
 ## Bitmaps
 
-* [Crocus Bitmap](bitmaps/crocus/) - 332x192 16-colour bitmap
-* [Latency Bitmap](bitmaps/latency/) - 672x384 4-colour bitmap
+* [Crocus Bitmap](bitmaps/crocus/) - 320x176 16-colour bitmap
+* [Latency Bitmap](bitmaps/latency/) - 640x352 4-colour bitmap
 
 ## Drawings
 
@@ -39,6 +39,6 @@ See [Colour Palettes](../docs/colour-palettes.md) for details, including palette
 
 Test textmaps for text mode. See [tram](../hardware/mem/docs/tram.md) docs for details on format.
 
-* [ROM Glyphs](textmaps/rom-84x24.mem) - tests all 128 internal ROM glyphs
-* [Edge Tests](textmaps/edge-84x24.mem) - test display edge cases (latency)
-* [Hello World](textmaps/hello-84x24.mem) - greetings from text mode
+* [ROM Glyphs](textmaps/rom-80x22.mem) - tests all 128 internal ROM glyphs
+* [Edge Tests](textmaps/edge-80x22.mem) - test display edge cases (latency)
+* [Hello World](textmaps/hello-80x22.mem) - greetings from text mode

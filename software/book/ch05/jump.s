@@ -11,8 +11,8 @@
 
 .equ TEXT_COLR, 0x0C000000  # 0xXY000000 Y=foreground colour and X=background
 .equ ANIM_RATE, 60  # frames to wait between animation
-.equ TEXT_LINE, 84  # number of characters in a line
-.equ TRAM_DEPTH, 84*24  # number of characters in tram
+.equ TEXT_LINE, 80  # number of characters in a line
+.equ TRAM_DEPTH, 80*22  # number of characters in tram
 
 
 .section .text

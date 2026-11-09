@@ -152,7 +152,7 @@ int run(int argc, char* argv[], const SimConf& config) {
     }
 
     // create screenbuffer
-    uint32_t* screenbuffer = new uint32_t[H_RES * V_RES];
+    uint32_t* screenbuffer = new uint32_t[H_RES * V_RES]();  // zero memory
     uint32_t* p = screenbuffer;
 
     // UART
@@ -227,6 +227,8 @@ int run(int argc, char* argv[], const SimConf& config) {
             if (keyb_state[SDL_SCANCODE_ESCAPE] && SDL_GetModState() & KMOD_CTRL) running = false;  // quit if user presses ctrl+esc
 
             SDL_UpdateTexture(sdl_texture, NULL, screenbuffer, H_RES*sizeof(uint32_t));
+            SDL_SetRenderDrawColor(sdl_renderer, 0, 0, 0, 255);  // letterbox colour for fullscreen
+            SDL_RenderClear(sdl_renderer);  // clear buffer to handle letterbox
             SDL_RenderCopy(sdl_renderer, sdl_texture, NULL, NULL);
             SDL_RenderPresent(sdl_renderer);
             frame_count++;

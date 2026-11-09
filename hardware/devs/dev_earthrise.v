@@ -41,7 +41,7 @@ module dev_earthrise #(
 
     // initial params - to be nice to software devs
     localparam ER_BPP_INIT = 4;  // canvas colour depth (4 bits = 16 colours)
-    localparam ER_CANV_DIMS_INIT = 'h00C00150;  // canvas dimensions h=192, w=336
+    localparam ER_CANV_DIMS_INIT = 'h00B00140;  // canvas dimensions h=176, w=320
 
     // HWREG_ADDR - must match software
     /* verilator lint_off UNUSEDPARAM */

@@ -2,8 +2,6 @@
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
-# Designed for 336x192 canvas
-
 #
 # Lines
 #
@@ -13,15 +11,15 @@ lca 10
 lcb  8
 
 # line 0
-x0  32
+x0  40
 y0   0
-x1 223
-y1 191
+x1 215
+y1 175
 draw line ca
 
 # line 1 (y-coord doesn't change)
-x0 223
-x1  32
+x0 215
+x1  40
 draw line cb
 
 # line 2 (single pixel)
@@ -68,7 +66,7 @@ y0  20
 x1 184
 y1  80
 x2 108
-y2 180
+y2 156
 draw trif cb
 draw tri ca
 
@@ -109,17 +107,17 @@ lca 0xC
 lcb 0xB
 
 # rect 0 - large outline rect
-x0 224
-y0 116
-x1  32
-y1  76
+x0 216
+y0 108
+x1  40
+y1  68
 draw rect ca
 
 # rect 1 - large outline rect
-x0  33
-y0  77
-x1 223
-y1 115
+x0  41
+y0  69
+x1 215
+y1 107
 draw rect cb
 
 # fill colours
@@ -127,17 +125,17 @@ fca 0x4
 fcb 0x5
 
 # rect 2 - small square on right-hand side
-x0 316
+x0 284
 y0  48
-x1 288
+x1 256
 y1  20
 draw rectf ca
 draw rect ca
 
 # rect 3 - small square on right-hand side
-x0 292
+x0 260
 y0  24
-x1 312
+x1 280
 y1  44
 draw rectf cb
 draw rect cb
@@ -194,15 +192,15 @@ lca 0xA
 lcb 0x8
 
 # horizontal line 0
-x0 220
+x0 212
 y0   3  # fixed vertical position
-x1  35
+x1  43
 y1   3
 draw line ca
 
 # horizontal line 1 (x-coords don't change)
-y0 188  # fixed vertical position
-y1 188
+y0 172  # fixed vertical position
+y1 172
 draw line cb
 
 # horizontal line 2 (single pixel)
@@ -223,7 +221,7 @@ lcb 0x6
 
 # circle 0
 x0 128
-y0  96
+y0  88
 r0  64
 draw circ ca
 
@@ -250,8 +248,8 @@ fca 0x4
 fcb 0x5
 
 # circle 5
-x0 302
-y0 152
+x0 270
+y0 134
 r0  20
 draw circf ca
 draw circ ca

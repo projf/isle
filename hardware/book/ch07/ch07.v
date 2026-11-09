@@ -50,14 +50,18 @@ module ch07 #(
     localparam VRAM_ADDRW = 14;  // vram address width (bits)
     localparam VRAM_LAT   =  2;  // vram display read latency (cycles, min=1)
 
+    // bitmap
+    localparam BMAP_HRES = 16'h640;  // hires bitmap width (pixels)
+    localparam BMAP_VRES = 16'h352;  // hires bitmap height (pixels)
+
     // Earthrise
     localparam ER_ADDRW = 10;  // 2^10 = 1024 x 32-bit = 4 KiB (word addressed)
 
     // text mode
     localparam TEXT_CIDXW =  4;  // 16 colours available in textmode
     localparam TRAM_ADDRW = 11;  // tram address width (bits)
-    localparam TEXT_HRES  = 84;  // tram width (chars) - 84x8 = 640
-    localparam TEXT_VRES  = 24;  // tram height (chars) - 24x16 = 384
+    localparam TEXT_HRES  = 80;  // tram width (chars) - 80x8 = 640
+    localparam TEXT_VRES  = 22;  // tram height (chars) - 22x16 = 352
     localparam TRAM_LAT   =  2;  // tram display read latency (cycles, min=1)
 
     // uart
@@ -367,6 +371,8 @@ module ch07 #(
 
     dev_display #(
         .BPC(BPC),
+        .BMAP_HRES(BMAP_HRES),
+        .BMAP_VRES(BMAP_VRES),
         .BYTE_CNT(BYTE_CNT),
         .CANV_SHIFTW(CANV_SHIFTW),
         .CIDX_ADDRW(CIDX_ADDRW),

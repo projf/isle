@@ -22,10 +22,10 @@ VERILOG_INCLUDE_DIRS += $(HARDWARE)/include
 
 # pass Verilog module parameters to simulator
 COMPILE_ARGS += -DBENCH  # enable initial blocks for simulation
-COMPILE_ARGS += -P${DUT}.DISPLAY_MODE=3
+COMPILE_ARGS += -P${DUT}.DISPLAY_MODE=0
 COMPILE_ARGS += -P${DUT}.FILE_FONT="\"../../../res/fonts/unifont-rom.mem"\"
 COMPILE_ARGS += -P${DUT}.FILE_PAL="\"../../../res/palettes/go-16.mem"\"
-COMPILE_ARGS += -P${DUT}.FILE_TXT="\"../../../res/textmaps/edge-84x24.mem"\"
+COMPILE_ARGS += -P${DUT}.FILE_TXT="\"../../../res/textmaps/edge-80x22.mem"\"
 COMPILE_ARGS += -P${DUT}.FONT_COUNT=128
 COMPILE_ARGS += -P${DUT}.GLYPH_HEIGHT=16
 COMPILE_ARGS += -P${DUT}.GLYPH_WIDTH=8

@@ -2,7 +2,8 @@
 # Copyright Will Green and Isle Contributors
 # SPDX-License-Identifier: MIT
 
-"""Chapter 5 Test Bench (cocotb)"""
+"""Chapter 5 Test Bench (cocotb)
+Just for waveform generation at present."""
 
 import cocotb
 from cocotb.clock import Clock
@@ -13,10 +14,10 @@ from tests.helpers import assert_coord, assert_pixel
 SYS_TIME = 50  # 50 ns is 20 MHz
 PIX_TIME = 20  # 20 ns is 50 MHz
 
-# 672x384 (DISPLAY_MODE=3)
-DISP_LINE   = 800  # horizontal line including blanking
-DISP_HBLANK = 128  # horizontal blanking
-DISP_VBLANK = 137  # vertical blanking
+# 640x360 (DISPLAY_MODE=0) with 640x352 graphics
+DISP_LINE   = 888  # horizontal line including blanking
+DISP_HBLANK = 248  # horizontal blanking
+DISP_VBLANK =  15  # vertical blanking
 
 
 async def reset_sys_dut(dut):

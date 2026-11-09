@@ -98,28 +98,26 @@ Windows users can run Verilator with SDL under Windows Subsystem for Linux. [WSL
 
 Once you have WSL2 running, you can use the Linux instructions (above). I have successfully tested Verilator/SDL simulations with Debian 12 running on Windows 10.
 
-## 672x384 Display Timings
+## 640x360 Display Timings
 
-Verilator designs use their own 672x384 display timings (`DISPLAY_MODE=3`) with a 20 MHz clock. The pixel and system clock are both 20 MHz in Verilator simulation.
-
-We want to be as close to 60 Hz and 20 MHz as possible; 825x404 at 20 MHz is 60.006 Hz.
+Verilator designs use their own 640x360 display timings (`DISPLAY_MODE=0`) with a 20 MHz clock. The pixel and system clock are both 20 MHz in Verilator simulation.
 
 ```
 Horizontal Timings
-Active Pixels        672
-Front Porch           23
-Sync Width            20
-Back Porch           110
-Blanking Total       153
-Total Pixels         825
+Active Pixels        640
+Front Porch           32
+Sync Width            96
+Back Porch           120
+Blanking Total       248
+Total Pixels         888
 Sync Polarity        pos
 
 Vertical Timings
-Active Lines         384
-Front Porch            5
+Active Lines         360
+Front Porch            3
 Sync Width             5
-Back Porch            10
-Blanking Total        20
-Total Lines          404
+Back Porch             7
+Blanking Total        15
+Total Lines          375
 Sync Polarity        pos
 ```

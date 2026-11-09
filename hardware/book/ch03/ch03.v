@@ -50,7 +50,6 @@ module ch03 #(
     localparam CIDX_ADDRW = 8;   // colour index address width 2^8 = 256 colours
     localparam COLRW = 3 * BPC;  // colour width across three channels (bits)
     localparam CANV_SHIFTW = 3;  // max shift is 5 bits (2^5 = 32 bits)
-    localparam PIX_IDXW=$clog2(WORD);  // pixel index width (bits)
     localparam CLUT_LAT =   2;   // clut display read latency (cycles; min=1)
 
     // display signals

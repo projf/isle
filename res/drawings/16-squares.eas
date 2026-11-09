@@ -9,25 +9,25 @@
 #
 
 fca 0
-x0 80
-y0 8
-x1 112
-y1 40
+x0 84
+y0 12
+x1 116
+y1 44
 draw rectf ca
 
 fca 1
-x0 128
-x1 160
+x0 124
+x1 156
 draw rectf ca
 
 fca 2
-x0 176
-x1 208
+x0 164
+x1 196
 draw rectf ca
 
 fca 3
-x0 224
-x1 256
+x0 204
+x1 236
 draw rectf ca
 
 
@@ -36,25 +36,25 @@ draw rectf ca
 #
 
 fca 4
-x0 80
-y0 56
-x1 112
-y1 88
+x0 84
+y0 52
+x1 116
+y1 84
 draw rectf ca
 
 fca 5
-x0 128
-x1 160
+x0 124
+x1 156
 draw rectf ca
 
 fca 6
-x0 176
-x1 208
+x0 164
+x1 196
 draw rectf ca
 
 fca 7
-x0 224
-x1 256
+x0 204
+x1 236
 draw rectf ca
 
 
@@ -63,25 +63,25 @@ draw rectf ca
 #
 
 fca 8
-x0 80
-y0 104
-x1 112
-y1 136
+x0 84
+y0 92
+x1 116
+y1 124
 draw rectf ca
 
 fca 9
-x0 128
-x1 160
+x0 124
+x1 156
 draw rectf ca
 
 fca 10
-x0 176
-x1 208
+x0 164
+x1 196
 draw rectf ca
 
 fca 11
-x0 224
-x1 256
+x0 204
+x1 236
 draw rectf ca
 
 
@@ -90,25 +90,25 @@ draw rectf ca
 #
 
 fca 12
-x0 80
-y0 152
-x1 112
-y1 184
+x0 84
+y0 132
+x1 116
+y1 164
 draw rectf ca
 
 fca 13
-x0 128
-x1 160
+x0 124
+x1 156
 draw rectf ca
 
 fca 14
-x0 176
-x1 208
+x0 164
+x1 196
 draw rectf ca
 
 fca 15
-x0 224
-x1 256
+x0 204
+x1 236
 draw rectf ca
 
 stop

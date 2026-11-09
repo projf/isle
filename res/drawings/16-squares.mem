@@ -1,0 +1,37 @@
+0054C200  // 0000: fca 0         ; x0 84
+2074100C  // 0004: y0 12         ; x1 116
+D401302C  // 0008: y1 44         ; draw rectf ca
+007CC201  // 000C: fca 1         ; x0 124
+D401209C  // 0010: x1 156        ; draw rectf ca
+00A4C202  // 0014: fca 2         ; x0 164
+D40120C4  // 0018: x1 196        ; draw rectf ca
+00CCC203  // 001C: fca 3         ; x0 204
+D40120EC  // 0020: x1 236        ; draw rectf ca
+0054C204  // 0024: fca 4         ; x0 84
+20741034  // 0028: y0 52         ; x1 116
+D4013054  // 002C: y1 84         ; draw rectf ca
+007CC205  // 0030: fca 5         ; x0 124
+D401209C  // 0034: x1 156        ; draw rectf ca
+00A4C206  // 0038: fca 6         ; x0 164
+D40120C4  // 003C: x1 196        ; draw rectf ca
+00CCC207  // 0040: fca 7         ; x0 204
+D40120EC  // 0044: x1 236        ; draw rectf ca
+0054C208  // 0048: fca 8         ; x0 84
+2074105C  // 004C: y0 92         ; x1 116
+D401307C  // 0050: y1 124        ; draw rectf ca
+007CC209  // 0054: fca 9         ; x0 124
+D401209C  // 0058: x1 156        ; draw rectf ca
+00A4C20A  // 005C: fca 10        ; x0 164
+D40120C4  // 0060: x1 196        ; draw rectf ca
+00CCC20B  // 0064: fca 11        ; x0 204
+D40120EC  // 0068: x1 236        ; draw rectf ca
+0054C20C  // 006C: fca 12        ; x0 84
+20741084  // 0070: y0 132        ; x1 116
+D40130A4  // 0074: y1 164        ; draw rectf ca
+007CC20D  // 0078: fca 13        ; x0 124
+D401209C  // 007C: x1 156        ; draw rectf ca
+00A4C20E  // 0080: fca 14        ; x0 164
+D40120C4  // 0084: x1 196        ; draw rectf ca
+00CCC20F  // 0088: fca 15        ; x0 204
+D40120EC  // 008C: x1 236        ; draw rectf ca
+CE00CE00  // 0090: stop          ; 
