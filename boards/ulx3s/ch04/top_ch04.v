@@ -45,7 +45,7 @@ module top_ch04 #(
     reg rst_sys;  // sync reset from clock lock
     always @(posedge clk_sys) rst_sys <= !clk_sys_locked;  // await clock lock
 
-    // pixel clock - 74 MHz for 1280x720 (DISPLAY_MODE=1)
+    // pixel clock - 74 MHz for 1280x720
     // 25 MHz -> 370/74 MHz
     wire clk_pix, clk_pix_5x, clk_pix_locked;
     clock2_gen #(

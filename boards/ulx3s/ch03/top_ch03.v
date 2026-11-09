@@ -23,8 +23,8 @@ module top_ch03 #(
     localparam FILE_PAL     = {RES, "/palettes/go-16.mem"};
     localparam FILE_ER_LIST = {RES, "/drawings/16-squares.mem"};
     localparam CANV_BPP     = 5'd4;  // bits per pixel (1,2,4,8,[15])
-    localparam CANV_WIDTH   = 16'd336;
-    localparam CANV_HEIGHT  = 16'd192;
+    localparam CANV_WIDTH   = 16'd320;
+    localparam CANV_HEIGHT  = 16'd176;
     localparam CANV_LORES   = 1'b1;  // 1: low resolution canvas
 
     // system clock - 20 MHz
@@ -44,7 +44,7 @@ module top_ch03 #(
     reg rst_sys;  // sync reset from clock lock
     always @(posedge clk_sys) rst_sys <= !clk_sys_locked;  // await clock lock
 
-    // pixel clock - 74 MHz for 1280x720 (DISPLAY_MODE=1)
+    // pixel clock - 74 MHz for 1280x720
     // 25 MHz -> 370/74 MHz
     wire clk_pix, clk_pix_5x, clk_pix_locked;
     clock2_gen #(
