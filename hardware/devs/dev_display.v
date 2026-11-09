@@ -76,7 +76,7 @@ module dev_display #(
     localparam DISP_VISIBLE_INIT = 'h0303;  // text mode and canvas visibility inc. transparency
     localparam DISP_BG_COLR_INIT = 'h0886;  // display background colour RGB555
     localparam CANV_BPP_INIT = 4;  // canvas colour depth (4 bits = 16 colours)
-    localparam CANV_DIMS_INIT = 'h00C00150;  // canvas dimensions h=192, w=336
+    localparam CANV_DIMS_INIT = 'h00B00140;  // canvas dimensions h=176, w=320
 
     // HWREG_ADDR - must match software
 
