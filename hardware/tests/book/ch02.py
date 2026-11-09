@@ -41,8 +41,8 @@ async def test_pixel_colour(dut):
     # await middle of clock before sampling colour
     await Timer(SYS_TIME >> 1, unit='ns')
 
-    # skip to line 4 (passed letterbox)
-    await Timer(4*DISP_LINE*SYS_TIME, unit='ns')  # wait the rest of the line
+    # skip to line 4 (after letterbox)
+    await Timer(4*DISP_LINE*SYS_TIME, unit='ns')
 
     # pixel line 4
     assert_coord(dut, 0, 4)
