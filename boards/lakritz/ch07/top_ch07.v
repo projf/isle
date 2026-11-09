@@ -6,11 +6,11 @@
 `timescale 1ns / 1ps
 
 module top_ch07 #(
-    parameter BPC=5,            // system bits per colour channel
-    parameter BPC_BOARD=8,      // board bits per colour channel
-    parameter CORDW=16,         // signed coordinate width (bits)
-    parameter DISPLAY_MODE=2,   // display mode 2: 1366x768 (72 MHz)
-    parameter BG_COLR='h0886    // background colour (RGB555)
+    parameter BPC=5,           // system bits per colour channel
+    parameter BPC_BOARD=8,     // board bits per colour channel
+    parameter CORDW=16,        // signed coordinate width (bits)
+    parameter DISPLAY_MODE=1,  // display mode 1: 1280x720
+    parameter BG_COLR='h0886   // background colour (RGB555)
     ) (
     input  wire clk_48m,        // 48 MHz board clock
     output wire [3:0] ddmi_dp,  // DVI out
@@ -61,17 +61,17 @@ module top_ch07 #(
     reg rst_sys;  // sync reset from clock lock
     always @(posedge clk_sys) rst_sys <= !clk_sys_locked;  // await clock lock
 
-    // pixel clock - 72 MHz for 1366x768 (DISPLAY_MODE=2)
-    // 48 MHz -> 360/72 MHz
+    // pixel clock - 74.4 MHz for 1280x720
+    // 48 MHz -> 372/74.4 MHz
     wire clk_pix, clk_pix_5x, clk_pix_locked;
     clock2_gen #(
-        .CLKI_DIV(2),
-        .CLKFB_DIV(15),
+        .CLKI_DIV(4),
+        .CLKFB_DIV(31),
         .CLKOP_DIV(2),
         .CLKOP_CPHASE(1),
         .CLKOS_DIV(10),
         .CLKOS_CPHASE(5)
-    ) clock_pix_inst (
+    ) clock2_gen_inst (
        .clk_in(clk_48m),
        .clk_5x_out(clk_pix_5x),
        .clk_out(clk_pix),

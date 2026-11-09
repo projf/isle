@@ -9,13 +9,13 @@ module top_ch01 #(
     parameter BPC=5,          // system bits per colour channel
     parameter BPC_BOARD=8,    // board bits per colour channel
     parameter CORDW=16,       // signed coordinate width (bits)
-    parameter DISPLAY_MODE=4  // display mode 4: 1280x720 (74.25 MHz)
+    parameter DISPLAY_MODE=1  // display mode 1: 1280x720
     ) (
     input  wire clk_48m,       // 48 MHz board clock
     output wire [3:0] ddmi_dp  // DVI out
     );
 
-    // generate common clock - 74.4 MHz for 1280x720 (DISPLAY_MODE=4)
+    // generate common clock - 74.4 MHz for 1280x720
     // 48 MHz -> 372/74.4 MHz
     wire clk, clk_5x, clk_locked;
     clock2_gen #(
