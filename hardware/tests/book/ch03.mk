@@ -26,11 +26,11 @@ VERILOG_INCLUDE_DIRS += $(HARDWARE)/include
 
 # pass Verilog module parameters to simulator
 COMPILE_ARGS += -DBENCH  # enable initial blocks for simulation
-COMPILE_ARGS += -P${DUT}.DISPLAY_MODE=3
+COMPILE_ARGS += -P${DUT}.DISPLAY_MODE=0
 COMPILE_ARGS += -P${DUT}.FILE_ER_LIST="\"../../../res/drawings/basic-test.mem"\"
 COMPILE_ARGS += -P${DUT}.FILE_PAL="\"../../../res/palettes/aqua-4.mem"\"
 COMPILE_ARGS += -P${DUT}.CANV_BPP=5\'d2
-COMPILE_ARGS += -P${DUT}.CANV_DIMS=32\'h018002A0
+COMPILE_ARGS += -P${DUT}.CANV_DIMS=32\'h01600280
 COMPILE_ARGS += -P${DUT}.CANV_LORES=1\'b0
 
 # each test needs its own build dir and results file
